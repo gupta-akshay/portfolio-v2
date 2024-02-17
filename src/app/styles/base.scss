@@ -1,0 +1,28 @@
+body {
+  color: $px-body;
+  font-family: $px-font;
+  line-height: $px-line-height;
+  font-size: $px-font-size;
+  font-weight: 300;
+  &.theme-light {
+    background: $px-white;
+    color: $px-body-light;
+    font-weight: 400;
+  }
+}
+
+.font-alt {
+  font-family: $px-font-alt;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: $px-theme;
+  @include px-hover {
+    color: darken($px-theme, 8%);
+    text-decoration: none;
+  }
+}
