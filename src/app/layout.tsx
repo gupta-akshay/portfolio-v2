@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
-import "@/app/styles/globals.scss";
+import type { Metadata } from 'next';
+import { Rubik } from 'next/font/google';
+import '@/app/styles/globals.scss';
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -9,8 +9,8 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: "Akshay Gupta",
-  description: "Akshay Gupta | Portfolio",
+  title: 'Akshay Gupta',
+  description: 'Akshay Gupta | Portfolio',
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body className={rubik.className}>{children}</body>
     </html>
   );
