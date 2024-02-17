@@ -26,3 +26,10 @@ a {
     text-decoration: none;
   }
 }
+
+.pp-section {
+  background: $px-bg-1;
+  .theme-light & {
+    background: $px-white;
+  }
+}

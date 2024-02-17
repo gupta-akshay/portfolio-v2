@@ -5,7 +5,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <Fragment>
       <Header />
-      <main>{children}</main>
+      <main className='main-right pp-main-section'>{children}</main>
     </Fragment>
   );
 };
