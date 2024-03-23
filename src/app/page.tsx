@@ -1,23 +1,8 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Layout from '@/app/components/Layout';
 import TypingAnimation from '@/app/components/TypingAnimation';
-import PreLoader from '@/app/components/PreLoader';
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  if (loading) {
-    return <PreLoader />;
-  }
-
   return (
     <Layout>
       <section
