@@ -46,6 +46,7 @@ export default function HomeSection() {
                   alt='banner-image'
                   width={540}
                   height={540}
+                  priority={true}
                 />
               </div>
             </div>
