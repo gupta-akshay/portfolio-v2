@@ -115,3 +115,106 @@ a {
   background: #0b0b13;
   color: #fff;
 }
+
+/* TITLE */
+.title {
+  margin-bottom: 35px;
+  @include down-sm {
+    margin-bottom: 25px;
+  }
+  h3 {
+    color: $px-white;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    font-weight: 300;
+    font-size: 30px;
+    display: inline-block;
+    vertical-align: top;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    @include down-sm {
+      letter-spacing: 2px;
+    }
+    .theme-light & {
+      color: $px-dark;
+    }
+    &:after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -7px;
+      left: 56px;
+      right: 0;
+      z-index: -1;
+      background: $px-theme;
+    }
+    &:before {
+      content: '';
+      position: absolute;
+      height: 1px;
+      bottom: -5px;
+      left: 0;
+      right: 0;
+      width: 60px;
+      background: $px-theme;
+    }
+  }
+}
+
+/* SEPARATOR */
+.separator {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  position: relative;
+  &:after {
+    content: '';
+    height: 1px;
+    background: $px-white;
+    opacity: 0.1;
+    position: absolute;
+    top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+    margin: auto;
+    .theme-light & {
+      background-color: $px-dark;
+    }
+  }
+  @include down-md {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  @include down-sm {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+}
+
+/* SLIDER PAGINATION */
+.owl-dots {
+  text-align: center;
+  .owl-dot {
+    display: inline-block;
+    vertical-align: top;
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 1px solid $px-white;
+    @include transition(ease all 0.55s);
+    border-radius: 50%;
+    margin: 0 5px;
+    .theme-light & {
+      border-color: $px-dark;
+    }
+    &.active {
+      background: $px-white;
+      .theme-light & {
+        background: $px-dark;
+      }
+    }
+  }
+}
