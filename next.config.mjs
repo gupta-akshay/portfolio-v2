@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
-  }
+  },
 };
 
 export default nextConfig;

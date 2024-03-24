@@ -110,6 +110,10 @@ a {
   border-radius: 50%;
   z-index: 1111;
   cursor: pointer;
+  @include down-lg {
+    top: 71px;
+    right: 13px;
+  }
 }
 .theme-light .color_switch {
   background: #0b0b13;

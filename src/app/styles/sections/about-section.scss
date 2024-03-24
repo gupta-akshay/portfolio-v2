@@ -26,9 +26,9 @@
         }
       }
       p {
-        color: $px-white;
+        color: $px-body;
         .theme-light & {
-          color: $px-dark;
+          color: $px-body-light;
         }
       }
     }
