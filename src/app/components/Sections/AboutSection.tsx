@@ -56,9 +56,35 @@ export default function AboutSection() {
         </div>
         <div className='separator' />
         <div className='title'>
-          <h3>Skills</h3>
+          <h3>Education & Skills</h3>
         </div>
-        <Skills />
+        <div className='row'>
+          <div className='col-lg-4 m-15px-tb'>
+            <ul className='education-box'>
+              <li>
+                <span>2013-2017</span>
+                <h6>B.E. In Computer Science</h6>
+                <p>RGPV, India</p>
+              </li>
+              <li>
+                <span>2013</span>
+                <h6>Higher Secondary Certification</h6>
+                <p>Central Board of Secondary Education</p>
+              </li>
+            </ul>
+          </div>
+          <div className='col-lg-7 ml-auto m-15px-tb'>
+            <div className='skills-box'>
+              <h3>My Skills</h3>
+              <p>
+                Leveraging a solid foundation in full-stack development, I excel
+                in applying a variety of tech-stacks to create dynamic and
+                efficient applications.
+              </p>
+              <Skills />
+            </div>
+          </div>
+        </div>
         <div className='separator' />
         <div className='title'>
           <h3>Experience</h3>

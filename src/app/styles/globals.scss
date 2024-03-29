@@ -17,6 +17,15 @@ a {
   text-decoration: none !important;
 }
 
+.m-15px-tb {
+  margin-top: 15px;
+  padding-bottom: 15px;
+}
+
+.ml-auto, .mx-auto {
+  margin-left: auto !important;
+}
+
 @import "./variables";
 @import "./mixin";
 @import "./color";
