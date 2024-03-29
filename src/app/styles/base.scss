@@ -288,3 +288,14 @@ a {
     }
   }
 }
+
+/* PARTICLES */
+.particles {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  .theme-light & {
+    opacity: 0.3;
+    filter: invert(1);
+  }
+}
