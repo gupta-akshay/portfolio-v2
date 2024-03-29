@@ -319,7 +319,7 @@ a {
     @include glitchCopy;
     left: 2px;
     text-shadow: -2px 0 $px-pink;
-    clip: rect(38px, 450px, 30px, 0);
+    clip: rect(44px, 450px, 50px, 0);
     animation: glitch-anim 5s infinite linear alternate-reverse;
   }
   &::after {
