@@ -2,11 +2,7 @@
 
 import { FormEvent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faMap,
-  faMailForward,
-  faMobile,
-} from '@fortawesome/free-solid-svg-icons';
+import { faMap, faInbox, faMobile } from '@fortawesome/free-solid-svg-icons';
 
 export default function ContactSection() {
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -35,13 +31,13 @@ export default function ContactSection() {
               </p>
               <ul>
                 <li className='media'>
-                  <FontAwesomeIcon icon={faMap} />
+                  <FontAwesomeIcon icon={faMap} fontSize={20} />
                   <span className='media-body'>
-                    Currently living in Ujjain, Madhya Pradesh
+                    Ujjain, Madhya Pradesh, India
                   </span>
                 </li>
                 <li className='media'>
-                  <FontAwesomeIcon icon={faMailForward} />
+                  <FontAwesomeIcon icon={faInbox} />
                   <span className='media-body'>contact@akshaygupta.live</span>
                 </li>
                 <li className='media'>
