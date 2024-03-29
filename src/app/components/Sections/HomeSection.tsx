@@ -16,7 +16,9 @@ export default function HomeSection() {
             <div className='col-lg-6'>
               <div className='type-box'>
                 <h6>Hello, I am</h6>
-                <h1 className='font-alt'>Akshay Gupta</h1>
+                <h1 className='font-alt glitch' data-text='Akshay Gupta'>
+                  Akshay Gupta
+                </h1>
                 <p className='lead'>
                   I am <TypingAnimation />
                 </p>
