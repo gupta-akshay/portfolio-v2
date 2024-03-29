@@ -21,18 +21,18 @@ export default function HomeSection() {
                   I am <TypingAnimation />
                 </p>
                 <p className='desc'>
-                  I am currently working as an Staff Engineer at{' '}
+                  As a Staff Engineer at{' '}
                   <a href='https://www.peoplegrove.com' target='_blank'>
                     PeopleGrove
                   </a>
-                  . I specialize in crafting seamless and scalable digital
-                  experiences. My expertise spans the full spectrum of software
-                  development, from intricate front-end interfaces to robust
-                  back-end systems. With a firm belief in the power of Agile
-                  methodologies, I am committed to driving innovation and
-                  excellence in every project. My passion lies in building
-                  solutions that not only meet the immediate needs of our users
-                  but also anticipate future challenges and opportunities.
+                  , I excel in delivering seamless, scalable digital
+                  experiences. My comprehensive expertise in software
+                  development ranges from crafting intricate user interfaces to
+                  engineering robust backend architectures. I am dedicated to
+                  leveraging Agile methodologies to foster innovation and
+                  achieve excellence in every endeavor, ensuring our solutions
+                  not only satisfy user needs but also remain ahead of the
+                  curve, ready for future advancements.
                 </p>
                 <div className='btn-bar'>
                   <a
