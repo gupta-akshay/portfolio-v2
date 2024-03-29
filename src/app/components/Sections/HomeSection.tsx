@@ -40,7 +40,7 @@ export default function HomeSection() {
                     href='/assets/akshay-resume.pdf'
                     download
                   >
-                    Donwload Resume
+                    Download Resume
                   </a>
                 </div>
               </div>
