@@ -114,11 +114,11 @@ export default function ContactSection() {
         <div className='row'>
           <div className='col-lg-5 col-xl-4 m-15px-tb'>
             <div className='contact-info'>
-              <h4>What&apos;s your story? Contact me.</h4>
+              <h4>Let&apos;s Connect. Share your vision.</h4>
               <p>
-                Always available for freelancing if the right project comes
-                along. Available to discuss if you have any full-time
-                opportunity as well. Feel free to contact me.
+                I&apos;m here for collaboration and opportunities. Whether
+                it&apos;s a game-changing project or an exciting full-time role,
+                let&apos;s talk.
               </p>
               <ul>
                 <li className='media'>
@@ -148,7 +148,7 @@ export default function ContactSection() {
                       <input
                         name='name'
                         id='name'
-                        placeholder='Name...'
+                        placeholder='Full Name'
                         className={`form-control${errorMap.name ? ' invalid' : ''}`}
                         type='text'
                         value={formData.name}
@@ -169,7 +169,7 @@ export default function ContactSection() {
                       <input
                         name='email'
                         id='email'
-                        placeholder='Email...'
+                        placeholder='Your Email'
                         className={`form-control${errorMap.email ? ' invalid' : ''}`}
                         type='text'
                         value={formData.email}
@@ -190,7 +190,7 @@ export default function ContactSection() {
                       <input
                         name='subject'
                         id='subject'
-                        placeholder='Subject...'
+                        placeholder='Email Subject'
                         className={`form-control${errorMap.subject ? ' invalid' : ''}`}
                         type='text'
                         value={formData.subject}
@@ -211,7 +211,7 @@ export default function ContactSection() {
                       <textarea
                         name='message'
                         id='message'
-                        placeholder='Your message...'
+                        placeholder='Write Your Message'
                         className={`form-control${errorMap.message ? ' invalid' : ''}`}
                         rows={5}
                         value={formData.message}
@@ -234,7 +234,7 @@ export default function ContactSection() {
                         type='submit'
                         disabled={isButtonDisabled || isSending}
                       >
-                        Send Message
+                        Submit
                       </button>
                     </div>
                   </div>
