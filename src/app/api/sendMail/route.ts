@@ -1,3 +1,4 @@
+import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import sanitizeHtml from 'sanitize-html';
 
@@ -5,21 +6,13 @@ import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
 import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-
-type ResponseData = {
-  message: string,
-  error?: any,
-};
-
 const emailRegex = /\S+@\S+\.\S+/;
 
-export async function POST(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
+export async function POST(req: NextRequest) {
   try {
-    const { name, email, subject, message } = req.body;
+    const body = await req.json();
+
+    const { name, email, subject, message } = body;
 
     // Validating request body
     if (
@@ -27,17 +20,23 @@ export async function POST(
       email.trim().length === 0 ||
       message.trim().length === 0
     ) {
-      return res.status(400).json({ message: 'Required params missing.' });
+      return NextResponse.json(
+        { message: 'Required params missing.' },
+        { status: 400 }
+      );
     }
-    if (email.trim().length > 0 && !emailRegex.test(email)) {
-      return res.status(400).json({ message: 'Not a valid email.' });
+    if (email.trim().length > 0 && !emailRegex.test(email.trim())) {
+      return NextResponse.json(
+        { message: 'Not a valid email.' },
+        { status: 400 }
+      );
     }
 
     // sanitizing values before using
-    const nameToSend = sanitizeHtml(name);
-    const messageToSend = sanitizeHtml(message);
-    const subjectToSend = sanitizeHtml(subject);
-    const sendToEmail = sanitizeHtml(email);
+    const nameToSend = sanitizeHtml(name.trim());
+    const messageToSend = sanitizeHtml(message.trim());
+    const subjectToSend = sanitizeHtml(subject.trim());
+    const sendToEmail = sanitizeHtml(email.trim());
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -72,9 +71,12 @@ export async function POST(
       }),
     ]);
 
-    return res.status(200).json({ message: 'email sent' });
+    return NextResponse.json({ message: 'email sent' }, { status: 200 });
   } catch (e) {
     console.log('Error in sending mail ---', e);
-    return res.status(500).json({ message: 'Error in sending mail', error: e });
+    return NextResponse.json(
+      { message: 'Error in sending mail', error: e },
+      { status: 500 }
+    );
   }
 }

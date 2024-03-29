@@ -1,14 +1,105 @@
 'use client';
 
-import { FormEvent } from 'react';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
+import toast from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMap, faInbox, faMobile } from '@fortawesome/free-solid-svg-icons';
 
+const emailRegex = /\S+@\S+\.\S+/;
+
 export default function ContactSection() {
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(e);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+  const [errorMap, setErrorMap] = useState({
+    name: false,
+    email: false,
+    subject: false,
+    message: false,
+  });
+  const [isSending, setIsSending] = useState(false);
+
+  const handleInputChange = (e: { target: { name: any, value: any } }) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case 'name':
+      case 'subject':
+      case 'message':
+        setErrorMap({
+          ...errorMap,
+          [name]: value.length > 0 && value.trim().length === 0,
+        });
+        break;
+      case 'email':
+        setErrorMap({
+          ...errorMap,
+          email:
+            value.length > 0 &&
+            (value.trim().length === 0 || !emailRegex.test(value)),
+        });
+    }
+    setFormData({ ...formData, [name]: value });
   };
+
+  const resetFormState = () => {
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+    });
+    setErrorMap({
+      name: false,
+      email: false,
+      subject: false,
+      message: false,
+    });
+  };
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      setIsSending(true);
+      await toast.promise(
+        fetch('/api/sendMail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        }),
+        {
+          loading: 'Sending Message...',
+          success: () => {
+            resetFormState();
+            setIsSending(false);
+            return 'Message sent successfully!';
+          },
+          error: (err) => {
+            console.error('Error while submitting the form', err);
+            setIsSending(false);
+            return 'Some error occurred. Please try again!';
+          },
+        },
+        {
+          success: {
+            duration: 3000,
+          },
+        }
+      );
+    } catch (e) {
+      console.error('Error while submitting the form', e);
+      setIsSending(false);
+    }
+  };
+
+  const isButtonDisabled =
+    Object.values(errorMap).some((value) => value) ||
+    Object.values(formData).some((value) => value.trim().length === 0);
 
   return (
     <section
@@ -58,10 +149,19 @@ export default function ContactSection() {
                         name='name'
                         id='name'
                         placeholder='Name...'
-                        className='form-control'
+                        className={`form-control${errorMap.name ? ' invalid' : ''}`}
                         type='text'
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        disabled={isSending}
                         required
                       />
+                      <span
+                        className='warning-text text-danger'
+                        style={{ display: errorMap.name ? 'block' : 'none' }}
+                      >
+                        The name is invalid.
+                      </span>
                     </div>
                   </div>
                   <div className='col-md-6'>
@@ -70,10 +170,19 @@ export default function ContactSection() {
                         name='email'
                         id='email'
                         placeholder='Email...'
-                        className='form-control'
-                        type='email'
+                        className={`form-control${errorMap.email ? ' invalid' : ''}`}
+                        type='text'
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        disabled={isSending}
                         required
                       />
+                      <span
+                        className='warning-text text-danger'
+                        style={{ display: errorMap.email ? 'block' : 'none' }}
+                      >
+                        The email is invalid.
+                      </span>
                     </div>
                   </div>
                   <div className='col-md-12'>
@@ -82,10 +191,19 @@ export default function ContactSection() {
                         name='subject'
                         id='subject'
                         placeholder='Subject...'
-                        className='form-control'
+                        className={`form-control${errorMap.subject ? ' invalid' : ''}`}
                         type='text'
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        disabled={isSending}
                         required
                       />
+                      <span
+                        className='warning-text text-danger'
+                        style={{ display: errorMap.subject ? 'block' : 'none' }}
+                      >
+                        The subject is invalid.
+                      </span>
                     </div>
                   </div>
                   <div className='col-md-12'>
@@ -94,21 +212,31 @@ export default function ContactSection() {
                         name='message'
                         id='message'
                         placeholder='Your message...'
-                        className='form-control'
+                        className={`form-control${errorMap.message ? ' invalid' : ''}`}
                         rows={5}
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        disabled={isSending}
                         required
                       />
+                      <span
+                        className='warning-text text-danger'
+                        style={{ display: errorMap.message ? 'block' : 'none' }}
+                      >
+                        The message is invalid.
+                      </span>
                     </div>
                   </div>
                   <div className='col-md-12'>
                     <div className='send'>
-                      <input
+                      <button
                         className='px-btn px-btn-theme'
                         type='submit'
-                        value='Send Message'
-                      />
+                        disabled={isButtonDisabled || isSending}
+                      >
+                        Send Message
+                      </button>
                     </div>
-                    {/* TODO - Add spans for success/failure message */}
                   </div>
                 </div>
               </form>

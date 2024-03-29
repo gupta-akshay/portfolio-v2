@@ -277,7 +277,7 @@ a {
     .theme-light & {
       box-shadow: 4px 4px $px-dark;
     }
-    &:hover {
+    &:not(:disabled):hover {
       background: $px-white;
       color: $px-theme;
       box-shadow: 4px 4px $px-theme;
@@ -285,6 +285,17 @@ a {
         background: $px-dark;
         color: $px-theme;
       }
+    }
+  }
+  &:disabled {
+    background: #ccc;
+    color: #666;
+    box-shadow: none;
+    cursor: not-allowed;
+    border-color: #bbb;
+    box-shadow: 4px 4px $px-white;
+    .theme-light & {
+      box-shadow: 4px 4px $px-dark;
     }
   }
 }

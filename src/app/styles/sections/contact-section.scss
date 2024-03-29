@@ -72,9 +72,15 @@
   }
   .form-group {
     margin-bottom: 1rem;
+    .warning-text {
+      animation: fade_in_show 0.1s
+    }
   }
   .form-control {
     height: calc(2em + 0.75rem + 2px);
+    &.invalid {
+      border-color: $px-error !important;
+    }
   }
   .form-control,
   .form-control:focus {
@@ -120,5 +126,17 @@
         padding-top: 55%;
       }
     }
+  }
+}
+
+@keyframes fade_in_show {
+  0% {
+       opacity: 0;
+       transform: scale(0)
+  }
+
+  100% {
+       opacity: 1;
+       transform: scale(1)
   }
 }
