@@ -4,7 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Fragment, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faIdBadge } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHouse,
+  faIdBadge,
+  faMapLocation,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   faGithub,
   faLinkedin,
@@ -75,6 +79,12 @@ const Header = () => {
                 <span>About Me</span>
               </a>
             </li>
+            <li data-menuanchor='contactus'>
+              <a className='nav-link' href='#contact'>
+                <FontAwesomeIcon icon={faMapLocation} height={20} width={20} />
+                <span>Contact Me</span>
+              </a>
+            </li>
             {/* <li data-menuanchor='services'>
               <a className='nav-link' href='#services'>
                 <i className='ti-panel' />
@@ -92,13 +102,7 @@ const Header = () => {
                 <i className='ti-layout-media-overlay-alt-2' />
                 <span>Blogs</span>
               </a>
-            </li>
-            <li data-menuanchor='contactus'>
-              <a className='nav-link' href='#contactus'>
-                <i className='ti-map-alt' />
-                <span>Contact Me</span>
-              </a>
-            </li> */}
+            </li>*/}
           </ul>
         </div>
         <div className='nav justify-content-center social-icons'>

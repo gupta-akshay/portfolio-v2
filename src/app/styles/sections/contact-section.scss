@@ -1,0 +1,124 @@
+.contact-info {
+  background: $px-dark;
+  padding: 30px;
+  .theme-light & {
+    background: $px-gray;
+  }
+  @include down-md {
+    margin-bottom: 20px;
+  }
+  h4 {
+    font-size: 28px;
+    color: $px-white;
+    font-weight: 500;
+    margin-bottom: 20px;
+    .theme-light & {
+      color: $px-dark;
+    }
+  }
+  p {
+    font-size: 16px;
+    color: $px-body;
+    .theme-light & {
+      color: $px-body-light;
+    }
+  }
+  ul {
+    margin: 0;
+    padding: 10px 0 0;
+    list-style: none;
+  }
+  li {
+    font-size: 18px;
+    font-weight: 500;
+    color: $px-white;
+    line-height: 1.3;
+    position: relative;
+    .theme-light & {
+      color: $px-dark;
+    }
+    svg {
+      width: 30px;
+      text-align: center;
+      color: $px-theme;
+      font-size: 22px;
+    }
+    span {
+      padding-left: 10px;
+    }
+    + li {
+      padding-top: 20px;
+    }
+  }
+}
+
+.contact-form {
+  background: $px-dark;
+  padding: 30px;
+  .theme-light & {
+    background: $px-gray;
+  }
+  @include down-md {
+    margin-bottom: 20px;
+  }
+  h4 {
+    font-weight: 500;
+    color: $px-white;
+    font-size: 22px;
+    margin-bottom: 20px;
+    .theme-light & {
+      color: $px-dark;
+    }
+  }
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  .form-control {
+    height: calc(2em + 0.75rem + 2px);
+  }
+  .form-control,
+  .form-control:focus {
+    color: $px-white;
+    background: none;
+    border: 1px solid rgba($px-white, 0.3);
+    border-radius: 2px;
+    box-shadow: none;
+    .theme-light & {
+      color: $px-dark;
+      border: 1px solid rgba($px-dark, 0.3);
+      background: $px-white;
+    }
+  }
+  .form-control::placeholder {
+    color: rgba($px-white, 0.3);
+    .theme-light & {
+      color: rgba($px-dark, 0.3);
+    }
+  }
+  textarea.form-control {
+    height: auto;
+    resize: none;
+  }
+}
+
+.google-map {
+  margin-top: 50px;
+  .theme-light & {
+    border: 5px solid $px-white;
+  }
+  @include down-sm {
+    margin-top: 15px;
+  }
+  .embed-responsive-21by9 {
+    filter: grayscale(1);
+    -webkit-filter: grayscale(1);
+    &:before {
+      content: block;
+      content: '';
+      padding-top: 30%;
+      @include down-sm {
+        padding-top: 55%;
+      }
+    }
+  }
+}
