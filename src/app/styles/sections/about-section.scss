@@ -32,6 +32,16 @@
         }
       }
     }
+    .btn-bar {
+      padding-top: 35px;
+      .px-btn {
+        min-width: 150px;
+        text-align: center;
+        + .px-btn {
+          margin-left: 22px;
+        }
+      }
+    }
   }
 }
 

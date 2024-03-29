@@ -2,7 +2,16 @@ import Image from 'next/image';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 
+const calculateExperience = () => {
+  const startDate = new Date('2017-09-13').getTime();
+  const currentDate = new Date().getTime();
+  const diffInMilliseconds = currentDate - startDate;
+  const diffInYears = diffInMilliseconds / (1000 * 60 * 60 * 24 * 365);
+  return Math.floor(diffInYears);
+};
+
 export default function AboutSection() {
+  const yearsOfExperience = calculateExperience();
   return (
     <section
       id='about'
@@ -31,25 +40,26 @@ export default function AboutSection() {
               <div className='about-text'>
                 <h4>Greetings from the Digital Realm!</h4>
                 <p>
-                  I&apos;m a code conjurer and pixel whisperer, otherwise known
-                  as a Full Stack Web Developer, crafting digital wonders from
-                  the comfort of my abode. Currently weaving web magic with the
-                  brilliant minds at PeopleGrove, I boast over 6 years of
-                  navigating the mystical lands of syntax and semicolons. My
-                  quest? To forge seamless user experiences and top-tier digital
-                  marvels, all while keeping an eye out for the elusive perfect
-                  line of code.
+                  As a seasoned Full Stack Web Developer at PeopleGrove, I blend
+                  over {yearsOfExperience} years of experience with a flair for
+                  creating immersive digital environments. My journey is marked
+                  by an unwavering commitment to user-centric design and the
+                  pursuit of coding perfection.
                 </p>
                 <p>
-                  When not in the throes of development, you can find me
-                  orchestrating electronic symphonies or moonlighting as a DJ,
-                  where the beats are as dynamic as my code. My love for gaming
-                  knows no bounds, be it console wars or the peace of PC realms.
-                  And when the screens fade to black, I&apos;m off to sandy
-                  shores and salty breezes, with Goa being my sanctuary from the
-                  binary world. Because after all, even a web wizard needs a
-                  haven to recharge their creative spells.
+                  Beyond the realm of development, my passions extend to music
+                  production and DJing—hobbies where rhythm and innovation play
+                  in harmony. I&apos;m also an avid gamer, appreciative of both
+                  console challenges and the tranquility of PC gaming. To
+                  unwind, I retreat to the serene beaches of Goa, my personal
+                  refuge from the digital storm, where I rejuvenate my
+                  creativity.
                 </p>
+                <div className='btn-bar'>
+                  <a className='px-btn px-btn-theme' href='#contact'>
+                    <span>Hire Me</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
