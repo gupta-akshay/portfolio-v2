@@ -9,7 +9,7 @@ const SKILLS_ARR = [
   },
   {
     id: 'html/css',
-    name: 'Html/CSS',
+    name: 'HTML/CSS',
   },
   {
     id: 'node.js',
