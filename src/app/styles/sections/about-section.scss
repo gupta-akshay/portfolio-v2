@@ -121,13 +121,17 @@
     flex-wrap: wrap;
     gap: 15px;
     &__pill {
-      padding: 10px 15px;
+      padding: 12px 20px;
       border-radius: 5px;
       box-shadow:
         $px-theme-rgb-1 0px 1px 2px 0px,
         $px-theme-rgb-2 0px 2px 6px 2px;
       background: $px-dark;
       color: $px-white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
       @include transition(ease all 0.4s);
       .theme-light & {
         color: $px-dark;
@@ -143,6 +147,9 @@
           color: $px-dark;
           background: $px-theme;
         }
+      }
+      &--icon {
+        font-size: 24px;
       }
     }
   }
