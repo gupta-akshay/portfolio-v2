@@ -318,15 +318,21 @@ a {
   &::before {
     @include glitchCopy;
     left: 2px;
-    text-shadow: -2px 0 $px-pink;
+    text-shadow: -2px 0 $px-pink-comp;
     clip: rect(44px, 450px, 50px, 0);
     animation: glitch-anim 5s infinite linear alternate-reverse;
+    .theme-light & {
+      text-shadow: -2px 0 $px-pink;
+    }
   }
   &::after {
     @include glitchCopy;
     left: -2px;
-    text-shadow: -2px 0 $px-teal, 2px 2px $px-pink;
+    text-shadow: -2px 0 $px-teal-comp, 2px 2px $px-pink-comp;
     animation: glitch-anim 1s infinite linear alternate-reverse;
+    .theme-light & {
+      text-shadow: -2px 0 $px-teal, 2px 2px $px-pink;
+    }
   }
 }
 
