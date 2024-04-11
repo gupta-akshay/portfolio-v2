@@ -106,19 +106,39 @@ const Header = () => {
           </ul>
         </div>
         <div className='nav justify-content-center social-icons'>
-          <Link href='https://github.com/gupta-akshay'>
+          <Link
+            href='https://github.com/gupta-akshay'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <FontAwesomeIcon icon={faGithub} />
           </Link>
-          <Link href='https://www.linkedin.com/in/akshayguptaujn'>
+          <Link
+            href='https://www.linkedin.com/in/akshayguptaujn'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <FontAwesomeIcon icon={faLinkedin} />
           </Link>
-          <Link href='https://www.instagram.com/dja_shay'>
+          <Link
+            href='https://www.instagram.com/dja_shay'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <FontAwesomeIcon icon={faInstagram} />
           </Link>
-          <Link href='https://www.facebook.com/deejay.ashay'>
+          <Link
+            href='https://www.facebook.com/deejay.ashay'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <FontAwesomeIcon icon={faFacebook} />
           </Link>
-          <Link href='https://soundcloud.com/deejay-a-shay'>
+          <Link
+            href='https://soundcloud.com/deejay-a-shay'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <FontAwesomeIcon icon={faSoundcloud} />
           </Link>
         </div>
