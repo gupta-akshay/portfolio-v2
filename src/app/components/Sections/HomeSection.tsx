@@ -21,7 +21,7 @@ export default function HomeSection() {
                   I am <TypingAnimation />
                 </p>
                 <p className='desc'>
-                  As a Staff Engineer at{' '}
+                  As an Staff Engineer at{' '}
                   <a href='https://www.peoplegrove.com' target='_blank'>
                     PeopleGrove
                   </a>

@@ -73,7 +73,7 @@ export default function AboutSection() {
             <ul className='education-box'>
               <li>
                 <span>2013-2017</span>
-                <h6>B.E. In Computer Science</h6>
+                <h6>Bachelor of Engineering in Computer Science</h6>
                 <p>RGPV, India</p>
               </li>
               <li>

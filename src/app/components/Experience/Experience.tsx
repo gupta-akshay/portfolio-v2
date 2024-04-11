@@ -22,8 +22,8 @@ export default function Experience() {
               <div className='experience-row--right'>
                 <h6>{experience.role}</h6>
                 <label>
-                  {experience.company} | {experience.location} | Jan 2019 -
-                  Present
+                  {experience.company} | {experience.location} |{' '}
+                  {experience.timeInRole}
                 </label>
                 <div className='experience-row--right__type'>Full Time</div>
                 <div
