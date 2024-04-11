@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import TypingAnimation from '@/app/components/TypingAnimation';
-import ParticlesBackground from '@/app/components/ParticlesBackground';
 
 export default function HomeSection() {
   return (
@@ -10,7 +9,6 @@ export default function HomeSection() {
       className='pp-section pp-scrollable'
     >
       <div className='home-banner'>
-        {/* <ParticlesBackground /> */}
         <div className='container'>
           <div className='row full-screen align-items-center'>
             <div className='col-lg-6'>
@@ -39,10 +37,10 @@ export default function HomeSection() {
                 <div className='btn-bar'>
                   <a
                     className='px-btn px-btn-theme'
-                    href='/assets/akshay-resume.pdf'
+                    href='/assets/akshay-cv.pdf'
                     download
                   >
-                    Download Resume
+                    Download CV
                   </a>
                 </div>
               </div>
