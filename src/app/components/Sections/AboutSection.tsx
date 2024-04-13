@@ -28,7 +28,6 @@ export default function AboutSection() {
                 width={560}
                 height={560}
                 style={{ objectFit: 'cover' }}
-                priority={true}
               />
             </div>
           </div>
