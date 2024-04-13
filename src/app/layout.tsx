@@ -13,8 +13,9 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: 'Akshay Gupta',
-  description: 'Akshay Gupta | Portfolio',
+  title: 'Akshay Gupta | Full-Stack Web Developer',
+  description:
+    `Akshay Gupta | Full-Stack Web Developer | I am a Staff Engineer at PeopleGrove, a company that provides online mentoring and networking solutions for students and professionals. I have over six years of experience in web development.`,
 };
 
 export default function RootLayout({
