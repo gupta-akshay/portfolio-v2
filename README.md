@@ -1,4 +1,8 @@
-# Personal Portfolio Website
+[![Netlify Status](https://api.netlify.com/api/v1/badges/05e288a4-4c16-468a-b42d-5bb8c2cdf6fd/deploy-status)](https://app.netlify.com/sites/akshay-portfolio-v2/deploys)
+
+---
+
+# Personal Portfolio Website V2
 
 Live on https://akshaygupta.live
 
@@ -30,6 +34,8 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can try out the older version of my site built with Gatsby [https://github.com/gupta-akshay/portfolio](here).
 
 ---
 
