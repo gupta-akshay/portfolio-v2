@@ -20,10 +20,10 @@ export default function AboutSection() {
     >
       <div className='container'>
         <div className='row align-items-center justify-content-center'>
-          <div className='col-lg-6 m-15px-tb'>
+          <div className='col-lg-6 m-15px-tb d-none d-sm-block'>
             <div className='about-img'>
               <Image
-                src='/images/the-office.webp'
+                src='/images/about-me.png'
                 alt='about-image'
                 width={560}
                 height={560}
