@@ -55,7 +55,7 @@ const Header = () => {
             <div className='hl-logo'>
               <div className='img'>
                 <Image
-                  src='/images/the-office.webp'
+                  src='/images/header.webp'
                   alt='Navbar Image'
                   height={120}
                   width={120}

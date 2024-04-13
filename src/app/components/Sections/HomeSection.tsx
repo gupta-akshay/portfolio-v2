@@ -45,13 +45,13 @@ export default function HomeSection() {
                 </div>
               </div>
             </div>
-            <div className='col-lg-6'>
+            <div className='col-lg-6 d-none d-sm-block'>
               <div className='hb-img'>
                 <Image
-                  src='/images/home-banner.jpg'
+                  src='/images/home-banner.webp'
                   alt='banner-image'
-                  width={540}
-                  height={540}
+                  width={600}
+                  height={600}
                   priority={true}
                 />
               </div>
