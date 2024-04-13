@@ -38,7 +38,12 @@ const DayNightToggle = () => {
   };
 
   return (
-    <label className='color_switch' onClick={() => changeMode()} role='button'>
+    <label
+      className='color_switch'
+      onClick={() => changeMode()}
+      role='button'
+      aria-label={`switch to ${isLightMode ? 'dark' : 'light'} mode`}
+    >
       <FontAwesomeIcon icon={isLightMode ? faMoon : faSun} />
     </label>
   );

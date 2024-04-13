@@ -37,6 +37,7 @@ const Header = () => {
           <button
             className={`toggler-menu ${sideBarToggle ? 'open' : ''}`}
             onClick={() => setSideBarToggle(!sideBarToggle)}
+            aria-label={`${sideBarToggle ? 'close' : 'open'} menu`}
           >
             <span />
             <span />
@@ -59,7 +60,6 @@ const Header = () => {
                   alt='Navbar Image'
                   height={120}
                   width={120}
-                  priority={true}
                   style={{ objectFit: 'cover' }}
                 />
               </div>
@@ -85,24 +85,6 @@ const Header = () => {
                 <span>Contact Me</span>
               </a>
             </li>
-            {/* <li data-menuanchor='services'>
-              <a className='nav-link' href='#services'>
-                <i className='ti-panel' />
-                <span>Services</span>
-              </a>
-            </li>
-            <li data-menuanchor='work'>
-              <a className='nav-link' href='#work'>
-                <i className='ti-bookmark-alt' />
-                <span>Portfolio</span>
-              </a>
-            </li>
-            <li data-menuanchor='blog' className='blog'>
-              <a className='nav-link' href='#blog'>
-                <i className='ti-layout-media-overlay-alt-2' />
-                <span>Blogs</span>
-              </a>
-            </li>*/}
           </ul>
         </div>
         <div className='nav justify-content-center social-icons'>
@@ -110,6 +92,7 @@ const Header = () => {
             href='https://github.com/gupta-akshay'
             target='_blank'
             rel='noopener noreferrer'
+            aria-label='Github'
           >
             <FontAwesomeIcon icon={faGithub} />
           </Link>
@@ -117,6 +100,7 @@ const Header = () => {
             href='https://www.linkedin.com/in/akshayguptaujn'
             target='_blank'
             rel='noopener noreferrer'
+            aria-label='Linkedin'
           >
             <FontAwesomeIcon icon={faLinkedin} />
           </Link>
@@ -124,6 +108,7 @@ const Header = () => {
             href='https://www.instagram.com/dja_shay'
             target='_blank'
             rel='noopener noreferrer'
+            aria-label='Instagram'
           >
             <FontAwesomeIcon icon={faInstagram} />
           </Link>
@@ -131,6 +116,7 @@ const Header = () => {
             href='https://www.facebook.com/deejay.ashay'
             target='_blank'
             rel='noopener noreferrer'
+            aria-label='Facebook'
           >
             <FontAwesomeIcon icon={faFacebook} />
           </Link>
@@ -138,6 +124,7 @@ const Header = () => {
             href='https://soundcloud.com/deejay-a-shay'
             target='_blank'
             rel='noopener noreferrer'
+            aria-label='Soundcloud'
           >
             <FontAwesomeIcon icon={faSoundcloud} />
           </Link>

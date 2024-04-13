@@ -14,7 +14,6 @@ export default function Experience() {
                   alt='Company Logo'
                   width={120}
                   height={120}
-                  priority={true}
                 />
               </div>
             </div>
