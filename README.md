@@ -9,6 +9,7 @@ Created using following:
 * Next.js 14
 * Typescript
 * Sass
+* Bootstrap 5
 * [Resend](https://resend.com) to send mails
 
 ## How to run locally
@@ -32,6 +33,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ---
 
-I hope you will like this project. Feel free to drop your feedback at contact@akshaygupta.live or akshaygupta.live@gmail.com
+I hope you will like this project. Feel free to drop your feedback at [contact@akshaygupta.live](contact@akshaygupta.live) or [akshaygupta.live@gmail.com](akshaygupta.live@gmail.com).
 
 ❤️ Akshay Gupta
