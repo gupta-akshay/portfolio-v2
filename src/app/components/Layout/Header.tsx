@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -16,13 +17,27 @@ import {
   faInstagram,
   faFacebook,
 } from '@fortawesome/free-brands-svg-icons';
-import { activeSection } from '@/app/utils';
 
 const Header = () => {
   const [sideBarToggle, setSideBarToggle] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const pathname = usePathname();
+
   useEffect(() => {
-    activeSection();
-  }, []);
+    switch (pathname) {
+      case '/about':
+        setActiveSection('about');
+        break;
+      case '/contact':
+        setActiveSection('contact');
+        break;
+      default:
+        setActiveSection('home');
+        break;
+    }
+
+    return () => setActiveSection('home');
+  }, [pathname]);
 
   return (
     <Fragment>
@@ -67,23 +82,23 @@ const Header = () => {
             </div>
           </div>
           <ul className='nav nav-menu' id='pp-menu'>
-            <li data-menuanchor='home' className='active'>
-              <a className='nav-link' href='#home'>
+            <li className={activeSection === 'home' ? 'active' : ''}>
+              <Link className='nav-link' href='/'>
                 <FontAwesomeIcon icon={faHouse} height={20} width={20} />
                 <span>Home</span>
-              </a>
+              </Link>
             </li>
-            <li data-menuanchor='about'>
-              <a className='nav-link' href='#about'>
+            <li className={activeSection === 'about' ? 'active' : ''}>
+              <Link className='nav-link' href='/about'>
                 <FontAwesomeIcon icon={faIdBadge} height={20} width={20} />
                 <span>About Me</span>
-              </a>
+              </Link>
             </li>
-            <li data-menuanchor='contactus'>
-              <a className='nav-link' href='#contact'>
+            <li className={activeSection === 'contact' ? 'active' : ''}>
+              <Link className='nav-link' href='/contact'>
                 <FontAwesomeIcon icon={faMapLocation} height={20} width={20} />
                 <span>Contact Me</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

@@ -32,6 +32,7 @@ a {
 }
 
 .pp-section {
+  height: 100vh;
   background: $px-bg-1;
   .theme-light & {
     background: $px-white;
