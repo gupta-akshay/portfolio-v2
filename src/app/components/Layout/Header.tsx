@@ -75,7 +75,7 @@ const Header = () => {
                   alt='Navbar Image'
                   height={120}
                   width={120}
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'cover', width: 'auto', height: 'auto' }}
                 />
               </div>
               <h5>Akshay Gupta</h5>
