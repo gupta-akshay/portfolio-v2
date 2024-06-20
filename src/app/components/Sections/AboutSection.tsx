@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 
@@ -55,9 +56,9 @@ export default function AboutSection() {
                   creativity.
                 </p>
                 <div className='btn-bar'>
-                  <a className='px-btn px-btn-theme' href='#contact'>
+                  <Link className='px-btn px-btn-theme' href='/contact'>
                     <span>Hire Me</span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
