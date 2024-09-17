@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { createClient } from '@supabase/supabase-js';
 import sanitizeHtml from 'sanitize-html';
 
 import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
 import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
-
-import { Database } from './database.types';
-
-const supabase = createClient<Database>(
-  process.env.SUPABASE_PROJECT_URL as string,
-  process.env.SUPABASE_API_KEY as string
-);
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -47,17 +39,6 @@ export async function POST(req: NextRequest) {
     const messageToSend = sanitizeHtml(message.trim());
     const subjectToSend = sanitizeHtml(subject.trim());
     const sendToEmail = sanitizeHtml(email.trim());
-
-    const { error } = await supabase.from('form_submissions').insert({
-      name: nameToSend,
-      email_id: sendToEmail,
-      subject: subjectToSend,
-      message: messageToSend,
-    });
-
-    if (error) {
-      console.error('Error while creating record ---', error);
-    }
 
     await Promise.all([
       // confirmation email to sender

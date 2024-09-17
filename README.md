@@ -14,15 +14,12 @@ Created using following:
 * Typescript
 * Sass
 * Bootstrap 5
-* [Supabase](https://supabase.com) for DBaaS
 * [Resend](https://resend.com) to send mails
 
 ## How to run locally
 
  * Create `.env.local` at the root of the project, this will contain -
     * `RESEND_API_KEY` for your Resend account.
-    * `SUPABASE_PROJECT_URL` for your Supabase project.
-    * `SUPABASE_API_KEY` for your Supabase project's key.
  * Above keys are used in `src/app/api/sendMail/route.ts`.
 
 Local server can be started by -
