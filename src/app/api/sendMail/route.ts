@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import sanitizeHtml from 'sanitize-html';
+import { z } from 'zod';
+
+// Define a schema for input validation
+const contactSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address'),
+  subject: z.string().optional(),
+  message: z.string().min(1, 'Message is required'),
+});
 
 import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
@@ -8,52 +17,41 @@ import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const emailRegex = /\S+@\S+\.\S+/;
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const { name, email, subject, message } = body;
+    // Validate input using Zod
+    const result = contactSchema.safeParse(body);
 
-    // Validating request body
-    if (
-      name.trim().length === 0 ||
-      email.trim().length === 0 ||
-      message.trim().length === 0
-    ) {
+    if (!result.success) {
       return NextResponse.json(
-        { message: 'Required params missing.' },
-        { status: 400 }
-      );
-    }
-    if (email.trim().length > 0 && !emailRegex.test(email.trim())) {
-      return NextResponse.json(
-        { message: 'Not a valid email.' },
+        { message: 'Invalid input', errors: result.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
 
-    // sanitizing values before using
-    const nameToSend = sanitizeHtml(name.trim());
-    const messageToSend = sanitizeHtml(message.trim());
-    const subjectToSend = sanitizeHtml(subject.trim());
-    const sendToEmail = sanitizeHtml(email.trim());
+    const { name, email, subject, message } = result.data;
 
+    // Sanitize inputs
+    const sanitizedData = {
+      name: sanitizeHtml(name.trim()),
+      email: sanitizeHtml(email.trim()),
+      subject: sanitizeHtml(subject?.trim() ?? ''),
+      message: sanitizeHtml(message.trim()),
+    };
+
+    // Send emails
     await Promise.all([
-      // confirmation email to sender
       resend.emails.send({
         from: 'Akshay Gupta <contact@akshaygupta.live>',
-        to: [sendToEmail],
+        to: [sanitizedData.email],
         subject: 'Thank you for contacting! I will reach out to you soon!',
         html: replaceMergeFields({
           messageString: userHtmlString,
-          mergeFields: {
-            name: nameToSend,
-          },
+          mergeFields: { name: sanitizedData.name },
         }),
       }),
-      // lead gen email to myself
       resend.emails.send({
         from: 'Contact Enquiry - Akshay Gupta <contact@akshaygupta.live>',
         to: ['contact@akshaygupta.live'],
@@ -61,21 +59,16 @@ export async function POST(req: NextRequest) {
         subject: 'New Contact Enquiry',
         html: replaceMergeFields({
           messageString: leadGenHtmlString,
-          mergeFields: {
-            name: nameToSend,
-            email: sendToEmail,
-            subject: subjectToSend,
-            message: messageToSend,
-          },
+          mergeFields: sanitizedData,
         }),
       }),
     ]);
 
-    return NextResponse.json({ message: 'email sent' }, { status: 200 });
+    return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
   } catch (e) {
-    console.log('Error in sending mail ---', e);
+    console.error('Error in sending mail:', e);
     return NextResponse.json(
-      { message: 'Error in sending mail', error: e },
+      { message: 'Error in sending mail' },
       { status: 500 }
     );
   }
