@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
 
     if (!result.success) {
       return NextResponse.json(
-        { message: 'Invalid input', errors: result.error.flatten().fieldErrors },
+        {
+          message: 'Invalid input',
+          errors: result.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
@@ -64,7 +67,10 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
+    return NextResponse.json(
+      { message: 'Email sent successfully' },
+      { status: 200 }
+    );
   } catch (e) {
     console.error('Error in sending mail:', e);
     return NextResponse.json(
