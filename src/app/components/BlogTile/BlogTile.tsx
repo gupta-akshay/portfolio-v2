@@ -1,4 +1,4 @@
-import Image from 'next/Image';
+import Image from 'next/image';
 import Link from 'next/link';
 // @ts-ignore
 import { getImageDimensions } from '@sanity/asset-utils';
@@ -22,7 +22,7 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
   const url = urlFor(mainImage).fit('max').auto('format').url() as string;
 
   return (
-    <div className='col-md-6 m-15px-tb' key={blog._id}>
+    <div className='col-md-6 m-15px-tb'>
       <div className='blog-grid'>
         <div className='blog-img'>
           <Link href={`/blog/${blog.slug.current}`}>
