@@ -1,9 +1,13 @@
 import { groq } from 'next-sanity';
 
 const postData = `{
+  _id,
   title,
   slug,
-  categories,
+  categories[]->{
+    title,
+    slug
+  },
   author->{
     _id,
     name,
@@ -13,8 +17,7 @@ const postData = `{
   },
   mainImage,
   publishedAt,
-  body,
-  preview
+  body
 }`;
 
 export const postQuery = groq`*[_type == 'post'] ${postData}`;

@@ -73,5 +73,25 @@ export const blockContentType = defineType({
         },
       ],
     }),
+    defineArrayMember({
+      type: 'code',
+      name: 'code',
+      title: 'Code Blocks',
+      options: {
+        languageAlternatives: [
+          { title: '', value: '' },
+          { title: 'Javascript', value: 'javascript' },
+          { title: 'Typescript', value: 'typescript' },
+          { title: 'HTML', value: 'html' },
+          { title: 'CSS', value: 'css' },
+          { title: 'React', value: 'react' },
+          { title: 'Node', value: 'node' },
+          { title: 'MySql', value: 'mysql' },
+          { title: 'PostgreSQL', value: 'postgreSql' },
+          { title: 'ZH', value: 'zh', mode: 'sh' },
+        ],
+        withFilename: false,
+      },
+    }),
   ],
 });

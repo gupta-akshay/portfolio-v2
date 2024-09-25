@@ -27,7 +27,7 @@ export async function sanityFetch<QueryResponse>({
   });
 }
 
-export const getPosts = async () => {
+export const getPosts = async (): Promise<Blog[]> => {
   return await sanityFetch({
     query: postQuery,
     qParams: {},
