@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faBlog,
   faHouse,
   faIdBadge,
   faMapLocation,
@@ -30,6 +31,9 @@ const Header = () => {
         break;
       case '/contact':
         setActiveSection('contact');
+        break;
+      case '/blog':
+        setActiveSection('blog');
         break;
       default:
         setActiveSection('home');
@@ -92,6 +96,12 @@ const Header = () => {
               <Link className='nav-link' href='/about'>
                 <FontAwesomeIcon icon={faIdBadge} height={20} width={20} />
                 <span>About Me</span>
+              </Link>
+            </li>
+            <li className={activeSection === 'blog' ? 'active' : ''}>
+              <Link className='nav-link' href='/blog'>
+                <FontAwesomeIcon icon={faBlog} height={20} width={20} />
+                <span>Blogs</span>
               </Link>
             </li>
             <li className={activeSection === 'contact' ? 'active' : ''}>

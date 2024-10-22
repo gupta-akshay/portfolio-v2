@@ -73,7 +73,7 @@
   .form-group {
     margin-bottom: 1rem;
     .warning-text {
-      animation: fade_in_show 0.1s
+      animation: fade_in_show 0.1s;
     }
   }
   .form-control {
@@ -131,12 +131,12 @@
 
 @keyframes fade_in_show {
   0% {
-       opacity: 0;
-       transform: scale(0)
+    opacity: 0;
+    transform: scale(0);
   }
 
   100% {
-       opacity: 1;
-       transform: scale(1)
+    opacity: 1;
+    transform: scale(1);
   }
 }

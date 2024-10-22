@@ -1,23 +1,23 @@
 .not-found {
   min-height: 100vh;
   &:after {
-		content: "";
-	    position: absolute;
-	    right: -20vh;
-	    top: -20vh;
-	    width: 100vh;
-	    height: 100vh;
-	    border-radius: 50%;
-	    background: $px-dark;
-	    z-index: 0;
-	    .theme-light & {
-	    	background: $px-gray;
-	    }
-	}
+    content: '';
+    position: absolute;
+    right: -20vh;
+    top: -20vh;
+    width: 100vh;
+    height: 100vh;
+    border-radius: 50%;
+    background: $px-dark;
+    z-index: 0;
+    .theme-light & {
+      background: $px-gray;
+    }
+  }
   .container {
-		position: relative;
-		z-index: 1;
-	}
+    position: relative;
+    z-index: 1;
+  }
   .not-found-content {
     min-height: 100vh;
     h2 {
