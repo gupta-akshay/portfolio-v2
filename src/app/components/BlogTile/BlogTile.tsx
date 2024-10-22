@@ -1,9 +1,6 @@
-import Image from 'next/image';
 import Link from 'next/link';
 // @ts-ignore
-import { getImageDimensions } from '@sanity/asset-utils';
-
-import { urlFor } from '@/sanity/lib/image';
+import BlogImage from '@/app/components/BlogImage';
 import { Blog } from '@/sanity/types/blog';
 
 const formatDate = (dateString: string): string => {
@@ -18,23 +15,13 @@ const formatDate = (dateString: string): string => {
 
 const BlogTile = ({ blog }: { blog: Blog }) => {
   const { mainImage } = blog;
-  const { width, height } = getImageDimensions(mainImage);
-  const url = urlFor(mainImage).fit('max').auto('format').url() as string;
 
   return (
     <div className='col-md-6 m-15px-tb'>
       <div className='blog-grid'>
         <div className='blog-img'>
           <Link href={`/blog/${blog.slug.current}`}>
-            <Image
-              src={url}
-              width={width}
-              height={height}
-              alt={blog.mainImage.alt || 'blog image'}
-              loading='lazy'
-              layout='responsive'
-              style={{ objectFit: 'cover' }}
-            />
+            <BlogImage value={mainImage} isTileImage />
           </Link>
         </div>
         <div className='blog-info'>
