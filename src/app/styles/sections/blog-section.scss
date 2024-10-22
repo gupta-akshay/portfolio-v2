@@ -26,6 +26,10 @@
     .meta {
       color: $px-body;
       font-size: 12px;
+
+      .theme-light & {
+        color: $px-body-light;
+      }
     }
 
     p {

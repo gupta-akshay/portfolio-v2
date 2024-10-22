@@ -329,10 +329,14 @@ a {
   &::after {
     @include glitchCopy;
     left: -2px;
-    text-shadow: -2px 0 $px-teal-comp, 2px 2px $px-pink-comp;
+    text-shadow:
+      -2px 0 $px-teal-comp,
+      2px 2px $px-pink-comp;
     animation: glitch-anim 1s infinite linear alternate-reverse;
     .theme-light & {
-      text-shadow: -2px 0 $px-teal, 2px 2px $px-pink;
+      text-shadow:
+        -2px 0 $px-teal,
+        2px 2px $px-pink;
     }
   }
 }

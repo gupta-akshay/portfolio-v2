@@ -1,10 +1,10 @@
 .main-right {
-	@include up-lg {
-		left: 250px;
-	  position: absolute;
-	  height: 100%;
+  @include up-lg {
+    left: 250px;
+    position: absolute;
+    height: 100%;
     width: calc(100% - 250px);
-	}
+  }
 }
 
 .header-left {
