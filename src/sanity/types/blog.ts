@@ -1,24 +1,41 @@
 import { PortableTextBlock } from 'sanity';
 
+export type Slug = {
+  _type: 'slug',
+  current: string,
+};
+
+export type Category = {
+  title: string,
+  slug: Slug,
+};
+
+export type ImageAsset = {
+  _ref: string,
+  _type: 'reference',
+};
+
+export type Image = {
+  _type: 'image',
+  asset: ImageAsset,
+  alt?: string,
+};
+
 export type Author = {
   name: string,
-  image: string,
-  bio?: string,
-  slug: {
-    current: string,
-  },
-  _id?: number | string,
-  _ref?: number | string,
+  image: Image,
+  bio: PortableTextBlock[],
+  slug: Slug,
+  _id: string,
 };
 
 export type Blog = {
-  _id: number,
+  _id: string,
   title: string,
-  slug: any,
-  metadata: string,
-  body: PortableTextBlock[],
-  mainImage: any,
+  slug: Slug,
+  categories: Category[],
   author: Author,
-  tags: string[],
+  mainImage: Image,
   publishedAt: string,
+  body: PortableTextBlock[],
 };
