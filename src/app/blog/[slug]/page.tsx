@@ -16,8 +16,6 @@ const formatDate = (dateString: string): string => {
 const SingleBlogPage = async ({ params }: { params: { slug: string } }) => {
   const post = await getPostBySlug(params.slug);
 
-  console.log(JSON.stringify(post, null, 2));
-
   return (
     <Layout isBlog>
       <div id={post.slug.current} className='single-blog'>
