@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { config } from '@fortawesome/fontawesome-svg-core';
-import { rubik, playfair } from './fonts';
+import { rubik } from './fonts';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -21,9 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className={`${rubik.variable} ${playfair.variable}`}>
-        {children}
-      </body>
+      <body className={`${rubik.variable}`}>{children}</body>
     </html>
   );
 }
