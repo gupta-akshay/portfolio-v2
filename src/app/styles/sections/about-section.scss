@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use '../variables' as *;
+@use '../mixin' as *;
+
 .about-section {
   .about-img {
     img {
@@ -86,7 +90,7 @@
       position: absolute;
       bottom: -5px;
       left: 0;
-      border-top: 5px solid darken($px-theme, 25%);
+      border-top: 5px solid color.adjust($px-theme, $lightness: -25%);
       border-left: 5px solid transparent;
     }
   }

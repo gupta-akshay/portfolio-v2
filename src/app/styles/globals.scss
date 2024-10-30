@@ -1,5 +1,12 @@
-@import '~bootstrap/dist/css/bootstrap.min.css';
-@import '~devicon/devicon.min.css';
+@use 'sass:color';
+@use 'sass:math';
+@use './base' as *;
+@use './sections/header' as *;
+@use './sections/home-banner' as *;
+@use './sections/about-section' as *;
+@use './sections/contact-section' as *;
+@use './sections/blog-section' as *;
+@use './sections/not-found' as *;
 
 * {
   box-sizing: border-box;
@@ -28,14 +35,3 @@ a {
 .mx-auto {
   margin-left: auto !important;
 }
-
-@import './variables';
-@import './mixin';
-@import './color';
-@import './base';
-@import './sections/header';
-@import './sections/home-banner';
-@import './sections/about-section';
-@import './sections/contact-section';
-@import './sections/blog-section';
-@import './sections/not-found';

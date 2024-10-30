@@ -1,3 +1,6 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+
 .main-right {
   @include up-lg {
     left: 250px;
