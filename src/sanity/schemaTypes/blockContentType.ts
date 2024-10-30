@@ -50,15 +50,15 @@ export const blockContentType = defineType({
               {
                 name: 'href',
                 type: 'url',
-                title: 'URL'
+                title: 'URL',
               },
               {
                 title: 'Open in new tab',
                 name: 'blank',
                 description: 'Read https://css-tricks.com/use-target_blank/',
-                type: 'boolean'
-              }
-            ]
+                type: 'boolean',
+              },
+            ],
           },
           {
             name: 'internalLink',
@@ -72,10 +72,10 @@ export const blockContentType = defineType({
                 to: [
                   { type: 'post' },
                   // other types you may want to link to
-                ]
-              }
-            ]
-          }
+                ],
+              },
+            ],
+          },
         ],
       },
     }),

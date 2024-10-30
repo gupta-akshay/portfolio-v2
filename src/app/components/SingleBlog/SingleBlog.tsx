@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import BlogImage from '@/app/components/BlogImage';
 // @ts-ignore
-import { PortableText } from '@portabletext/react';
+import {
+  PortableText,
+  PortableTextMarkComponentProps,
+} from '@portabletext/react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Blog } from '@/sanity/types/blog';
@@ -26,21 +29,23 @@ const components = {
     internalLink: ({
       value,
       children,
-    }: {
-      value: { slug: { current: string } };
-      children: React.ReactNode;
-    }) => {
-      const { slug = { current: '' } } = value;
-      const href = `/${slug.current}`;
+    }: PortableTextMarkComponentProps<{
+      _type: string,
+      slug: { current: string },
+    }>) => {
+      if (!value?.slug) return null;
+      const href = `/${value.slug.current}`;
       return <Link href={href}>{children}</Link>;
     },
     link: ({
       value,
       children,
-    }: {
-      value: { blank?: boolean; href: string };
-      children: React.ReactNode;
-    }) => {
+    }: PortableTextMarkComponentProps<{
+      _type: string,
+      blank?: boolean,
+      href: string,
+    }>) => {
+      if (!value?.href) return null;
       const { blank, href } = value;
       return blank ? (
         <Link href={href} target='_blank' rel='noopener noreferrer'>
