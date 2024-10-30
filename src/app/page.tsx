@@ -23,7 +23,7 @@ export default function Home() {
                     I am <TypingAnimation />
                   </p>
                   <p className='desc'>
-                    As a Staff Engineer at{' '}
+                    Hey there! 👋 I&apos;m currently a Staff Engineer at{' '}
                     <a
                       href='https://www.peoplegrove.com'
                       target='_blank'
@@ -31,14 +31,14 @@ export default function Home() {
                     >
                       PeopleGrove
                     </a>
-                    , I excel in delivering seamless, scalable digital
-                    experiences. My comprehensive expertise in software
-                    development ranges from crafting intricate user interfaces
-                    to engineering robust backend architectures. I am dedicated
-                    to leveraging Agile methodologies to foster innovation and
-                    achieve excellence in every endeavor, ensuring our solutions
-                    not only satisfy user needs but also remain ahead of the
-                    curve, ready for future advancements.
+                    . I love building websites and apps that are both
+                    user-friendly and powerful under the hood. Think of me as
+                    someone who enjoys creating digital solutions that make
+                    people&apos;s lives easier! I&apos;m passionate about
+                    working with teams to bring creative ideas to life and
+                    always excited to learn and try new things in the tech
+                    world. Whether it&apos;s making beautiful websites or
+                    solving complex technical challenges, I&apos;m your guy!
                   </p>
                   <div className='btn-bar'>
                     <a

@@ -1,5 +1,7 @@
 @use 'sass:color';
 @use 'sass:math';
+@use './variables' as *;
+@use './mixin' as *;
 @use './base' as *;
 @use './sections/header' as *;
 @use './sections/home-banner' as *;
@@ -8,11 +10,20 @@
 @use './sections/blog-section' as *;
 @use './sections/not-found' as *;
 
+// Reset & Base Styles
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
   outline: none !important;
+}
+
+// Document Setup
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html,
@@ -21,17 +32,27 @@ body {
   overflow-x: hidden;
 }
 
+body {
+  color: $px-body;
+  font-family: $px-font;
+  line-height: $px-line-height;
+  font-size: $px-font-size;
+  font-weight: 300;
+  
+  &.theme-light {
+    background: $px-white;
+    color: $px-body-light;
+    font-weight: 400;
+  }
+}
+
+// Links
 a {
-  color: inherit;
-  text-decoration: none !important;
-}
-
-.m-15px-tb {
-  margin-top: 15px;
-  padding-bottom: 15px;
-}
-
-.ml-auto,
-.mx-auto {
-  margin-left: auto !important;
+  color: $px-theme;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+  
+  @include px-hover {
+    color: color.adjust($px-theme, $lightness: -8%);
+  }
 }

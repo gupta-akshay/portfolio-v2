@@ -3,35 +3,6 @@
 @use './variables' as *;
 @use './mixin' as *;
 
-body {
-  color: $px-body;
-  font-family: $px-font;
-  line-height: $px-line-height;
-  font-size: $px-font-size;
-  font-weight: 300;
-  &.theme-light {
-    background: $px-white;
-    color: $px-body-light;
-    font-weight: 400;
-  }
-}
-
-img {
-  max-width: 100%;
-}
-
-* {
-  outline: none !important;
-}
-
-a {
-  color: $px-theme;
-  @include px-hover {
-    color: color.adjust($px-theme, $lightness: -8%);
-    text-decoration: none;
-  }
-}
-
 .pp-section {
   height: 100vh;
   background: $px-bg-1;

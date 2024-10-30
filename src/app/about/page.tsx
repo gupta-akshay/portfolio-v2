@@ -17,30 +17,30 @@ const EducationAndSkills = () => (
   <>
     <div className='separator' />
     <div className='title'>
-      <h3>Education & Skills</h3>
+      <h3>My Background & What I&apos;m Good At</h3>
     </div>
     <div className='row'>
       <div className='col-lg-4 m-15px-tb'>
         <ul className='education-box'>
           <li>
             <span>2013-2017</span>
-            <h6>Bachelor of Engineering in Computer Science</h6>
+            <h6>Computer Science Degree</h6>
             <p>RGPV, India</p>
           </li>
           <li>
             <span>2013</span>
-            <h6>Higher Secondary Certification</h6>
+            <h6>High School Diploma</h6>
             <p>Central Board of Secondary Education</p>
           </li>
         </ul>
       </div>
       <div className='col-lg-7 ml-auto m-15px-tb'>
         <div className='skills-box'>
-          <h3>My Skills</h3>
+          <h3>What I Can Do</h3>
           <p>
-            Leveraging a solid foundation in full-stack development, I excel in
-            applying a variety of tech stacks to create dynamic and efficient
-            applications.
+            I love building websites and apps from start to finish! Over the
+            years, I&apos;ve learned to use many different tools to create
+            amazing things on the internet.
           </p>
           <Skills />
         </div>
@@ -76,29 +76,30 @@ export default function About() {
             <div className='col-lg-6 m-15px-tb'>
               <div className='about-info'>
                 <div className='title'>
-                  <h3>About me.</h3>
+                  <h3>Let me introduce myself!</h3>
                 </div>
                 <div className='about-text'>
-                  <h4>Greetings from the Digital Realm!</h4>
+                  <h4>Hi there!</h4>
                   <p>
-                    As a seasoned Full Stack Web Developer at PeopleGrove, I
-                    blend over {yearsOfExperience} years of experience with a
-                    flair for creating immersive digital environments. My
-                    journey is marked by an unwavering commitment to
-                    user-centric design and the pursuit of coding perfection.
+                    I&apos;m a web developer at PeopleGrove, where I&apos;ve
+                    spent the last {yearsOfExperience} years creating cool stuff
+                    for the internet! I love making websites that are not just
+                    beautiful but also super easy to use. It&apos;s like
+                    building digital playgrounds where everything just works
+                    smoothly!
                   </p>
                   <p>
-                    Beyond the realm of development, my passions extend to music
-                    production and DJing—hobbies where rhythm and innovation
-                    play in harmony. I&apos;m also an avid gamer, appreciative
-                    of both console challenges and the tranquility of PC gaming.
-                    To unwind, I retreat to the serene beaches of Goa, my
-                    personal refuge from the digital storm, where I rejuvenate
-                    my creativity.
+                    When I&apos;m not coding, you&apos;ll find me mixing beats
+                    and DJing - it&apos;s my creative escape! I&apos;m also a
+                    big gaming fan, whether it&apos;s getting lost in console
+                    adventures or relaxing with some PC games. And whenever I
+                    need to recharge, I head to my favorite spot - the beautiful
+                    beaches of Goa. There&apos;s nothing like the sound of waves
+                    to refresh your mind! 🌊
                   </p>
                   <div className='btn-bar'>
                     <Link className='px-btn px-btn-theme' href='/contact'>
-                      <span>Hire Me</span>
+                      <span>Let&apos;s Work Together!</span>
                     </Link>
                   </div>
                 </div>
