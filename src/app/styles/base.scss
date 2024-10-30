@@ -1,4 +1,7 @@
-@use "sass:math";
+@use 'sass:math';
+@use 'sass:color';
+@use './variables' as *;
+@use './mixin' as *;
 
 body {
   color: $px-body;
@@ -28,7 +31,7 @@ img {
 a {
   color: $px-theme;
   @include px-hover {
-    color: darken($px-theme, 8%);
+    color: color.adjust($px-theme, $lightness: -8%);
     text-decoration: none;
   }
 }
@@ -370,9 +373,9 @@ a {
 @keyframes glitch-anim {
   $steps: 20;
   @for $i from 0 through $steps {
-    #{percentage($i*math.div(1, $steps))} {
-      clip: rect(random(100) + px, 9999px, random(100) + px, 0);
-      transform: skew((random(100) * 0.01) + deg);
+    #{math.percentage($i*math.div(1, $steps))} {
+      clip: rect(math.random(100) * 1px, 9999px, math.random(100) * 1px, 0);
+      transform: skew((math.random(100) * 0.01) * 1deg);
     }
   }
 }
@@ -380,8 +383,8 @@ a {
 @keyframes glitch-skew {
   $steps: 10;
   @for $i from 0 through $steps {
-    #{percentage($i*math.div(1, $steps))} {
-      transform: skew((random(10) - 5) + deg);
+    #{math.percentage($i*math.div(1, $steps))} {
+      transform: skew((math.random(10) - 5) + deg);
     }
   }
 }

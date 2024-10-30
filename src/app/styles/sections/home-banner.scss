@@ -1,3 +1,6 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+
 .home-banner {
   overflow: hidden;
   position: relative;
