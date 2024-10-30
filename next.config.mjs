@@ -23,7 +23,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "script-src 'self' 'strict-dynamic' 'nonce-RANDOMNONCE' https: http:",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com",
               "font-src 'self'",
@@ -32,6 +32,7 @@ const nextConfig = {
               "form-action 'self'",
               "frame-ancestors 'none'",
               "frame-src 'self' https://www.google.com",
+              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io",
               "block-all-mixed-content",
               "upgrade-insecure-requests"
             ].join('; ')
