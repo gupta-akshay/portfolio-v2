@@ -1,5 +1,29 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      '@fortawesome/fontawesome-svg-core',
+      '@fortawesome/free-brands-svg-icons',
+      '@fortawesome/free-solid-svg-icons',
+      '@fortawesome/react-fontawesome',
+      '@portabletext/react',
+      '@sanity/code-input',
+      '@sanity/icons',
+      '@sanity/image-url',
+      '@sanity/vision',
+      '@tsparticles/engine',
+      '@tsparticles/react',
+      'bootstrap',
+      'devicon',
+      'react-hot-toast',
+      'react-syntax-highlighter',
+      'resend',
+      'sanitize-html',
+      'sanity',
+      'typed.js',
+      'zod',
+    ],
+  },
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api'],
@@ -43,8 +67,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value:
-              'camera=(), microphone=(), geolocation=()',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
           {
             key: 'X-Content-Type-Options',
@@ -68,4 +91,9 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+import bundleAnalyzer from '@next/bundle-analyzer';
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+export default withBundleAnalyzer(nextConfig);
