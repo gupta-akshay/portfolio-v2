@@ -80,7 +80,7 @@ const Header = () => {
                   height={120}
                   width={120}
                   loading='lazy'
-                  style={{ objectFit: 'cover', width: 'auto', height: 'auto' }}
+                  style={{ objectFit: 'cover', width: '100%', height: 'auto' }}
                 />
               </div>
               <h5>Akshay Gupta</h5>
