@@ -16,6 +16,7 @@ export default function Experience() {
                   <Image
                     src={experience.imgSrc}
                     alt='Company Logo'
+                    loading='lazy'
                     width={120}
                     height={120}
                   />

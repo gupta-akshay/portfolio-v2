@@ -68,6 +68,7 @@ export default function About() {
                   alt='about-image'
                   width={560}
                   height={560}
+                  loading='lazy'
                   style={{ objectFit: 'cover' }}
                 />
               </div>
