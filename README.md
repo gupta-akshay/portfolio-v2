@@ -39,7 +39,7 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can try out the older version of my site built with Gatsby [https://github.com/gupta-akshay/portfolio](here).
+You can try out the older version of my site built with Gatsby ([https://github.com/gupta-akshay/portfolio](https://github.com/gupta-akshay/portfolio)).
 
 ---
 
