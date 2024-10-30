@@ -36,6 +36,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^6.0.0",
     "@types/node": "^20.17.3",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
@@ -46,6 +47,9 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "next-sanity": "^9.8.8",
+    "postcss": "^8.4.47",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-preset-env": "^10.0.8",
     "prettier": "^3.3.3",
     "sass": "^1.80.5",
     "typescript": "^5.6.3"
