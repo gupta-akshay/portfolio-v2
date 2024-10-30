@@ -4,7 +4,12 @@ import Image from 'next/image';
 import { getImageDimensions } from '@sanity/asset-utils';
 import { urlFor } from '@/sanity/lib/image';
 
-const BlogImage = ({ value, isInline, isTileImage = false, isAuthor = false }: any) => {
+const BlogImage = ({
+  value,
+  isInline,
+  isTileImage = false,
+  isAuthor = false,
+}: any) => {
   const { width, height } = getImageDimensions(value);
   const url = urlFor(value).fit('max').auto('format').url() as string;
 
