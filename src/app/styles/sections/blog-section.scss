@@ -9,6 +9,7 @@
       max-height: 360px;
       object-fit: cover;
       background-position: center;
+      width: 100%;
       @include down-md {
         max-height: 246px;
       }
@@ -116,6 +117,7 @@
       max-width: 1110px;
       object-fit: cover;
       background-position: center;
+      width: 100%;
       @include down-md {
         max-height: 246px;
       }

@@ -69,7 +69,7 @@ export default function About() {
                   width={560}
                   height={560}
                   loading='lazy'
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'cover', width: '100%' }}
                 />
               </div>
             </div>
