@@ -1,3 +1,5 @@
+@use "sass:math";
+
 body {
   color: $px-body;
   font-family: $px-font;
@@ -149,10 +151,34 @@ a {
     top: 71px;
     right: 13px;
   }
+  .theme-light & {
+    background: #0b0b13;
+    color: #fff;
+  }
 }
-.theme-light .color_switch {
-  background: #0b0b13;
-  color: #fff;
+
+.back-btn {
+  position: fixed;
+  top: 86px;
+  right: 25px;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  background: $px-white;
+  color: $px-dark;
+  text-align: center;
+  font-size: 20px;
+  border-radius: 50%;
+  z-index: 1111;
+  cursor: pointer;
+  @include down-lg {
+    top: 130px;
+    right: 13px;
+  }
+  .theme-light & {
+    background: $px-dark;
+    color: $px-white;
+  }
 }
 
 /* TITLE */
@@ -329,10 +355,14 @@ a {
   &::after {
     @include glitchCopy;
     left: -2px;
-    text-shadow: -2px 0 $px-teal-comp, 2px 2px $px-pink-comp;
+    text-shadow:
+      -2px 0 $px-teal-comp,
+      2px 2px $px-pink-comp;
     animation: glitch-anim 1s infinite linear alternate-reverse;
     .theme-light & {
-      text-shadow: -2px 0 $px-teal, 2px 2px $px-pink;
+      text-shadow:
+        -2px 0 $px-teal,
+        2px 2px $px-pink;
     }
   }
 }
@@ -340,9 +370,9 @@ a {
 @keyframes glitch-anim {
   $steps: 20;
   @for $i from 0 through $steps {
-    #{percentage($i*(1/$steps))} {
+    #{percentage($i*math.div(1, $steps))} {
       clip: rect(random(100) + px, 9999px, random(100) + px, 0);
-      transform: skew((random(100) / 100) + deg);
+      transform: skew((random(100) * 0.01) + deg);
     }
   }
 }
@@ -350,7 +380,7 @@ a {
 @keyframes glitch-skew {
   $steps: 10;
   @for $i from 0 through $steps {
-    #{percentage($i*(1/$steps))} {
+    #{percentage($i*math.div(1, $steps))} {
       transform: skew((random(10) - 5) + deg);
     }
   }

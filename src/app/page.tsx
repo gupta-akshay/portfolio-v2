@@ -23,8 +23,12 @@ export default function Home() {
                     I am <TypingAnimation />
                   </p>
                   <p className='desc'>
-                    As an Staff Engineer at{' '}
-                    <a href='https://www.peoplegrove.com' target='_blank'>
+                    As a Staff Engineer at{' '}
+                    <a
+                      href='https://www.peoplegrove.com'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
                       PeopleGrove
                     </a>
                     , I excel in delivering seamless, scalable digital
@@ -51,9 +55,10 @@ export default function Home() {
                 <div className='hb-img'>
                   <Image
                     src='/images/home-banner.webp'
-                    alt='banner-image'
+                    alt='Akshay Gupta - Staff Engineer at PeopleGrove'
                     width={600}
                     height={600}
+                    priority
                   />
                 </div>
               </div>
