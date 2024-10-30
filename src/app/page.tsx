@@ -58,6 +58,7 @@ export default function Home() {
                     alt='Akshay Gupta - Staff Engineer at PeopleGrove'
                     width={600}
                     height={600}
+                    loading='lazy'
                     priority
                   />
                 </div>

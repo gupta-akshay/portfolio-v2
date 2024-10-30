@@ -79,6 +79,7 @@ const Header = () => {
                   alt='Navbar Image'
                   height={120}
                   width={120}
+                  loading='lazy'
                   style={{ objectFit: 'cover', width: 'auto', height: 'auto' }}
                 />
               </div>
