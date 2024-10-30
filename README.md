@@ -23,7 +23,7 @@ Created using following:
     * `RESEND_API_KEY` for your Resend account
     * `NEXT_PUBLIC_SANITY_PROJECT_ID` from your Sanity project settings
     * `NEXT_PUBLIC_SANITY_DATASET` (usually "production")
-    * `SANITY_API_TOKEN` generated from your Sanity project API settings
+    * `NEXT_PUBLIC_SANITY_HOOK_SECRET` generated from your Sanity project API settings
  * Above keys are used in `src/app/api/sendMail/route.ts` and Sanity client configuration.
 
 Local server can be started by -
