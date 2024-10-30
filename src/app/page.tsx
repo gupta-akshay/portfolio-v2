@@ -24,7 +24,11 @@ export default function Home() {
                   </p>
                   <p className='desc'>
                     As a Staff Engineer at{' '}
-                    <a href='https://www.peoplegrove.com' target='_blank' rel="noopener noreferrer">
+                    <a
+                      href='https://www.peoplegrove.com'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
                       PeopleGrove
                     </a>
                     , I excel in delivering seamless, scalable digital
