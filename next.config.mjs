@@ -25,12 +25,13 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://cdn.sanity.io",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com",
               "font-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
+              "frame-src 'self' https://www.google.com",
               "block-all-mixed-content",
               "upgrade-insecure-requests"
             ].join('; ')
