@@ -25,14 +25,14 @@ const Header = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    switch (pathname) {
-      case '/about':
+    switch (true) {
+      case pathname === '/about':
         setActiveSection('about');
         break;
-      case '/contact':
+      case pathname === '/contact':
         setActiveSection('contact');
         break;
-      case '/blog':
+      case pathname === '/blog' || pathname.startsWith('/blog/'):
         setActiveSection('blog');
         break;
       default:
