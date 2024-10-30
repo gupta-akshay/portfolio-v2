@@ -1,20 +1,16 @@
+import { notFound } from 'next/navigation';
 import Layout from '@/app/components/Layout';
-import { getPostBySlug } from '@/sanity/lib/client';
 import SingleBlog from '@/app/components/SingleBlog';
 import BlogImage from '@/app/components/BlogImage';
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-
-  const day: string = date.getUTCDate().toString().padStart(2, '0');
-  const month: string = date.toLocaleString('en-US', { month: 'short' });
-  const year: number = date.getUTCFullYear();
-
-  return `${day}/${month}/${year}`;
-};
+import { getPostBySlug } from '@/sanity/lib/client';
+import { formatDate } from '@/app/utils';
 
 const SingleBlogPage = async ({ params }: { params: { slug: string } }) => {
   const post = await getPostBySlug(params.slug);
+
+  if (!post) {
+    notFound();
+  }
 
   return (
     <Layout isBlog>

@@ -1,6 +1,14 @@
 .blog-grid {
   .blog-img {
     overflow: hidden;
+    .blog-image {
+      max-height: 360px;
+      object-fit: cover;
+      background-position: center;
+      @include down-md {
+        max-height: 246px;
+      }
+    }
     img {
       @include transition(ease all 0.35s);
       @include scale(1);
@@ -26,9 +34,19 @@
     .meta {
       color: $px-body;
       font-size: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
 
       .theme-light & {
         color: $px-body-light;
+      }
+
+      .hashtag {
+        font-size: 12px;
+        font-weight: 600px;
+        color: $px-theme;
+        border-bottom: 1px solid $px-theme;
       }
     }
 
@@ -84,20 +102,18 @@
     padding-top: 100px;
     padding-bottom: 40px;
   }
-}
 
-.single-blog {
-  padding-top: 70px;
-  padding-bottom: 100px;
-  background: $px-bg-1;
-  min-height: 100%;
-  .theme-light & {
-    background: $px-white;
+  .blog-feature-img {
+    .blog-image {
+      max-height: 663px;
+      object-fit: cover;
+      background-position: center;
+      @include down-md {
+        max-height: 246px;
+      }
+    }
   }
-  @include down-md {
-    padding-top: 100px;
-    padding-bottom: 40px;
-  }
+
 }
 
 .article {
@@ -175,7 +191,8 @@
         color: $px-dark;
       }
     }
-    p {
+    p,
+    li {
       color: $px-body;
       .theme-light & {
         color: $px-body-light;

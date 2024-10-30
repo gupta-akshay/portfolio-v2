@@ -95,3 +95,13 @@ export const getSkillsArray = () => [
     icon: 'devicon-antdesign-plain',
   },
 ];
+
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+
+  const day: string = date.getUTCDate().toString().padStart(2, '0');
+  const month: string = date.toLocaleString('en-US', { month: 'short' });
+  const year: number = date.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
+};

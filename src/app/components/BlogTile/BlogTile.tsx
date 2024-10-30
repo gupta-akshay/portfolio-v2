@@ -1,17 +1,7 @@
 import Link from 'next/link';
-// @ts-ignore
 import BlogImage from '@/app/components/BlogImage';
 import { Blog } from '@/sanity/types/blog';
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-
-  const day: string = date.getUTCDate().toString().padStart(2, '0');
-  const month: string = date.toLocaleString('en-US', { month: 'short' });
-  const year: number = date.getUTCFullYear();
-
-  return `${day}/${month}/${year}`;
-};
+import { formatDate } from '@/app/utils';
 
 const BlogTile = ({ blog }: { blog: Blog }) => {
   const { mainImage } = blog;
@@ -25,7 +15,15 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
           </Link>
         </div>
         <div className='blog-info'>
-          <div className='meta'>{formatDate(blog.publishedAt)}</div>
+          <div className='meta'>
+            <span>{formatDate(blog.publishedAt)}</span>
+            <span>|</span>
+            {blog.categories.map((category) => (
+              <span key={category.slug.current} className='hashtag'>
+                #{category.title}
+              </span>
+            ))}
+          </div>
           <p>
             <Link href={`/blog/${blog.slug.current}`}>{blog.title}</Link>
           </p>

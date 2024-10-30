@@ -24,6 +24,7 @@ const BlogImage = ({ value, isInline, isTileImage = false }: any) => {
       alt={value.alt || 'blog image'}
       loading='lazy'
       style={styleObj}
+      className='blog-image'
     />
   );
 };
