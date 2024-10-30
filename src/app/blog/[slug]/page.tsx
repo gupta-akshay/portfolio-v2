@@ -5,7 +5,8 @@ import BlogImage from '@/app/components/BlogImage';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate } from '@/app/utils';
 
-const SingleBlogPage = async ({ params }: { params: { slug: string } }) => {
+const SingleBlogPage = async (props: { params: Promise<{ slug: string }> }) => {
+  const params = await props.params;
   const post = await getPostBySlug(params.slug);
 
   if (!post) {
@@ -33,7 +34,7 @@ const SingleBlogPage = async ({ params }: { params: { slug: string } }) => {
                   <h2>{post.title}</h2>
                   <div className='media'>
                     <div className='avatar'>
-                      <BlogImage value={post.author.image} />
+                      <BlogImage value={post.author.image} isAuthor />
                     </div>
                     <div className='media-body'>
                       <label>{post.author.name}</label>

@@ -104,8 +104,12 @@
   }
 
   .blog-feature-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     .blog-image {
       max-height: 663px;
+      max-width: 1110px;
       object-fit: cover;
       background-position: center;
       @include down-md {

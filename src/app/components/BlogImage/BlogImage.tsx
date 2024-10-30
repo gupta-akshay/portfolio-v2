@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { getImageDimensions } from '@sanity/asset-utils';
 import { urlFor } from '@/sanity/lib/image';
 
-const BlogImage = ({ value, isInline, isTileImage = false }: any) => {
+const BlogImage = ({ value, isInline, isTileImage = false, isAuthor = false }: any) => {
   const { width, height } = getImageDimensions(value);
   const url = urlFor(value).fit('max').auto('format').url() as string;
 
@@ -19,8 +19,8 @@ const BlogImage = ({ value, isInline, isTileImage = false }: any) => {
   return (
     <Image
       src={url}
-      width={width}
-      height={height}
+      width={isAuthor ? 45 : width}
+      height={isAuthor ? 45 : height}
       alt={value.alt || 'blog image'}
       loading='lazy'
       style={styleObj}
