@@ -22,6 +22,7 @@
     "@tsparticles/engine": "^3.5.0",
     "@tsparticles/react": "^3.0.0",
     "bootstrap": "^5.3.3",
+    "critters": "^0.0.25",
     "devicon": "^2.16.0",
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",
