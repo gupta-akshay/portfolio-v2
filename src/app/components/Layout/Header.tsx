@@ -32,7 +32,7 @@ const Header = () => {
       case pathname === '/contact':
         setActiveSection('contact');
         break;
-      case pathname === '/blog' || pathname.startsWith('/blog/'):
+      case pathname === '/blog' || (pathname && pathname.startsWith('/blog/')):
         setActiveSection('blog');
         break;
       default:
