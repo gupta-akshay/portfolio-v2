@@ -13,7 +13,7 @@ jest.mock('next/image', () => ({
   default: (props: any) => <img {...props} />,
 }));
 
-describe('Header', () => {
+describe('#Header', () => {
   beforeEach(() => {
     (usePathname as jest.Mock).mockReturnValue('/');
   });

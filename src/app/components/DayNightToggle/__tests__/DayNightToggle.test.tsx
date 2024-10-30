@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import DayNightToggle from '../DayNightToggle';
 
-describe('DayNightToggle', () => {
+describe('#DayNightToggle', () => {
   const localStorageMock = (() => {
     let store: { [key: string]: string } = {};
     return {

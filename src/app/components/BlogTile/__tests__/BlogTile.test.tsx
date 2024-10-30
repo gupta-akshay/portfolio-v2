@@ -22,7 +22,7 @@ jest.mock('@/app/utils', () => ({
   formatDate: (date: string) => '20/Mar/2024',
 }));
 
-describe('BlogTile', () => {
+describe('#BlogTile', () => {
   const mockBlog: Blog = {
     _id: 'mock-id',
     title: 'Test Blog Post',

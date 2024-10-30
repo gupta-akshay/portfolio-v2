@@ -5,7 +5,7 @@ import Typed from 'typed.js';
 // Mock typed.js
 jest.mock('typed.js');
 
-describe('TypingAnimation', () => {
+describe('#TypingAnimation', () => {
   it('renders the typing animation container', () => {
     render(<TypingAnimation />);
     const typingElement = screen.getByTestId('typing-animation');

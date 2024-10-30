@@ -20,7 +20,7 @@ jest.mock('tsparticles', () => ({
   loadFull: jest.fn(() => Promise.resolve()),
 }));
 
-describe('ParticlesBackground', () => {
+describe('#ParticlesBackground', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

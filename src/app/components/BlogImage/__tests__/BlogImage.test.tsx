@@ -17,7 +17,7 @@ jest.mock('@sanity/asset-utils', () => ({
   getImageDimensions: () => ({ width: 800, height: 600 }),
 }));
 
-describe('BlogImage', () => {
+describe('#BlogImage', () => {
   const mockValue = {
     alt: 'Test image',
     // Minimal mock of a Sanity image asset

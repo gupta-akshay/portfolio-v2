@@ -11,7 +11,7 @@ jest.mock('@/app/utils', () => ({
   ]),
 }));
 
-describe('Skills', () => {
+describe('#Skills', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

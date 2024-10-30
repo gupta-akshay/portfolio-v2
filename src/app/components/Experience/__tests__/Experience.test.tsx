@@ -9,7 +9,7 @@ jest.mock('next/image', () => ({
   default: (props: any) => <img alt={props.alt || ''} {...props} />,
 }));
 
-describe('Experience', () => {
+describe('#Experience', () => {
   it('renders the Experience title', () => {
     render(<Experience />);
     expect(screen.getByText('Experience')).toBeInTheDocument();
