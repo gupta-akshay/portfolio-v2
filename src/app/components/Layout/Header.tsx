@@ -25,6 +25,11 @@ const Header = () => {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname.startsWith('/blog')) {
+      setActiveSection('blog');
+      return;
+    }
+
     switch (pathname) {
       case '/about':
         setActiveSection('about');
