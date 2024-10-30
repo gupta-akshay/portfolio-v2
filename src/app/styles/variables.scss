@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 $px-theme: #2fbf71 !default; // Main theme color
 $px-theme-rgb-1: rgb(47, 191, 113, 0.3);
@@ -22,8 +22,8 @@ $px-body: rgba(255, 255, 255, 0.8) !default;
 $px-body-light: #555 !default;
 $px-font-size: 15px !default;
 $px-line-height: 1.7 !default;
-$px-font: 'Rubik', monospac !default;
-$px-font-alt: 'Rubik', serif !default;
+$px-font: var(--font-rubik), monospace !default;
+// $px-font-alt: var(--font-playfair), serif !default;
 
 // Breakpoints
 $px-media-xsm: 567px !default;

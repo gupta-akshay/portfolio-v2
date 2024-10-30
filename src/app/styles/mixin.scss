@@ -1,3 +1,7 @@
+@use 'sass:color';
+@use 'sass:math';
+@use './variables' as *;
+
 // --------------------------------------------------
 // Flexbox SASS mixins
 // The spec: http://www.w3.org/TR/css3-flexbox
@@ -239,6 +243,7 @@
 @mixin px-hover {
   &:hover {
     @content;
+    color: color.adjust($px-theme, $lightness: -8%);
   }
 }
 

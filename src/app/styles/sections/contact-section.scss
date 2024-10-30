@@ -1,3 +1,6 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+
 .contact-info {
   background: $px-dark;
   padding: 30px;

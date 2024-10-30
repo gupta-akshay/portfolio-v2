@@ -1,3 +1,7 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+@use 'sass:color';
+
 .blog-grid {
   .blog-img {
     overflow: hidden;
@@ -221,6 +225,13 @@
         cite {
           font-weight: 600;
         }
+      }
+    }
+    a {
+      color: $px-theme;
+      @include px-hover {
+        color: color.adjust($px-theme, $lightness: -8%);
+        text-decoration: none;
       }
     }
   }
