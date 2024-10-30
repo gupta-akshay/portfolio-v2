@@ -10,7 +10,7 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
     <div className='col-md-6 m-15px-tb'>
       <div className='blog-grid'>
         <div className='blog-img'>
-          <Link href={`/blog/${blog.slug.current}`}>
+          <Link href={`/blog/${blog.slug.current}`} prefetch>
             <BlogImage value={mainImage} isTileImage />
           </Link>
         </div>
@@ -25,7 +25,9 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
             ))}
           </div>
           <p>
-            <Link href={`/blog/${blog.slug.current}`}>{blog.title}</Link>
+            <Link href={`/blog/${blog.slug.current}`} prefetch>
+              {blog.title}
+            </Link>
           </p>
         </div>
       </div>

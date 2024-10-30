@@ -1,5 +1,29 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      '@fortawesome/fontawesome-svg-core',
+      '@fortawesome/free-brands-svg-icons',
+      '@fortawesome/free-solid-svg-icons',
+      '@fortawesome/react-fontawesome',
+      '@portabletext/react',
+      '@sanity/code-input',
+      '@sanity/icons',
+      '@sanity/image-url',
+      '@sanity/vision',
+      '@tsparticles/engine',
+      '@tsparticles/react',
+      'bootstrap',
+      'devicon',
+      'react-hot-toast',
+      'react-syntax-highlighter',
+      'resend',
+      'sanitize-html',
+      'sanity',
+      'typed.js',
+      'zod',
+    ],
+  },
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api'],
@@ -25,14 +49,14 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com",
               "font-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
-              "frame-src 'self' https://www.google.com",
-              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io",
+              "frame-src 'self' https://www.google.com https://app.netlify.com",
+              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com",
               'block-all-mixed-content',
               'upgrade-insecure-requests',
             ].join('; '),
@@ -43,8 +67,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value:
-              'camera=(), microphone=(), geolocation=()',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
           {
             key: 'X-Content-Type-Options',
@@ -68,4 +91,9 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+import bundleAnalyzer from '@next/bundle-analyzer';
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+export default withBundleAnalyzer(nextConfig);
