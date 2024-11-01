@@ -20,41 +20,50 @@ const CodeComponent = ({ value }: any) => {
   );
 };
 
+const InternalLink = ({
+  value,
+  children,
+}: PortableTextMarkComponentProps<{
+  _type: string,
+  slug: { current: string },
+}>) => {
+  if (!value?.slug) return null;
+  const href = `/${value.slug.current}`;
+  return <Link href={href}>{children}</Link>;
+};
+
+const ExternalLink = ({
+  value,
+  children,
+}: PortableTextMarkComponentProps<{
+  _type: string,
+  blank?: boolean,
+  href: string,
+}>) => {
+  if (!value?.href) return null;
+  const { blank, href } = value;
+  return blank ? (
+    <Link href={href} target='_blank' rel='noopener noreferrer'>
+      {children}
+    </Link>
+  ) : (
+    <Link href={href}>{children}</Link>
+  );
+};
+
+const CodeMarkComponent = ({ children }: PortableTextMarkComponentProps) => {
+  return <code>{children}</code>;
+};
+
 const components = {
   types: {
     image: BlogImage,
     code: CodeComponent,
   },
   marks: {
-    internalLink: ({
-      value,
-      children,
-    }: PortableTextMarkComponentProps<{
-      _type: string,
-      slug: { current: string },
-    }>) => {
-      if (!value?.slug) return null;
-      const href = `/${value.slug.current}`;
-      return <Link href={href}>{children}</Link>;
-    },
-    link: ({
-      value,
-      children,
-    }: PortableTextMarkComponentProps<{
-      _type: string,
-      blank?: boolean,
-      href: string,
-    }>) => {
-      if (!value?.href) return null;
-      const { blank, href } = value;
-      return blank ? (
-        <Link href={href} target='_blank' rel='noopener noreferrer'>
-          {children}
-        </Link>
-      ) : (
-        <Link href={href}>{children}</Link>
-      );
-    },
+    internalLink: InternalLink,
+    link: ExternalLink,
+    code: CodeMarkComponent,
   },
 };
 
