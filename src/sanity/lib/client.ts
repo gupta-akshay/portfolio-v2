@@ -29,7 +29,7 @@ export async function sanityFetch<QueryResponse>({
 
 export const getPosts = async (): Promise<Blog[]> => {
   return await sanityFetch({
-    query: postQuery,
+    query: postQuery + ' | order(publishedAt desc)',
     qParams: {},
     tags: ['post', 'author', 'category'],
   });
