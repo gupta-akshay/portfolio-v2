@@ -79,7 +79,7 @@ export default function About() {
                   <h3>Let me introduce myself!</h3>
                 </div>
                 <div className='about-text'>
-                  <h4>Hi there!</h4>
+                  <h4>Hi there! 👋</h4>
                   <p>
                     I&apos;m a web developer at PeopleGrove, where I&apos;ve
                     spent the last {yearsOfExperience} years creating cool stuff
