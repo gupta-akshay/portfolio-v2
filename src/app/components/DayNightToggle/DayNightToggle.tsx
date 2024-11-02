@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { handleKeyDown } from '@/app/utils';
 
 const DayNightToggle = () => {
   const [isLightMode, setIsLightMode] = useState(false);
@@ -38,14 +39,15 @@ const DayNightToggle = () => {
   };
 
   return (
-    <label
+    <button
       className='color_switch'
-      onClick={() => changeMode()}
-      role='button'
-      aria-label={`switch to ${isLightMode ? 'dark' : 'light'} mode`}
+      onClick={changeMode}
+      onKeyDown={(e) => handleKeyDown(e, changeMode)}
+      aria-label={`Switch to ${isLightMode ? 'dark' : 'light'} mode`}
+      aria-pressed={isLightMode}
     >
-      <FontAwesomeIcon icon={isLightMode ? faMoon : faSun} />
-    </label>
+      <FontAwesomeIcon icon={isLightMode ? faMoon : faSun} aria-hidden='true' />
+    </button>
   );
 };
 

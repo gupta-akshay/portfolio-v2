@@ -1,3 +1,5 @@
+import { KeyboardEvent } from 'react';
+
 export const getSkillsArray = () => [
   {
     id: 'javascript',
@@ -104,4 +106,14 @@ export const formatDate = (dateString: string): string => {
   const year: number = date.getUTCFullYear();
 
   return `${day}/${month}/${year}`;
+};
+
+export const handleKeyDown = (
+  e: KeyboardEvent<HTMLButtonElement>,
+  callback: Function
+) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    callback();
+  }
 };
