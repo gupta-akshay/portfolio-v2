@@ -6,11 +6,11 @@ import Layout from '@/app/components/Layout';
 export const metadata: Metadata = {
   title: 'Akshay Gupta | Full-Stack Web Developer',
   description:
-    'Staff Engineer at PeopleGrove with over 6 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
+    'Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
   openGraph: {
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
-      'Staff Engineer at PeopleGrove with over 6 years of experience in web development.',
+      'Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
     url: 'https://akshaygupta.live',
     siteName: 'Akshay Gupta',
     images: [
