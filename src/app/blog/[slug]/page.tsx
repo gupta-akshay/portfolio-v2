@@ -7,13 +7,13 @@ import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
 
-interface PageProps {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+type Props = {
+  params: Promise<{ slug: string }>,
+};
 
-const SingleBlogPage = async ({ params }: PageProps) => {
-  const post = await getPostBySlug(params.slug);
+const SingleBlogPage = async ({ params }: Props) => {
+  const slug = (await params).slug;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
@@ -61,11 +61,10 @@ const SingleBlogPage = async ({ params }: PageProps) => {
 };
 
 // Add generateMetadata function for dynamic blog posts
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const post = await getPostBySlug(params.slug);
+    const slug = (await params).slug;
+    const post = await getPostBySlug(slug);
 
     if (!post) {
       return {
