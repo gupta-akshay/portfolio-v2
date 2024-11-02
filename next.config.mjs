@@ -16,8 +16,6 @@ const nextConfig = {
       '@sanity/icons',
       '@sanity/image-url',
       '@sanity/vision',
-      '@tsparticles/engine',
-      '@tsparticles/react',
       'bootstrap',
       'devicon',
       'react-hot-toast',
