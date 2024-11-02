@@ -1,6 +1,19 @@
+import type { Metadata } from 'next';
 import Layout from '@/app/components/Layout';
 import { getPosts } from '@/sanity/lib/client';
 import BlogTile from '@/app/components/BlogTile';
+
+export const metadata: Metadata = {
+  title: 'Blog | Akshay Gupta',
+  description:
+    'Read my latest thoughts and insights about web development, technology, and software engineering.',
+  openGraph: {
+    title: 'Blog | Akshay Gupta',
+    description:
+      'Read my latest thoughts and insights about web development and technology.',
+    type: 'article',
+  },
+};
 
 export default async function Blog() {
   const posts = await getPosts();

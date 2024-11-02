@@ -1,9 +1,29 @@
+import type { Metadata } from 'next';
+import { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
-import { useMemo } from 'react';
+
+export const metadata: Metadata = {
+  title: 'About | Akshay Gupta',
+  description:
+    'Learn about my journey as a Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+  openGraph: {
+    title: 'About Akshay Gupta | Full-Stack Developer',
+    description:
+      'Learn about my journey as a Staff Engineer at PeopleGrove, my skills, and experience.',
+    images: [
+      {
+        url: 'https://akshaygupta.live/images/about-me.png',
+        width: 560,
+        height: 560,
+        alt: 'About Akshay Gupta',
+      },
+    ],
+  },
+};
 
 const calculateExperience = (): number => {
   const startDate = new Date('2017-09-13').getTime();
@@ -79,7 +99,7 @@ export default function About() {
                   <h3>Let me introduce myself!</h3>
                 </div>
                 <div className='about-text'>
-                  <h4>Hi there!</h4>
+                  <h4>Hi there! 👋</h4>
                   <p>
                     I&apos;m a web developer at PeopleGrove, where I&apos;ve
                     spent the last {yearsOfExperience} years creating cool stuff

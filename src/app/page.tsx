@@ -1,6 +1,30 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import TypingAnimation from '@/app/components/TypingAnimation';
 import Layout from '@/app/components/Layout';
+
+export const metadata: Metadata = {
+  title: 'Akshay Gupta | Full-Stack Web Developer',
+  description:
+    'Staff Engineer at PeopleGrove with over 6 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
+  openGraph: {
+    title: 'Akshay Gupta | Full-Stack Web Developer',
+    description:
+      'Staff Engineer at PeopleGrove with over 6 years of experience in web development.',
+    url: 'https://akshaygupta.live',
+    siteName: 'Akshay Gupta',
+    images: [
+      {
+        url: 'https://akshaygupta.live/images/home-banner.webp',
+        width: 600,
+        height: 600,
+        alt: 'Akshay Gupta - Staff Engineer at PeopleGrove',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+};
 
 export default function Home() {
   return (
