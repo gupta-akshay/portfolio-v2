@@ -46,7 +46,7 @@ const Header = () => {
   return (
     <Fragment>
       {/* Mobile Header */}
-      <div className='mob-header'>
+      <div className='mob-header' role='banner'>
         <div className='d-flex'>
           <div className='navbar-brand'>
             <Link href='/'>
@@ -69,6 +69,8 @@ const Header = () => {
         className={`header-left ${
           sideBarToggle ? 'menu-open menu-open-desk' : ''
         }`}
+        role='navigation'
+        aria-label='Main navigation'
       >
         <div className='scroll-bar'>
           <div className='hl-top'>
@@ -113,7 +115,10 @@ const Header = () => {
             </li>
           </ul>
         </div>
-        <div className='nav justify-content-center social-icons'>
+        <div
+          className='nav justify-content-center social-icons'
+          aria-label='Social media links'
+        >
           <Link
             href='https://github.com/gupta-akshay'
             target='_blank'

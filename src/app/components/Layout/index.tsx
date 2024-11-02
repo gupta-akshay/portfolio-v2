@@ -12,10 +12,21 @@ const Layout = ({
 }) => {
   return (
     <Fragment>
+      <a href='#main-content' className='skip-link'>
+        Skip to main content
+      </a>
       <Header />
-      <main className='main-right pp-main-section'>{children}</main>
-      <DayNightToggle />
-      {isBlog ? <BackBtn /> : null}
+      <main
+        id='main-content'
+        className='main-right pp-main-section'
+        tabIndex={-1}
+      >
+        {children}
+      </main>
+      <div className='fixed-controls' role='group' aria-label='Page controls'>
+        <DayNightToggle />
+        {isBlog && <BackBtn />}
+      </div>
     </Fragment>
   );
 };
