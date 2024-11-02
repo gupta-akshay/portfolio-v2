@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { act } from '@testing-library/react';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import { loadFull } from 'tsparticles';
 import type { Engine, ISourceOptions } from '@tsparticles/engine';
@@ -12,7 +13,12 @@ export default function ParticlesBackground() {
     initParticlesEngine(async (engine: Engine) => {
       await loadFull(engine);
     }).then(() => {
-      setInit(true);
+      // Wrap setInit in act when running tests
+      if (process.env.NODE_ENV === 'test') {
+        act(() => setInit(true));
+      } else {
+        setInit(true);
+      }
     });
   }, []);
 

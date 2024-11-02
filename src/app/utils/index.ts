@@ -100,7 +100,10 @@ export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
 
   const day: string = date.getUTCDate().toString().padStart(2, '0');
-  const month: string = date.toLocaleString('en-US', { month: 'short' });
+  const month: string = new Date(date).toLocaleString('en-US', {
+    month: 'short',
+    timeZone: 'UTC',
+  });
   const year: number = date.getUTCFullYear();
 
   return `${day}/${month}/${year}`;

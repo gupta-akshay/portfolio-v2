@@ -69,6 +69,7 @@ const Header = () => {
         className={`header-left ${
           sideBarToggle ? 'menu-open menu-open-desk' : ''
         }`}
+        data-testid='header-left'
       >
         <div className='scroll-bar'>
           <div className='hl-top'>
