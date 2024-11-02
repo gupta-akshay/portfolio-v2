@@ -1,9 +1,11 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Layout from '@/app/components/Layout';
 import SingleBlog from '@/app/components/SingleBlog';
 import BlogImage from '@/app/components/BlogImage';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate } from '@/app/utils';
+import { urlFor } from '@/sanity/lib/image';
 
 const SingleBlogPage = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;
@@ -53,5 +55,43 @@ const SingleBlogPage = async (props: { params: Promise<{ slug: string }> }) => {
     </Layout>
   );
 };
+
+// Add generateMetadata function for dynamic blog posts
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string },
+}): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug);
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: `The blog post you're looking for does not exist`,
+    };
+  }
+
+  const imageUrl = urlFor(post.mainImage).width(1200).height(630).url();
+
+  return {
+    title: `${post.title} | Akshay Gupta's Blog`,
+    description: post.title,
+    openGraph: {
+      title: post.title,
+      description: post.title,
+      type: 'article',
+      publishedTime: post.publishedAt,
+      authors: [post.author.name],
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+  };
+}
 
 export default SingleBlogPage;
