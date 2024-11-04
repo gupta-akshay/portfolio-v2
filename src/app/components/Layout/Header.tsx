@@ -17,6 +17,8 @@ import {
   faSoundcloud,
   faInstagram,
   faFacebook,
+  faMedium,
+  faDev,
 } from '@fortawesome/free-brands-svg-icons';
 
 const Header = () => {
@@ -134,6 +136,22 @@ const Header = () => {
             aria-label='Linkedin'
           >
             <FontAwesomeIcon icon={faLinkedin} />
+          </Link>
+          <Link
+            href='https://medium.com/@akshaygupta.live'
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='Medium'
+          >
+            <FontAwesomeIcon icon={faMedium} />
+          </Link>
+          <Link
+            href='https://dev.to/akshay_gupta'
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='Dev.to'
+          >
+            <FontAwesomeIcon icon={faDev} />
           </Link>
           <Link
             href='https://www.instagram.com/dja_shay'
