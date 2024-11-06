@@ -136,6 +136,7 @@
       }
     }
   }
+  transition: background-color 0.2s ease-in-out;
 }
 
 .tooltip {
@@ -168,6 +169,7 @@
       color: $px-dark;
     }
   }
+  transition: background-color 0.2s ease-in-out;
 }
 
 .toggler-menu {

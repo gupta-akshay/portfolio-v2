@@ -37,12 +37,13 @@ body {
   font-family: $px-font;
   line-height: $px-line-height;
   font-size: $px-font-size;
-  font-weight: 300;
+  font-weight: 400;
+  background: $px-bg-1;
+  transition: background-color 0.3s ease-in-out;
   
   &.theme-light {
     background: $px-white;
     color: $px-body-light;
-    font-weight: 400;
   }
 }
 
