@@ -9,8 +9,8 @@ Live on https://akshaygupta.live
 ## Technologies used
 Created using following:
 
-* React 18
-* Next.js 14
+* React 19
+* Next.js 15
 * Typescript
 * Sass
 * Bootstrap 5
