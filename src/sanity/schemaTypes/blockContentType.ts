@@ -112,6 +112,7 @@ export const blockContentType = defineType({
           { title: 'MySql', value: 'mysql' },
           { title: 'PostgreSQL', value: 'postgreSql' },
           { title: 'ZH', value: 'zh', mode: 'sh' },
+          { title: 'Python', value: 'python' },
         ],
         withFilename: false,
       },
