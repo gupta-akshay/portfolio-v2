@@ -3,11 +3,13 @@ import Image from 'next/image';
 // @ts-ignore
 import { getImageDimensions } from '@sanity/asset-utils';
 import { urlFor } from '@/sanity/lib/image';
+import './BlogImage.css';
 
 const BlogImage = ({
   value,
   isInline,
   isTileImage = false,
+  isCoverImage = false,
   isAuthor = false,
 }: any) => {
   const { width, height } = getImageDimensions(value);
@@ -18,19 +20,25 @@ const BlogImage = ({
     : {
         display: isInline ? 'inline-block' : 'block',
         aspectRatio: `${width} / ${height}`,
-        objectFit: 'cover' as const,
+        objectFit: 'contain' as const,
+        maxWidth: '100%',
+        height: 'auto',
       };
 
   return (
-    <Image
-      src={url}
-      width={isAuthor ? 45 : width}
-      height={isAuthor ? 45 : height}
-      alt={value.alt || 'blog image'}
-      loading='lazy'
-      style={styleObj}
-      className='blog-image'
-    />
+    <div
+      className={`${isTileImage || isCoverImage ? '' : 'image-container'} ${isAuthor ? 'author-image' : ''}`}
+    >
+      <Image
+        src={url}
+        width={isAuthor ? 45 : width}
+        height={isAuthor ? 45 : height}
+        alt={value.alt || 'blog image'}
+        loading='lazy'
+        style={styleObj}
+        className='blog-image'
+      />
+    </div>
   );
 };
 

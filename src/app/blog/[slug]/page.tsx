@@ -24,7 +24,7 @@ const SingleBlogPage = async ({ params }: Props) => {
       <div id={post.slug.current} className='single-blog'>
         <div className='container'>
           <div className='blog-feature-img'>
-            <BlogImage value={post.mainImage} />
+            <BlogImage value={post.mainImage} isCoverImage />
           </div>
           <div className='row justify-content-center'>
             <div className='col-lg-8'>
