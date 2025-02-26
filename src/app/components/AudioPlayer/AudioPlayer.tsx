@@ -19,39 +19,33 @@ import {
 } from './components';
 
 const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
-  // If there are no tracks, display a message
-  if (!tracks || tracks.length === 0) {
-    return (
-      <div className='cloudinaryAudioPlayer'>
-        <NoTracks />
-      </div>
-    );
-  }
-
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-
-  // Refs
   const audioRef = useRef<HTMLAudioElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const miniCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Custom hooks
+  // Check if we have tracks to display
+  const hasTracks = tracks && tracks.length > 0;
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+  // Custom hooks - all called unconditionally
   const {
     audioContextRef,
     analyserRef,
-    sourceRef,
     animationRef,
     miniAnimationRef,
     setupAudioContext,
   } = useAudioContext(audioRef, false);
 
   const { trackDurations, setTrackDurations } = useTrackDurations(
-    tracks,
+    hasTracks ? tracks : [],
     cloudName
   );
 
-  const { audioData, waveformStyle, drawWaveform, drawMiniVisualizer } =
-    useVisualizer(analyserRef, canvasRef, miniCanvasRef);
+  const { drawWaveform, drawMiniVisualizer } = useVisualizer(
+    analyserRef,
+    canvasRef,
+    miniCanvasRef
+  );
 
   const {
     currentTrackIndex,
@@ -72,7 +66,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     toggleMute,
   } = useAudioPlayback(
     audioRef,
-    tracks,
+    hasTracks ? tracks : [],
     animationRef,
     miniAnimationRef,
     drawWaveform,
@@ -83,25 +77,26 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Update track duration in our state when audio metadata is loaded
   useEffect(() => {
     if (audioRef.current && currentTrack && currentTrack.id) {
+      const audioElement = audioRef.current; // Store ref value in a variable
       const updateDuration = () => {
-        if (audioRef.current && currentTrack.id) {
-          setDuration(audioRef.current.duration);
+        if (audioElement && currentTrack.id) {
+          setDuration(audioElement.duration);
 
           // Also update the track duration in our trackDurations state
           setTrackDurations((prev) => ({
             ...prev,
-            [currentTrack.id]: audioRef.current!.duration,
+            [currentTrack.id]: audioElement.duration,
           }));
         }
       };
 
-      audioRef.current.addEventListener('loadedmetadata', updateDuration);
+      audioElement.addEventListener('loadedmetadata', updateDuration);
 
       return () => {
-        audioRef.current?.removeEventListener('loadedmetadata', updateDuration);
+        audioElement.removeEventListener('loadedmetadata', updateDuration);
       };
     }
-  }, [currentTrack, setTrackDurations]);
+  }, [currentTrack, setTrackDurations, setDuration]);
 
   // Set up audio context and analyzer when track changes
   useEffect(() => {
@@ -114,7 +109,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       // Initialize audio data array if we have an analyzer
       if (analyserRef.current) {
         const bufferLength = analyserRef.current.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
       }
 
       // Start visualizations if playing
@@ -171,6 +165,9 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     analyserRef,
     drawWaveform,
     drawMiniVisualizer,
+    animationRef,
+    miniAnimationRef,
+    setIsPlaying,
   ]);
 
   // Handle track selection
@@ -209,6 +206,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       }
     }, 100);
   };
+
+  // If there are no tracks, return early after hooks are called
+  if (!hasTracks) {
+    return (
+      <div className='cloudinaryAudioPlayer'>
+        <NoTracks />
+      </div>
+    );
+  }
 
   return (
     <div className='cloudinaryAudioPlayer'>

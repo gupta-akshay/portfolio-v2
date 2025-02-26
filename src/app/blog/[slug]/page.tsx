@@ -10,7 +10,7 @@ import { formatDate } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>,
 };
 
 // Separate component for blog content to use with Suspense

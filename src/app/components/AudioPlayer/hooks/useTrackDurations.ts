@@ -131,7 +131,7 @@ export const useTrackDurations = (
         hiddenAudioRef.current.remove();
       }
     };
-  }, [tracks, cloudName]);
+  }, [tracks, cloudName, trackDurations]);
 
   return { trackDurations, setTrackDurations };
 };

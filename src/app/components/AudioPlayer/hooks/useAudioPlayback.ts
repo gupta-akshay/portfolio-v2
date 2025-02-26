@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject } from 'react';
+import { useState, useEffect, RefObject, useRef, useCallback } from 'react';
 import { Track } from '../types';
 
 /**
@@ -25,6 +25,33 @@ export const useAudioPlayback = (
   // Get current track if one is selected
   const currentTrack =
     currentTrackIndex !== null ? tracks[currentTrackIndex] : null;
+
+  // Define handleNext function using useCallback to avoid dependency issues
+  const handleNext = useCallback(() => {
+    if (currentTrackIndex === null) {
+      if (tracks.length > 0) {
+        setCurrentTrackIndex(0);
+      }
+      return;
+    }
+
+    setCurrentTrackIndex(
+      currentTrackIndex === tracks.length - 1 ? 0 : currentTrackIndex + 1
+    );
+  }, [currentTrackIndex, tracks.length, setCurrentTrackIndex]);
+
+  const handlePrevious = useCallback(() => {
+    if (currentTrackIndex === null) {
+      if (tracks.length > 0) {
+        setCurrentTrackIndex(tracks.length - 1);
+      }
+      return;
+    }
+
+    setCurrentTrackIndex(
+      currentTrackIndex === 0 ? tracks.length - 1 : currentTrackIndex - 1
+    );
+  }, [currentTrackIndex, tracks.length, setCurrentTrackIndex]);
 
   // Update CSS variables for slider fills
   useEffect(() => {
@@ -80,7 +107,7 @@ export const useAudioPlayback = (
       audio.removeEventListener('play', onPlay);
       audio.removeEventListener('pause', onPause);
     };
-  }, [currentTrackIndex, currentTrack]);
+  }, [currentTrackIndex, currentTrack, audioRef, handleNext, volume, isMuted]);
 
   // Update volume and mute state
   useEffect(() => {
@@ -88,7 +115,7 @@ export const useAudioPlayback = (
       audioRef.current.volume = volume;
       audioRef.current.muted = isMuted;
     }
-  }, [volume, isMuted]);
+  }, [volume, isMuted, audioRef]);
 
   // Reset player state when track changes
   useEffect(() => {
@@ -96,7 +123,7 @@ export const useAudioPlayback = (
 
     // Reset current time
     setCurrentTime(0);
-  }, [currentTrackIndex]);
+  }, [currentTrackIndex, audioRef]);
 
   const handlePlayPause = () => {
     if (audioRef.current && currentTrack) {
@@ -166,32 +193,6 @@ export const useAudioPlayback = (
       }
       setIsPlaying(!isPlaying);
     }
-  };
-
-  const handleNext = () => {
-    if (currentTrackIndex === null) {
-      if (tracks.length > 0) {
-        setCurrentTrackIndex(0);
-      }
-      return;
-    }
-
-    setCurrentTrackIndex(
-      currentTrackIndex === tracks.length - 1 ? 0 : currentTrackIndex + 1
-    );
-  };
-
-  const handlePrevious = () => {
-    if (currentTrackIndex === null) {
-      if (tracks.length > 0) {
-        setCurrentTrackIndex(tracks.length - 1);
-      }
-      return;
-    }
-
-    setCurrentTrackIndex(
-      currentTrackIndex === 0 ? tracks.length - 1 : currentTrackIndex - 1
-    );
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {

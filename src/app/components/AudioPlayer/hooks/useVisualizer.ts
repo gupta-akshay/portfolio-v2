@@ -1,4 +1,4 @@
-import { useState, useRef, RefObject, useCallback } from 'react';
+import { useRef, RefObject, useCallback } from 'react';
 import { ExtendedHTMLCanvasElement } from '../types';
 import { isLightTheme } from '../utils';
 
@@ -10,13 +10,9 @@ export const useVisualizer = (
   canvasRef: RefObject<HTMLCanvasElement | null>,
   miniCanvasRef: RefObject<HTMLCanvasElement | null>
 ) => {
-  const [audioData, setAudioData] = useState<number[]>([]);
-  const [waveformStyle, setWaveformStyle] = useState<'wave'>('wave');
-
   // Performance optimization: Cache these values to avoid recalculation
   const lastFrameTimeRef = useRef<number>(0);
   const lastMiniFrameTimeRef = useRef<number>(0); // Separate timing for mini visualizer
-  const targetFpsRef = useRef<number>(30); // Limit to 30fps for better performance
   const frameIntervalRef = useRef<number>(1000 / 30); // ms between frames
 
   // Cache gradients to avoid recreating them on every frame
@@ -171,7 +167,13 @@ export const useVisualizer = (
     } catch (error) {
       console.error('Error drawing waveform:', error);
     }
-  }, []);
+  }, [
+    canvasRef,
+    analyserRef,
+    lastFrameTimeRef,
+    frameIntervalRef,
+    gradientCacheRef,
+  ]);
 
   // Memoize the drawMiniVisualizer function
   const drawMiniVisualizer = useCallback(() => {
@@ -299,11 +301,15 @@ export const useVisualizer = (
     } catch (error) {
       console.error('Error drawing mini visualizer:', error);
     }
-  }, []);
+  }, [
+    miniCanvasRef,
+    analyserRef,
+    lastMiniFrameTimeRef,
+    frameIntervalRef,
+    gradientCacheRef,
+  ]);
 
   return {
-    audioData,
-    waveformStyle,
     drawWaveform,
     drawMiniVisualizer,
   };
