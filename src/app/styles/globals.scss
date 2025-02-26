@@ -58,20 +58,6 @@ a {
   }
 }
 
-// Company link with enhanced contrast
-.company-link {
-  color: #ffffff; // High contrast color
-  background-color: $px-theme;
-  padding: 0 4px;
-  border-radius: 3px;
-  font-weight: 500;
-  
-  .theme-light & {
-    color: #000000;
-    background-color: color.adjust($px-theme, $lightness: -15%);
-  }
-}
-
 // Add focus styles for keyboard navigation
 :focus-visible {
   outline: 3px solid $px-theme;
@@ -188,5 +174,38 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+// Keyboard accessible code blocks
+.code-block-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+  
+  .keyboard-accessible-code {
+    &:focus {
+      outline: 3px solid $px-theme !important;
+      outline-offset: 2px !important;
+    }
+    
+    &[tabindex="0"] {
+      cursor: text;
+      
+      &::before {
+        content: "Keyboard accessible: use arrow keys to scroll";
+        display: block;
+        position: absolute;
+        top: -1.5rem;
+        right: 0;
+        font-size: 0.75rem;
+        color: $px-theme;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      
+      &:focus::before {
+        opacity: 1;
+      }
+    }
   }
 }

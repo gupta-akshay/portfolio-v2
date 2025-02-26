@@ -15,9 +15,16 @@ import { useLoading } from '@/app/context/LoadingContext';
 
 const CodeComponent = ({ value }: any) => {
   return (
-    <div>
+    <div className="code-block-wrapper">
       {/* @ts-ignore */}
-      <SyntaxHighlighter language={value.language} style={dracula}>
+      <SyntaxHighlighter 
+        language={value.language} 
+        style={dracula}
+        tabIndex={0} 
+        role="region" 
+        aria-label={`Code snippet in ${value.language}`}
+        className="keyboard-accessible-code"
+      >
         {value.code}
       </SyntaxHighlighter>
     </div>
