@@ -5,6 +5,8 @@ import type { ChangeEvent, FormEvent } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMap, faInbox, faMobile } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
 import Layout from '@/app/components/Layout';
 
 const emailRegex = /\S+@\S+\.\S+/;
@@ -137,17 +139,17 @@ export default function Contact() {
                 </p>
                 <ul>
                   <li className='media'>
-                    <FontAwesomeIcon icon={faMap} fontSize={20} />
+                    <FontAwesomeIcon icon={faMap as IconProp} fontSize={20} />
                     <span className='media-body'>
                       Ujjain, Madhya Pradesh, India
                     </span>
                   </li>
                   <li className='media'>
-                    <FontAwesomeIcon icon={faInbox} />
+                    <FontAwesomeIcon icon={faInbox as IconProp} />
                     <span className='media-body'>contact@akshaygupta.live</span>
                   </li>
                   <li className='media'>
-                    <FontAwesomeIcon icon={faMobile} />
+                    <FontAwesomeIcon icon={faMobile as IconProp} />
                     <span className='media-body'>+91 88199 45982</span>
                   </li>
                 </ul>

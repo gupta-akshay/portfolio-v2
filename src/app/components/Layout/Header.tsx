@@ -10,6 +10,7 @@ import {
   faHouse,
   faIdBadge,
   faMapLocation,
+  faMusic,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faGithub,
@@ -20,6 +21,7 @@ import {
   faMedium,
   faDev,
 } from '@fortawesome/free-brands-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 const Header = () => {
   const [sideBarToggle, setSideBarToggle] = useState(false);
@@ -36,6 +38,9 @@ const Header = () => {
         break;
       case pathname === '/blog' || pathname.startsWith('/blog/'):
         setActiveSection('blog');
+        break;
+      case pathname === '/music':
+        setActiveSection('music');
         break;
       default:
         setActiveSection('home');
@@ -93,25 +98,31 @@ const Header = () => {
           <ul className='nav nav-menu' id='pp-menu'>
             <li className={activeSection === 'home' ? 'active' : ''}>
               <Link className='nav-link' href='/'>
-                <FontAwesomeIcon icon={faHouse} height={20} width={20} />
+                <FontAwesomeIcon icon={faHouse as IconProp} height={20} width={20} />
                 <span>Home</span>
               </Link>
             </li>
             <li className={activeSection === 'about' ? 'active' : ''}>
               <Link className='nav-link' href='/about'>
-                <FontAwesomeIcon icon={faIdBadge} height={20} width={20} />
+                <FontAwesomeIcon icon={faIdBadge as IconProp} height={20} width={20} />
                 <span>About Me</span>
               </Link>
             </li>
             <li className={activeSection === 'blog' ? 'active' : ''}>
               <Link className='nav-link' href='/blog'>
-                <FontAwesomeIcon icon={faBlog} height={20} width={20} />
+                <FontAwesomeIcon icon={faBlog as IconProp} height={20} width={20} />
                 <span>Blogs</span>
+              </Link>
+            </li>
+            <li className={activeSection === 'music' ? 'active' : ''}>
+              <Link className='nav-link' href='/music'>
+                <FontAwesomeIcon icon={faMusic as IconProp} height={20} width={20} />
+                <span>My Music</span>
               </Link>
             </li>
             <li className={activeSection === 'contact' ? 'active' : ''}>
               <Link className='nav-link' href='/contact'>
-                <FontAwesomeIcon icon={faMapLocation} height={20} width={20} />
+                <FontAwesomeIcon icon={faMapLocation as IconProp} height={20} width={20} />
                 <span>Contact Me</span>
               </Link>
             </li>
@@ -127,7 +138,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Github'
           >
-            <FontAwesomeIcon icon={faGithub} />
+            <FontAwesomeIcon icon={faGithub as IconProp} />
           </Link>
           <Link
             href='https://www.linkedin.com/in/akshayguptaujn'
@@ -135,7 +146,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Linkedin'
           >
-            <FontAwesomeIcon icon={faLinkedin} />
+            <FontAwesomeIcon icon={faLinkedin as IconProp} />
           </Link>
           <Link
             href='https://medium.com/@akshaygupta.live'
@@ -143,7 +154,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Medium'
           >
-            <FontAwesomeIcon icon={faMedium} />
+            <FontAwesomeIcon icon={faMedium as IconProp} />
           </Link>
           <Link
             href='https://dev.to/akshay_gupta'
@@ -151,7 +162,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Dev.to'
           >
-            <FontAwesomeIcon icon={faDev} />
+            <FontAwesomeIcon icon={faDev as IconProp} />
           </Link>
           <Link
             href='https://www.instagram.com/dja_shay'
@@ -159,7 +170,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Instagram'
           >
-            <FontAwesomeIcon icon={faInstagram} />
+            <FontAwesomeIcon icon={faInstagram as IconProp} />
           </Link>
           <Link
             href='https://www.facebook.com/deejay.ashay'
@@ -167,7 +178,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Facebook'
           >
-            <FontAwesomeIcon icon={faFacebook} />
+            <FontAwesomeIcon icon={faFacebook as IconProp} />
           </Link>
           <Link
             href='https://soundcloud.com/deejay-a-shay'
@@ -175,7 +186,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Soundcloud'
           >
-            <FontAwesomeIcon icon={faSoundcloud} />
+            <FontAwesomeIcon icon={faSoundcloud as IconProp} />
           </Link>
         </div>
       </header>

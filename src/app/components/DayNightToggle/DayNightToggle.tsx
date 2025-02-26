@@ -2,8 +2,8 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
-import { handleKeyDown } from '@/app/utils';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { handleKeyDown } from '@/app/utils';
 import { useTheme } from '@/app/context/ThemeContext';
 
 const DayNightToggle = () => {
