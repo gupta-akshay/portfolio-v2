@@ -34,7 +34,7 @@ export default function Home() {
         data-nav-tooltip='Home'
         className='pp-section pp-scrollable'
       >
-        <div className='home-banner'>
+        <div className='home-banner' id="main-content">
           <div className='container'>
             <div className='row full-screen align-items-center'>
               <div className='col-lg-6'>

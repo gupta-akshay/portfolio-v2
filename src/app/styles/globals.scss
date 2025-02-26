@@ -50,11 +50,25 @@ body {
 // Links
 a {
   color: $px-theme;
-  text-decoration: none;
+  text-decoration: underline;
   transition: color 0.2s ease-in-out;
   
   @include px-hover {
     color: color.adjust($px-theme, $lightness: -8%);
+  }
+}
+
+// Company link with enhanced contrast
+.company-link {
+  color: #ffffff; // High contrast color
+  background-color: $px-theme;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-weight: 500;
+  
+  .theme-light & {
+    color: #000000;
+    background-color: color.adjust($px-theme, $lightness: -15%);
   }
 }
 
@@ -137,4 +151,42 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
   position: relative;
   display: inline-flex;
   align-items: center;
+}
+
+// Accessibility: Skip to main content link
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+
+  &:focus {
+    top: 0;
+  }
+}
+
+// Accessibility: Visually hidden text for screen readers
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// Accessibility: Respect user's motion preferences
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

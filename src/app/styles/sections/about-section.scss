@@ -76,7 +76,7 @@
   }
   span {
     background: $px-theme;
-    color: $px-white;
+    color: #000000;
     font-size: 11px;
     padding: 1px 8px;
     display: inline-block;
@@ -226,7 +226,7 @@
     &__type {
       display: inline-block;
       padding: 5px 10px;
-      color: $px-white;
+      color: #000000;
       background: $px-theme;
       font-size: 10px;
       font-weight: 300;
