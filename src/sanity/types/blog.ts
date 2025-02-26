@@ -38,4 +38,5 @@ export type Blog = {
   mainImage: Image,
   publishedAt: string,
   body: PortableTextBlock[],
+  excerpt?: string,
 };

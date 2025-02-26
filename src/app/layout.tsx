@@ -1,5 +1,7 @@
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik } from './fonts';
+import { LoadingProvider } from './context/LoadingContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -15,7 +17,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className={`${rubik.variable}`}>{children}</body>
+      <body className={`${rubik.variable}`}>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <ThemeProvider>
+          <LoadingProvider>
+            {children}
+          </LoadingProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

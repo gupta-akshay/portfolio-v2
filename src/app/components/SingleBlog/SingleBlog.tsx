@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import BlogImage from '@/app/components/BlogImage';
 // @ts-ignore
 import {
@@ -8,12 +11,20 @@ import {
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Blog } from '@/sanity/types/blog';
+import { useLoading } from '@/app/context/LoadingContext';
 
 const CodeComponent = ({ value }: any) => {
   return (
-    <div>
+    <div className="code-block-wrapper">
       {/* @ts-ignore */}
-      <SyntaxHighlighter language={value.language} style={dracula}>
+      <SyntaxHighlighter 
+        language={value.language} 
+        style={dracula}
+        tabIndex={0} 
+        role="region" 
+        aria-label={`Code snippet in ${value.language}`}
+        className="keyboard-accessible-code"
+      >
         {value.code}
       </SyntaxHighlighter>
     </div>
@@ -27,9 +38,32 @@ const InternalLink = ({
   _type: string,
   slug: { current: string },
 }>) => {
+  const router = useRouter();
+  const { startLoading } = useLoading();
+
   if (!value?.slug) return null;
   const href = `/${value.slug.current}`;
-  return <Link href={href}>{children}</Link>;
+  
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Only add loading state for blog links
+    if (href.startsWith('/blog/')) {
+      e.preventDefault();
+      startLoading();
+      
+      // Use setTimeout to ensure the loading state is set before navigation
+      setTimeout(() => {
+        router.push(href);
+      }, 10);
+    }
+  };
+
+  return (
+    <span className="internal-link-wrapper">
+      <Link href={href} onClick={handleClick} prefetch={false}>
+        {children}
+      </Link>
+    </span>
+  );
 };
 
 const ExternalLink = ({
@@ -72,3 +106,4 @@ const SingleBlog = ({ post }: { post: Blog }) => {
 };
 
 export default SingleBlog;
+

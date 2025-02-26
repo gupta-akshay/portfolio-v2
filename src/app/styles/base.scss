@@ -71,52 +71,6 @@
   padding-top: 42.857143%;
 }
 
-/* LOADING */
-#loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: $px-theme;
-  z-index: 99999;
-}
-.load-circle {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  width: 50px;
-  height: 50px;
-  span {
-    display: inline-block;
-    width: 64px;
-    height: 64px;
-    &:after {
-      content: ' ';
-      display: block;
-      width: 46px;
-      height: 46px;
-      margin: 1px;
-      border-radius: 50%;
-      border: 5px solid $px-white;
-      border-color: $px-white transparent $px-white transparent;
-      animation: lds-dual-ring 1.2s linear infinite;
-    }
-  }
-}
-
-@keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 /* COLOR SWITCH */
 .color_switch,
 .back-btn {
@@ -291,7 +245,8 @@
   @include transition(ease all 0.4s);
   &.px-btn-theme {
     background: $px-theme;
-    color: $px-white;
+    color: #000000;
+    font-weight: 500;
     box-shadow: 4px 4px $px-white;
     .theme-light & {
       box-shadow: 4px 4px $px-dark;

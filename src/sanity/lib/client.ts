@@ -21,10 +21,12 @@ export async function sanityFetch<QueryResponse>({
   qParams: QueryParams,
   tags: string[],
 }): Promise<QueryResponse> {
-  return client.fetch<QueryResponse>(query, qParams, {
+  const data = await client.fetch<QueryResponse>(query, qParams, {
     cache: 'force-cache',
     next: { tags },
   });
+  
+  return data;
 }
 
 export const getPosts = async (): Promise<Blog[]> => {

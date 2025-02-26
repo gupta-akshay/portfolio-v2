@@ -50,32 +50,11 @@ body {
 // Links
 a {
   color: $px-theme;
-  text-decoration: none;
+  text-decoration: underline;
   transition: color 0.2s ease-in-out;
   
   @include px-hover {
     color: color.adjust($px-theme, $lightness: -8%);
-  }
-}
-
-.skip-link {
-  background: $px-theme;
-  color: $px-white;
-  font-weight: 700;
-  left: 50%;
-  padding: 8px 20px;
-  position: absolute;
-  transform: translateY(-100%);
-  transition: transform 0.3s;
-  z-index: 100;
-  background: darken($px-theme, 10%);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-
-  &:focus {
-    transform: translateY(0%);
-  }
-  &:hover {
-    background: darken($px-theme, 15%);
   }
 }
 
@@ -90,5 +69,143 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
   &:focus-visible {
     outline: 3px solid $px-theme !important;
     outline-offset: 2px !important;
+  }
+}
+
+// Global loading spinner
+.global-loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $px-bg-1;
+  z-index: 9999;
+  
+  .theme-light & {
+    background-color: $px-white;
+  }
+}
+
+.global-loading-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.spinner-circle {
+  position: absolute;
+  border: 3px solid transparent;
+  border-top-color: $px-theme;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-circle-inner {
+  position: absolute;
+  border: 3px solid transparent;
+  border-top-color: rgba($px-theme, 0.6);
+  border-radius: 50%;
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  animation: spin 1.5s linear infinite reverse;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Component wrappers
+.back-btn-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.internal-link-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+// Accessibility: Skip to main content link
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+
+  &:focus {
+    top: 0;
+  }
+}
+
+// Accessibility: Visually hidden text for screen readers
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// Accessibility: Respect user's motion preferences
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Keyboard accessible code blocks
+.code-block-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+  
+  .keyboard-accessible-code {
+    &:focus {
+      outline: 3px solid $px-theme !important;
+      outline-offset: 2px !important;
+    }
+    
+    &[tabindex="0"] {
+      cursor: text;
+      
+      &::before {
+        content: "Keyboard accessible: use arrow keys to scroll";
+        display: block;
+        position: absolute;
+        top: -1.5rem;
+        right: 0;
+        font-size: 0.75rem;
+        color: $px-theme;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      
+      &:focus::before {
+        opacity: 1;
+      }
+    }
   }
 }

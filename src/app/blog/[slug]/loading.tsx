@@ -1,11 +1,5 @@
-export default function Loading() {
-  return (
-    <div>
-      <div id='loading'>
-        <div className='load-circle'>
-          <span className='one' />
-        </div>
-      </div>
-    </div>
-  );
+import LoadingIndicator from '@/app/components/LoadingIndicator';
+
+export default function BlogPostLoading() {
+  return <LoadingIndicator />;
 }

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import { getPosts } from '@/sanity/lib/client';
 import BlogTile from '@/app/components/BlogTile';
+import LoadingIndicator from '@/app/components/LoadingIndicator';
 
 export const metadata: Metadata = {
   title: 'Blog | Akshay Gupta',
@@ -12,12 +14,38 @@ export const metadata: Metadata = {
     description:
       'Read my latest thoughts and insights about web development and technology.',
     type: 'article',
+    images: [
+      {
+        url: 'https://akshaygupta.dev/images/about-me.png',
+        width: 1200,
+        height: 630,
+        alt: 'Akshay Gupta Blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog | Akshay Gupta',
+    description: 'Read my latest thoughts and insights about web development and technology.',
+    images: ['https://akshaygupta.dev/images/about-me.png'],
+    creator: '@akshay_gupta_',
   },
 };
 
-export default async function Blog() {
+// Separate component for blog posts to use with Suspense
+async function BlogPosts() {
   const posts = await getPosts();
+  
+  return (
+    <div className="row">
+      {posts.map((post) => (
+        <BlogTile key={post._id} blog={post} />
+      ))}
+    </div>
+  );
+}
 
+export default function Blog() {
   return (
     <Layout>
       <section
@@ -29,11 +57,9 @@ export default async function Blog() {
           <div className='title'>
             <h3>Latest Blogs.</h3>
           </div>
-          <div className='row'>
-            {posts.map((post) => (
-              <BlogTile key={post._id} blog={post} />
-            ))}
-          </div>
+          <Suspense fallback={<LoadingIndicator />}>
+            <BlogPosts />
+          </Suspense>
         </div>
       </section>
     </Layout>
