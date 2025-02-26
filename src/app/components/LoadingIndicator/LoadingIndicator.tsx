@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 type LoadingIndicatorProps = {
   size?: 'small' | 'medium' | 'large';
 };
 
-const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({ 
+// Memoize the component to prevent unnecessary re-renders
+const LoadingIndicator: React.FC<LoadingIndicatorProps> = memo(({ 
   size = 'large'
 }) => {
-  const sizeMap = {
+  // Pre-define sizes to avoid recalculation
+  const dimensions = {
     small: { width: '30px', height: '30px' },
     medium: { width: '50px', height: '50px' },
-    large: { width: '70px', height: '70px' },
-  };
-
-  const dimensions = sizeMap[size];
+    large: { width: '70px', height: '70px' }
+  }[size];
 
   return (
     <div className="global-loading-container">
@@ -23,6 +23,9 @@ const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
       </div>
     </div>
   );
-};
+});
+
+// Add display name for better debugging
+LoadingIndicator.displayName = 'LoadingIndicator';
 
 export default LoadingIndicator; 

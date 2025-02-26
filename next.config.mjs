@@ -2,10 +2,11 @@
 import crypto from 'crypto';
 import bundleAnalyzer from '@next/bundle-analyzer';
 
-const nextConfig = {
+const nextConfig = {  
   experimental: {
     optimizeCss: true,
     optimizeServerReact: true,
+    serverMinification: true,
     optimizePackageImports: [
       '@fortawesome/fontawesome-svg-core',
       '@fortawesome/free-brands-svg-icons',
@@ -27,13 +28,16 @@ const nextConfig = {
       'zod',
     ],
   },
+
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api'],
   },
+
   images: {
     remotePatterns: [
       {
@@ -43,7 +47,11 @@ const nextConfig = {
         pathname: '/images/**',
       },
     ],
+    // Optimize images
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
   },
+
   async headers() {
     return [
       {
@@ -91,10 +99,33 @@ const nextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
           },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
         ],
       },
     ];
   },
+
   webpack: (config, { isServer }) => {
     // Optimize chunks
     config.optimization.splitChunks = {

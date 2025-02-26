@@ -1,13 +1,11 @@
-import { Rubik, Playfair_Display } from 'next/font/google';
+import { Rubik } from 'next/font/google';
 
 export const rubik = Rubik({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '700', '900'],
-  style: ['normal', 'italic'],
+  weight: ['400', '500', '700'],
+  style: ['normal'],
   variable: '--font-rubik',
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'sans-serif'],
 });
-
-// export const playfair = Playfair_Display({
-//   subsets: ['latin'],
-//   variable: '--font-playfair',
-// });

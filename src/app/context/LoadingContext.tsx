@@ -7,6 +7,8 @@ import React, {
   ReactNode,
   useEffect,
   useRef,
+  useMemo,
+  useCallback,
 } from 'react';
 import { usePathname } from 'next/navigation';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
@@ -26,12 +28,14 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
 
   // Stop loading when pathname changes (navigation completes)
   useEffect(() => {
-    setIsLoading(false);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+    if (isLoading) {
+      setIsLoading(false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
     }
-  }, [pathname]);
+  }, [pathname, isLoading]);
 
   // Clean up timeout on unmount
   useEffect(() => {
@@ -42,7 +46,8 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const startLoading = () => {
+  // Memoize functions to prevent unnecessary re-renders
+  const startLoading = useCallback(() => {
     setIsLoading(true);
 
     // Set a timeout to automatically stop loading after 5 seconds
@@ -55,18 +60,24 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       timeoutRef.current = null;
     }, 5000);
-  };
+  }, []);
 
-  const stopLoading = () => {
+  const stopLoading = useCallback(() => {
     setIsLoading(false);
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-  };
+  }, []);
+
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({ isLoading, startLoading, stopLoading }),
+    [isLoading, startLoading, stopLoading]
+  );
 
   return (
-    <LoadingContext.Provider value={{ isLoading, startLoading, stopLoading }}>
+    <LoadingContext.Provider value={contextValue}>
       {isLoading && <LoadingIndicator />}
       {children}
     </LoadingContext.Provider>
