@@ -1,0 +1,31 @@
+/**
+ * Type definitions for the audio player
+ */
+
+export interface Track {
+  id: string;
+  title: string;
+  artist: string;
+  cloudinaryPublicId: string; // Cloudinary public ID for the audio file
+  duration?: string; // Make duration optional as we'll calculate it from metadata
+}
+
+export interface AudioPlayerProps {
+  tracks: Track[];
+}
+
+// Define available waveform styles
+export type WaveformStyleType = 'wave';
+
+// Add a type for the extended canvas element with prevScaleFactor
+export interface ExtendedHTMLCanvasElement extends HTMLCanvasElement {
+  prevScaleFactor?: number;
+}
+
+// Declare global AudioContext for TypeScript
+declare global {
+  interface Window {
+    AudioContext: typeof AudioContext;
+    webkitAudioContext: typeof AudioContext;
+  }
+}
