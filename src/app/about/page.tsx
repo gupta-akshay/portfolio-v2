@@ -9,11 +9,11 @@ import Experience from '@/app/components/Experience';
 export const metadata: Metadata = {
   title: 'About | Akshay Gupta',
   description:
-    'Learn about my journey as a Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
   openGraph: {
     title: 'About Akshay Gupta | Full-Stack Developer',
     description:
-      'Learn about my journey as a Staff Engineer at PeopleGrove, my skills, and experience.',
+      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
     images: [
       {
         url: 'https://akshaygupta.live/images/about-me.png',

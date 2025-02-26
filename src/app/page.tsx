@@ -6,11 +6,11 @@ import Layout from '@/app/components/Layout';
 export const metadata: Metadata = {
   title: 'Akshay Gupta | Full-Stack Web Developer',
   description:
-    'Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
+    'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
   openGraph: {
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
-      'Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
     url: 'https://akshaygupta.live',
     siteName: 'Akshay Gupta',
     images: [
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
         url: 'https://akshaygupta.live/images/home-banner.webp',
         width: 600,
         height: 600,
-        alt: 'Akshay Gupta - Staff Engineer at PeopleGrove',
+        alt: 'Akshay Gupta - Senior Staff Engineer at PeopleGrove',
       },
     ],
     locale: 'en_US',
@@ -47,7 +47,7 @@ export default function Home() {
                     I am <TypingAnimation />
                   </p>
                   <p className='desc'>
-                    Hey there! 👋 I&apos;m currently a Staff Engineer at{' '}
+                    Hey there! 👋 I&apos;m currently a Senior Staff Engineer at{' '}
                     <a
                       href='https://www.peoplegrove.com'
                       target='_blank'
@@ -79,7 +79,7 @@ export default function Home() {
                 <div className='hb-img'>
                   <Image
                     src='/images/home-banner.webp'
-                    alt='Akshay Gupta - Staff Engineer at PeopleGrove'
+                    alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'
                     width={600}
                     height={600}
                     loading='lazy'
