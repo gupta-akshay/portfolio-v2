@@ -18,13 +18,11 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${rubik.variable}`}>
-        <a href="#main-content" className="skip-link">
+        <a href='#main-content' className='skip-link'>
           Skip to main content
         </a>
         <ThemeProvider>
-          <LoadingProvider>
-            {children}
-          </LoadingProvider>
+          <LoadingProvider>{children}</LoadingProvider>
         </ThemeProvider>
       </body>
     </html>

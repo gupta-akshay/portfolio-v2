@@ -6,14 +6,14 @@ interface TrackListProps {
   tracks: Track[];
   currentTrackIndex: number | null;
   onTrackSelect: (index: number) => void;
-  trackDurations: {[id: string]: number};
+  trackDurations: { [id: string]: number };
 }
 
-const TrackList: React.FC<TrackListProps> = ({ 
-  tracks, 
-  currentTrackIndex, 
+const TrackList: React.FC<TrackListProps> = ({
+  tracks,
+  currentTrackIndex,
   onTrackSelect,
-  trackDurations
+  trackDurations,
 }) => {
   // Get track duration - use cached value, provided value, or loading placeholder
   const getTrackDuration = (track: Track) => {
@@ -27,20 +27,20 @@ const TrackList: React.FC<TrackListProps> = ({
   };
 
   return (
-    <div className="trackList">
+    <div className='trackList'>
       <h4>Playlist</h4>
       <ul>
         {tracks.map((track, index) => (
-          <li 
-            key={track.id} 
+          <li
+            key={track.id}
             className={`trackItem ${currentTrackIndex === index ? 'active' : ''}`}
             onClick={() => onTrackSelect(index)}
           >
-            <div className="trackInfo">
-              <span className="trackTitle">{track.title}</span>
-              <span className="trackArtist">{track.artist}</span>
+            <div className='trackInfo'>
+              <span className='trackTitle'>{track.title}</span>
+              <span className='trackArtist'>{track.artist}</span>
             </div>
-            <span className="trackDuration">{getTrackDuration(track)}</span>
+            <span className='trackDuration'>{getTrackDuration(track)}</span>
           </li>
         ))}
       </ul>

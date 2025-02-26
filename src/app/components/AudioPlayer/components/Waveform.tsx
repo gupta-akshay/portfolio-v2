@@ -6,13 +6,13 @@ interface WaveformProps {
 
 const Waveform: React.FC<WaveformProps> = ({ canvasRef }) => {
   return (
-    <div className="waveformContainer">
+    <div className='waveformContainer'>
       {/* Dynamic waveform visualization */}
-      <canvas 
+      <canvas
         ref={canvasRef as RefObject<HTMLCanvasElement>}
         width={800}
         height={100}
-        className="waveformCanvas"
+        className='waveformCanvas'
       />
     </div>
   );

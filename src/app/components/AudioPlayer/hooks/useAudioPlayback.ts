@@ -13,7 +13,9 @@ export const useAudioPlayback = (
   drawMiniVisualizer: () => void,
   audioContextRef: RefObject<AudioContext | null>
 ) => {
-  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(
+    null
+  );
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
@@ -21,18 +23,19 @@ export const useAudioPlayback = (
   const [duration, setDuration] = useState(0);
 
   // Get current track if one is selected
-  const currentTrack = currentTrackIndex !== null ? tracks[currentTrackIndex] : null;
+  const currentTrack =
+    currentTrackIndex !== null ? tracks[currentTrackIndex] : null;
 
   // Update CSS variables for slider fills
   useEffect(() => {
     const progressBar = document.querySelector('.progressBar') as HTMLElement;
     const volumeSlider = document.querySelector('.volumeSlider') as HTMLElement;
-    
+
     if (progressBar && duration > 0) {
       const fillPercentage = (currentTime / duration) * 100;
       progressBar.style.setProperty('--seek-fill', `${fillPercentage}%`);
     }
-    
+
     if (volumeSlider) {
       volumeSlider.style.setProperty('--volume-fill', `${volume * 100}%`);
     }
@@ -90,7 +93,7 @@ export const useAudioPlayback = (
   // Reset player state when track changes
   useEffect(() => {
     if (!audioRef.current || currentTrackIndex === null) return;
-    
+
     // Reset current time
     setCurrentTime(0);
   }, [currentTrackIndex]);
@@ -99,7 +102,7 @@ export const useAudioPlayback = (
     if (audioRef.current && currentTrack) {
       if (isPlaying) {
         audioRef.current.pause();
-        
+
         // Stop visualizations
         if (animationRef.current) {
           cancelAnimationFrame(animationRef.current);
@@ -118,17 +121,21 @@ export const useAudioPlayback = (
               drawWaveform();
               animationRef.current = requestAnimationFrame(animateWaveform);
             };
-            
+
             const animateMiniVisualizer = () => {
               drawMiniVisualizer();
-              miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+              miniAnimationRef.current = requestAnimationFrame(
+                animateMiniVisualizer
+              );
             };
-            
+
             // Start animation loops
             animationRef.current = requestAnimationFrame(animateWaveform);
-            miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
-            
-            audioRef.current?.play().catch(error => {
+            miniAnimationRef.current = requestAnimationFrame(
+              animateMiniVisualizer
+            );
+
+            audioRef.current?.play().catch((error) => {
               console.error('Error playing audio:', error);
             });
           });
@@ -138,17 +145,21 @@ export const useAudioPlayback = (
             drawWaveform();
             animationRef.current = requestAnimationFrame(animateWaveform);
           };
-          
+
           const animateMiniVisualizer = () => {
             drawMiniVisualizer();
-            miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+            miniAnimationRef.current = requestAnimationFrame(
+              animateMiniVisualizer
+            );
           };
-          
+
           // Start animation loops
           animationRef.current = requestAnimationFrame(animateWaveform);
-          miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
-          
-          audioRef.current.play().catch(error => {
+          miniAnimationRef.current = requestAnimationFrame(
+            animateMiniVisualizer
+          );
+
+          audioRef.current.play().catch((error) => {
             console.error('Error playing audio:', error);
           });
         }
@@ -164,8 +175,10 @@ export const useAudioPlayback = (
       }
       return;
     }
-    
-    setCurrentTrackIndex(currentTrackIndex === tracks.length - 1 ? 0 : currentTrackIndex + 1);
+
+    setCurrentTrackIndex(
+      currentTrackIndex === tracks.length - 1 ? 0 : currentTrackIndex + 1
+    );
   };
 
   const handlePrevious = () => {
@@ -175,8 +188,10 @@ export const useAudioPlayback = (
       }
       return;
     }
-    
-    setCurrentTrackIndex(currentTrackIndex === 0 ? tracks.length - 1 : currentTrackIndex - 1);
+
+    setCurrentTrackIndex(
+      currentTrackIndex === 0 ? tracks.length - 1 : currentTrackIndex - 1
+    );
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -213,6 +228,6 @@ export const useAudioPlayback = (
     handlePrevious,
     handleTimeChange,
     handleVolumeChange,
-    toggleMute
+    toggleMute,
   };
 };

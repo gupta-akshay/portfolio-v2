@@ -7,10 +7,10 @@ interface NowPlayingProps {
   miniCanvasRef: RefObject<HTMLCanvasElement | null>;
 }
 
-const NowPlaying: React.FC<NowPlayingProps> = ({ 
-  currentTrack, 
+const NowPlaying: React.FC<NowPlayingProps> = ({
+  currentTrack,
   isPlaying,
-  miniCanvasRef
+  miniCanvasRef,
 }) => {
   // Ensure canvas is properly sized when component mounts
   useEffect(() => {
@@ -19,21 +19,21 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
       // Force canvas to match its container size
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
-      
+
       // Draw initial circle to ensure something is visible
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
-        const radius = Math.min(canvas.width, canvas.height) / 2 * 0.5;
-        
+        const radius = (Math.min(canvas.width, canvas.height) / 2) * 0.5;
+
         // Draw circle
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
         ctx.fillStyle = '#2fbf71';
         ctx.fill();
-        
+
         // Add ring
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
@@ -45,19 +45,19 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   }, [currentTrack, miniCanvasRef]);
 
   return (
-    <div className="nowPlaying">
-      <div className="coverImage">
+    <div className='nowPlaying'>
+      <div className='coverImage'>
         {/* Small waveform visualization */}
-        <div className="miniVisualizer">
-          <canvas 
+        <div className='miniVisualizer'>
+          <canvas
             ref={miniCanvasRef as RefObject<HTMLCanvasElement>}
-            width={80} 
-            height={80} 
+            width={80}
+            height={80}
             className={isPlaying ? 'pulsing' : ''}
           />
         </div>
       </div>
-      <div className="trackDetails">
+      <div className='trackDetails'>
         <h4>{currentTrack.title}</h4>
         <p>{currentTrack.artist}</p>
       </div>

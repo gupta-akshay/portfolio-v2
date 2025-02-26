@@ -15,12 +15,15 @@ const DayNightToggle = () => {
       onClick={toggleTheme}
       onKeyDown={(e) => handleKeyDown(e, toggleTheme)}
       aria-label={`Switch to ${isLightMode ? 'dark' : 'light'} mode`}
-      role="switch"
+      role='switch'
       aria-checked={isLightMode}
       title={`Switch to ${isLightMode ? 'dark' : 'light'} mode`}
     >
-      <FontAwesomeIcon icon={(isLightMode ? faMoon : faSun) as IconProp} aria-hidden="true" />
-      <span className="visually-hidden">
+      <FontAwesomeIcon
+        icon={(isLightMode ? faMoon : faSun) as IconProp}
+        aria-hidden='true'
+      />
+      <span className='visually-hidden'>
         {isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
       </span>
     </button>

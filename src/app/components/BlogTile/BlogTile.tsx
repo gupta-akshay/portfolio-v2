@@ -15,7 +15,7 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     startLoading();
-    
+
     // Use setTimeout to ensure the loading state is set before navigation
     setTimeout(() => {
       router.push(`/blog/${blog.slug.current}`);
@@ -48,8 +48,8 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
             ))}
           </div>
           <h2 className='blog-title'>
-            <Link 
-              href={`/blog/${blog.slug.current}`} 
+            <Link
+              href={`/blog/${blog.slug.current}`}
               prefetch={false}
               onClick={handleClick}
             >

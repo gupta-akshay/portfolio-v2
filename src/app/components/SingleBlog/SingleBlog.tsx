@@ -15,15 +15,15 @@ import { useLoading } from '@/app/context/LoadingContext';
 
 const CodeComponent = ({ value }: any) => {
   return (
-    <div className="code-block-wrapper">
+    <div className='code-block-wrapper'>
       {/* @ts-ignore */}
-      <SyntaxHighlighter 
-        language={value.language} 
+      <SyntaxHighlighter
+        language={value.language}
         style={dracula}
-        tabIndex={0} 
-        role="region" 
+        tabIndex={0}
+        role='region'
         aria-label={`Code snippet in ${value.language}`}
-        className="keyboard-accessible-code"
+        className='keyboard-accessible-code'
       >
         {value.code}
       </SyntaxHighlighter>
@@ -43,13 +43,13 @@ const InternalLink = ({
 
   if (!value?.slug) return null;
   const href = `/${value.slug.current}`;
-  
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // Only add loading state for blog links
     if (href.startsWith('/blog/')) {
       e.preventDefault();
       startLoading();
-      
+
       // Use setTimeout to ensure the loading state is set before navigation
       setTimeout(() => {
         router.push(href);
@@ -58,7 +58,7 @@ const InternalLink = ({
   };
 
   return (
-    <span className="internal-link-wrapper">
+    <span className='internal-link-wrapper'>
       <Link href={href} onClick={handleClick} prefetch={false}>
         {children}
       </Link>
@@ -106,4 +106,3 @@ const SingleBlog = ({ post }: { post: Blog }) => {
 };
 
 export default SingleBlog;
-

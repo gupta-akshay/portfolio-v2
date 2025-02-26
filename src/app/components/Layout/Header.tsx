@@ -98,31 +98,51 @@ const Header = () => {
           <ul className='nav nav-menu' id='pp-menu'>
             <li className={activeSection === 'home' ? 'active' : ''}>
               <Link className='nav-link' href='/'>
-                <FontAwesomeIcon icon={faHouse as IconProp} height={20} width={20} />
+                <FontAwesomeIcon
+                  icon={faHouse as IconProp}
+                  height={20}
+                  width={20}
+                />
                 <span>Home</span>
               </Link>
             </li>
             <li className={activeSection === 'about' ? 'active' : ''}>
               <Link className='nav-link' href='/about'>
-                <FontAwesomeIcon icon={faIdBadge as IconProp} height={20} width={20} />
+                <FontAwesomeIcon
+                  icon={faIdBadge as IconProp}
+                  height={20}
+                  width={20}
+                />
                 <span>About Me</span>
               </Link>
             </li>
             <li className={activeSection === 'blog' ? 'active' : ''}>
               <Link className='nav-link' href='/blog'>
-                <FontAwesomeIcon icon={faBlog as IconProp} height={20} width={20} />
+                <FontAwesomeIcon
+                  icon={faBlog as IconProp}
+                  height={20}
+                  width={20}
+                />
                 <span>Blogs</span>
               </Link>
             </li>
             <li className={activeSection === 'music' ? 'active' : ''}>
               <Link className='nav-link' href='/music'>
-                <FontAwesomeIcon icon={faMusic as IconProp} height={20} width={20} />
+                <FontAwesomeIcon
+                  icon={faMusic as IconProp}
+                  height={20}
+                  width={20}
+                />
                 <span>My Music</span>
               </Link>
             </li>
             <li className={activeSection === 'contact' ? 'active' : ''}>
               <Link className='nav-link' href='/contact'>
-                <FontAwesomeIcon icon={faMapLocation as IconProp} height={20} width={20} />
+                <FontAwesomeIcon
+                  icon={faMapLocation as IconProp}
+                  height={20}
+                  width={20}
+                />
                 <span>Contact Me</span>
               </Link>
             </li>

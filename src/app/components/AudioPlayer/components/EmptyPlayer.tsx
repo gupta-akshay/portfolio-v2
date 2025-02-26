@@ -5,8 +5,8 @@ import { faWaveSquare } from '@fortawesome/free-solid-svg-icons';
 
 const EmptyPlayer: React.FC = () => {
   return (
-    <div className="emptyPlayerState">
-      <div className="emptyStateIcon">
+    <div className='emptyPlayerState'>
+      <div className='emptyStateIcon'>
         <FontAwesomeIcon icon={faWaveSquare as IconProp} />
       </div>
       <h3>Ready to Play</h3>

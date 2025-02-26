@@ -21,7 +21,7 @@ const BackBtn = () => {
   };
 
   return (
-    <div className="back-btn-wrapper">
+    <div className='back-btn-wrapper'>
       <button
         type='button'
         className='back-btn'

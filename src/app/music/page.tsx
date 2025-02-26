@@ -25,7 +25,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'My Music | Akshay Gupta',
-    description: 'Listen to my latest remixes and music productions. Enjoy the beats!',
+    description:
+      'Listen to my latest remixes and music productions. Enjoy the beats!',
     images: ['https://akshaygupta.dev/images/about-me.png'],
     creator: '@akshay_gupta_',
   },
@@ -33,18 +34,24 @@ export const metadata: Metadata = {
 
 const musicTracks = [
   {
-    id: '1',
-    title: 'Fitoor Remix',
+    id: 'Fitoor_-_Yeh_Fitoor_Mera_A-Shay_Remix_Ft._Yash_Kapoor_th4cme',
+    title: 'Yeh Fitoor Mera - Remix',
     artist: 'A-Shay Ft. Yash Kapoor',
-    cloudinaryPublicId: 'crzr6wqv7wjq9tmmevjm', // Just the ID without extension or path
-    url: 'https://res.cloudinary.com/akshaygupta/video/upload/crzr6wqv7wjq9tmmevjm',
+    cloudinaryPublicId:
+      'Fitoor_-_Yeh_Fitoor_Mera_A-Shay_Remix_Ft._Yash_Kapoor_th4cme',
+  },
+  {
+    id: 'RHTDM_-_Zara_Zara_A-Shay_Remix_Final_Mix_1_kwumvv',
+    title: 'RHTDM: Zara Zara - Remix',
+    artist: 'A-Shay',
+    cloudinaryPublicId: 'RHTDM_-_Zara_Zara_A-Shay_Remix_Final_Mix_1_kwumvv',
   },
 ];
 
 // Separate component for music tracks to use with Suspense
 function MusicTracks() {
   return (
-    <div className="music-container">
+    <div className='music-container'>
       <AudioPlayer tracks={musicTracks} />
     </div>
   );
@@ -62,9 +69,12 @@ export default function Music() {
           <div className='title'>
             <h3>My Music.</h3>
           </div>
-          <div className="music-description mb-4">
-            <p>Welcome to my music collection! Here you can listen to my latest remixes and productions. 
-            I love experimenting with different genres and creating unique sounds. Enjoy the beats!</p>
+          <div className='music-description mb-4'>
+            <p>
+              Welcome to my music collection! Here you can listen to my latest
+              remixes and productions. I love experimenting with different
+              genres and creating unique sounds. Enjoy the beats!
+            </p>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <MusicTracks />
