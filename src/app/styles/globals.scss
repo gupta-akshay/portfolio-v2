@@ -68,14 +68,14 @@ a {
   transform: translateY(-100%);
   transition: transform 0.3s;
   z-index: 100;
-  background: darken($px-theme, 10%);
+  background: color.adjust($px-theme, $lightness: -10%);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 
   &:focus {
     transform: translateY(0%);
   }
   &:hover {
-    background: darken($px-theme, 15%);
+    background: color.adjust($px-theme, $lightness: -15%);
   }
 }
 
@@ -91,4 +91,71 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
     outline: 3px solid $px-theme !important;
     outline-offset: 2px !important;
   }
+}
+
+// Global loading spinner
+.global-loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $px-bg-1;
+  z-index: 9999;
+  
+  .theme-light & {
+    background-color: $px-white;
+  }
+}
+
+.global-loading-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.spinner-circle {
+  position: absolute;
+  border: 3px solid transparent;
+  border-top-color: $px-theme;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner-circle-inner {
+  position: absolute;
+  border: 3px solid transparent;
+  border-top-color: rgba($px-theme, 0.6);
+  border-radius: 50%;
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  animation: spin 1.5s linear infinite reverse;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Component wrappers
+.back-btn-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.internal-link-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }

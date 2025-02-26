@@ -16,6 +16,8 @@
   bottom: 0;
   top: 0;
   background: $px-bg-3;
+  transition: background-color 0.2s ease-in-out;
+  
   .theme-light & {
     background: $px-gray;
   }
@@ -136,7 +138,6 @@
       }
     }
   }
-  transition: background-color 0.2s ease-in-out;
 }
 
 .tooltip {
@@ -151,6 +152,8 @@
   width: 100%;
   z-index: 11;
   background: $px-bg-1;
+  transition: background-color 0.2s ease-in-out;
+  
   .theme-light & {
     background: $px-white;
   }
@@ -169,7 +172,6 @@
       color: $px-dark;
     }
   }
-  transition: background-color 0.2s ease-in-out;
 }
 
 .toggler-menu {

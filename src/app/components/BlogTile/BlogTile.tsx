@@ -1,10 +1,26 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import BlogImage from '@/app/components/BlogImage';
 import { Blog } from '@/sanity/types/blog';
 import { formatDate } from '@/app/utils';
+import { useLoading } from '@/app/context/LoadingContext';
 
 const BlogTile = ({ blog }: { blog: Blog }) => {
   const { mainImage } = blog;
+  const router = useRouter();
+  const { startLoading } = useLoading();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    startLoading();
+    
+    // Use setTimeout to ensure the loading state is set before navigation
+    setTimeout(() => {
+      router.push(`/blog/${blog.slug.current}`);
+    }, 10);
+  };
 
   return (
     <div className='col-md-6 m-15px-tb'>
@@ -12,8 +28,9 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
         <div className='blog-img'>
           <Link
             href={`/blog/${blog.slug.current}`}
-            prefetch
+            prefetch={false}
             aria-label={`Read more about ${blog.title}`}
+            onClick={handleClick}
           >
             <BlogImage value={mainImage} isTileImage alt={blog.title} />
           </Link>
@@ -31,7 +48,11 @@ const BlogTile = ({ blog }: { blog: Blog }) => {
             ))}
           </div>
           <h2 className='blog-title'>
-            <Link href={`/blog/${blog.slug.current}`} prefetch>
+            <Link 
+              href={`/blog/${blog.slug.current}`} 
+              prefetch={false}
+              onClick={handleClick}
+            >
               {blog.title}
             </Link>
           </h2>

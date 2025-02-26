@@ -2,21 +2,35 @@
 
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { handleKeyDown } from '@/app/utils';
+import { useLoading } from '@/app/context/LoadingContext';
+
 const BackBtn = () => {
   const router = useRouter();
+  const pathname = usePathname();
+  const { startLoading } = useLoading();
+
+  const handleBack = () => {
+    // Only show loading indicator when navigating from a blog post
+    if (pathname.startsWith('/blog/')) {
+      startLoading();
+    }
+    router.back();
+  };
 
   return (
-    <button
-      type='button'
-      className='back-btn'
-      onClick={() => router.back()}
-      onKeyDown={(e) => handleKeyDown(e, () => router.back())}
-      aria-label='Go back to previous page'
-    >
-      <FontAwesomeIcon icon={faArrowLeft} aria-hidden='true' />
-    </button>
+    <div className="back-btn-wrapper">
+      <button
+        type='button'
+        className='back-btn'
+        onClick={handleBack}
+        onKeyDown={(e) => handleKeyDown(e, handleBack)}
+        aria-label='Go back to previous page'
+      >
+        <FontAwesomeIcon icon={faArrowLeft} aria-hidden='true' />
+      </button>
+    </div>
   );
 };
 

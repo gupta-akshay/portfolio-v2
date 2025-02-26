@@ -17,7 +17,8 @@ const postData = `{
   },
   mainImage,
   publishedAt,
-  body
+  body,
+  "excerpt": pt::text(body[0..1])
 }`;
 
 export const postQuery = groq`*[_type == 'post'] ${postData}`;
