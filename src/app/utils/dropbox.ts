@@ -1,4 +1,6 @@
 import { Dropbox } from 'dropbox';
+import { Track } from '@/app/components/AudioPlayer/types';
+import { getDropboxToken } from './dropboxAuth';
 
 // Helper to determine if we're on the client side
 const isClient = typeof window !== 'undefined';
@@ -11,19 +13,19 @@ const getFetch = () => {
   return global.fetch;
 };
 
-const dbx = new Dropbox({
-  accessToken: process.env.NEXT_PUBLIC_DROPBOX_ACCESS_TOKEN,
-  fetch: getFetch(),
-});
-
-export async function getAudioFilesList() {
+export async function getAudioFilesList(): Promise<Track[]> {
   try {
+    const accessToken = await getDropboxToken();
+
+    const dbx = new Dropbox({ accessToken, fetch: getFetch() });
+
     const response = await dbx.filesListFolder({
       path: '',
       recursive: true,
+      include_media_info: true,
     });
 
-    const audioFiles = response.result.entries
+    const tracks: Track[] = response.result.entries
       .filter((entry) => {
         const isAudioFile =
           entry['.tag'] === 'file' &&
@@ -56,30 +58,29 @@ export async function getAudioFilesList() {
       })
       .sort((a, b) => b.year - a.year);
 
-    return audioFiles;
-  } catch (e) {
-    console.error('Error getting audio files list:', e);
-    return [];
+    return tracks;
+  } catch (error) {
+    console.error('Error fetching audio files:', error);
+    throw error;
   }
 }
 
 // Cache for temporary links
 const tempLinkCache = new Map<string, { url: string; expiry: number }>();
 
-export async function getAudioUrl(path: string | null): Promise<string | null> {
-  if (!path) return null;
-
-  // Check cache first
-  const cached = tempLinkCache.get(path);
-  if (cached && cached.expiry > Date.now()) {
-    return cached.url;
-  }
-
+export async function getAudioUrl(path: string): Promise<string> {
   try {
-    const response = await dbx.filesGetTemporaryLink({ path });
+    const accessToken = await getDropboxToken();
+
+    const dbx = new Dropbox({ accessToken, fetch: getFetch() });
+
+    const response = await dbx.filesGetTemporaryLink({
+      path: path,
+    });
+
     const url = response.result.link;
 
-    // Cache the URL for 3 hours (Dropbox links expire in 4 hours)
+    // Cache the URL for 1 hour
     tempLinkCache.set(path, {
       url,
       expiry: Date.now() + 3 * 60 * 60 * 1000,
@@ -87,7 +88,7 @@ export async function getAudioUrl(path: string | null): Promise<string | null> {
 
     return url;
   } catch (error) {
-    console.error('Error getting temporary link:', error);
-    return null;
+    console.error('Error getting audio URL:', error);
+    throw error;
   }
 }

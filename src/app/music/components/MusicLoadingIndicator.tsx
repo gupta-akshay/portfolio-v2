@@ -13,4 +13,4 @@ const MusicLoadingIndicator: React.FC = () => {
   );
 };
 
-export default MusicLoadingIndicator; 
+export default MusicLoadingIndicator;
