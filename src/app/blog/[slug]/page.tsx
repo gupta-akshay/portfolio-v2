@@ -62,7 +62,7 @@ async function BlogContent({ slug }: { slug: string }) {
 
 const SingleBlogPage = async ({ params }: Props) => {
   const slug = (await params).slug;
-  
+
   return (
     <Layout isBlog>
       <Suspense fallback={<LoadingIndicator />}>
@@ -96,7 +96,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     const imageUrl = urlFor(post.mainImage).width(1200).height(630).url();
-    
+
     // Create a description from the excerpt or fallback to title
     const description = post.excerpt || post.title;
 

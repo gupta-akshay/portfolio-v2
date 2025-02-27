@@ -14,9 +14,9 @@ import { usePathname } from 'next/navigation';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 
 type LoadingContextType = {
-  isLoading: boolean;
-  startLoading: () => void;
-  stopLoading: () => void;
+  isLoading: boolean,
+  startLoading: () => void,
+  stopLoading: () => void,
 };
 
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);

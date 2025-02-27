@@ -26,7 +26,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Blog | Akshay Gupta',
-    description: 'Read my latest thoughts and insights about web development and technology.',
+    description:
+      'Read my latest thoughts and insights about web development and technology.',
     images: ['https://akshaygupta.dev/images/about-me.png'],
     creator: '@akshay_gupta_',
   },
@@ -35,9 +36,9 @@ export const metadata: Metadata = {
 // Separate component for blog posts to use with Suspense
 async function BlogPosts() {
   const posts = await getPosts();
-  
+
   return (
-    <div className="row">
+    <div className='row'>
       {posts.map((post) => (
         <BlogTile key={post._id} blog={post} />
       ))}

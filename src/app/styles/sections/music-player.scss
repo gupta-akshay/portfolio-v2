@@ -1,0 +1,726 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+
+.cloudinaryAudioPlayer {
+  display: flex;
+  flex-direction: column;
+  background-color: $px-bg-3;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+  color: $px-white;
+  transition: background-color 0.2s ease-in-out;
+  
+  .theme-light & {
+    background-color: $px-gray;
+    color: $px-dark;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  @include up-md {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.trackList {
+  flex: 1;
+  margin-bottom: 20px;
+  
+  @include up-md {
+    margin-right: 20px;
+    margin-bottom: 0;
+    max-width: 450px;
+  }
+  
+  h4 {
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: $px-white;
+    
+    .theme-light & {
+      color: $px-dark;
+    }
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    max-height: 500px;
+    border-radius: 8px;
+    background-color: $px-bg-2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    scrollbar-width: thin;
+    scrollbar-color: $px-theme transparent;
+    
+    .theme-light & {
+      background-color: $px-white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    @include down-md {
+      max-height: 300px;
+    }
+
+    // Add focus styles for keyboard navigation
+    &:focus {
+      outline: 2px solid $px-theme;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.trackItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid rgba($px-white, 0.05);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  .theme-light & {
+    border-bottom: 1px solid rgba($px-dark, 0.05);
+  }
+  
+  &:hover {
+    background-color: rgba($px-white, 0.05);
+    
+    .theme-light & {
+      background-color: rgba($px-dark, 0.03);
+    }
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &.active {
+    background-color: rgba($px-theme, 0.2);
+    border-left: 3px solid $px-theme;
+    
+    .theme-light & {
+      background-color: rgba($px-theme, 0.1);
+    }
+  }
+
+  // Add focus styles for keyboard navigation
+  &:focus {
+    outline: 2px solid $px-theme;
+    outline-offset: -2px;
+    background-color: rgba($px-theme, 0.1);
+  }
+}
+
+.trackInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.trackTitle {
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: $px-white;
+  
+  .theme-light & {
+    color: $px-dark;
+  }
+}
+
+.trackArtist {
+  font-size: 0.85rem;
+  color: rgba($px-white, 0.7);
+  
+  .theme-light & {
+    color: $px-body-light;
+  }
+}
+
+.trackDuration {
+  color: rgba($px-white, 0.5);
+  font-size: 0.85rem;
+  
+  .theme-light & {
+    color: rgba($px-dark, 0.5);
+  }
+}
+
+.playerControls {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+
+.nowPlaying {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.coverImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  
+  .theme-light & {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.trackDetails {
+  h4 {
+    margin: 0 0 5px 0;
+    font-weight: 600;
+    color: $px-white;
+    
+    .theme-light & {
+      color: $px-dark;
+    }
+  }
+  
+  p {
+    margin: 0;
+    color: rgba($px-white, 0.7);
+    font-size: 0.9rem;
+    
+    .theme-light & {
+      color: $px-body-light;
+    }
+  }
+}
+
+.playerWrapper {
+  margin-bottom: 20px;
+}
+
+.waveformContainer {
+  position: relative;
+  
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+}
+
+.timeControls {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.currentTime, .totalTime {
+  font-size: 0.85rem;
+  color: rgba($px-white, 0.7);
+  
+  .theme-light & {
+    color: $px-body-light;
+  }
+}
+
+.progressBar {
+  flex: 1;
+  margin: 0 10px;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba($px-white, 0.2);
+  border-radius: 5px;
+  outline: none;
+  
+  .theme-light & {
+    background: rgba($px-dark, 0.1);
+  }
+  
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: $px-theme;
+    cursor: pointer;
+    margin-top: -5px;
+  }
+  
+  &::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: $px-theme;
+    cursor: pointer;
+    border: none;
+    transform: translateY(-5px);
+  }
+  
+  &:focus-visible {
+    outline: 3px solid $px-theme;
+    outline-offset: 2px;
+  }
+  
+  &::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, $px-theme 0%, $px-theme var(--seek-fill, 0%), rgba($px-white, 0.2) var(--seek-fill, 0%));
+    border-radius: 5px;
+    height: 5px;
+    
+    .theme-light & {
+      background: linear-gradient(to right, $px-theme 0%, $px-theme var(--seek-fill, 0%), rgba($px-dark, 0.1) var(--seek-fill, 0%));
+    }
+  }
+  
+  &::-moz-range-track {
+    background: rgba($px-white, 0.2);
+    border-radius: 5px;
+    height: 5px;
+    
+    .theme-light & {
+      background: rgba($px-dark, 0.1);
+    }
+  }
+  
+  &::-moz-range-progress {
+    background: $px-theme;
+    border-radius: 5px;
+    height: 5px;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  margin-top: 40px;
+  position: relative;
+
+  // Center main controls
+  .mainControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.controlButton {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: rgba($px-white, 0.8);
+  cursor: pointer;
+  margin: 0 10px;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+  
+  .theme-light & {
+    color: rgba($px-dark, 0.7);
+  }
+  
+  &:hover {
+    color: $px-theme;
+    background-color: rgba($px-theme, 0.1);
+  }
+  
+  &:focus-visible {
+    outline: 3px solid $px-theme;
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    &:hover {
+      background-color: transparent;
+      color: rgba($px-white, 0.8);
+      
+      .theme-light & {
+        color: rgba($px-dark, 0.7);
+      }
+    }
+  }
+  
+  &.playButton {
+    font-size: 1.5rem;
+    background-color: $px-theme;
+    color: $px-white;
+    width: 50px;
+    height: 50px;
+    box-shadow: 4px 4px $px-white;
+    
+    .theme-light & {
+      box-shadow: 4px 4px $px-dark;
+    }
+    
+    &:hover {
+      background: $px-white;
+      color: $px-theme;
+      box-shadow: 4px 4px $px-theme;
+      
+      .theme-light & {
+        background: $px-dark;
+        color: $px-theme;
+      }
+    }
+
+    &:disabled {
+      opacity: 1;
+      background-color: $px-theme;
+      color: $px-white;
+      
+      .theme-light & {
+        color: $px-white;
+      }
+      
+      &:hover {
+        background-color: $px-theme;
+        color: $px-white;
+        box-shadow: 4px 4px $px-white;
+        
+        .theme-light & {
+          box-shadow: 4px 4px $px-dark;
+          color: $px-white;
+        }
+      }
+    }
+  }
+}
+
+.volumeControl {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  width: 120px;
+}
+
+.muteButton {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: rgba($px-white, 0.8);
+  cursor: pointer;
+  padding: 5px;
+  min-width: 30px;
+  
+  .theme-light & {
+    color: rgba($px-dark, 0.7);
+  }
+  
+  &:hover {
+    color: $px-theme;
+  }
+  
+  &:focus-visible {
+    outline: 3px solid $px-theme;
+    outline-offset: 2px;
+  }
+}
+
+.volumeSlider {
+  width: 80px;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba($px-white, 0.2);
+  border-radius: 5px;
+  outline: none;
+  margin-left: 10px;
+  pointer-events: auto;
+  
+  .theme-light & {
+    background: rgba($px-dark, 0.1);
+  }
+  
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: $px-theme;
+    cursor: pointer;
+    margin-top: -3.5px;
+  }
+  
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: $px-theme;
+    cursor: pointer;
+    border: none;
+    transform: translateY(-3.5px);
+  }
+  
+  &:focus-visible {
+    outline: 3px solid $px-theme;
+    outline-offset: 2px;
+  }
+  
+  &::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, $px-theme 0%, $px-theme var(--volume-fill, 0%), rgba($px-white, 0.2) var(--volume-fill, 0%));
+    border-radius: 5px;
+    height: 5px;
+    
+    .theme-light & {
+      background: linear-gradient(to right, $px-theme 0%, $px-theme var(--volume-fill, 0%), rgba($px-dark, 0.1) var(--volume-fill, 0%));
+    }
+  }
+  
+  &::-moz-range-track {
+    background: rgba($px-white, 0.2);
+    border-radius: 5px;
+    height: 5px;
+    
+    .theme-light & {
+      background: rgba($px-dark, 0.1);
+    }
+  }
+  
+  &::-moz-range-progress {
+    background: $px-theme;
+    border-radius: 5px;
+    height: 5px;
+  }
+}
+
+.noTracks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  text-align: center;
+  color: rgba($px-white, 0.7);
+  font-style: italic;
+  background-color: $px-bg-2;
+  border-radius: 8px;
+  padding: 20px;
+  
+  .theme-light & {
+    color: $px-body-light;
+    background-color: rgba($px-dark, 0.03);
+  }
+}
+
+.emptyPlayerState {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 250px;
+  text-align: center;
+  padding: 30px;
+  background-color: rgba($px-white, 0.005);
+  border-radius: 12px;
+  
+  .theme-light & {
+    background-color: rgba($px-dark, 0.05);
+  }
+  
+  .emptyStateIcon {
+    font-size: 3rem;
+    color: $px-theme;
+    margin-bottom: 15px;
+    opacity: 0.8;
+    animation: pulse 2s infinite ease-in-out;
+  }
+  
+  h3 {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: $px-white;
+    
+    .theme-light & {
+      color: $px-dark;
+    }
+  }
+  
+  p {
+    color: rgba($px-white, 0.7);
+    margin-bottom: 0;
+    max-width: 300px;
+    
+    .theme-light & {
+      color: $px-body-light;
+    }
+  }
+}
+
+.waveformCanvas {
+  width: 100%;
+  height: 100px;
+  border-radius: 8px;
+  background-color: rgba($px-dark, 0.3);
+  
+  .theme-light & {
+    background-color: rgba($px-dark, 0.05);
+  }
+}
+
+.miniVisualizer {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: rgba($px-dark, 0.3);
+  
+  .theme-light & {
+    background-color: rgba($px-dark, 0.05);
+  }
+  
+  canvas {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.pulsing {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Visualization control styles */
+.visualizationControl {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+  padding: 0 10px;
+  border-left: 1px solid rgba($px-white, 0.1);
+  min-width: 100px;
+  
+  .theme-light & {
+    border-left: 1px solid rgba($px-dark, 0.1);
+  }
+}
+
+.visualizationButton {
+  background: none;
+  border: none;
+  color: $px-theme;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    background-color: rgba($px-theme, 0.1);
+    transform: scale(1.1);
+  }
+  
+  &:focus-visible {
+    outline: 3px solid $px-theme;
+    outline-offset: 2px;
+  }
+}
+
+.visualizationLabel {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  color: rgba($px-white, 0.7);
+  text-transform: capitalize;
+  min-width: 70px;
+  
+  .theme-light & {
+    color: $px-body-light;
+  }
+}
+
+@include down-md {
+  .visualizationLabel {
+    display: none;
+  }
+  
+  .visualizationControl {
+    margin-left: 10px;
+    padding: 0 5px;
+    min-width: 40px;
+  }
+}
+
+// Add focus styles for the music section
+.pp-section.pp-scrollable {
+  &:focus {
+    outline: 2px solid $px-theme;
+    outline-offset: -2px;
+  }
+}
+
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: $px-white;
+  
+  .theme-light & {
+    color: $px-dark;
+  }
+}
+
+.progressBar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  width: 100%;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: $px-theme;
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+    color: $px-white;
+    
+    .theme-light & {
+      color: $px-dark;
+    }
+  }
+} 

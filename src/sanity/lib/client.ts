@@ -25,7 +25,7 @@ export async function sanityFetch<QueryResponse>({
     cache: 'force-cache',
     next: { tags },
   });
-  
+
   return data;
 }
 

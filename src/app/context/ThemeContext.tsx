@@ -9,8 +9,8 @@ import React, {
 } from 'react';
 
 type ThemeContextType = {
-  isLightMode: boolean;
-  toggleTheme: () => void;
+  isLightMode: boolean,
+  toggleTheme: () => void,
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -62,4 +62,4 @@ export function useTheme() {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-} 
+}
