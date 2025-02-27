@@ -80,7 +80,7 @@ export const useAudioContext = (
           try {
             sourceRef.current.disconnect();
           } catch (e) {
-            console.log('Error disconnecting old source node:', e);
+            console.error('Error disconnecting old source node:', e);
           }
         }
 
@@ -91,8 +91,6 @@ export const useAudioContext = (
         sourceRef.current.connect(analyserRef.current);
         analyserRef.current.connect(audioContext.destination);
         isInitializedRef.current = true;
-
-        console.log('Audio context initialized successfully');
       }
 
       // Resume audio context if suspended
