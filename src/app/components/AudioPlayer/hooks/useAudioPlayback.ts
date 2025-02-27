@@ -1,4 +1,4 @@
-import { useState, useEffect, RefObject, useRef, useCallback } from 'react';
+import { useState, useEffect, RefObject, useCallback } from 'react';
 import { Track } from '../types';
 
 /**
@@ -221,6 +221,7 @@ export const useAudioPlayback = (
     volume,
     isMuted,
     currentTime,
+    setCurrentTime,
     duration,
     setDuration,
     currentTrack,

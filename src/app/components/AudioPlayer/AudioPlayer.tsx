@@ -18,6 +18,9 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const miniCanvasRef = useRef<HTMLCanvasElement>(null);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMetadataLoaded, setIsMetadataLoaded] = useState(false);
+  const [isPlayable, setIsPlayable] = useState(false);
+  const shouldAutoPlayRef = useRef(false);
 
   // Check if we have tracks to display
   const hasTracks = tracks && tracks.length > 0;
@@ -54,6 +57,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     handleTimeChange,
     handleVolumeChange,
     toggleMute,
+    setCurrentTime,
   } = useAudioPlayback(
     audioRef,
     hasTracks ? tracks : [],
@@ -64,94 +68,142 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     audioContextRef
   );
 
+  // Reset states when track changes
+  useEffect(() => {
+    if (currentTrack) {
+      setIsLoading(true);
+      setIsMetadataLoaded(false);
+      setIsPlayable(false);
+      setIsPlaying(false);
+      shouldAutoPlayRef.current = true; // Set auto-play flag when track changes
+    }
+  }, [currentTrack, setIsPlaying]);
+
   // Update track URL when current track changes
   useEffect(() => {
     const updateTrackUrl = async () => {
       if (currentTrack) {
-        setIsLoading(true);
         try {
           const url = await getAudioUrl(currentTrack.path);
           setCurrentUrl(url);
         } catch (error) {
           console.error('Error loading audio URL:', error);
-        } finally {
           setIsLoading(false);
+          shouldAutoPlayRef.current = false;
         }
       } else {
         setCurrentUrl(null);
+        shouldAutoPlayRef.current = false;
       }
     };
     updateTrackUrl();
   }, [currentTrack]);
 
-  // Update track duration when audio metadata is loaded
+  // Handle audio loading events
   useEffect(() => {
     if (audioRef.current && currentTrack) {
       const audioElement = audioRef.current;
-      const updateDuration = () => {
+
+      const handleLoadedMetadata = () => {
         if (audioElement) {
           setDuration(audioElement.duration);
+          setIsMetadataLoaded(true);
         }
       };
 
-      audioElement.addEventListener('loadedmetadata', updateDuration);
+      const handleCanPlayThrough = async () => {
+        setIsPlayable(true);
+        setIsLoading(false);
+
+        // Initialize audio context before playing
+        await setupAudioContext();
+
+        // Auto-play if this was triggered by a track selection
+        if (shouldAutoPlayRef.current) {
+          shouldAutoPlayRef.current = false;
+          try {
+            await audioElement.play();
+            setIsPlaying(true);
+          } catch (error) {
+            console.error('Error auto-playing:', error);
+            setIsPlaying(false);
+          }
+        }
+      };
+
+      const handleTimeUpdate = () => {
+        setCurrentTime(audioElement.currentTime);
+      };
+
+      const handleError = (error: ErrorEvent) => {
+        console.error('Error loading audio:', error);
+        setIsLoading(false);
+        setIsMetadataLoaded(false);
+        setIsPlayable(false);
+        shouldAutoPlayRef.current = false;
+      };
+
+      audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
+      audioElement.addEventListener('canplaythrough', handleCanPlayThrough);
+      audioElement.addEventListener('timeupdate', handleTimeUpdate);
+      audioElement.addEventListener('error', handleError);
 
       return () => {
-        audioElement.removeEventListener('loadedmetadata', updateDuration);
+        audioElement.removeEventListener(
+          'loadedmetadata',
+          handleLoadedMetadata
+        );
+        audioElement.removeEventListener(
+          'canplaythrough',
+          handleCanPlayThrough
+        );
+        audioElement.removeEventListener('timeupdate', handleTimeUpdate);
+        audioElement.removeEventListener('error', handleError);
       };
     }
-  }, [currentTrack, setDuration]);
+  }, [
+    currentTrack,
+    setDuration,
+    setIsPlaying,
+    setupAudioContext,
+    setCurrentTime,
+  ]);
 
-  // Set up audio context and analyzer when track changes
+  // Set up audio context and analyzer when track starts playing
   useEffect(() => {
-    if (!audioRef.current || currentTrackIndex === null) return;
+    if (
+      !audioRef.current ||
+      currentTrackIndex === null ||
+      !isPlayable ||
+      !isPlaying
+    )
+      return;
 
-    // Make sure audio context is running and analyzer is set up
-    const initializeAudio = async () => {
-      await setupAudioContext();
-
-      // Initialize audio data array if we have an analyzer
-      if (analyserRef.current) {
-        const bufferLength = analyserRef.current.frequencyBinCount;
+    // Start visualizations
+    const startVisualizations = () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (miniAnimationRef.current) {
+        cancelAnimationFrame(miniAnimationRef.current);
       }
 
-      // Start visualizations if playing
-      if (isPlaying && audioRef.current) {
-        // Cancel any existing animation frames before creating new ones
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-        if (miniAnimationRef.current) {
-          cancelAnimationFrame(miniAnimationRef.current);
-        }
-
-        // Create animation loop functions that call themselves
-        const animateWaveform = () => {
-          drawWaveform();
-          animationRef.current = requestAnimationFrame(animateWaveform);
-        };
-
-        const animateMiniVisualizer = () => {
-          drawMiniVisualizer();
-          miniAnimationRef.current = requestAnimationFrame(
-            animateMiniVisualizer
-          );
-        };
-
-        // Start animation loops
+      const animateWaveform = () => {
+        drawWaveform();
         animationRef.current = requestAnimationFrame(animateWaveform);
-        miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+      };
 
-        audioRef.current.play().catch((error) => {
-          console.error('Error playing audio:', error);
-          setIsPlaying(false);
-        });
-      }
+      const animateMiniVisualizer = () => {
+        drawMiniVisualizer();
+        miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+      };
+
+      animationRef.current = requestAnimationFrame(animateWaveform);
+      miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
     };
 
-    initializeAudio();
+    startVisualizations();
 
-    // Clean up animations when component unmounts or track changes
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -165,50 +217,16 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   }, [
     currentTrackIndex,
     isPlaying,
-    setupAudioContext,
     analyserRef,
     drawWaveform,
     drawMiniVisualizer,
     animationRef,
     miniAnimationRef,
-    setIsPlaying,
+    isPlayable,
   ]);
 
-  // Handle track selection
   const handleTrackSelect = (index: number) => {
     setCurrentTrackIndex(index);
-    setIsPlaying(true);
-
-    // Ensure visualizations start when a track is selected
-    // This needs to be done after the state updates and component re-renders
-    setTimeout(() => {
-      if (audioRef.current && analyserRef.current) {
-        // Cancel any existing animation frames
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-        if (miniAnimationRef.current) {
-          cancelAnimationFrame(miniAnimationRef.current);
-        }
-
-        // Create animation loop functions
-        const animateWaveform = () => {
-          drawWaveform();
-          animationRef.current = requestAnimationFrame(animateWaveform);
-        };
-
-        const animateMiniVisualizer = () => {
-          drawMiniVisualizer();
-          miniAnimationRef.current = requestAnimationFrame(
-            animateMiniVisualizer
-          );
-        };
-
-        // Start animation loops
-        animationRef.current = requestAnimationFrame(animateWaveform);
-        miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
-      }
-    }, 100);
   };
 
   return (
@@ -252,7 +270,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
                 onTimeChange={handleTimeChange}
                 onVolumeChange={handleVolumeChange}
                 onToggleMute={toggleMute}
-                isLoading={isLoading}
+                isLoading={isLoading || !isMetadataLoaded}
               />
             </div>
           </>
