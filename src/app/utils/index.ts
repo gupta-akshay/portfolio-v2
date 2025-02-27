@@ -163,4 +163,16 @@ export const musicTracks = [
     artist: 'A-Shay',
     cloudinaryPublicId: 'Mera_Joota_Hai_Japani_A-Shay_Edit_lzylai',
   },
+  {
+    id: 'Sanam_Re_A-Shay_Neon_Remix_hearthis.at_icdz97',
+    title: 'Sanam Re - Remix',
+    artist: 'A-Shay & Neon',
+    cloudinaryPublicId: 'Sanam_Re_A-Shay_Neon_Remix_hearthis.at_icdz97',
+  },
+  {
+    id: 'Lilly_Wood_The_Prick_-_Prayer_In_C_A-Shay_Remix_symprx',
+    title: 'Lilly Wood & The Prick: Prayer In C - Remix',
+    artist: 'A-Shay',
+    cloudinaryPublicId: 'Lilly_Wood_The_Prick_-_Prayer_In_C_A-Shay_Remix_symprx',
+  },
 ];
