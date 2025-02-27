@@ -59,10 +59,12 @@ export default function Music() {
           </div>
           <div className='music-description mb-4'>
             <p>
-              Welcome to my music collection! Here you can listen to my latest
-              remixes and productions. I love experimenting with different
-              genres and creating unique sounds. Enjoy the beats!
+              Hey there! 🎧 Welcome to my music collection! I love experimenting
+              with different genres and crafting unique sounds that blend styles
+              in unexpected ways. Whether it's a fresh remix or an original
+              production, every track is a piece of my creative journey.
             </p>
+            <p>Hit play, turn up the volume, and enjoy the beats! 🚀</p>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <MusicTracks />

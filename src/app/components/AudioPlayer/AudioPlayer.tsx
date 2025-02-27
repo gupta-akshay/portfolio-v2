@@ -10,7 +10,6 @@ import {
   NowPlaying,
   Waveform,
   EmptyPlayer,
-  NoTracks,
 } from './components';
 
 const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
@@ -190,15 +189,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       }
     }, 100);
   };
-
-  // If there are no tracks, return early after hooks are called
-  if (!hasTracks) {
-    return (
-      <div className='cloudinaryAudioPlayer'>
-        <NoTracks />
-      </div>
-    );
-  }
 
   return (
     <div className='cloudinaryAudioPlayer'>
