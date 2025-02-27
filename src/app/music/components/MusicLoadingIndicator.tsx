@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-const LoadingIndicator: React.FC = () => {
+const MusicLoadingIndicator: React.FC = () => {
   return (
     <div className='loading-container'>
       <div className='loading-spinner'>
@@ -13,4 +13,4 @@ const LoadingIndicator: React.FC = () => {
   );
 };
 
-export default LoadingIndicator;
+export default MusicLoadingIndicator; 

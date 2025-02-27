@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import AudioPlayer from '@/app/components/AudioPlayer';
-import LoadingIndicator from '@/app/components/LoadingIndicator';
+import MusicLoadingIndicator from './MusicLoadingIndicator';
 import { Track } from '@/app/components/AudioPlayer/types';
 import { getAudioFilesList } from '@/app/utils/dropbox';
 
@@ -32,7 +32,7 @@ function MusicTracks() {
   }
 
   if (isLoading) {
-    return <LoadingIndicator />;
+    return <MusicLoadingIndicator />;
   }
 
   return (

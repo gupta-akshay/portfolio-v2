@@ -19,6 +19,33 @@
   outline: none !important;
 }
 
+* {
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: $px-theme transparent;
+
+  // Webkit (Chrome, Safari, Edge)
+  &::-webkit-scrollbar {
+    width: 8px;  // Vertical scrollbar width
+    height: 8px; // Horizontal scrollbar height
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $px-theme;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+
+    &:hover {
+      background-color: color.adjust($px-theme, $lightness: -8%);
+    }
+  }
+}
+
 // Document Setup
 html {
   font-size: 100%;
