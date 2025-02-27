@@ -148,7 +148,8 @@ export const musicTracks = [
     id: 'Ed_Sheeran_-_Shape_Of_You_A-Shay_Remix_Final_Mix_x05fv5',
     title: 'Ed Sheeran: Shape of You - Remix',
     artist: 'A-Shay',
-    cloudinaryPublicId: 'Ed_Sheeran_-_Shape_Of_You_A-Shay_Remix_Final_Mix_x05fv5',
+    cloudinaryPublicId:
+      'Ed_Sheeran_-_Shape_Of_You_A-Shay_Remix_Final_Mix_x05fv5',
   },
   {
     id: 'Humari_Adhuri_Kahani_-_Humnava_A-Shay_Remix_bnsym7',

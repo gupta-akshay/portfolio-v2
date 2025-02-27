@@ -3,12 +3,7 @@
 import { useRef, useEffect } from 'react';
 import { AudioPlayerProps } from './types';
 import { getAudioUrl } from './utils';
-import {
-  useAudioContext,
-  useAudioPlayback,
-  useTrackDurations,
-  useVisualizer,
-} from './hooks';
+import { useAudioContext, useAudioPlayback, useVisualizer } from './hooks';
 import {
   TrackList,
   PlayerControls,
@@ -35,11 +30,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     miniAnimationRef,
     setupAudioContext,
   } = useAudioContext(audioRef, false);
-
-  const { trackDurations, setTrackDurations } = useTrackDurations(
-    hasTracks ? tracks : [],
-    cloudName
-  );
 
   const { drawWaveform, drawMiniVisualizer } = useVisualizer(
     analyserRef,
@@ -74,19 +64,13 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     audioContextRef
   );
 
-  // Update track duration in our state when audio metadata is loaded
+  // Update track duration when audio metadata is loaded
   useEffect(() => {
-    if (audioRef.current && currentTrack && currentTrack.id) {
-      const audioElement = audioRef.current; // Store ref value in a variable
+    if (audioRef.current && currentTrack) {
+      const audioElement = audioRef.current;
       const updateDuration = () => {
-        if (audioElement && currentTrack.id) {
+        if (audioElement) {
           setDuration(audioElement.duration);
-
-          // Also update the track duration in our trackDurations state
-          setTrackDurations((prev) => ({
-            ...prev,
-            [currentTrack.id]: audioElement.duration,
-          }));
         }
       };
 
@@ -96,7 +80,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         audioElement.removeEventListener('loadedmetadata', updateDuration);
       };
     }
-  }, [currentTrack, setTrackDurations, setDuration]);
+  }, [currentTrack, setDuration]);
 
   // Set up audio context and analyzer when track changes
   useEffect(() => {
@@ -231,7 +215,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         tracks={tracks}
         currentTrackIndex={currentTrackIndex}
         onTrackSelect={handleTrackSelect}
-        trackDurations={trackDurations}
       />
 
       <div className='playerControls'>

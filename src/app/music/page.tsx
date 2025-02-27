@@ -50,8 +50,8 @@ export default function Music() {
         data-nav-tooltip='Music'
         className='pp-section pp-scrollable section'
         tabIndex={0}
-        role="region"
-        aria-label="Music Section"
+        role='region'
+        aria-label='Music Section'
       >
         <div className='container'>
           <div className='title'>
