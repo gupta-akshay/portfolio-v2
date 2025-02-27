@@ -10,7 +10,7 @@ export const useTrackDurations = (
   cloudName: string | undefined
 ) => {
   const [trackDurations, setTrackDurations] = useState<{
-    [id: string]: number;
+    [id: string]: number,
   }>({});
   const hiddenAudioRef = useRef<HTMLAudioElement | null>(null);
   const loadedTracksRef = useRef<Set<string>>(new Set());
