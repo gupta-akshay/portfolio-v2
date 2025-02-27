@@ -2,7 +2,7 @@
 import crypto from 'crypto';
 import bundleAnalyzer from '@next/bundle-analyzer';
 
-const nextConfig = {  
+const nextConfig = {
   experimental: {
     optimizeCss: true,
     optimizeServerReact: true,
@@ -73,10 +73,10 @@ const nextConfig = {
               "font-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",
-              "form-action 'self'",
+              "form-action 'self' https://www.dropbox.com https://oauth2.dropbox.com",
               "frame-ancestors 'none'",
-              "frame-src 'self' https://www.google.com https://app.netlify.com",
-              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com https://api.dropboxapi.com https://*.dropboxusercontent.com https://content.dropboxapi.com",
+              "frame-src 'self' https://www.google.com https://app.netlify.com https://www.dropbox.com https://oauth2.dropbox.com",
+              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com https://api.dropboxapi.com https://*.dropboxusercontent.com https://content.dropboxapi.com https://www.dropbox.com https://oauth2.dropbox.com",
               "media-src 'self' blob: https://*.dropboxusercontent.com",
               'block-all-mixed-content',
               'upgrade-insecure-requests',
