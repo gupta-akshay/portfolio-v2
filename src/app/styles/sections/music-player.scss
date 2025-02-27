@@ -314,6 +314,12 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+
+    @include down-md {
+      position: static;
+      transform: none;
+      margin-right: auto;
+    }
   }
 }
 
