@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import AudioPlayer from '@/app/components/AudioPlayer';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
+import { musicTracks } from '@/app/utils';
 
 export const metadata: Metadata = {
   title: 'My Music | Akshay Gupta',
@@ -32,22 +33,6 @@ export const metadata: Metadata = {
   },
 };
 
-const musicTracks = [
-  {
-    id: 'Fitoor_-_Yeh_Fitoor_Mera_A-Shay_Remix_Ft._Yash_Kapoor_th4cme',
-    title: 'Yeh Fitoor Mera - Remix',
-    artist: 'A-Shay Ft. Yash Kapoor',
-    cloudinaryPublicId:
-      'Fitoor_-_Yeh_Fitoor_Mera_A-Shay_Remix_Ft._Yash_Kapoor_th4cme',
-  },
-  {
-    id: 'RHTDM_-_Zara_Zara_A-Shay_Remix_Final_Mix_1_kwumvv',
-    title: 'RHTDM: Zara Zara - Remix',
-    artist: 'A-Shay',
-    cloudinaryPublicId: 'RHTDM_-_Zara_Zara_A-Shay_Remix_Final_Mix_1_kwumvv',
-  },
-];
-
 // Separate component for music tracks to use with Suspense
 function MusicTracks() {
   return (
@@ -64,6 +49,9 @@ export default function Music() {
         id='music'
         data-nav-tooltip='Music'
         className='pp-section pp-scrollable section'
+        tabIndex={0}
+        role="region"
+        aria-label="Music Section"
       >
         <div className='container'>
           <div className='title'>

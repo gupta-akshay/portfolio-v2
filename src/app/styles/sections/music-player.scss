@@ -31,7 +31,7 @@
   @include up-md {
     margin-right: 20px;
     margin-bottom: 0;
-    max-width: 300px;
+    max-width: 450px;
   }
   
   h4 {
@@ -48,15 +48,27 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 300px;
     overflow-y: auto;
+    max-height: 500px;
     border-radius: 8px;
     background-color: $px-bg-2;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    scrollbar-width: thin;
+    scrollbar-color: $px-theme transparent;
     
     .theme-light & {
       background-color: $px-white;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    @include down-md {
+      max-height: 300px;
+    }
+
+    // Add focus styles for keyboard navigation
+    &:focus {
+      outline: 2px solid $px-theme;
+      outline-offset: 2px;
     }
   }
 }
@@ -93,6 +105,13 @@
     .theme-light & {
       background-color: rgba($px-theme, 0.1);
     }
+  }
+
+  // Add focus styles for keyboard navigation
+  &:focus {
+    outline: 2px solid $px-theme;
+    outline-offset: -2px;
+    background-color: rgba($px-theme, 0.1);
   }
 }
 
@@ -133,6 +152,7 @@
   flex: 2;
   display: flex;
   flex-direction: column;
+  align-self: center;
 }
 
 .nowPlaying {
@@ -602,5 +622,13 @@
     margin-left: 10px;
     padding: 0 5px;
     min-width: 40px;
+  }
+}
+
+// Add focus styles for the music section
+.pp-section.pp-scrollable {
+  &:focus {
+    outline: 2px solid $px-theme;
+    outline-offset: -2px;
   }
 } 
