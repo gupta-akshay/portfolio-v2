@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
-import AudioPlayer from '@/app/components/AudioPlayer';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
-import { Track } from '@/app/components/AudioPlayer/types';
+import MusicTracks from '@/app/music/components/MusicTracks';
 
 export const metadata: Metadata = {
   title: 'My Music | Akshay Gupta',
@@ -32,32 +31,6 @@ export const metadata: Metadata = {
     creator: '@akshay_gupta_',
   },
 };
-
-// Separate component for music tracks to use with Suspense
-async function MusicTracks() {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    (process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : 'https://akshaygupta.live');
-
-  const response = await fetch(`${baseUrl}/api/music`, {
-    cache: 'no-store',
-    next: { revalidate: 0 },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch tracks');
-  }
-
-  const tracks: Track[] = await response.json();
-
-  return (
-    <div className='music-container'>
-      <AudioPlayer tracks={tracks} />
-    </div>
-  );
-}
 
 export default function Music() {
   return (
