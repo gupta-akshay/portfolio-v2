@@ -12,8 +12,8 @@ export const useVisualizer = (
 ) => {
   // Performance optimization: Cache these values to avoid recalculation
   const lastFrameTimeRef = useRef<number>(0);
-  const lastMiniFrameTimeRef = useRef<number>(0); // Separate timing for mini visualizer
-  const frameIntervalRef = useRef<number>(1000 / 30); // ms between frames
+  const lastMiniFrameTimeRef = useRef<number>(0);
+  const frameIntervalRef = useRef<number>(1000 / 60); // Increased to 60 FPS for smoother animation
 
   // Cache gradients to avoid recreating them on every frame
   const gradientCacheRef = useRef<{ [key: string]: CanvasGradient | null }>({
@@ -25,14 +25,12 @@ export const useVisualizer = (
     miniDark: null,
   });
 
-  // Memoize the drawWaveform function to prevent unnecessary recreations
   const drawWaveform = useCallback(() => {
     if (!canvasRef.current || !analyserRef.current) return;
 
     const now = performance.now();
     const elapsed = now - lastFrameTimeRef.current;
 
-    // Throttle rendering to target FPS
     if (elapsed < frameIntervalRef.current) return;
     lastFrameTimeRef.current = now - (elapsed % frameIntervalRef.current);
 
@@ -47,8 +45,6 @@ export const useVisualizer = (
     ) {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
-
-      // Clear gradient cache when canvas size changes
       gradientCacheRef.current.waveLight = null;
       gradientCacheRef.current.waveDark = null;
       gradientCacheRef.current.fillLight = null;
@@ -58,105 +54,84 @@ export const useVisualizer = (
     try {
       const analyser = analyserRef.current;
       const bufferLength = analyser.frequencyBinCount;
-
-      // Use time domain data for wave style
       const dataArray = new Uint8Array(bufferLength);
       analyser.getByteTimeDomainData(dataArray);
 
-      // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Set dimensions
       const width = canvas.width;
       const height = canvas.height;
-
-      // Check if we're in light theme
       const isLightMode = isLightTheme();
 
       // Use cached gradient or create a new one
-      let gradient;
-      if (isLightMode) {
-        if (!gradientCacheRef.current.waveLight) {
-          gradient = ctx.createLinearGradient(0, 0, width, 0);
-          gradient.addColorStop(0, '#2fbf71'); // px-theme
+      let gradient = isLightMode
+        ? gradientCacheRef.current.waveLight
+        : gradientCacheRef.current.waveDark;
+      if (!gradient) {
+        gradient = ctx.createLinearGradient(0, 0, width, 0);
+        if (isLightMode) {
+          gradient.addColorStop(0, '#2fbf71');
           gradient.addColorStop(0.5, '#5fd99a');
-          gradient.addColorStop(1, '#00c9c9'); // teal color
+          gradient.addColorStop(1, '#00c9c9');
           gradientCacheRef.current.waveLight = gradient;
         } else {
-          gradient = gradientCacheRef.current.waveLight;
-        }
-      } else {
-        if (!gradientCacheRef.current.waveDark) {
-          gradient = ctx.createLinearGradient(0, 0, width, 0);
-          gradient.addColorStop(0, '#2fbf71'); // px-theme
+          gradient.addColorStop(0, '#2fbf71');
           gradient.addColorStop(0.5, '#5fd99a');
-          gradient.addColorStop(1, '#00e5e5'); // brighter teal
+          gradient.addColorStop(1, '#00e5e5');
           gradientCacheRef.current.waveDark = gradient;
-        } else {
-          gradient = gradientCacheRef.current.waveDark;
         }
       }
 
-      // Draw smooth wave
+      // Draw smooth wave with increased reactivity
       ctx.lineWidth = 2;
       ctx.strokeStyle = gradient;
       ctx.beginPath();
 
-      // Optimize point sampling - use fewer points for better performance
-      // Increase skipFactor for better performance
-      const skipFactor = Math.ceil(bufferLength / 250); // Reduced from 500 to 250 points
+      // Optimize point sampling while maintaining reactivity
+      const skipFactor = Math.ceil(bufferLength / 512); // Increased sample points
       const sliceWidth = width / (bufferLength / skipFactor);
-
       let x = 0;
       let lastY = height / 2;
 
-      // Apply a subtle vertical scaling to make the wave less aggressive
-      const verticalScale = 0.7; // Reduce the vertical amplitude (0-1)
+      // Increased vertical scale for more dramatic effect
+      const verticalScale = 0.9; // Increased from 0.7
 
       for (let i = 0; i < bufferLength; i += skipFactor) {
-        // Normalize to 0-2 range and center around 1
         const v = dataArray[i] / 128.0;
-
-        // Scale the vertical amplitude and center at half height
         const y = height / 2 + (((v - 1) * height) / 2) * verticalScale;
 
-        // Apply bezier curve for smoother wave
         if (i === 0) {
           ctx.moveTo(x, y);
         } else {
-          // Use quadratic curves for smoother lines
+          // Enhanced curve smoothing
           const prevX = x - sliceWidth;
           const midX = prevX + (x - prevX) / 2;
-          ctx.quadraticCurveTo(midX, lastY, x, y);
+          const midY = (lastY + y) / 2;
+          ctx.quadraticCurveTo(prevX, lastY, midX, midY);
+          ctx.quadraticCurveTo(midX, midY, x, y);
         }
 
         lastY = y;
         x += sliceWidth;
       }
 
-      // Complete the path to the right edge
       ctx.lineTo(canvas.width, height / 2);
       ctx.stroke();
 
-      // Add a subtle fill below the line
-      let fillGradient;
-      if (isLightMode) {
-        if (!gradientCacheRef.current.fillLight) {
-          fillGradient = ctx.createLinearGradient(0, height / 2, 0, height);
-          fillGradient.addColorStop(0, 'rgba(47, 191, 113, 0.2)'); // Reduced opacity
-          fillGradient.addColorStop(1, 'rgba(0, 201, 201, 0.03)');
+      // Add enhanced fill effect
+      let fillGradient = isLightMode
+        ? gradientCacheRef.current.fillLight
+        : gradientCacheRef.current.fillDark;
+      if (!fillGradient) {
+        fillGradient = ctx.createLinearGradient(0, height / 2, 0, height);
+        if (isLightMode) {
+          fillGradient.addColorStop(0, 'rgba(47, 191, 113, 0.3)'); // Increased opacity
+          fillGradient.addColorStop(1, 'rgba(0, 201, 201, 0.05)');
           gradientCacheRef.current.fillLight = fillGradient;
         } else {
-          fillGradient = gradientCacheRef.current.fillLight;
-        }
-      } else {
-        if (!gradientCacheRef.current.fillDark) {
-          fillGradient = ctx.createLinearGradient(0, height / 2, 0, height);
-          fillGradient.addColorStop(0, 'rgba(47, 191, 113, 0.2)'); // Reduced opacity
-          fillGradient.addColorStop(1, 'rgba(0, 229, 229, 0.03)');
+          fillGradient.addColorStop(0, 'rgba(47, 191, 113, 0.3)'); // Increased opacity
+          fillGradient.addColorStop(1, 'rgba(0, 229, 229, 0.05)');
           gradientCacheRef.current.fillDark = fillGradient;
-        } else {
-          fillGradient = gradientCacheRef.current.fillDark;
         }
       }
 
@@ -167,13 +142,7 @@ export const useVisualizer = (
     } catch (error) {
       console.error('Error drawing waveform:', error);
     }
-  }, [
-    canvasRef,
-    analyserRef,
-    lastFrameTimeRef,
-    frameIntervalRef,
-    gradientCacheRef,
-  ]);
+  }, [canvasRef, analyserRef]);
 
   // Memoize the drawMiniVisualizer function
   const drawMiniVisualizer = useCallback(() => {

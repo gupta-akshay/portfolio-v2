@@ -1,96 +1,109 @@
-import React from 'react';
+import { ChangeEvent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   faPlay,
   faPause,
-  faForward,
   faBackward,
+  faForward,
   faVolumeHigh,
   faVolumeMute,
 } from '@fortawesome/free-solid-svg-icons';
 import { formatTime } from '../utils';
+import LoadingSpinner from './LoadingSpinner';
 
-interface PlayerControlsProps {
+export interface PlayerControlsProps {
   isPlaying: boolean;
   currentTime: number;
   duration: number;
   volume: number;
   isMuted: boolean;
+  isLoading?: boolean;
   onPlayPause: () => void;
   onPrevious: () => void;
   onNext: () => void;
-  onTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onVolumeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onTimeChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onVolumeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onToggleMute: () => void;
 }
 
-const PlayerControls: React.FC<PlayerControlsProps> = ({
+const PlayerControls = ({
   isPlaying,
   currentTime,
   duration,
   volume,
   isMuted,
+  isLoading = false,
   onPlayPause,
   onPrevious,
   onNext,
   onTimeChange,
   onVolumeChange,
   onToggleMute,
-}) => {
+}: PlayerControlsProps) => {
   return (
     <>
       <div className='timeControls'>
         <span className='currentTime'>{formatTime(currentTime)}</span>
         <input
           type='range'
-          min='0'
+          min={0}
           max={duration || 0}
           value={currentTime}
           onChange={onTimeChange}
           className='progressBar'
           aria-label='Seek time'
+          disabled={isLoading}
         />
         <span className='totalTime'>{formatTime(duration)}</span>
       </div>
 
       <div className='controls'>
-        <button
-          onClick={onPrevious}
-          className='controlButton'
-          aria-label='Previous track'
-        >
-          <FontAwesomeIcon icon={faBackward as IconProp} />
-        </button>
-        <button
-          onClick={onPlayPause}
-          className={`controlButton playButton`}
-          aria-label={isPlaying ? 'Pause' : 'Play'}
-        >
-          <FontAwesomeIcon icon={(isPlaying ? faPause : faPlay) as IconProp} />
-        </button>
-        <button
-          onClick={onNext}
-          className='controlButton'
-          aria-label='Next track'
-        >
-          <FontAwesomeIcon icon={faForward as IconProp} />
-        </button>
+        <div className='mainControls'>
+          <button
+            onClick={onPrevious}
+            className='controlButton'
+            aria-label='Previous track'
+            disabled={isLoading}
+          >
+            <FontAwesomeIcon icon={faBackward} />
+          </button>
+
+          <button
+            onClick={onPlayPause}
+            className='controlButton playButton'
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+            )}
+          </button>
+
+          <button
+            onClick={onNext}
+            className='controlButton'
+            aria-label='Next track'
+            disabled={isLoading}
+          >
+            <FontAwesomeIcon icon={faForward} />
+          </button>
+        </div>
+
         <div className='volumeControl'>
           <button
             onClick={onToggleMute}
             className='muteButton'
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
-            <FontAwesomeIcon
-              icon={(isMuted ? faVolumeMute : faVolumeHigh) as IconProp}
-            />
+            <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeHigh} />
           </button>
           <input
             type='range'
-            min='0'
-            max='1'
-            step='0.01'
+            min={0}
+            max={1}
+            step={0.01}
             value={volume}
             onChange={onVolumeChange}
             className='volumeSlider'

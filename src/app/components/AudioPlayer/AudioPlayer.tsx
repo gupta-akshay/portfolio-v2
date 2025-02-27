@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { AudioPlayerProps } from './types';
-import { getAudioUrl } from './utils';
+import { getAudioUrl } from '@/app/utils/dropbox';
 import { useAudioContext, useAudioPlayback, useVisualizer } from './hooks';
 import {
   TrackList,
@@ -16,10 +16,11 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const miniCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Check if we have tracks to display
   const hasTracks = tracks && tracks.length > 0;
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
   // Custom hooks - all called unconditionally
   const {
@@ -62,6 +63,26 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     drawMiniVisualizer,
     audioContextRef
   );
+
+  // Update track URL when current track changes
+  useEffect(() => {
+    const updateTrackUrl = async () => {
+      if (currentTrack) {
+        setIsLoading(true);
+        try {
+          const url = await getAudioUrl(currentTrack.path);
+          setCurrentUrl(url);
+        } catch (error) {
+          console.error('Error loading audio URL:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setCurrentUrl(null);
+      }
+    };
+    updateTrackUrl();
+  }, [currentTrack]);
 
   // Update track duration when audio metadata is loaded
   useEffect(() => {
@@ -192,12 +213,12 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   return (
     <div className='cloudinaryAudioPlayer'>
-      {currentTrack && (
+      {currentTrack && currentUrl && (
         <audio
           ref={audioRef}
-          src={getAudioUrl(currentTrack.cloudinaryPublicId, cloudName)}
+          src={currentUrl}
           preload='metadata'
-          crossOrigin='anonymous' // Required for Web Audio API with external sources
+          crossOrigin='anonymous'
         />
       )}
 
@@ -212,7 +233,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           <>
             <NowPlaying
               currentTrack={currentTrack}
-              isPlaying={isPlaying}
+              isPlaying={isPlaying && !isLoading}
               miniCanvasRef={miniCanvasRef}
             />
 
@@ -231,6 +252,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
                 onTimeChange={handleTimeChange}
                 onVolumeChange={handleVolumeChange}
                 onToggleMute={toggleMute}
+                isLoading={isLoading}
               />
             </div>
           </>

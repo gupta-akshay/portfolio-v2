@@ -6,7 +6,7 @@ export interface Track {
   id: string;
   title: string;
   artist: string;
-  cloudinaryPublicId: string; // Cloudinary public ID for the audio file
+  path: string; // Dropbox file path
   duration?: string; // Make duration optional as we'll calculate it from metadata
 }
 
