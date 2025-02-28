@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, RefObject } from 'react';
 import { AudioPlayerProps } from './types';
 import { getAudioUrl } from '@/app/utils/dropbox';
 import { useAudioContext, useAudioPlayback, useVisualizer } from './hooks';
@@ -10,6 +10,8 @@ import {
   NowPlaying,
   Waveform,
   EmptyPlayer,
+  MiniPlayer,
+  FullScreenPlayer,
 } from './components';
 
 const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
@@ -20,10 +22,12 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isMetadataLoaded, setIsMetadataLoaded] = useState(false);
   const [isPlayable, setIsPlayable] = useState(false);
+  const [isFullScreenVisible, setIsFullScreenVisible] = useState(false);
   const shouldAutoPlayRef = useRef(false);
 
   // Check if we have tracks to display
   const hasTracks = tracks && tracks.length > 0;
+  const isMobile = window.innerWidth <= 991;
 
   // Custom hooks - all called unconditionally
   const {
@@ -75,7 +79,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       setIsMetadataLoaded(false);
       setIsPlayable(false);
       setIsPlaying(false);
-      shouldAutoPlayRef.current = true; // Set auto-play flag when track changes
+      shouldAutoPlayRef.current = true;
     }
   }, [currentTrack, setIsPlaying]);
 
@@ -115,10 +119,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         setIsPlayable(true);
         setIsLoading(false);
 
-        // Initialize audio context before playing
         await setupAudioContext();
 
-        // Auto-play if this was triggered by a track selection
         if (shouldAutoPlayRef.current) {
           shouldAutoPlayRef.current = false;
           try {
@@ -179,7 +181,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     )
       return;
 
-    // Start visualizations
     const startVisualizations = () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -229,6 +230,14 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     setCurrentTrackIndex(index);
   };
 
+  const handleExpandPlayer = () => {
+    setIsFullScreenVisible(true);
+  };
+
+  const handleCloseFullScreen = () => {
+    setIsFullScreenVisible(false);
+  };
+
   return (
     <div className='cloudinaryAudioPlayer'>
       {currentTrack && currentUrl && (
@@ -246,38 +255,75 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         onTrackSelect={handleTrackSelect}
       />
 
-      <div className='playerControls'>
-        {currentTrack ? (
-          <>
-            <NowPlaying
-              currentTrack={currentTrack}
-              isPlaying={isPlaying && !isLoading}
-              miniCanvasRef={miniCanvasRef}
-            />
-
-            <div className='playerWrapper'>
-              <Waveform canvasRef={canvasRef} />
-
-              <PlayerControls
-                isPlaying={isPlaying}
-                currentTime={currentTime}
-                duration={duration}
-                volume={volume}
-                isMuted={isMuted}
-                onPlayPause={handlePlayPause}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                onTimeChange={handleTimeChange}
-                onVolumeChange={handleVolumeChange}
-                onToggleMute={toggleMute}
-                isLoading={isLoading || !isMetadataLoaded}
+      {/* Desktop Player */}
+      {!isMobile && (
+        <div className='playerControls desktop'>
+          {currentTrack ? (
+            <>
+              <NowPlaying
+                currentTrack={currentTrack}
+                isPlaying={isPlaying && !isLoading}
+                miniCanvasRef={miniCanvasRef}
               />
-            </div>
-          </>
-        ) : (
-          <EmptyPlayer />
-        )}
-      </div>
+
+              <div className='playerWrapper'>
+                <Waveform canvasRef={canvasRef} />
+
+                <PlayerControls
+                  isPlaying={isPlaying}
+                  currentTime={currentTime}
+                  duration={duration}
+                  volume={volume}
+                  isMuted={isMuted}
+                  onPlayPause={handlePlayPause}
+                  onPrevious={handlePrevious}
+                  onNext={handleNext}
+                  onTimeChange={handleTimeChange}
+                  onVolumeChange={handleVolumeChange}
+                  onToggleMute={toggleMute}
+                  isLoading={isLoading || !isMetadataLoaded}
+                />
+              </div>
+            </>
+          ) : (
+            <EmptyPlayer />
+          )}
+        </div>
+      )}
+
+      {/* Mobile Mini Player */}
+      {currentTrack && isMobile && (
+        <MiniPlayer
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          isLoading={isLoading || !isMetadataLoaded}
+          miniCanvasRef={miniCanvasRef as RefObject<HTMLCanvasElement>}
+          onPlayPause={handlePlayPause}
+          onExpand={handleExpandPlayer}
+        />
+      )}
+
+      {/* Mobile Full Screen Player */}
+      {currentTrack && isMobile && (
+        <FullScreenPlayer
+          isVisible={isFullScreenVisible}
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
+          volume={volume}
+          isMuted={isMuted}
+          isLoading={isLoading || !isMetadataLoaded}
+          canvasRef={canvasRef as RefObject<HTMLCanvasElement>}
+          onClose={handleCloseFullScreen}
+          onPlayPause={handlePlayPause}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          onTimeChange={handleTimeChange}
+          onVolumeChange={handleVolumeChange}
+          onToggleMute={toggleMute}
+        />
+      )}
     </div>
   );
 };
