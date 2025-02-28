@@ -131,7 +131,7 @@ You only need to update the refresh token if:
 - You create a new Dropbox app.
 - There's a security breach requiring token rotation.
 
-### 3. Audio File Naming 🎵
+### 4. Audio File Naming 🎵
 
 Name your audio files like this:
 
@@ -142,7 +142,7 @@ Example: [2024][The Beatles][Hey Jude][Remix][A-Shay].mp3
 
 > Pro tip: The brackets are important. Very important.
 
-### 3. Fire It Up! 🔥
+### 5. Fire It Up! 🔥
 
 ```bash
 npm run dev
