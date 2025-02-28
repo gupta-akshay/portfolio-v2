@@ -37,6 +37,38 @@ Because one framework is never enough:
   - Smart metadata parsing (It reads file names better than I read documentation)
   - Volume control (For when your neighbors complain)
   - Keyboard controls (For the mouse-averse)
+  - Mobile-optimized UI:
+    - Swipe gestures (Up to expand, Down to minimize)
+    - Mini player with scrolling track names
+    - Fullscreen mode with touch-friendly controls
+    - Responsive visualizations
+    - Auto-adjusting layout for different screen sizes
+
+### About Token Management 🔐
+
+The app implements a robust token management system that:
+
+- Caches access tokens for 1 hour to minimize API calls
+- Automatically refreshes expired tokens using the refresh token
+- Handles token expiration and renewal transparently
+- Implements retry mechanisms for failed API calls
+- Uses server-side token refresh to keep credentials secure
+
+The token flow works like this:
+
+1. Client requests an audio file
+2. System checks for a cached access token
+3. If token is expired or missing:
+   - Server exchanges refresh token for new access token
+   - New token is cached for future requests
+4. Audio is streamed using valid token
+5. Process repeats automatically when token expires
+
+Error handling includes:
+
+- Automatic retry with fresh token on 401 errors
+- Cache invalidation for expired tokens
+- Graceful fallbacks for API failures
 
 ## 🚀 Quick Start
 
