@@ -25,7 +25,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LoadingProvider>{children}</LoadingProvider>
         </ThemeProvider>
-      <Metrics />
+        <Metrics />
       </body>
     </html>
   );

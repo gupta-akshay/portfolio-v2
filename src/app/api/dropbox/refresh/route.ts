@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 
-const DROPBOX_APP_KEY = process.env.NEXT_PUBLIC_DROPBOX_API_KEY!;
-const DROPBOX_APP_SECRET = process.env.NEXT_PUBLIC_DROPBOX_API_SECRET!;
-const DROPBOX_REFRESH_TOKEN = process.env.NEXT_PUBLIC_DROPBOX_REFRESH_TOKEN!;
-
 export async function GET() {
   try {
+    if (
+      !process.env.NEXT_PUBLIC_DROPBOX_API_KEY ||
+      !process.env.NEXT_PUBLIC_DROPBOX_API_SECRET ||
+      !process.env.NEXT_PUBLIC_DROPBOX_REFRESH_TOKEN
+    ) {
+      throw new Error('Missing required Dropbox environment variables');
+    }
+
     const response = await fetch('https://api.dropbox.com/oauth2/token', {
       method: 'POST',
       headers: {
@@ -13,9 +17,9 @@ export async function GET() {
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
-        refresh_token: DROPBOX_REFRESH_TOKEN,
-        client_id: DROPBOX_APP_KEY,
-        client_secret: DROPBOX_APP_SECRET,
+        refresh_token: process.env.NEXT_PUBLIC_DROPBOX_REFRESH_TOKEN,
+        client_id: process.env.NEXT_PUBLIC_DROPBOX_API_KEY,
+        client_secret: process.env.NEXT_PUBLIC_DROPBOX_API_SECRET,
       }),
     });
 

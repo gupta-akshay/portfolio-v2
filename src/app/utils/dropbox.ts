@@ -1,4 +1,4 @@
-import { Dropbox } from 'dropbox';
+import { Dropbox, DropboxResponse } from 'dropbox';
 import { Track } from '@/app/components/AudioPlayer/types';
 import { getDropboxToken } from './dropboxAuth';
 
@@ -13,17 +13,43 @@ const getFetch = () => {
   return global.fetch;
 };
 
+/**
+ * Create a new Dropbox instance with the latest token
+ */
+const createDropboxClient = async (): Promise<Dropbox> => {
+  const accessToken = await getDropboxToken();
+  return new Dropbox({ accessToken, fetch: getFetch() });
+};
+
+/**
+ * Retry a Dropbox API call with a fresh token
+ */
+const retryWithFreshToken = async <T>(
+  operation: (dbx: Dropbox) => Promise<DropboxResponse<T>>
+): Promise<DropboxResponse<T>> => {
+  const dbx = await createDropboxClient();
+  try {
+    return await operation(dbx);
+  } catch (error: any) {
+    // Check if error is due to invalid token
+    if (error?.status === 401) {
+      // Try one more time with a fresh client
+      const newDbx = await createDropboxClient();
+      return await operation(newDbx);
+    }
+    throw error;
+  }
+};
+
 export async function getAudioFilesList(): Promise<Track[]> {
   try {
-    const accessToken = await getDropboxToken();
-
-    const dbx = new Dropbox({ accessToken, fetch: getFetch() });
-
-    const response = await dbx.filesListFolder({
-      path: '',
-      recursive: true,
-      include_media_info: true,
-    });
+    const response = await retryWithFreshToken((dbx) =>
+      dbx.filesListFolder({
+        path: '',
+        recursive: true,
+        include_media_info: true,
+      })
+    );
 
     const tracks: Track[] = response.result.entries
       .filter((entry) => {
@@ -66,17 +92,20 @@ export async function getAudioFilesList(): Promise<Track[]> {
 }
 
 // Cache for temporary links
-const tempLinkCache = new Map<string, { url: string; expiry: number }>();
+const tempLinkCache = new Map<string, { url: string, expiry: number }>();
 
 export async function getAudioUrl(path: string): Promise<string> {
   try {
-    const accessToken = await getDropboxToken();
+    // Check cache first
+    const cached = tempLinkCache.get(path);
+    if (cached && Date.now() < cached.expiry) {
+      return cached.url;
+    }
 
-    const dbx = new Dropbox({ accessToken, fetch: getFetch() });
-
-    const response = await dbx.filesGetTemporaryLink({
-      path: path,
-    });
+    // Get fresh URL
+    const response = await retryWithFreshToken((dbx) =>
+      dbx.filesGetTemporaryLink({ path })
+    );
 
     const url = response.result.link;
 

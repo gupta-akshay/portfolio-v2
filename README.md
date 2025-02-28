@@ -53,9 +53,27 @@ NEXT_PUBLIC_DROPBOX_API_KEY=your_dropbox_app_key
 NEXT_PUBLIC_DROPBOX_API_SECRET=your_dropbox_app_secret
 NEXT_PUBLIC_DROPBOX_REFRESH_TOKEN=your_dropbox_refresh_token
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
+NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
 ```
 
-### 2. Audio Files Setup 🎵
+### 2. Analytics Setup 📊
+
+This project uses Google Analytics and Microsoft Clarity for basic usage analytics:
+
+1. **Google Analytics**:
+   - Create a GA4 property at [Google Analytics](https://analytics.google.com)
+   - Get your Measurement ID (starts with 'G-')
+   - Add it to `.env.local` as `NEXT_PUBLIC_GOOGLE_ANALYTICS`
+
+2. **Microsoft Clarity**:
+   - Create a project at [Microsoft Clarity](https://clarity.microsoft.com)
+   - Get your tracking code
+   - Add it to `.env.local` as `NEXT_PUBLIC_CLARITY_APP_CODE`
+
+> Note: These analytics tools are used solely to understand usage patterns and improve user experience. No personal data is collected or processed beyond standard analytics metrics.
+
+### 3. Audio Files Setup 🎵
 
 1. Create a Dropbox app at [Dropbox App Console](https://www.dropbox.com/developers/apps)
    > Warning: May require coffee ☕
@@ -65,7 +83,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
      - `files.metadata.read` (For peeking at your files)
      - `files.content.read` (For actually using them)
    - Set up OAuth:
-     - Add `http://localhost:3000/api/dropbox/callback` and `https://akshaygupta.live/api/dropbox/callback` as redirect URIs in your Dropbox app settings.
+     - Add `http://localhost:3000/api/dropbox/callback` and `https://{YOUR_DOMAIN}/api/dropbox/callback` as redirect URIs in your Dropbox app settings.
      - Copy your app key and secret to the respective env variables.
    - Get your refresh token using Dropbox OAuth API:
      - Make a request to `https://www.dropbox.com/oauth2/authorize` with the required parameters including `token_access_type=offline`:
@@ -113,18 +131,18 @@ You only need to update the refresh token if:
 - You create a new Dropbox app.
 - There's a security breach requiring token rotation.
 
-### 3. Audio File Naming 🎵
+### 4. Audio File Naming 🎵
 
 Name your audio files like this:
 
-```
+```text
 [Year][Original Artist][Name][Type][Artist].mp3
 Example: [2024][The Beatles][Hey Jude][Remix][A-Shay].mp3
 ```
 
 > Pro tip: The brackets are important. Very important.
 
-### 3. Fire It Up! 🔥
+### 5. Fire It Up! 🔥
 
 ```bash
 npm run dev
