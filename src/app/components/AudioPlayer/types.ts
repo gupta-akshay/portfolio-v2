@@ -6,8 +6,8 @@ export interface Track {
   id: string;
   title: string;
   artist: string;
-  path: string; // Dropbox file path
-  duration?: string; // Make duration optional as we'll calculate it from metadata
+  path: string;
+  duration?: string;
 }
 
 export interface AudioPlayerProps {

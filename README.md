@@ -20,7 +20,8 @@ Because one framework is never enough:
 
 - [Resend](https://resend.com) - For emails that actually reach inboxes
 - [Sanity.io](https://www.sanity.io) - Where my blog posts live their best life
-- [Dropbox SDK](https://github.com/dropbox/dropbox-sdk-js) - Because cloud storage is cooler than local
+- [AWS S3](https://aws.amazon.com/s3/) - For reliable and scalable music storage
+- [AWS CloudFront](https://aws.amazon.com/cloudfront/) - Making music streaming fast worldwide
 - Custom Audio Player - Like Spotify, but with more bugs (kidding!)
 
 ## ✨ Features
@@ -33,7 +34,7 @@ Because one framework is never enough:
 - 🎵 Audio Player Extraordinaire:
   - Waveform visualization (It's not just a line, it's art!)
   - Mini visualizer (Like a disco ball for your ears)
-  - Dropbox streaming (Cloud-powered tunes)
+  - AWS S3 + CloudFront streaming (Global CDN-powered tunes)
   - Smart metadata parsing (It reads file names better than I read documentation)
   - Volume control (For when your neighbors complain)
   - Keyboard controls (For the mouse-averse)
@@ -114,9 +115,13 @@ RESEND_API_KEY=your_key_here
 NEXT_PUBLIC_SANITY_PROJECT_ID=your_id_here
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_HOOK_SECRET=your_secret_here
-NEXT_PUBLIC_DROPBOX_API_KEY=your_dropbox_app_key
-NEXT_PUBLIC_DROPBOX_API_SECRET=your_dropbox_app_secret
-NEXT_PUBLIC_DROPBOX_REFRESH_TOKEN=your_dropbox_refresh_token
+NEXT_PUBLIC_AWS_REGION=your_aws_region
+NEXT_PUBLIC_AWS_ACCESS_KEY_ID=your_aws_access_key
+NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+NEXT_PUBLIC_AWS_BUCKET_NAME=your_s3_bucket_name
+NEXT_PUBLIC_CLOUDFRONT_DOMAIN=your_cloudfront_domain
+NEXT_PUBLIC_CLOUDFRONT_KEY_PAIR_ID=your_cloudfront_key_pair_id
+NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY=your_cloudfront_private_key
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
 NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
@@ -140,61 +145,74 @@ This project uses Google Analytics and Microsoft Clarity for basic usage analyti
 
 ### 3. Audio Files Setup 🎵
 
-1. Create a Dropbox app at [Dropbox App Console](https://www.dropbox.com/developers/apps)
-   > Warning: May require coffee ☕
-2. Set up your Dropbox app:
-   - Create a new app with 'App folder' access
-   - Add these permissions:
-     - `files.metadata.read` (For peeking at your files)
-     - `files.content.read` (For actually using them)
-   - Set up OAuth:
-     - Add `http://localhost:3000/api/dropbox/callback` and `https://{YOUR_DOMAIN}/api/dropbox/callback` as redirect URIs in your Dropbox app settings.
-     - Copy your app key and secret to the respective env variables.
-   - Get your refresh token using Dropbox OAuth API:
-     - Make a request to `https://www.dropbox.com/oauth2/authorize` with the required parameters including `token_access_type=offline`:
+1. Create an S3 bucket:
+   - Go to AWS Console → S3
+   - Create a new bucket
+   - Block all public access (for security)
+   - Enable CORS for your domains
 
-       ```bash
-       https://www.dropbox.com/oauth2/authorize?
-       client_id=YOUR_APP_KEY&
-       response_type=code&
-       redirect_uri=YOUR_REGISTERED_REDIRECT_URI&
-       token_access_type=offline
-       ```
+2. Set up CloudFront (Optional but recommended):
+   - Create a CloudFront distribution
+   - Use your S3 bucket as origin
+   - Set up Origin Access Identity (OAI)
+   - Create a CloudFront key pair for signed URLs
+   - Configure your bucket policy to allow CloudFront access
 
-     - After user authorization, Dropbox will redirect to your specified `redirect_uri` with an authorization code.
-     - Exchange the authorization code for a refresh token by making a POST request to `https://api.dropbox.com/oauth2/token`:
+3. Create an IAM user:
+   - Create a user with programmatic access
+   - Attach a policy with these permissions:
 
-       ```bash
-       curl -X POST https://api.dropbox.com/oauth2/token \
-            -d grant_type=authorization_code \
-            -d code=YOUR_AUTHORIZATION_CODE \
-            -d client_id=YOUR_APP_KEY \
-            -d client_secret=YOUR_APP_SECRET \
-            -d redirect_uri=YOUR_REGISTERED_REDIRECT_URI
-       ```
+     ```json
+     {
+         "Version": "2012-10-17",
+         "Statement": [
+             {
+                 "Effect": "Allow",
+                 "Action": [
+                     "s3:ListBucket",
+                     "s3:GetObject"
+                 ],
+                 "Resource": [
+                     "arn:aws:s3:::your-bucket-name",
+                     "arn:aws:s3:::your-bucket-name/*"
+                 ]
+             }
+         ]
+     }
+     ```
 
-     - The response will include `refresh_token`. Store it in `.env.local` under `NEXT_PUBLIC_DROPBOX_REFRESH_TOKEN`.
-   > For more details, refer to [Dropbox API documentation](https://www.dropbox.com/developers/documentation/http/documentation).
+4. Configure CORS for your S3 bucket:
 
-### About Refresh Tokens 🔄
+   ```json
+   [
+       {
+           "AllowedOrigins": [
+               "http://localhost:3000",
+               "https://your-domain.com"
+           ],
+           "AllowedMethods": ["GET", "HEAD"],
+           "AllowedHeaders": ["*"],
+           "ExposeHeaders": ["ETag"],
+           "MaxAgeSeconds": 3600
+       }
+   ]
+   ```
 
-Your refresh token is a long-lived credential that:
+### About URL Signing 🔐
 
-- Never expires unless explicitly revoked in Dropbox
-- Automatically handles access token renewal
-- Keeps your music player working indefinitely
+The app implements two levels of secure URL generation:
 
-The flow works like this:
+1. **CloudFront Signed URLs** (Preferred):
+   - Uses CloudFront key pairs for URL signing
+   - Provides global CDN distribution
+   - URLs expire after 1 hour
+   - Requires proper CloudFront setup
 
-1. Access tokens expire after a few hours.
-2. Your app automatically uses the refresh token to get new access tokens.
-3. This process continues indefinitely without any manual intervention.
-
-You only need to update the refresh token if:
-
-- You explicitly revoke it in Dropbox.
-- You create a new Dropbox app.
-- There's a security breach requiring token rotation.
+2. **S3 Pre-signed URLs** (Fallback):
+   - Uses IAM credentials for signing
+   - Direct S3 access
+   - URLs expire after 1 hour
+   - Automatic fallback if CloudFront isn't configured
 
 ### 4. Audio File Naming 🎵
 

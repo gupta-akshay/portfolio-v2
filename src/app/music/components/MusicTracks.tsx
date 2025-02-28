@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import AudioPlayer from '@/app/components/AudioPlayer';
 import MusicLoadingIndicator from './MusicLoadingIndicator';
 import { Track } from '@/app/components/AudioPlayer/types';
-import { getAudioFilesList } from '@/app/utils/dropbox';
+import { getAudioFilesList } from '@/app/utils/aws';
 
 function MusicTracks() {
   const [tracks, setTracks] = useState<Track[]>([]);
