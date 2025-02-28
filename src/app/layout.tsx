@@ -2,6 +2,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
+import Metrics from './metrics';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -24,6 +25,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LoadingProvider>{children}</LoadingProvider>
         </ThemeProvider>
+      <Metrics />
       </body>
     </html>
   );

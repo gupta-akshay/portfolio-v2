@@ -67,16 +67,16 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: https://www.clarity.ms",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.dropboxusercontent.com",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.dropboxusercontent.com https://*.clarity.ms https://*.bing.com",
               "font-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self' https://www.dropbox.com https://oauth2.dropbox.com",
               "frame-ancestors 'none'",
               "frame-src 'self' https://www.google.com https://app.netlify.com https://www.dropbox.com https://oauth2.dropbox.com",
-              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com https://api.dropboxapi.com https://*.dropboxusercontent.com https://content.dropboxapi.com https://www.dropbox.com https://oauth2.dropbox.com",
+              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com https://api.dropboxapi.com https://*.dropboxusercontent.com https://content.dropboxapi.com https://www.dropbox.com https://oauth2.dropbox.com https://*.clarity.ms",
               "media-src 'self' blob: https://*.dropboxusercontent.com",
               'block-all-mixed-content',
               'upgrade-insecure-requests',
@@ -106,24 +106,6 @@ const nextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
           },
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/images/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
-        source: '/_next/static/:path*',
-        headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
