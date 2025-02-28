@@ -91,6 +91,12 @@
     outline-offset: 2px;
     transform: scale(1.1);
   }
+
+  @include down-md {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+  }
 }
 
 .color_switch {

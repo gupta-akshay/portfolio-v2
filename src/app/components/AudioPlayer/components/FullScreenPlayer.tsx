@@ -66,12 +66,16 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   };
 
   return (
-    <div 
+    <div
       className={`fullScreenPlayer ${isVisible ? 'visible' : ''}`}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <button onClick={onClose} className='closeButton' aria-label='Close player'>
+      <button
+        onClick={onClose}
+        className='closeButton'
+        aria-label='Close player'
+      >
         <FontAwesomeIcon icon={faTimes} />
       </button>
 
