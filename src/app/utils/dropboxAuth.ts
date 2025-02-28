@@ -3,22 +3,40 @@ interface TokenResponse {
   expiresAt: number;
 }
 
-let cachedToken: TokenResponse | null = null;
+// Use a cache with timestamp to handle stale data
+interface TokenCache {
+  token: TokenResponse;
+  timestamp: number;
+}
+
+let cachedToken: TokenCache | null = null;
+const MAX_CACHE_AGE = 3600 * 1000; // 1 hour in milliseconds
 
 /**
  * Check if the current token is valid
  */
-const isTokenValid = (token: TokenResponse | null): token is TokenResponse => {
-  if (!token) return false;
+const isTokenValid = (cache: TokenCache | null): cache is TokenCache => {
+  if (!cache || !cache.token) return false;
+
+  // Check if cache is too old (force refresh after MAX_CACHE_AGE)
+  if (Date.now() - cache.timestamp > MAX_CACHE_AGE) return false;
+
   // Add a 5-minute buffer to ensure token doesn't expire during use
-  return Date.now() < token.expiresAt - 5 * 60 * 1000;
+  return Date.now() < cache.token.expiresAt - 5 * 60 * 1000;
 };
 
 /**
  * Get a fresh access token from the server
  */
 const refreshToken = async (): Promise<TokenResponse> => {
-  const refreshResponse = await fetch('/api/dropbox/refresh');
+  const refreshResponse = await fetch('/api/dropbox/refresh', {
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+    },
+  });
+
   if (!refreshResponse.ok) {
     throw new Error('Failed to refresh access token');
   }
@@ -33,18 +51,18 @@ const refreshToken = async (): Promise<TokenResponse> => {
 
 export async function getDropboxToken(): Promise<string> {
   try {
-    // Check if we have a valid cached token
     if (isTokenValid(cachedToken)) {
-      return cachedToken.accessToken;
+      return cachedToken.token.accessToken;
     }
 
-    // Get a fresh token
     const newToken = await refreshToken();
-    cachedToken = newToken;
+    cachedToken = {
+      token: newToken,
+      timestamp: Date.now(),
+    };
     return newToken.accessToken;
   } catch (error) {
     console.error('Error getting Dropbox token:', error);
-    // Clear cached token in case of error
     cachedToken = null;
     throw error;
   }
