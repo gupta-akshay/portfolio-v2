@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     if (
@@ -26,19 +29,41 @@ export async function GET() {
     const data = await response.json();
 
     if (!response.ok) {
+      console.error('Dropbox token refresh failed:', data);
       throw new Error(data.error_description || 'Failed to refresh token');
     }
 
-    return NextResponse.json({
-      accessToken: data.access_token,
-      expiresIn: data.expires_in,
-      expiresAt: Date.now() + data.expires_in * 1000,
-    });
+    return new NextResponse(
+      JSON.stringify({
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+        expiresAt: Date.now() + data.expires_in * 1000,
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control':
+            'no-store, no-cache, must-revalidate, proxy-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error refreshing token:', error);
-    return NextResponse.json(
-      { error: 'Failed to refresh access token' },
-      { status: 500 }
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to refresh access token' }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control':
+            'no-store, no-cache, must-revalidate, proxy-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      }
     );
   }
 }
