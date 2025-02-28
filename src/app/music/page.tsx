@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: 'music.playlist',
     images: [
       {
-        url: 'https://akshaygupta.dev/images/about-me.png',
+        url: '/images/about-me.png',
         width: 1200,
         height: 630,
         alt: 'Akshay Gupta Music',
@@ -27,8 +27,11 @@ export const metadata: Metadata = {
     title: 'My Music | Akshay Gupta',
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
-    images: ['https://akshaygupta.dev/images/about-me.png'],
-    creator: '@akshay_gupta_',
+    creator: '@ashay_music',
+    images: ['/images/about-me.png'],
+  },
+  alternates: {
+    canonical: 'https://akshaygupta.live/music',
   },
 };
 
