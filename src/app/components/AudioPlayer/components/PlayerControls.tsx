@@ -53,6 +53,7 @@ const PlayerControls = ({
           className='progressBar'
           aria-label='Seek time'
           disabled={isLoading}
+          step={0.01}
         />
         <span className='totalTime'>{formatTime(duration)}</span>
       </div>

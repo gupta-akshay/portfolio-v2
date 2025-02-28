@@ -1,4 +1,10 @@
-import React, { RefObject, useEffect, useRef, useState, TouchEvent } from 'react';
+import React, {
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+  TouchEvent,
+} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlay,
@@ -32,7 +38,8 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
   useEffect(() => {
     const checkOverflow = () => {
       if (titleRef.current) {
-        const isTextOverflowing = titleRef.current.scrollWidth > titleRef.current.clientWidth;
+        const isTextOverflowing =
+          titleRef.current.scrollWidth > titleRef.current.clientWidth;
         setIsOverflowing(isTextOverflowing);
       }
     };
@@ -72,7 +79,7 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
   };
 
   return (
-    <div 
+    <div
       className='miniPlayer'
       onClick={handleClick}
       onTouchStart={handleTouchStart}
@@ -90,10 +97,7 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
         <div className='miniTrackInfo'>
           <h4 ref={titleRef} className={isOverflowing ? 'scrolling' : ''}>
             {isOverflowing ? (
-              <span 
-                className='scrollingText'
-                data-content={currentTrack.title}
-              >
+              <span className='scrollingText' data-content={currentTrack.title}>
                 {currentTrack.title}
               </span>
             ) : (
