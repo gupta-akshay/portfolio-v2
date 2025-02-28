@@ -41,6 +41,55 @@ const retryWithFreshToken = async <T>(
   }
 };
 
+/**
+ * Checks if a file entry is an audio file (mp3 or wav)
+ */
+const isAudioFile = (entry: any): boolean => {
+  return (
+    entry['.tag'] === 'file' &&
+    (entry.name.endsWith('.mp3') || entry.name.endsWith('.wav'))
+  );
+};
+
+/**
+ * Extracts track metadata from filename following the format:
+ * [year][original artist][name][type][artist]
+ * e.g. [2024][The Beatles][Hey Jude][Cover][A-Shay]
+ */
+const parseTrackMetadata = (fileName: string) => {
+  const cleanFileName = fileName.replace(/\.(mp3|wav)$/, '');
+  const matches = cleanFileName.match(/\[(.*?)\]/g) || [];
+  const parts = matches.map((m) => m.slice(1, -1));
+
+  return {
+    year: parseInt(parts[0], 10) || 9999,
+    originalArtist: parts[1] || '',
+    name: parts[2] || '',
+    type: parts[3] || '',
+    artist: parts[4] || 'A-Shay',
+  };
+};
+
+/**
+ * Formats the track title based on metadata
+ */
+const formatTrackTitle = (metadata: {
+  originalArtist: string,
+  name: string,
+  type: string,
+}): string => {
+  const { originalArtist, name, type } = metadata;
+  const typeString = type.trim().length > 0 ? ` - ${type}` : '';
+
+  return originalArtist.trim().length > 0
+    ? `${originalArtist}: ${name}${typeString}`
+    : `${name}${typeString}`;
+};
+
+/**
+ * Retrieves a list of audio tracks from Dropbox
+ * Returns an array of Track objects sorted by year (newest first)
+ */
 export async function getAudioFilesList(): Promise<Track[]> {
   try {
     const response = await retryWithFreshToken((dbx) =>
@@ -52,34 +101,16 @@ export async function getAudioFilesList(): Promise<Track[]> {
     );
 
     const tracks: Track[] = response.result.entries
-      .filter((entry) => {
-        const isAudioFile =
-          entry['.tag'] === 'file' &&
-          (entry.name.endsWith('.mp3') || entry.name.endsWith('.wav'));
-        return isAudioFile;
-      })
+      .filter(isAudioFile)
       .map((file) => {
-        const fileName = file.name.replace(/\.(mp3|wav)$/, '');
-        const matches = fileName.match(/\[(.*?)\]/g) || [];
-        const parts = matches.map((m) => m.slice(1, -1));
-
-        const year = parseInt(parts[0], 10) || 9999;
-        const originalArtist = parts[1] || '';
-        const name = parts[2] || '';
-        const type = parts[3] || '';
-        const artist = parts[4] || 'A-Shay';
-
-        const title =
-          originalArtist.trim().length > 0
-            ? `${originalArtist}: ${name} - ${type}`
-            : `${name} - ${type}`;
+        const metadata = parseTrackMetadata(file.name);
 
         return {
           id: file.path_display || '',
-          title: title.trim(),
-          artist: artist,
+          title: formatTrackTitle(metadata).trim(),
+          artist: metadata.artist,
           path: file.path_lower || '',
-          year: year,
+          year: metadata.year,
         };
       })
       .sort((a, b) => b.year - a.year);
