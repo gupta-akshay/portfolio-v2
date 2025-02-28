@@ -44,6 +44,39 @@ Because one framework is never enough:
     - Responsive visualizations
     - Auto-adjusting layout for different screen sizes
 
+## 📸 Screenshots
+
+### 🖥️ Desktop View
+
+#### Home Page
+
+![Home Page](screenshots/desktop/home.png)
+
+#### About Section
+
+![About 1](screenshots/desktop/about-1.png) | ![About 2](screenshots/desktop/about-2.png)
+:-------------------------:|:-------------------------:
+
+#### Blog Section
+
+![Blog 1](screenshots/desktop/blog-1.png) | ![Blog 2](screenshots/desktop/blog-2.png)
+:-------------------------:|:-------------------------:
+
+#### Music Section
+
+![Music 1](screenshots/desktop/music-1.png) | ![Music 2](screenshots/desktop/music-2.png)
+:-------------------------:|:-------------------------:
+
+#### Contact Page
+
+![Contact Page](screenshots/desktop/contact.png)
+
+### 📱 Mobile View
+
+![Home](screenshots/mobile/home.png) | ![About 1](screenshots/mobile/about-1.png) | ![About 2](screenshots/mobile/about-2.png) | ![Blog 1](screenshots/mobile/blog-1.png)
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+![Blog 2](screenshots/mobile/blog-2.png) | ![Music 1](screenshots/mobile/music-1.png) | ![Music 2](screenshots/mobile/music-2.png) | ![Contact](screenshots/mobile/contact.png)
+
 ### About Token Management 🔐
 
 The app implements a robust token management system that:
