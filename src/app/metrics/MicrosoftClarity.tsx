@@ -3,6 +3,7 @@
 import Script from 'next/script';
 
 const MicrosoftClarity = () => {
+  if (process.env.NODE_ENV === 'development') return null;
   return (
     <Script
       id='microsoft-clarity-init'
