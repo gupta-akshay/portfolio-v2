@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, RefObject } from 'react';
 import { AudioPlayerProps } from './types';
-import { getAudioUrl } from '@/app/utils/dropbox';
+import { getAudioUrl } from '@/app/utils/aws';
 import { useAudioContext, useAudioPlayback, useVisualizer } from './hooks';
 import {
   TrackList,
