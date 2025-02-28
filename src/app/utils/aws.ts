@@ -1,4 +1,8 @@
-import { S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  ListObjectsV2Command,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getSignedUrl as getCloudfrontSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { Track } from '@/app/components/AudioPlayer/types';
@@ -13,8 +17,10 @@ const s3Client = new S3Client({
 
 const BUCKET_NAME = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME || '';
 const CLOUDFRONT_DOMAIN = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN || '';
-const CLOUDFRONT_KEY_PAIR_ID = process.env.NEXT_PUBLIC_CLOUDFRONT_KEY_PAIR_ID || '';
-const CLOUDFRONT_PRIVATE_KEY = process.env.NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY || '';
+const CLOUDFRONT_KEY_PAIR_ID =
+  process.env.NEXT_PUBLIC_CLOUDFRONT_KEY_PAIR_ID || '';
+const CLOUDFRONT_PRIVATE_KEY =
+  process.env.NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY || '';
 
 /**
  * Parse track metadata from the file key
@@ -39,9 +45,9 @@ const parseTrackMetadata = (fileKey: string) => {
  * Format track title based on metadata
  */
 const formatTrackTitle = (metadata: {
-  originalArtist: string;
-  name: string;
-  type: string;
+  originalArtist: string,
+  name: string,
+  type: string,
 }): string => {
   const { originalArtist, name, type } = metadata;
   const typeString = type.trim().length > 0 ? ` - ${type}` : '';
@@ -64,11 +70,12 @@ export async function getAudioFilesList(): Promise<Track[]> {
     const response = await s3Client.send(command);
     if (!response.Contents) return [];
 
-    const tracks: Track[] = response.Contents
-      .filter((item) => item.Key && /\.(mp3|wav)$/i.test(item.Key))
+    const tracks: Track[] = response.Contents.filter(
+      (item) => item.Key && /\.(mp3|wav)$/i.test(item.Key)
+    )
       .map((item) => {
         const metadata = parseTrackMetadata(item.Key || '');
-        
+
         return {
           id: item.Key || '',
           title: formatTrackTitle(metadata),
@@ -109,7 +116,7 @@ export async function getAudioUrl(path: string): Promise<string> {
 
         // Ensure the CloudFront domain doesn't include the protocol
         const cleanDomain = CLOUDFRONT_DOMAIN.replace(/^https?:\/\//, '');
-        
+
         const url = `https://${cleanDomain}/${path}`;
         return getCloudfrontSignedUrl({
           url,
@@ -133,4 +140,4 @@ export async function getAudioUrl(path: string): Promise<string> {
     console.error('Error getting audio URL:', error);
     throw error;
   }
-} 
+}

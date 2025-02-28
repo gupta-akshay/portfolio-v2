@@ -78,32 +78,6 @@ Because one framework is never enough:
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
 ![Blog 2](screenshots/mobile/blog-2.png) | ![Music 1](screenshots/mobile/music-1.png) | ![Music 2](screenshots/mobile/music-2.png) | ![Contact](screenshots/mobile/contact.png)
 
-### About Token Management 🔐
-
-The app implements a robust token management system that:
-
-- Caches access tokens for 1 hour to minimize API calls
-- Automatically refreshes expired tokens using the refresh token
-- Handles token expiration and renewal transparently
-- Implements retry mechanisms for failed API calls
-- Uses server-side token refresh to keep credentials secure
-
-The token flow works like this:
-
-1. Client requests an audio file
-2. System checks for a cached access token
-3. If token is expired or missing:
-   - Server exchanges refresh token for new access token
-   - New token is cached for future requests
-4. Audio is streamed using valid token
-5. Process repeats automatically when token expires
-
-Error handling includes:
-
-- Automatic retry with fresh token on 401 errors
-- Cache invalidation for expired tokens
-- Graceful fallbacks for API failures
-
 ## 🚀 Quick Start
 
 ### 1. Environment Setup
@@ -197,22 +171,6 @@ This project uses Google Analytics and Microsoft Clarity for basic usage analyti
        }
    ]
    ```
-
-### About URL Signing 🔐
-
-The app implements two levels of secure URL generation:
-
-1. **CloudFront Signed URLs** (Preferred):
-   - Uses CloudFront key pairs for URL signing
-   - Provides global CDN distribution
-   - URLs expire after 1 hour
-   - Requires proper CloudFront setup
-
-2. **S3 Pre-signed URLs** (Fallback):
-   - Uses IAM credentials for signing
-   - Direct S3 access
-   - URLs expire after 1 hour
-   - Automatic fallback if CloudFront isn't configured
 
 ### 4. Audio File Naming 🎵
 
