@@ -28,7 +28,7 @@ function MusicTracks() {
   }, []);
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className='text-red-500'>{error}</div>;
   }
 
   if (isLoading) {
