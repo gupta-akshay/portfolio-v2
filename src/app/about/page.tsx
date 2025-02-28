@@ -14,14 +14,30 @@ export const metadata: Metadata = {
     title: 'About Akshay Gupta | Full-Stack Developer',
     description:
       'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
+    type: 'profile',
     images: [
       {
-        url: 'https://akshaygupta.live/images/about-me.png',
+        url: '/images/about-me.png',
         width: 560,
         height: 560,
         alt: 'About Akshay Gupta',
       },
     ],
+    firstName: 'Akshay',
+    lastName: 'Gupta',
+    username: 'akshay_gupta_',
+    gender: 'male',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Akshay Gupta | Full-Stack Developer',
+    description:
+      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
+    creator: '@ashay_music',
+    images: ['/images/about-me.png'],
+  },
+  alternates: {
+    canonical: 'https://akshaygupta.live/about',
   },
 };
 

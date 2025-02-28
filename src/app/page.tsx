@@ -4,6 +4,7 @@ import TypingAnimation from '@/app/components/TypingAnimation';
 import Layout from '@/app/components/Layout';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://akshaygupta.live'),
   title: 'Akshay Gupta | Full-Stack Web Developer',
   description:
     'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
     siteName: 'Akshay Gupta',
     images: [
       {
-        url: 'https://akshaygupta.live/images/home-banner.webp',
+        url: '/images/home-banner.webp',
         width: 600,
         height: 600,
         alt: 'Akshay Gupta - Senior Staff Engineer at PeopleGrove',
@@ -23,6 +24,17 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Akshay Gupta | Full-Stack Web Developer',
+    description:
+      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    creator: '@ashay_music',
+    images: ['/images/home-banner.webp'],
+  },
+  alternates: {
+    canonical: 'https://akshaygupta.live',
   },
 };
 
