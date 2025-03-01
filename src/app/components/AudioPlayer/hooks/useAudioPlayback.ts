@@ -200,11 +200,13 @@ export const useAudioPlayback = (
         console.log('AudioContext resumed successfully');
       }
 
-      // Check if audio is ready to play
-      if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
-        console.log('Audio not ready, loading...');
-        audio.load();
-        return;
+      // Ensure audio is not muted and volume is set
+      audio.muted = false;
+      audio.volume = volume;
+
+      // Set volume through gain node for better Safari compatibility
+      if (gainNodeRef.current) {
+        gainNodeRef.current.gain.value = volume;
       }
 
       if (isPlaying) {
@@ -214,14 +216,42 @@ export const useAudioPlayback = (
       } else {
         console.log('Attempting to play audio...');
         try {
-          // Ensure audio is not muted
-          audio.muted = false;
+          // Force load if needed
+          if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
+            console.log('Audio not fully loaded, forcing load...');
+            audio.load();
 
-          // Set volume through gain node for better iOS compatibility
-          if (gainNodeRef.current) {
-            gainNodeRef.current.gain.value = volume;
+            // Wait for canplay event
+            await new Promise<void>((resolve, reject) => {
+              const onCanPlay = () => {
+                console.log('Audio can now play');
+                cleanup();
+                resolve();
+              };
+
+              const onError = (e: Event) => {
+                console.error('Error during load:', e);
+                cleanup();
+                reject(new Error('Failed to load audio'));
+              };
+
+              const cleanup = () => {
+                audio.removeEventListener('canplay', onCanPlay);
+                audio.removeEventListener('error', onError);
+              };
+
+              audio.addEventListener('canplay', onCanPlay);
+              audio.addEventListener('error', onError);
+
+              // Set timeout
+              setTimeout(() => {
+                cleanup();
+                reject(new Error('Timeout waiting for audio to be playable'));
+              }, 5000);
+            });
           }
 
+          // Attempt playback
           const playPromise = audio.play();
           if (playPromise !== undefined) {
             await playPromise;

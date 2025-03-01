@@ -88,215 +88,209 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Update track URL when current track changes
   useEffect(() => {
+    let isMounted = true;
+    let currentAudioUrl: string | null = null;
+
     const updateTrackUrl = async () => {
       if (currentTrackIndex === null || !tracks[currentTrackIndex]) {
         setCurrentUrl(null);
         return;
       }
 
-      setIsLoading(true);
-      setIsMetadataLoaded(false);
-      setIsPlayable(false);
-      setIsPlaying(false);
-      setError(null);
-
       try {
+        // Generate URL first
         console.log(
           'Generating URL for track:',
           tracks[currentTrackIndex].title
         );
-        const url = await getAudioUrl(tracks[currentTrackIndex].path);
-        console.log('Generated URL:', url);
+        const newUrl = await getAudioUrl(tracks[currentTrackIndex].path);
+        console.log('Generated URL:', newUrl);
 
-        // Set the URL first
-        setCurrentUrl(url);
+        // If component unmounted or URL is the same, don't proceed
+        if (!isMounted || newUrl === currentAudioUrl) {
+          return;
+        }
+
+        // Update state and URL
+        currentAudioUrl = newUrl;
+        setIsLoading(true);
+        setIsMetadataLoaded(false);
+        setIsPlayable(false);
+        setIsPlaying(false);
+        setError(null);
+        setCurrentUrl(newUrl);
 
         // Wait for audio element to be available
-        const maxAttempts = 10;
-        const waitForAudio = async (
-          attempts = 0
-        ): Promise<HTMLAudioElement> => {
-          if (attempts >= maxAttempts) {
-            throw new Error('Timeout waiting for audio element');
-          }
-
-          if (!audioRef.current) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
-            return waitForAudio(attempts + 1);
-          }
-
-          return audioRef.current;
-        };
-
-        const audio = await waitForAudio();
+        const audio = await new Promise<HTMLAudioElement>((resolve, reject) => {
+          const checkAudio = () => {
+            if (audioRef.current) {
+              resolve(audioRef.current);
+            } else if (attempts >= 10) {
+              reject(new Error('Audio element not found'));
+            } else {
+              attempts++;
+              setTimeout(checkAudio, 100);
+            }
+          };
+          let attempts = 0;
+          checkAudio();
+        });
 
         // Reset audio element state
-        audio.pause();
         audio.currentTime = 0;
+        audio.volume = volume;
+        audio.muted = false;
+
+        // Force load the audio
         audio.load();
 
         // Wait for metadata to load
         await new Promise<void>((resolve, reject) => {
           const onMetadataLoaded = () => {
-            console.log('Metadata loaded successfully');
+            console.log('Audio metadata loaded', {
+              duration: audio.duration,
+              muted: audio.muted,
+              readyState: audio.readyState,
+              networkState: audio.networkState,
+              error: audio.error,
+            });
+            cleanup();
             resolve();
           };
 
           const onError = (e: Event) => {
-            const audio = e.target as HTMLAudioElement;
-            console.error('Error loading audio:', {
-              error: audio.error,
-              networkState: audio.networkState,
-              readyState: audio.readyState,
-            });
-            reject(new Error('Failed to load audio metadata'));
+            console.error('Error loading audio:', e);
+            cleanup();
+            reject(new Error('Failed to load audio'));
           };
 
-          audio.addEventListener('loadedmetadata', onMetadataLoaded);
-          audio.addEventListener('error', onError);
-
-          // Cleanup
           const cleanup = () => {
             audio.removeEventListener('loadedmetadata', onMetadataLoaded);
             audio.removeEventListener('error', onError);
           };
 
+          audio.addEventListener('loadedmetadata', onMetadataLoaded);
+          audio.addEventListener('error', onError);
+
           // Set timeout for metadata loading
-          const timeoutId = setTimeout(() => {
+          setTimeout(() => {
             cleanup();
             reject(new Error('Metadata loading timeout'));
           }, 10000);
-
-          // Cleanup on success or error
-          Promise.race([
-            new Promise((_, reject) =>
-              setTimeout(
-                () => reject(new Error('Metadata loading timeout')),
-                10000
-              )
-            ),
-            new Promise<void>((resolve) => {
-              if (audio.readyState >= 1) {
-                resolve();
-              }
-            }),
-          ]).finally(() => {
-            clearTimeout(timeoutId);
-            cleanup();
-          });
         });
+
+        // Wait for audio to be playable
+        await new Promise<void>((resolve, reject) => {
+          if (audio.readyState >= 3) {
+            resolve();
+            return;
+          }
+
+          const onCanPlay = () => {
+            console.log('Audio can play', {
+              currentTime: audio.currentTime,
+              paused: audio.paused,
+              muted: audio.muted,
+              readyState: audio.readyState,
+              networkState: audio.networkState,
+            });
+            cleanup();
+            resolve();
+          };
+
+          const onError = (e: Event) => {
+            console.error('Error during load:', e);
+            cleanup();
+            reject(new Error('Failed to load audio'));
+          };
+
+          const cleanup = () => {
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+          };
+
+          audio.addEventListener('canplaythrough', onCanPlay);
+          audio.addEventListener('error', onError);
+
+          // Set timeout
+          setTimeout(() => {
+            cleanup();
+            reject(new Error('Timeout waiting for audio to be playable'));
+          }, 10000);
+        });
+
+        setIsMetadataLoaded(true);
+        setIsPlayable(true);
+        setIsLoading(false);
+
+        // Auto-play if needed
+        if (shouldAutoPlayRef.current) {
+          shouldAutoPlayRef.current = false;
+          try {
+            await audio.play();
+            setIsPlaying(true);
+          } catch (error) {
+            console.error('Auto-play failed:', error);
+            setIsPlaying(false);
+          }
+        }
       } catch (error) {
         console.error('Error setting up track:', error);
-        setError(
-          error instanceof Error ? error.message : 'Failed to load track'
-        );
-        setCurrentUrl(null);
-      } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setError(error instanceof Error ? error.message : 'Unknown error');
+          setIsLoading(false);
+          // Still mark as playable even if preload fails
+          setIsPlayable(true);
+          setIsMetadataLoaded(true);
+        }
       }
     };
 
     updateTrackUrl();
+    return () => {
+      isMounted = false;
+    };
   }, [currentTrackIndex, tracks]);
-
-  // Handle audio loading events
-  useEffect(() => {
-    if (audioRef.current && currentTrack) {
-      const audioElement = audioRef.current;
-
-      const handleLoadedMetadata = () => {
-        if (audioElement) {
-          setDuration(audioElement.duration);
-          setIsMetadataLoaded(true);
-        }
-      };
-
-      const handleCanPlayThrough = async () => {
-        setIsPlayable(true);
-        setIsLoading(false);
-
-        await setupAudioContext();
-
-        if (shouldAutoPlayRef.current) {
-          shouldAutoPlayRef.current = false;
-          try {
-            await audioElement.play();
-            setIsPlaying(true);
-          } catch (error) {
-            console.error('Error auto-playing:', error);
-            setIsPlaying(false);
-          }
-        }
-      };
-
-      const handleTimeUpdate = () => {
-        setCurrentTime(audioElement.currentTime);
-      };
-
-      const handleError = (error: ErrorEvent) => {
-        console.error('Error loading audio:', error);
-        setIsLoading(false);
-        setIsMetadataLoaded(false);
-        setIsPlayable(false);
-        shouldAutoPlayRef.current = false;
-      };
-
-      audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
-      audioElement.addEventListener('canplaythrough', handleCanPlayThrough);
-      audioElement.addEventListener('timeupdate', handleTimeUpdate);
-      audioElement.addEventListener('error', handleError);
-
-      return () => {
-        audioElement.removeEventListener(
-          'loadedmetadata',
-          handleLoadedMetadata
-        );
-        audioElement.removeEventListener(
-          'canplaythrough',
-          handleCanPlayThrough
-        );
-        audioElement.removeEventListener('timeupdate', handleTimeUpdate);
-        audioElement.removeEventListener('error', handleError);
-      };
-    }
-  }, [
-    currentTrack,
-    setDuration,
-    setIsPlaying,
-    setupAudioContext,
-    setCurrentTime,
-  ]);
 
   // Set up audio context and analyzer when track starts playing
   useEffect(() => {
-    if (
-      !audioRef.current ||
-      currentTrackIndex === null ||
-      !isPlayable ||
-      !isPlaying
-    )
-      return;
+    if (!audioRef.current || currentTrackIndex === null || !isPlayable) return;
 
-    const startVisualizations = () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (miniAnimationRef.current) {
-        cancelAnimationFrame(miniAnimationRef.current);
-      }
+    const startVisualizations = async () => {
+      try {
+        // Setup audio context and nodes
+        await setupAudioContext();
 
-      const animateWaveform = () => {
-        drawWaveform();
+        if (!isPlaying) return;
+
+        // Start animation frames
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+        }
+        if (miniAnimationRef.current) {
+          cancelAnimationFrame(miniAnimationRef.current);
+        }
+
+        const animateWaveform = () => {
+          drawWaveform();
+          animationRef.current = requestAnimationFrame(animateWaveform);
+        };
+
+        const animateMiniVisualizer = () => {
+          drawMiniVisualizer();
+          miniAnimationRef.current = requestAnimationFrame(
+            animateMiniVisualizer
+          );
+        };
+
+        // Start both animations
         animationRef.current = requestAnimationFrame(animateWaveform);
-      };
-
-      const animateMiniVisualizer = () => {
-        drawMiniVisualizer();
         miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
-      };
 
-      animationRef.current = requestAnimationFrame(animateWaveform);
-      miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+        console.log('Visualizations started');
+      } catch (error) {
+        console.error('Error starting visualizations:', error);
+      }
     };
 
     startVisualizations();
@@ -314,12 +308,12 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   }, [
     currentTrackIndex,
     isPlaying,
-    analyserRef,
+    isPlayable,
+    setupAudioContext,
     drawWaveform,
     drawMiniVisualizer,
     animationRef,
     miniAnimationRef,
-    isPlayable,
   ]);
 
   const handleTrackSelect = (index: number) => {
@@ -372,12 +366,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       {/* Always render the audio element, but with empty src if no track */}
       <audio
         ref={audioRef}
-        preload='metadata'
-        playsInline={true}
-        src={currentUrl || ''}
+        src={currentUrl || undefined}
+        preload='auto'
+        crossOrigin='anonymous'
+        playsInline
+        x-webkit-airplay='allow'
+        webkit-playsinline='true'
+        x-webkit-playsinline='true'
         onLoadStart={() => {
           console.log('Audio loading started');
-          setIsLoading(true);
         }}
         onLoadedMetadata={(e) => {
           const audio = e.target as HTMLAudioElement;
@@ -387,16 +384,28 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             readyState: audio.readyState,
             networkState: audio.networkState,
             error: audio.error,
+            currentSrc: audio.currentSrc,
           });
+          setDuration(audio.duration);
           setIsMetadataLoaded(true);
         }}
         onCanPlay={() => {
+          const audio = audioRef.current;
+          if (!audio) return;
+
           console.log('Audio can play', {
-            currentTime: audioRef.current?.currentTime,
-            paused: audioRef.current?.paused,
-            muted: audioRef.current?.muted,
-            readyState: audioRef.current?.readyState,
+            currentTime: audio.currentTime,
+            paused: audio.paused,
+            muted: audio.muted,
+            readyState: audio.readyState,
+            networkState: audio.networkState,
+            volume: audio.volume,
           });
+
+          // Ensure audio is properly configured for Safari
+          audio.volume = volume;
+          audio.muted = false;
+
           setIsPlayable(true);
           setIsLoading(false);
         }}

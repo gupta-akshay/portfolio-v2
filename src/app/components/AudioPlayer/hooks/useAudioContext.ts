@@ -38,37 +38,83 @@ export const useAudioContext = (
     initializeAudioContext();
   }, []);
 
+  // Setup audio nodes when audio element is available and playing
+  useEffect(() => {
+    const setupNodes = async () => {
+      if (!audioRef.current || !audioContextRef.current || !isPlaying) return;
+
+      try {
+        console.log('Setting up audio nodes...');
+
+        // Resume context if suspended
+        if (audioContextRef.current.state === 'suspended') {
+          await audioContextRef.current.resume();
+          console.log('AudioContext resumed');
+        }
+
+        // Create analyzer if it doesn't exist
+        if (!analyserRef.current) {
+          analyserRef.current = audioContextRef.current.createAnalyser();
+          analyserRef.current.fftSize = 2048;
+          analyserRef.current.smoothingTimeConstant = 0.8;
+          console.log('Analyzer node created');
+        }
+
+        // Create gain node if it doesn't exist
+        if (!gainNodeRef.current) {
+          gainNodeRef.current = audioContextRef.current.createGain();
+          gainNodeRef.current.gain.value = 0.7;
+          console.log('Gain node created');
+        }
+
+        // Create and connect source if it doesn't exist
+        if (!sourceRef.current) {
+          sourceRef.current = audioContextRef.current.createMediaElementSource(
+            audioRef.current
+          );
+          console.log('Source node created');
+        }
+
+        // Connect nodes
+        sourceRef.current.connect(gainNodeRef.current);
+        gainNodeRef.current.connect(analyserRef.current);
+        analyserRef.current.connect(audioContextRef.current.destination);
+
+        console.log('Audio nodes connected successfully');
+      } catch (error) {
+        console.error('Error setting up audio nodes:', error);
+      }
+    };
+
+    setupNodes();
+
+    // Cleanup function
+    return () => {
+      if (sourceRef.current) {
+        try {
+          sourceRef.current.disconnect();
+        } catch (error) {
+          console.error('Error disconnecting source:', error);
+        }
+      }
+    };
+  }, [audioRef, isPlaying]);
+
   // Handle user interaction to unlock audio
   useEffect(() => {
     const unlockAudioContext = async (event: Event) => {
-      console.log('Unlock attempt triggered by:', event.type);
-
-      if (!audioContextRef.current) {
-        console.warn('No AudioContext available to unlock');
-        return;
-      }
+      if (!audioContextRef.current) return;
 
       try {
         if (audioContextRef.current.state === 'suspended') {
-          console.log('Resuming suspended AudioContext...');
           await audioContextRef.current.resume();
-          console.log('AudioContext resumed successfully');
+          console.log('AudioContext resumed through user interaction');
         }
-
-        // Create and play a silent buffer
-        const buffer = audioContextRef.current.createBuffer(1, 1, 44100);
-        const source = audioContextRef.current.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioContextRef.current.destination);
-        source.start(0);
-        source.stop(0.001);
-        console.log('Silent buffer played successfully');
       } catch (error) {
         console.error('Error unlocking AudioContext:', error);
       }
     };
 
-    // Add both click and touch handlers
     document.addEventListener('click', unlockAudioContext);
     document.addEventListener('touchstart', unlockAudioContext);
 
@@ -78,69 +124,56 @@ export const useAudioContext = (
     };
   }, []);
 
-  // Setup audio context and analyzer
   const setupAudioContext = async () => {
-    console.log('Setting up AudioContext...');
+    if (!audioContextRef.current || !audioRef.current) return;
 
     try {
-      if (!audioContextRef.current) {
-        console.log('Creating new AudioContext...');
-        const AudioContextClass =
-          window.AudioContext || window.webkitAudioContext;
-        audioContextRef.current = new AudioContextClass({
-          sampleRate: 44100,
-          latencyHint: 'interactive',
-        });
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
       }
 
-      const audioContext = audioContextRef.current;
-      console.log('Current AudioContext state:', audioContext.state);
-
-      if (audioContext.state === 'suspended') {
-        console.log('Attempting to resume AudioContext...');
-        await audioContext.resume();
-        console.log('AudioContext resumed successfully');
-      }
-
-      // Create analyzer node if it doesn't exist
-      if (!analyserRef.current) {
-        analyserRef.current = audioContext.createAnalyser();
-        analyserRef.current.fftSize = 2048;
-        analyserRef.current.smoothingTimeConstant = 0.8;
-        console.log('Analyzer node created');
-      }
-
-      // Setup audio nodes only if we have an audio element and haven't initialized yet
-      if (audioRef.current && !isInitializedRef.current) {
-        console.log('Setting up audio nodes...');
-
-        // Disconnect existing source if any
-        if (sourceRef.current) {
-          sourceRef.current.disconnect();
-        }
-
-        // Create and connect nodes
-        sourceRef.current = audioContext.createMediaElementSource(
-          audioRef.current
-        );
-        gainNodeRef.current = audioContext.createGain();
-        gainNodeRef.current.gain.value = 0.7;
-
-        sourceRef.current.connect(gainNodeRef.current);
-        gainNodeRef.current.connect(analyserRef.current);
-        analyserRef.current.connect(audioContext.destination);
-
+      if (!isInitializedRef.current) {
+        await setupNodes();
         isInitializedRef.current = true;
-        console.log('Audio nodes setup complete');
       }
     } catch (error) {
       console.error('Error in setupAudioContext:', error);
-      // Reset on error
-      audioContextRef.current = null;
-      analyserRef.current = null;
-      sourceRef.current = null;
-      gainNodeRef.current = null;
-      isInitializedRef.current = false;
+    }
+  };
+
+  const setupNodes = async () => {
+    if (!audioRef.current || !audioContextRef.current) return;
+
+    try {
+      // Create analyzer if it doesn't exist
+      if (!analyserRef.current) {
+        analyserRef.current = audioContextRef.current.createAnalyser();
+        analyserRef.current.fftSize = 2048;
+        analyserRef.current.smoothingTimeConstant = 0.8;
+      }
+
+      // Create gain node if it doesn't exist
+      if (!gainNodeRef.current) {
+        gainNodeRef.current = audioContextRef.current.createGain();
+        gainNodeRef.current.gain.value = 0.7;
+      }
+
+      // Create and connect source if it doesn't exist
+      if (!sourceRef.current) {
+        sourceRef.current = audioContextRef.current.createMediaElementSource(
+          audioRef.current
+        );
+      }
+
+      // Connect nodes
+      sourceRef.current.connect(gainNodeRef.current);
+      gainNodeRef.current.connect(analyserRef.current);
+      analyserRef.current.connect(audioContextRef.current.destination);
+
+      console.log('Audio nodes setup complete');
+    } catch (error) {
+      console.error('Error setting up audio nodes:', error);
+      throw error;
     }
   };
 
