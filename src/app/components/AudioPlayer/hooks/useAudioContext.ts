@@ -18,29 +18,51 @@ export const useAudioContext = (
   // Initialize Web Audio API and clean up on unmount
   useEffect(() => {
     const unlockAudioContext = async () => {
-      if (!audioContextRef.current) return;
-
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
+      if (!audioContextRef.current) {
+        console.log('No AudioContext to unlock');
+        return;
       }
 
-      // Create and play a silent buffer
-      const buffer = audioContextRef.current.createBuffer(1, 1, 44100);
-      const source = audioContextRef.current.createBufferSource();
-      source.buffer = buffer;
-      source.connect(audioContextRef.current.destination);
-      source.start(0);
-      source.stop(0.001);
+      console.log('Unlocking AudioContext...');
+      console.log('Current state:', audioContextRef.current.state);
+
+      if (audioContextRef.current.state === 'suspended') {
+        try {
+          await audioContextRef.current.resume();
+          console.log('AudioContext resumed successfully');
+        } catch (error) {
+          console.error('Failed to resume AudioContext:', error);
+        }
+      }
+
+      try {
+        // Create and play a silent buffer to force unlock
+        const buffer = audioContextRef.current.createBuffer(1, 1, 44100);
+        const source = audioContextRef.current.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioContextRef.current.destination);
+        source.start(0);
+        source.stop(0.001);
+        console.log('Silent buffer played successfully');
+      } catch (error) {
+        console.error('Failed to play silent buffer:', error);
+      }
+
+      console.log('Final AudioContext state:', audioContextRef.current.state);
     };
 
-    // Add event listener for unlocking
-    document.addEventListener('click', unlockAudioContext, { once: true });
-    document.addEventListener('touchstart', unlockAudioContext, { once: true });
+    const handleInteraction = async (event: Event) => {
+      console.log('User interaction detected:', event.type);
+      await unlockAudioContext();
+    };
+
+    document.addEventListener('click', handleInteraction, { once: true });
+    document.addEventListener('touchstart', handleInteraction, { once: true });
 
     // Clean up function
     return () => {
-      document.removeEventListener('click', unlockAudioContext);
-      document.removeEventListener('touchstart', unlockAudioContext);
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
 
       // Cancel any animation frames
       if (animationRef.current) {

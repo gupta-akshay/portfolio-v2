@@ -91,8 +91,23 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       if (currentTrack) {
         try {
           const url = await getAudioUrl(currentTrack.path);
-          console.log('generated url', url);
+          console.log('Generated URL:', url);
           setCurrentUrl(url);
+
+          // Force load and unmute after URL is set
+          if (audioRef.current) {
+            console.log('New track loaded:', currentTrack.title);
+            const audioElement = audioRef.current;
+            audioElement.muted = false; // Ensure it's unmuted
+            audioElement.load(); // Explicitly load the audio
+
+            setTimeout(() => {
+              console.log('Attempting to play after load...');
+              audioElement
+                .play()
+                .catch((err) => console.warn('Play blocked:', err));
+            }, 1000); // Delay slightly to let iOS process
+          }
         } catch (error) {
           console.error('Error loading audio URL:', error);
           setIsLoading(false);
@@ -230,6 +245,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   ]);
 
   const handleTrackSelect = (index: number) => {
+    console.log('Track selected:', tracks[index]?.title);
     setCurrentTrackIndex(index);
   };
 
@@ -269,11 +285,16 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           preload='auto'
           crossOrigin='anonymous'
           playsInline
-          muted
+          muted={false}
           x-webkit-airplay='allow'
           webkit-playsinline='true'
           x-webkit-playsinline='true'
           controlsList='nodownload'
+          onLoadStart={() => console.log('Audio loading started')}
+          onLoadedMetadata={() => console.log('Audio metadata loaded')}
+          onCanPlay={() => console.log('Audio can play')}
+          onPlay={() => console.log('Audio play event')}
+          onError={(e) => console.error('Audio error:', e)}
         />
       )}
 

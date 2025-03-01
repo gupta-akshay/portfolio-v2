@@ -160,16 +160,23 @@ export const useAudioPlayback = (
   }, [currentTrackIndex, audioRef]);
 
   const handlePlayPause = async () => {
-    if (!audioRef.current || !currentTrack) return;
+    if (!audioRef.current || !currentTrack) {
+      console.warn('Audio element or current track is missing.');
+      return;
+    }
+
     const audio = audioRef.current;
+    console.log('Play/Pause triggered on iOS');
 
     try {
       // Resume AudioContext if suspended (for iOS Safari)
       if (audioContextRef.current?.state === 'suspended') {
+        console.log('Resuming AudioContext...');
         await audioContextRef.current.resume();
       }
 
       if (isPlaying) {
+        console.log('Pausing audio...');
         audio.pause();
         setIsPlaying(false);
 
@@ -183,8 +190,11 @@ export const useAudioPlayback = (
           miniAnimationRef.current = null;
         }
       } else {
+        console.log('Trying to play audio...');
+
         // Force reload in case audio is not loading
         if (audio.readyState < 2) {
+          console.log('Audio not ready, forcing load...');
           await new Promise((resolve, reject) => {
             audio.load();
             audio.oncanplaythrough = resolve;
@@ -196,6 +206,7 @@ export const useAudioPlayback = (
           });
         }
 
+        console.log('Playing audio now...');
         await audio.play();
         setIsPlaying(true);
 
