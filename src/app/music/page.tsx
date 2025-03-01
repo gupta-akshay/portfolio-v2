@@ -5,6 +5,7 @@ import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://akshaygupta.live/music'),
   title: 'My Music | Akshay Gupta',
   description:
     'Listen to my latest remixes and music productions. Enjoy the beats!',

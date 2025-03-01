@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://akshaygupta.live/contact'),
   title: 'Contact | Akshay Gupta',
   description:
     'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',

@@ -104,6 +104,7 @@ export async function generateMetadata({
 
     if (!post) {
       return {
+        metadataBase: new URL(`https://akshaygupta.live/blog/${slug}`),
         title: 'Post Not Found | Akshay Gupta',
         description: `The blog post you're looking for does not exist`,
         twitter: {
@@ -124,6 +125,7 @@ export async function generateMetadata({
     const description = post.excerpt || post.title;
 
     return {
+      metadataBase: new URL(`https://akshaygupta.live/blog/${slug}`),
       title: `${post.title} | Akshay Gupta's Blog`,
       description: description,
       openGraph: {

@@ -7,6 +7,7 @@ import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://akshaygupta.live/about'),
   title: 'About | Akshay Gupta',
   description:
     'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',

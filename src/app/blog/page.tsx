@@ -6,6 +6,7 @@ import BlogTile from '@/app/components/BlogTile';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://akshaygupta.live/blog'),
   title: 'Blog | Akshay Gupta',
   description:
     'Read my latest thoughts and insights about web development, technology, and software engineering.',
