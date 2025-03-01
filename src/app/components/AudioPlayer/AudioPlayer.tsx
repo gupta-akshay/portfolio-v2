@@ -259,14 +259,27 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Add unmute effect after user interaction
   useEffect(() => {
-    const handleFirstInteraction = () => {
+    const handleFirstInteraction = (event: Event) => {
+      console.log('User interaction for unmuting:', event.type);
+
       if (audioRef.current) {
+        console.log('Unmuting audio element...');
         audioRef.current.muted = false;
+
+        // Also try to resume AudioContext if it exists
+        if (audioContextRef.current?.state === 'suspended') {
+          console.log('Attempting to resume AudioContext on interaction...');
+          audioContextRef.current
+            .resume()
+            .then(() => console.log('AudioContext resumed successfully'))
+            .catch((error) =>
+              console.error('Failed to resume AudioContext:', error)
+            );
+        }
       }
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('touchstart', handleFirstInteraction);
     };
 
+    // Add both click and touch handlers
     document.addEventListener('click', handleFirstInteraction);
     document.addEventListener('touchstart', handleFirstInteraction);
 
@@ -274,7 +287,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       document.removeEventListener('click', handleFirstInteraction);
       document.removeEventListener('touchstart', handleFirstInteraction);
     };
-  }, []);
+  }, [audioContextRef]);
 
   return (
     <div className='cloudinaryAudioPlayer'>
@@ -291,9 +304,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           x-webkit-playsinline='true'
           controlsList='nodownload'
           onLoadStart={() => console.log('Audio loading started')}
-          onLoadedMetadata={() => console.log('Audio metadata loaded')}
+          onLoadedMetadata={() => {
+            console.log('Audio metadata loaded', {
+              duration: audioRef.current?.duration,
+              muted: audioRef.current?.muted,
+              readyState: audioRef.current?.readyState,
+            });
+          }}
           onCanPlay={() => console.log('Audio can play')}
-          onPlay={() => console.log('Audio play event')}
+          onPlay={() => console.log('Audio play event triggered')}
           onError={(e) => console.error('Audio error:', e)}
         />
       )}
