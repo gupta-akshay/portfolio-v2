@@ -10,6 +10,7 @@ export const useAudioContext = (
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
   const animationRef = useRef<number | null>(null);
   const miniAnimationRef = useRef<number | null>(null);
   const isInitializedRef = useRef<boolean>(false);
@@ -42,6 +43,7 @@ export const useAudioContext = (
       // Clear references
       analyserRef.current = null;
       sourceRef.current = null;
+      gainNodeRef.current = null;
       isInitializedRef.current = false;
     };
   }, []);
@@ -54,9 +56,14 @@ export const useAudioContext = (
         !audioContextRef.current ||
         audioContextRef.current.state === 'closed'
       ) {
+        // Safari requires user interaction before creating AudioContext
         const AudioContextClass =
           window.AudioContext || window.webkitAudioContext;
-        audioContextRef.current = new AudioContextClass();
+        audioContextRef.current = new AudioContextClass({
+          // Safari prefers 44100 sample rate
+          sampleRate: 44100,
+          latencyHint: 'interactive',
+        });
         // Reset initialization flag when creating a new context
         isInitializedRef.current = false;
       }
@@ -88,8 +95,16 @@ export const useAudioContext = (
         sourceRef.current = audioContext.createMediaElementSource(
           audioRef.current
         );
-        sourceRef.current.connect(analyserRef.current);
+
+        // Create a gain node for volume control (helps with Safari)
+        gainNodeRef.current = audioContext.createGain();
+        gainNodeRef.current.gain.value = 0.7; // Set initial volume
+
+        // Connect the nodes
+        sourceRef.current.connect(gainNodeRef.current);
+        gainNodeRef.current.connect(analyserRef.current);
         analyserRef.current.connect(audioContext.destination);
+
         isInitializedRef.current = true;
       }
 
@@ -106,6 +121,7 @@ export const useAudioContext = (
     audioContextRef,
     analyserRef,
     sourceRef,
+    gainNodeRef,
     animationRef,
     miniAnimationRef,
     setupAudioContext,

@@ -11,7 +11,8 @@ export const useAudioPlayback = (
   miniAnimationRef: RefObject<number | null>,
   drawWaveform: () => void,
   drawMiniVisualizer: () => void,
-  audioContextRef: RefObject<AudioContext | null>
+  audioContextRef: RefObject<AudioContext | null>,
+  gainNodeRef: RefObject<GainNode | null>
 ) => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(
     null
@@ -109,13 +110,25 @@ export const useAudioPlayback = (
     };
   }, [currentTrackIndex, currentTrack, audioRef, handleNext, volume, isMuted]);
 
-  // Update volume and mute state
+  // Update volume for both HTML5 Audio and Web Audio API
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
+    }
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = volume;
+    }
+  }, [volume, gainNodeRef, audioRef]);
+
+  // Update mute state for both HTML5 Audio and Web Audio API
+  useEffect(() => {
+    if (audioRef.current) {
       audioRef.current.muted = isMuted;
     }
-  }, [volume, isMuted, audioRef]);
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = isMuted ? 0 : volume;
+    }
+  }, [isMuted, volume, gainNodeRef, audioRef]);
 
   // Reset player state when track changes
   useEffect(() => {
@@ -140,10 +153,25 @@ export const useAudioPlayback = (
           miniAnimationRef.current = null;
         }
       } else {
-        // Resume audio context if suspended (needed for browsers with autoplay policies)
-        if (audioContextRef.current?.state === 'suspended') {
-          audioContextRef.current.resume().then(() => {
-            // Create animation loop functions that call themselves
+        const playAudio = async () => {
+          try {
+            const audio = audioRef.current;
+            if (!audio) return;
+
+            // Resume audio context if suspended (needed for Safari)
+            if (audioContextRef.current?.state === 'suspended') {
+              await audioContextRef.current.resume();
+            }
+
+            // Load the audio if not loaded (important for Safari)
+            if (audio.readyState < 2) {
+              await audio.load();
+            }
+
+            // Play the audio
+            await audio.play();
+
+            // Start visualizations after successful play
             const animateWaveform = () => {
               drawWaveform();
               animationRef.current = requestAnimationFrame(animateWaveform);
@@ -156,42 +184,20 @@ export const useAudioPlayback = (
               );
             };
 
-            // Start animation loops
             animationRef.current = requestAnimationFrame(animateWaveform);
             miniAnimationRef.current = requestAnimationFrame(
               animateMiniVisualizer
             );
 
-            audioRef.current?.play().catch((error) => {
-              console.error('Error playing audio:', error);
-            });
-          });
-        } else {
-          // Create animation loop functions that call themselves
-          const animateWaveform = () => {
-            drawWaveform();
-            animationRef.current = requestAnimationFrame(animateWaveform);
-          };
-
-          const animateMiniVisualizer = () => {
-            drawMiniVisualizer();
-            miniAnimationRef.current = requestAnimationFrame(
-              animateMiniVisualizer
-            );
-          };
-
-          // Start animation loops
-          animationRef.current = requestAnimationFrame(animateWaveform);
-          miniAnimationRef.current = requestAnimationFrame(
-            animateMiniVisualizer
-          );
-
-          audioRef.current.play().catch((error) => {
+            setIsPlaying(true);
+          } catch (error) {
             console.error('Error playing audio:', error);
-          });
-        }
+            setIsPlaying(false);
+          }
+        };
+
+        playAudio();
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -207,10 +213,20 @@ export const useAudioPlayback = (
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
     setIsMuted(newVolume === 0);
+
+    // Update gain node directly for immediate effect
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = newVolume;
+    }
   };
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
+
+    // Update gain node directly for immediate effect
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = !isMuted ? 0 : volume;
+    }
   };
 
   return {

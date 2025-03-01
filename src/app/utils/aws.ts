@@ -118,6 +118,7 @@ export async function getAudioUrl(path: string): Promise<string> {
         const cleanDomain = CLOUDFRONT_DOMAIN.replace(/^https?:\/\//, '');
 
         const url = `https://${cleanDomain}/${path}`;
+
         return getCloudfrontSignedUrl({
           url,
           keyPairId: CLOUDFRONT_KEY_PAIR_ID,
@@ -125,17 +126,20 @@ export async function getAudioUrl(path: string): Promise<string> {
           dateLessThan: new Date(Date.now() + 3600 * 1000).toISOString(), // URL expires in 1 hour
         });
       } catch (cloudfrontError) {
-        console.error('Error getting URL:', cloudfrontError);
+        console.error('Error getting CloudFront URL:', cloudfrontError);
       }
     }
 
-    console.log('Using Fallback URL');
+    console.log('Using S3 Fallback URL');
     const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,
       Key: path,
+      ResponseContentDisposition: 'inline',
     });
 
-    return await getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
+    return await getSignedUrl(s3Client, command, {
+      expiresIn: 3600,
+    });
   } catch (error) {
     console.error('Error getting audio URL:', error);
     throw error;

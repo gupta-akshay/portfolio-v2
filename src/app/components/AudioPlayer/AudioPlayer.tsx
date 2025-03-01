@@ -36,6 +36,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     animationRef,
     miniAnimationRef,
     setupAudioContext,
+    gainNodeRef,
   } = useAudioContext(audioRef, false);
 
   const { drawWaveform, drawMiniVisualizer } = useVisualizer(
@@ -69,7 +70,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     miniAnimationRef,
     drawWaveform,
     drawMiniVisualizer,
-    audioContextRef
+    audioContextRef,
+    gainNodeRef
   );
 
   // Reset states when track changes
@@ -89,6 +91,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       if (currentTrack) {
         try {
           const url = await getAudioUrl(currentTrack.path);
+          console.log('generated url', url);
           setCurrentUrl(url);
         } catch (error) {
           console.error('Error loading audio URL:', error);
@@ -244,8 +247,10 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         <audio
           ref={audioRef}
           src={currentUrl}
-          preload='metadata'
+          preload='auto'
           crossOrigin='anonymous'
+          playsInline
+          x-webkit-airplay='allow'
         />
       )}
 
