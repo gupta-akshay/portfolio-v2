@@ -29,7 +29,7 @@ export default async function Image() {
           Get in Touch
         </div>
         <div style={{ fontSize: 36, textAlign: 'center', color: '#cccccc' }}>
-          Let's collaborate on your next project
+          Let&apos;s collaborate on your next project
         </div>
         <div style={{ fontSize: 24, marginTop: 40, color: '#999999' }}>
           akshaygupta.live/contact

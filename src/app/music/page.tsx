@@ -40,8 +40,7 @@ export default function Music() {
     '@context': 'https://schema.org',
     '@type': 'MusicPlaylist',
     name: 'Akshay Gupta Music Collection',
-    description:
-      'Listen to my remixes and music productions. Enjoy the beats!',
+    description: 'Listen to my remixes and music productions. Enjoy the beats!',
     url: 'https://akshaygupta.live/music',
     mainEntityOfPage: {
       '@type': 'WebPage',

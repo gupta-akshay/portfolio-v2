@@ -230,6 +230,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrackIndex, tracks]);
 
   // Set up audio context and analyzer when track starts playing
