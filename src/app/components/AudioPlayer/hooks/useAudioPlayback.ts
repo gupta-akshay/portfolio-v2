@@ -89,19 +89,15 @@ export const useAudioPlayback = (
     };
     const onEnded = () => handleNext();
     const onPlay = () => {
-      console.log('Play event triggered');
       setIsPlaying(true);
     };
     const onPause = () => {
-      console.log('Pause event triggered');
       setIsPlaying(false);
     };
     const onWaiting = () => {
-      console.log('Waiting event triggered');
       setIsPlaying(false);
     };
     const onPlaying = () => {
-      console.log('Playing event triggered');
       setIsPlaying(true);
     };
 
@@ -181,23 +177,11 @@ export const useAudioPlayback = (
     }
 
     const audio = audioRef.current;
-    console.log('Play/Pause triggered. Current state:', {
-      isPlaying,
-      readyState: audio.readyState,
-      paused: audio.paused,
-      currentTime: audio.currentTime,
-      duration: audio.duration,
-      muted: audio.muted,
-      volume: audio.volume,
-      networkState: audio.networkState,
-    });
 
     try {
       // Resume AudioContext if suspended (for iOS Safari)
       if (audioContextRef.current?.state === 'suspended') {
-        console.log('Resuming suspended AudioContext...');
         await audioContextRef.current.resume();
-        console.log('AudioContext resumed successfully');
       }
 
       // Ensure audio is not muted and volume is set
@@ -210,21 +194,17 @@ export const useAudioPlayback = (
       }
 
       if (isPlaying) {
-        console.log('Pausing audio...');
         audio.pause();
         setIsPlaying(false);
       } else {
-        console.log('Attempting to play audio...');
         try {
           // Force load if needed
           if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
-            console.log('Audio not fully loaded, forcing load...');
             audio.load();
 
             // Wait for canplay event
             await new Promise<void>((resolve, reject) => {
               const onCanPlay = () => {
-                console.log('Audio can now play');
                 cleanup();
                 resolve();
               };
@@ -255,7 +235,6 @@ export const useAudioPlayback = (
           const playPromise = audio.play();
           if (playPromise !== undefined) {
             await playPromise;
-            console.log('Audio playing successfully');
             setIsPlaying(true);
             startVisualizations();
           }

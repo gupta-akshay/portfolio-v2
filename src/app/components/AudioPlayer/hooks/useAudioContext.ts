@@ -20,7 +20,6 @@ export const useAudioContext = (
     const initializeAudioContext = () => {
       try {
         if (!audioContextRef.current) {
-          console.log('Initializing AudioContext...');
           const AudioContextClass =
             window.AudioContext || window.webkitAudioContext;
           audioContextRef.current = new AudioContextClass({
@@ -28,7 +27,6 @@ export const useAudioContext = (
             sampleRate: 44100,
             latencyHint: 'interactive',
           });
-          console.log('AudioContext created:', audioContextRef.current.state);
         }
       } catch (error) {
         console.error('Failed to initialize AudioContext:', error);
@@ -44,12 +42,9 @@ export const useAudioContext = (
       if (!audioRef.current || !audioContextRef.current || !isPlaying) return;
 
       try {
-        console.log('Setting up audio nodes...');
-
         // Resume context if suspended
         if (audioContextRef.current.state === 'suspended') {
           await audioContextRef.current.resume();
-          console.log('AudioContext resumed');
         }
 
         // Create analyzer if it doesn't exist
@@ -57,14 +52,12 @@ export const useAudioContext = (
           analyserRef.current = audioContextRef.current.createAnalyser();
           analyserRef.current.fftSize = 2048;
           analyserRef.current.smoothingTimeConstant = 0.8;
-          console.log('Analyzer node created');
         }
 
         // Create gain node if it doesn't exist
         if (!gainNodeRef.current) {
           gainNodeRef.current = audioContextRef.current.createGain();
           gainNodeRef.current.gain.value = 0.7;
-          console.log('Gain node created');
         }
 
         // Create and connect source if it doesn't exist
@@ -72,15 +65,12 @@ export const useAudioContext = (
           sourceRef.current = audioContextRef.current.createMediaElementSource(
             audioRef.current
           );
-          console.log('Source node created');
         }
 
         // Connect nodes
         sourceRef.current.connect(gainNodeRef.current);
         gainNodeRef.current.connect(analyserRef.current);
         analyserRef.current.connect(audioContextRef.current.destination);
-
-        console.log('Audio nodes connected successfully');
       } catch (error) {
         console.error('Error setting up audio nodes:', error);
       }
@@ -108,7 +98,6 @@ export const useAudioContext = (
       try {
         if (audioContextRef.current.state === 'suspended') {
           await audioContextRef.current.resume();
-          console.log('AudioContext resumed through user interaction');
         }
       } catch (error) {
         console.error('Error unlocking AudioContext:', error);
@@ -169,8 +158,6 @@ export const useAudioContext = (
       sourceRef.current.connect(gainNodeRef.current);
       gainNodeRef.current.connect(analyserRef.current);
       analyserRef.current.connect(audioContextRef.current.destination);
-
-      console.log('Audio nodes setup complete');
     } catch (error) {
       console.error('Error setting up audio nodes:', error);
       throw error;

@@ -98,13 +98,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       }
 
       try {
-        // Generate URL first
-        console.log(
-          'Generating URL for track:',
-          tracks[currentTrackIndex].title
-        );
         const newUrl = await getAudioUrl(tracks[currentTrackIndex].path);
-        console.log('Generated URL:', newUrl);
 
         // If component unmounted or URL is the same, don't proceed
         if (!isMounted || newUrl === currentAudioUrl) {
@@ -147,13 +141,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         // Wait for metadata to load
         await new Promise<void>((resolve, reject) => {
           const onMetadataLoaded = () => {
-            console.log('Audio metadata loaded', {
-              duration: audio.duration,
-              muted: audio.muted,
-              readyState: audio.readyState,
-              networkState: audio.networkState,
-              error: audio.error,
-            });
             cleanup();
             resolve();
           };
@@ -187,13 +174,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           }
 
           const onCanPlay = () => {
-            console.log('Audio can play', {
-              currentTime: audio.currentTime,
-              paused: audio.paused,
-              muted: audio.muted,
-              readyState: audio.readyState,
-              networkState: audio.networkState,
-            });
             cleanup();
             resolve();
           };
@@ -286,8 +266,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         // Start both animations
         animationRef.current = requestAnimationFrame(animateWaveform);
         miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
-
-        console.log('Visualizations started');
       } catch (error) {
         console.error('Error starting visualizations:', error);
       }
@@ -317,7 +295,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   ]);
 
   const handleTrackSelect = (index: number) => {
-    console.log('Track selected:', tracks[index]?.title);
     setCurrentTrackIndex(index);
   };
 
@@ -332,15 +309,11 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Add unmute effect after user interaction
   useEffect(() => {
     const handleFirstInteraction = (event: Event) => {
-      console.log('User interaction for unmuting:', event.type);
-
       if (audioRef.current) {
-        console.log('Unmuting audio element...');
         audioRef.current.muted = false;
 
         // Also try to resume AudioContext if it exists
         if (audioContextRef.current?.state === 'suspended') {
-          console.log('Attempting to resume AudioContext on interaction...');
           audioContextRef.current
             .resume()
             .then(() => console.log('AudioContext resumed successfully'))
@@ -373,34 +346,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         x-webkit-airplay='allow'
         webkit-playsinline='true'
         x-webkit-playsinline='true'
-        onLoadStart={() => {
-          console.log('Audio loading started');
-        }}
+        onLoadStart={() => {}}
         onLoadedMetadata={(e) => {
           const audio = e.target as HTMLAudioElement;
-          console.log('Audio metadata loaded', {
-            duration: audio.duration,
-            muted: audio.muted,
-            readyState: audio.readyState,
-            networkState: audio.networkState,
-            error: audio.error,
-            currentSrc: audio.currentSrc,
-          });
           setDuration(audio.duration);
           setIsMetadataLoaded(true);
         }}
         onCanPlay={() => {
           const audio = audioRef.current;
           if (!audio) return;
-
-          console.log('Audio can play', {
-            currentTime: audio.currentTime,
-            paused: audio.paused,
-            muted: audio.muted,
-            readyState: audio.readyState,
-            networkState: audio.networkState,
-            volume: audio.volume,
-          });
 
           // Ensure audio is properly configured for Safari
           audio.volume = volume;
@@ -410,30 +364,20 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           setIsLoading(false);
         }}
         onPlay={() => {
-          console.log('Audio play event triggered');
           setIsPlaying(true);
         }}
         onPause={() => {
-          console.log('Audio pause event triggered');
           setIsPlaying(false);
         }}
         onError={(e) => {
           const audio = e.target as HTMLAudioElement;
-          console.error('Audio error:', {
-            error: audio.error,
-            networkState: audio.networkState,
-            readyState: audio.readyState,
-            currentSrc: audio.currentSrc,
-          });
           setIsLoading(false);
           setError('Failed to load audio');
         }}
         onWaiting={() => {
-          console.log('Audio waiting');
           setIsLoading(true);
         }}
         onPlaying={() => {
-          console.log('Audio playing');
           setIsLoading(false);
         }}
       />
