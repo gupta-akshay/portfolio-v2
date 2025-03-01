@@ -59,11 +59,33 @@ export const useAudioContext = (
         // Safari requires user interaction before creating AudioContext
         const AudioContextClass =
           window.AudioContext || window.webkitAudioContext;
+
+        // Force unlock audio context for iOS Safari
+        const unlockAudioContext = async () => {
+          if (!audioContextRef.current) return;
+
+          if (audioContextRef.current.state === 'suspended') {
+            await audioContextRef.current.resume();
+          }
+
+          // Create and play a silent buffer
+          const buffer = audioContextRef.current.createBuffer(1, 1, 44100);
+          const source = audioContextRef.current.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioContextRef.current.destination);
+          source.start(0);
+          source.stop(0.001); // Extremely short duration
+        };
+
         audioContextRef.current = new AudioContextClass({
           // Safari prefers 44100 sample rate
           sampleRate: 44100,
           latencyHint: 'interactive',
         });
+
+        // Try to unlock the audio context
+        await unlockAudioContext();
+
         // Reset initialization flag when creating a new context
         isInitializedRef.current = false;
       }
@@ -108,12 +130,18 @@ export const useAudioContext = (
         isInitializedRef.current = true;
       }
 
-      // Resume audio context if suspended
+      // Always try to resume the context when setting up
       if (audioContext.state === 'suspended') {
         await audioContext.resume();
       }
     } catch (error) {
       console.error('Error setting up audio context:', error);
+      // Reset refs on error
+      audioContextRef.current = null;
+      analyserRef.current = null;
+      sourceRef.current = null;
+      gainNodeRef.current = null;
+      isInitializedRef.current = false;
     }
   };
 

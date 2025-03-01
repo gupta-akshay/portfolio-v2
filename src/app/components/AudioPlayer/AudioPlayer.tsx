@@ -251,6 +251,9 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           crossOrigin='anonymous'
           playsInline
           x-webkit-airplay='allow'
+          webkit-playsinline='true'
+          x-webkit-playsinline='true'
+          controlsList='nodownload'
         />
       )}
 

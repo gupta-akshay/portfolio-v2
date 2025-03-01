@@ -88,18 +88,37 @@ export const useAudioPlayback = (
       setDuration(audio.duration);
     };
     const onEnded = () => handleNext();
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
+    const onPlay = () => {
+      console.log('Play event triggered');
+      setIsPlaying(true);
+    };
+    const onPause = () => {
+      console.log('Pause event triggered');
+      setIsPlaying(false);
+    };
+    const onWaiting = () => {
+      console.log('Waiting event triggered');
+      setIsPlaying(false);
+    };
+    const onPlaying = () => {
+      console.log('Playing event triggered');
+      setIsPlaying(true);
+    };
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('ended', onEnded);
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
+    audio.addEventListener('waiting', onWaiting);
+    audio.addEventListener('playing', onPlaying);
 
     // Set initial volume
     audio.volume = volume;
     audio.muted = isMuted;
+
+    // Set initial playing state
+    setIsPlaying(!audio.paused);
 
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
@@ -107,6 +126,8 @@ export const useAudioPlayback = (
       audio.removeEventListener('ended', onEnded);
       audio.removeEventListener('play', onPlay);
       audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('waiting', onWaiting);
+      audio.removeEventListener('playing', onPlaying);
     };
   }, [currentTrackIndex, currentTrack, audioRef, handleNext, volume, isMuted]);
 
@@ -141,35 +162,84 @@ export const useAudioPlayback = (
   const handlePlayPause = () => {
     if (audioRef.current && currentTrack) {
       if (isPlaying) {
-        audioRef.current.pause();
+        const pauseAudio = async () => {
+          try {
+            audioRef.current?.pause();
+            setIsPlaying(false);
 
-        // Stop visualizations
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-          animationRef.current = null;
-        }
-        if (miniAnimationRef.current) {
-          cancelAnimationFrame(miniAnimationRef.current);
-          miniAnimationRef.current = null;
-        }
+            // Stop visualizations
+            if (animationRef.current) {
+              cancelAnimationFrame(animationRef.current);
+              animationRef.current = null;
+            }
+            if (miniAnimationRef.current) {
+              cancelAnimationFrame(miniAnimationRef.current);
+              miniAnimationRef.current = null;
+            }
+
+            // Suspend audio context
+            if (audioContextRef.current?.state === 'running') {
+              await audioContextRef.current.suspend().catch(console.error);
+            }
+          } catch (error) {
+            console.error('Error pausing audio:', error);
+          }
+        };
+
+        pauseAudio();
       } else {
         const playAudio = async () => {
           try {
             const audio = audioRef.current;
             if (!audio) return;
 
+            // iOS Safari requires user interaction
+            const userInteracted = document.documentElement.hasAttribute(
+              'data-user-interacted'
+            );
+            if (!userInteracted) {
+              document.documentElement.setAttribute(
+                'data-user-interacted',
+                'true'
+              );
+            }
+
             // Resume audio context if suspended (needed for Safari)
             if (audioContextRef.current?.state === 'suspended') {
-              await audioContextRef.current.resume();
+              await audioContextRef.current.resume().catch((err) => {
+                console.warn('Error resuming audio context:', err);
+              });
             }
 
             // Load the audio if not loaded (important for Safari)
             if (audio.readyState < 2) {
-              await audio.load();
+              await new Promise((resolve, reject) => {
+                audio.load();
+                audio.oncanplaythrough = resolve;
+                audio.onerror = reject;
+                // Timeout after 5 seconds
+                setTimeout(reject, 5000);
+              }).catch((err) => {
+                console.warn('Error loading audio:', err);
+                throw new Error('Audio loading timeout');
+              });
             }
 
-            // Play the audio
-            await audio.play();
+            // Play the audio with explicit error handling
+            try {
+              const playPromise = audio.play();
+              if (playPromise !== undefined) {
+                await playPromise;
+                setIsPlaying(true);
+              }
+            } catch (playError: any) {
+              console.error('Play error:', playError);
+              setIsPlaying(false);
+              if (playError.name === 'NotAllowedError') {
+                throw new Error('Audio playback requires user interaction');
+              }
+              throw playError;
+            }
 
             // Start visualizations after successful play
             const animateWaveform = () => {
@@ -188,11 +258,13 @@ export const useAudioPlayback = (
             miniAnimationRef.current = requestAnimationFrame(
               animateMiniVisualizer
             );
-
-            setIsPlaying(true);
           } catch (error) {
             console.error('Error playing audio:', error);
             setIsPlaying(false);
+            // Reset audio context if needed
+            if (audioContextRef.current?.state === 'running') {
+              await audioContextRef.current.suspend().catch(console.error);
+            }
           }
         };
 
