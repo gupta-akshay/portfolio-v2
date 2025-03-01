@@ -118,6 +118,33 @@ export default function Contact() {
 
   return (
     <Layout>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ContactPage',
+            name: 'Contact Akshay Gupta',
+            description:
+              'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
+            url: 'https://akshaygupta.live/contact',
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': 'https://akshaygupta.live/contact',
+            },
+            author: {
+              '@type': 'Person',
+              name: 'Akshay Gupta',
+              url: 'https://akshaygupta.live',
+            },
+            provider: {
+              '@type': 'Person',
+              name: 'Akshay Gupta',
+              email: 'contact@akshaygupta.live',
+            },
+          }),
+        }}
+      />
       <Toaster />
       <section
         id='contact'

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: 'profile',
     images: [
       {
-        url: '/images/about-me.png',
+        url: 'https://akshaygupta.live/images/about-me.png',
         width: 560,
         height: 560,
         alt: 'About Akshay Gupta',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     description:
       'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
     creator: '@ashay_music',
-    images: ['/images/about-me.png'],
+    images: ['https://akshaygupta.live/images/about-me.png'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/about',
@@ -86,10 +86,59 @@ const EducationAndSkills = () => (
 );
 
 export default function About() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About Akshay Gupta',
+    description:
+      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    mainEntity: {
+      '@type': 'Person',
+      name: 'Akshay Gupta',
+      jobTitle: 'Senior Staff Engineer',
+      worksFor: {
+        '@type': 'Organization',
+        name: 'PeopleGrove',
+        url: 'https://www.peoplegrove.com',
+      },
+      url: 'https://akshaygupta.live',
+      image: 'https://akshaygupta.live/images/about-me.png',
+      description:
+        'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+      sameAs: [
+        'https://github.com/gupta-akshay',
+        'https://linkedin.com/in/akshayguptaujn',
+        'https://twitter.com/ashay_music',
+      ],
+      knowsAbout: [
+        'Web Development',
+        'JavaScript',
+        'React',
+        'Node.js',
+        'TypeScript',
+        'Next.js',
+        'Postgres',
+        'ElasticSearch',
+        'Redis',
+        'RabbitMQ',
+        'Google Cloud Platform',
+      ],
+      alumniOf: {
+        '@type': 'EducationalOrganization',
+        name: 'RGPV',
+        location: 'India',
+      },
+    },
+  };
+
   const yearsOfExperience = useMemo(calculateExperience, []);
 
   return (
     <Layout>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section
         id='about'
         data-nav-tooltip='About'

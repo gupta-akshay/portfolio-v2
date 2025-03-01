@@ -21,42 +21,77 @@ async function BlogContent({ slug }: { slug: string }) {
     notFound();
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt || post.title,
+    image: post.mainImage
+      ? urlFor(post.mainImage).width(1200).height(630).url()
+      : 'https://akshaygupta.live/images/about-me.png',
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: post.author.name,
+      url: 'https://akshaygupta.live/about',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Akshay Gupta',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://akshaygupta.live/icon?size=192',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://akshaygupta.live/blog/${slug}`,
+    },
+  };
+
   return (
-    <div id={post.slug.current} className='single-blog'>
-      <div className='container'>
-        <div className='blog-feature-img'>
-          <BlogImage value={post.mainImage} isCoverImage />
-        </div>
-        <div className='row justify-content-center'>
-          <div className='col-lg-8'>
-            <article className='article'>
-              <div className='article-title'>
-                <div className='hashtags'>
-                  {post.categories.map((category) => (
-                    <span key={category.slug.current} className='hashtag'>
-                      #{category.title}
-                    </span>
-                  ))}
-                </div>
-                <h2>{post.title}</h2>
-                <div className='media'>
-                  <div className='avatar'>
-                    <BlogImage value={post.author.image} isAuthor />
+    <>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div id={post.slug.current} className='single-blog'>
+        <div className='container'>
+          <div className='blog-feature-img'>
+            <BlogImage value={post.mainImage} isCoverImage />
+          </div>
+          <div className='row justify-content-center'>
+            <div className='col-lg-8'>
+              <article className='article'>
+                <div className='article-title'>
+                  <div className='hashtags'>
+                    {post.categories.map((category) => (
+                      <span key={category.slug.current} className='hashtag'>
+                        #{category.title}
+                      </span>
+                    ))}
                   </div>
-                  <div className='media-body'>
-                    <label>{post.author.name}</label>
-                    <span>{formatDate(post.publishedAt)}</span>
+                  <h2>{post.title}</h2>
+                  <div className='media'>
+                    <div className='avatar'>
+                      <BlogImage value={post.author.image} isAuthor />
+                    </div>
+                    <div className='media-body'>
+                      <label>{post.author.name}</label>
+                      <span>{formatDate(post.publishedAt)}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className='article-content'>
-                <SingleBlog post={post} />
-              </div>
-            </article>
+                <div className='article-content'>
+                  <SingleBlog post={post} />
+                </div>
+              </article>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

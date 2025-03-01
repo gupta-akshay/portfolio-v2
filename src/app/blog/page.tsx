@@ -14,9 +14,10 @@ export const metadata: Metadata = {
     description:
       'Read my latest thoughts and insights about web development and technology.',
     type: 'article',
+    url: 'https://akshaygupta.live/blog',
     images: [
       {
-        url: '/images/about-me.png',
+        url: 'https://akshaygupta.live/images/about-me.png',
         width: 1200,
         height: 630,
         alt: 'Akshay Gupta Blog',
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     title: 'Blog | Akshay Gupta',
     description:
       'Read my latest thoughts and insights about web development and technology.',
-    images: ['/images/about-me.png'],
+    images: ['https://akshaygupta.live/images/about-me.png'],
     creator: '@ashay_music',
   },
   alternates: {
@@ -50,8 +51,35 @@ async function BlogPosts() {
 }
 
 export default function Blog() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Akshay Gupta Blog',
+    description:
+      'Read my latest thoughts and insights about web development, technology, and software engineering.',
+    url: 'https://akshaygupta.live/blog',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://akshaygupta.live/blog',
+    },
+    author: {
+      '@type': 'Person',
+      name: 'Akshay Gupta',
+      url: 'https://akshaygupta.live',
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Akshay Gupta',
+      url: 'https://akshaygupta.live',
+    },
+  };
+
   return (
     <Layout>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section
         id='blog'
         data-nav-tooltip='Blog'
