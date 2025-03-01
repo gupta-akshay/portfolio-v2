@@ -90,6 +90,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   useEffect(() => {
     const updateTrackUrl = async () => {
       if (currentTrackIndex === null || !tracks[currentTrackIndex]) {
+        setCurrentUrl(null);
         return;
       }
 
@@ -107,15 +108,32 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         const url = await getAudioUrl(tracks[currentTrackIndex].path);
         console.log('Generated URL:', url);
 
-        if (!audioRef.current) {
-          throw new Error('Audio element not available');
-        }
+        // Set the URL first
+        setCurrentUrl(url);
+
+        // Wait for audio element to be available
+        const maxAttempts = 10;
+        const waitForAudio = async (
+          attempts = 0
+        ): Promise<HTMLAudioElement> => {
+          if (attempts >= maxAttempts) {
+            throw new Error('Timeout waiting for audio element');
+          }
+
+          if (!audioRef.current) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            return waitForAudio(attempts + 1);
+          }
+
+          return audioRef.current;
+        };
+
+        const audio = await waitForAudio();
 
         // Reset audio element state
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        audioRef.current.src = url;
-        audioRef.current.load();
+        audio.pause();
+        audio.currentTime = 0;
+        audio.load();
 
         // Wait for metadata to load
         await new Promise<void>((resolve, reject) => {
@@ -134,19 +152,13 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             reject(new Error('Failed to load audio metadata'));
           };
 
-          audioRef.current?.addEventListener(
-            'loadedmetadata',
-            onMetadataLoaded
-          );
-          audioRef.current?.addEventListener('error', onError);
+          audio.addEventListener('loadedmetadata', onMetadataLoaded);
+          audio.addEventListener('error', onError);
 
           // Cleanup
           const cleanup = () => {
-            audioRef.current?.removeEventListener(
-              'loadedmetadata',
-              onMetadataLoaded
-            );
-            audioRef.current?.removeEventListener('error', onError);
+            audio.removeEventListener('loadedmetadata', onMetadataLoaded);
+            audio.removeEventListener('error', onError);
           };
 
           // Set timeout for metadata loading
@@ -164,8 +176,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
               )
             ),
             new Promise<void>((resolve) => {
-              const audio = audioRef.current;
-              if (audio && audio.readyState >= 1) {
+              if (audio.readyState >= 1) {
                 resolve();
               }
             }),
@@ -179,13 +190,14 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         setError(
           error instanceof Error ? error.message : 'Failed to load track'
         );
+        setCurrentUrl(null);
       } finally {
         setIsLoading(false);
       }
     };
 
     updateTrackUrl();
-  }, [currentTrackIndex, tracks, setIsPlaying]);
+  }, [currentTrackIndex, tracks]);
 
   // Handle audio loading events
   useEffect(() => {
@@ -357,65 +369,65 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   return (
     <div className='cloudinaryAudioPlayer'>
-      {currentTrack && currentUrl && (
-        <audio
-          ref={audioRef}
-          preload='metadata'
-          playsInline={true}
-          onLoadStart={() => {
-            console.log('Audio loading started');
-            setIsLoading(true);
-          }}
-          onLoadedMetadata={(e) => {
-            const audio = e.target as HTMLAudioElement;
-            console.log('Audio metadata loaded', {
-              duration: audio.duration,
-              muted: audio.muted,
-              readyState: audio.readyState,
-              networkState: audio.networkState,
-              error: audio.error,
-            });
-            setIsMetadataLoaded(true);
-          }}
-          onCanPlay={() => {
-            console.log('Audio can play', {
-              currentTime: audioRef.current?.currentTime,
-              paused: audioRef.current?.paused,
-              muted: audioRef.current?.muted,
-              readyState: audioRef.current?.readyState,
-            });
-            setIsPlayable(true);
-            setIsLoading(false);
-          }}
-          onPlay={() => {
-            console.log('Audio play event triggered');
-            setIsPlaying(true);
-          }}
-          onPause={() => {
-            console.log('Audio pause event triggered');
-            setIsPlaying(false);
-          }}
-          onError={(e) => {
-            const audio = e.target as HTMLAudioElement;
-            console.error('Audio error:', {
-              error: audio.error,
-              networkState: audio.networkState,
-              readyState: audio.readyState,
-              currentSrc: audio.currentSrc,
-            });
-            setIsLoading(false);
-            setError('Failed to load audio');
-          }}
-          onWaiting={() => {
-            console.log('Audio waiting');
-            setIsLoading(true);
-          }}
-          onPlaying={() => {
-            console.log('Audio playing');
-            setIsLoading(false);
-          }}
-        />
-      )}
+      {/* Always render the audio element, but with empty src if no track */}
+      <audio
+        ref={audioRef}
+        preload='metadata'
+        playsInline={true}
+        src={currentUrl || ''}
+        onLoadStart={() => {
+          console.log('Audio loading started');
+          setIsLoading(true);
+        }}
+        onLoadedMetadata={(e) => {
+          const audio = e.target as HTMLAudioElement;
+          console.log('Audio metadata loaded', {
+            duration: audio.duration,
+            muted: audio.muted,
+            readyState: audio.readyState,
+            networkState: audio.networkState,
+            error: audio.error,
+          });
+          setIsMetadataLoaded(true);
+        }}
+        onCanPlay={() => {
+          console.log('Audio can play', {
+            currentTime: audioRef.current?.currentTime,
+            paused: audioRef.current?.paused,
+            muted: audioRef.current?.muted,
+            readyState: audioRef.current?.readyState,
+          });
+          setIsPlayable(true);
+          setIsLoading(false);
+        }}
+        onPlay={() => {
+          console.log('Audio play event triggered');
+          setIsPlaying(true);
+        }}
+        onPause={() => {
+          console.log('Audio pause event triggered');
+          setIsPlaying(false);
+        }}
+        onError={(e) => {
+          const audio = e.target as HTMLAudioElement;
+          console.error('Audio error:', {
+            error: audio.error,
+            networkState: audio.networkState,
+            readyState: audio.readyState,
+            currentSrc: audio.currentSrc,
+          });
+          setIsLoading(false);
+          setError('Failed to load audio');
+        }}
+        onWaiting={() => {
+          console.log('Audio waiting');
+          setIsLoading(true);
+        }}
+        onPlaying={() => {
+          console.log('Audio playing');
+          setIsLoading(false);
+        }}
+      />
 
       <TrackList
         tracks={tracks}
