@@ -241,6 +241,25 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     setIsFullScreenVisible(false);
   };
 
+  // Add unmute effect after user interaction
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (audioRef.current) {
+        audioRef.current.muted = false;
+      }
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    document.addEventListener('click', handleFirstInteraction);
+    document.addEventListener('touchstart', handleFirstInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleFirstInteraction);
+      document.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, []);
+
   return (
     <div className='cloudinaryAudioPlayer'>
       {currentTrack && currentUrl && (
@@ -250,6 +269,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           preload='auto'
           crossOrigin='anonymous'
           playsInline
+          muted
           x-webkit-airplay='allow'
           webkit-playsinline='true'
           x-webkit-playsinline='true'

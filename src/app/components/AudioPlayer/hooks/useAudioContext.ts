@@ -17,8 +17,31 @@ export const useAudioContext = (
 
   // Initialize Web Audio API and clean up on unmount
   useEffect(() => {
+    const unlockAudioContext = async () => {
+      if (!audioContextRef.current) return;
+
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+
+      // Create and play a silent buffer
+      const buffer = audioContextRef.current.createBuffer(1, 1, 44100);
+      const source = audioContextRef.current.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContextRef.current.destination);
+      source.start(0);
+      source.stop(0.001);
+    };
+
+    // Add event listener for unlocking
+    document.addEventListener('click', unlockAudioContext, { once: true });
+    document.addEventListener('touchstart', unlockAudioContext, { once: true });
+
     // Clean up function
     return () => {
+      document.removeEventListener('click', unlockAudioContext);
+      document.removeEventListener('touchstart', unlockAudioContext);
+
       // Cancel any animation frames
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
