@@ -161,31 +161,31 @@ export const useAudioPlayback = (
 
   const handlePlayPause = async () => {
     if (!audioRef.current || !currentTrack) {
-      console.warn("Audio element or current track is missing.");
+      console.warn('Audio element or current track is missing.');
       return;
     }
 
     const audio = audioRef.current;
-    console.log("Play/Pause triggered. Current state:", {
+    console.log('Play/Pause triggered. Current state:', {
       isPlaying,
       readyState: audio.readyState,
       paused: audio.paused,
       currentTime: audio.currentTime,
       duration: audio.duration,
       muted: audio.muted,
-      volume: audio.volume
+      volume: audio.volume,
     });
 
     try {
       // Resume AudioContext if suspended (for iOS Safari)
-      if (audioContextRef.current?.state === "suspended") {
-        console.log("Resuming suspended AudioContext...");
+      if (audioContextRef.current?.state === 'suspended') {
+        console.log('Resuming suspended AudioContext...');
         await audioContextRef.current.resume();
-        console.log("AudioContext resumed successfully");
+        console.log('AudioContext resumed successfully');
       }
 
       if (isPlaying) {
-        console.log("Pausing audio...");
+        console.log('Pausing audio...');
         audio.pause();
         setIsPlaying(false);
 
@@ -199,21 +199,25 @@ export const useAudioPlayback = (
           miniAnimationRef.current = null;
         }
       } else {
-        console.log("Preparing to play audio...");
-        
+        console.log('Preparing to play audio...');
+
         // Ensure audio is unmuted
         audio.muted = false;
-        
+
         // Force reload if not ready
         if (audio.readyState < 2) {
-          console.log("Audio not ready (readyState:", audio.readyState, "). Forcing load...");
+          console.log(
+            'Audio not ready (readyState:',
+            audio.readyState,
+            '). Forcing load...'
+          );
           audio.load();
-          
-          console.log("Waiting for canplaythrough event...");
+
+          console.log('Waiting for canplaythrough event...');
           await new Promise((resolve, reject) => {
             const loadTimeout = setTimeout(() => {
               cleanup();
-              reject(new Error("Audio loading timeout"));
+              reject(new Error('Audio loading timeout'));
             }, 5000);
 
             const onCanPlay = () => {
@@ -228,19 +232,19 @@ export const useAudioPlayback = (
 
             const cleanup = () => {
               clearTimeout(loadTimeout);
-              audio.removeEventListener("canplaythrough", onCanPlay);
-              audio.removeEventListener("error", onError);
+              audio.removeEventListener('canplaythrough', onCanPlay);
+              audio.removeEventListener('error', onError);
             };
 
-            audio.addEventListener("canplaythrough", onCanPlay);
-            audio.addEventListener("error", onError);
+            audio.addEventListener('canplaythrough', onCanPlay);
+            audio.addEventListener('error', onError);
           });
         }
 
-        console.log("Attempting to play audio...");
+        console.log('Attempting to play audio...');
         try {
           await audio.play();
-          console.log("Audio playback started successfully");
+          console.log('Audio playback started successfully');
           setIsPlaying(true);
 
           // Start visualizations after successful play
@@ -251,18 +255,24 @@ export const useAudioPlayback = (
 
           const animateMiniVisualizer = () => {
             drawMiniVisualizer();
-            miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+            miniAnimationRef.current = requestAnimationFrame(
+              animateMiniVisualizer
+            );
           };
 
           animationRef.current = requestAnimationFrame(animateWaveform);
-          miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+          miniAnimationRef.current = requestAnimationFrame(
+            animateMiniVisualizer
+          );
         } catch (playError) {
-          console.error("Play() failed:", playError);
+          console.error('Play() failed:', playError);
           if (playError instanceof Error) {
-            if (playError.name === "NotAllowedError") {
-              console.log("Playback was blocked by browser policy. User interaction required.");
-            } else if (playError.name === "NotSupportedError") {
-              console.log("Audio format not supported by browser.");
+            if (playError.name === 'NotAllowedError') {
+              console.log(
+                'Playback was blocked by browser policy. User interaction required.'
+              );
+            } else if (playError.name === 'NotSupportedError') {
+              console.log('Audio format not supported by browser.');
             }
           }
           setIsPlaying(false);
@@ -270,7 +280,7 @@ export const useAudioPlayback = (
         }
       }
     } catch (error) {
-      console.error("Error in handlePlayPause:", error);
+      console.error('Error in handlePlayPause:', error);
       setIsPlaying(false);
     }
   };
