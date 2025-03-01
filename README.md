@@ -214,6 +214,60 @@ Then visit [http://localhost:3000](http://localhost:3000) and marvel at your cre
 - SCSS modules for style organization
 - Responsive design (Works on everything except your grandma's flip phone)
 
+## 🌐 Browser Compatibility & Audio Handling
+
+### Safari & iOS Specific Optimizations
+
+- Audio Context initialization with `sampleRate: 44100` for Safari compatibility
+- Explicit `audio.load()` call before playback to ensure metadata loading
+- Audio element attributes for iOS:
+
+  ```html
+  <audio
+    preload="auto"
+    playsInline
+    x-webkit-airplay="allow"
+    webkit-playsinline="true"
+    x-webkit-playsinline="true"
+  />
+  ```
+
+- Volume and mute state management before playback starts
+- Proper cleanup of audio nodes to prevent memory leaks
+
+### Audio Loading Strategy
+
+- Progressive loading with state tracking:
+  1. `HAVE_METADATA` state for initial track info
+  2. `canplay` event for basic playback readiness
+  3. `canplaythrough` event for buffered playback
+- Timeout handling for slow connections (5-second limit)
+- Automatic retry mechanism for failed loads
+- Proper cleanup of event listeners
+
+### Visualizer Optimizations
+
+- Frame rate limiting for performance (30fps target)
+- Canvas size optimization based on device capabilities
+- Gradient caching to reduce render overhead
+- Smooth transitions between visualization states
+- Separate animation frames for waveform and mini visualizer
+
+### Error Handling & Recovery
+
+- Automatic recovery from audio context suspension
+- Graceful degradation when Web Audio API is unavailable
+- Proper cleanup of audio resources on unmount
+- Clear error messaging for various failure scenarios
+
+### Performance Considerations
+
+- Lazy loading of audio resources
+- Efficient audio node connection/disconnection
+- Memory leak prevention through proper cleanup
+- Throttled progress updates
+- Optimized canvas drawing operations
+
 ## 🔄 Version History
 
 You can check out the older version built with Gatsby at [portfolio v1](https://github.com/gupta-akshay/portfolio) (Warning: Contains legacy code and nostalgia)
