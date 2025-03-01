@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: 'article',
     images: [
       {
-        url: '/images/about-me.png',
+        url: 'https://akshaygupta.live/images/about-me.png',
         width: 1200,
         height: 630,
         alt: 'Akshay Gupta Blog',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: 'Blog | Akshay Gupta',
     description:
       'Read my latest thoughts and insights about web development and technology.',
-    images: ['/images/about-me.png'],
+    images: ['https://akshaygupta.live/images/about-me.png'],
     creator: '@ashay_music',
   },
   alternates: {

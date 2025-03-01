@@ -1,79 +1,103 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import Layout from '@/app/components/Layout';
 import SingleBlog from '@/app/components/SingleBlog';
 import BlogImage from '@/app/components/BlogImage';
-import LoadingIndicator from '@/app/components/LoadingIndicator';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
 
-type Props = {
-  params: Promise<{ slug: string }>,
-};
+interface SingleBlogPageProps {
+  params: Promise<{ slug: string }>;
+}
 
-// Separate component for blog content to use with Suspense
-async function BlogContent({ slug }: { slug: string }) {
+const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
+  const slug = (await params).slug;
+
   const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
   }
 
-  return (
-    <div id={post.slug.current} className='single-blog'>
-      <div className='container'>
-        <div className='blog-feature-img'>
-          <BlogImage value={post.mainImage} isCoverImage />
-        </div>
-        <div className='row justify-content-center'>
-          <div className='col-lg-8'>
-            <article className='article'>
-              <div className='article-title'>
-                <div className='hashtags'>
-                  {post.categories.map((category) => (
-                    <span key={category.slug.current} className='hashtag'>
-                      #{category.title}
-                    </span>
-                  ))}
-                </div>
-                <h2>{post.title}</h2>
-                <div className='media'>
-                  <div className='avatar'>
-                    <BlogImage value={post.author.image} isAuthor />
-                  </div>
-                  <div className='media-body'>
-                    <label>{post.author.name}</label>
-                    <span>{formatDate(post.publishedAt)}</span>
-                  </div>
-                </div>
-              </div>
-              <div className='article-content'>
-                <SingleBlog post={post} />
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const SingleBlogPage = async ({ params }: Props) => {
-  const slug = (await params).slug;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt || post.title,
+    image: post.mainImage
+      ? urlFor(post.mainImage).width(1200).height(630).url()
+      : 'https://akshaygupta.live/images/about-me.png',
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: post.author.name,
+      url: 'https://akshaygupta.live/about',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Akshay Gupta',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://akshaygupta.live/icon?size=192',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://akshaygupta.live/blog/${slug}`,
+    },
+  };
 
   return (
     <Layout isBlog>
-      <Suspense fallback={<LoadingIndicator />}>
-        <BlogContent slug={slug} />
-      </Suspense>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div id={post.slug.current} className='single-blog'>
+        <div className='container'>
+          <div className='blog-feature-img'>
+            <BlogImage value={post.mainImage} isCoverImage />
+          </div>
+          <div className='row justify-content-center'>
+            <div className='col-lg-8'>
+              <article className='article'>
+                <div className='article-title'>
+                  <div className='hashtags'>
+                    {post.categories.map((category) => (
+                      <span key={category.slug.current} className='hashtag'>
+                        #{category.title}
+                      </span>
+                    ))}
+                  </div>
+                  <h2>{post.title}</h2>
+                  <div className='media'>
+                    <div className='avatar'>
+                      <BlogImage value={post.author.image} isAuthor />
+                    </div>
+                    <div className='media-body'>
+                      <label>{post.author.name}</label>
+                      <span>{formatDate(post.publishedAt)}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className='article-content'>
+                  <SingleBlog post={post} />
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 };
 
 // Add generateMetadata function for dynamic blog posts
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: SingleBlogPageProps): Promise<Metadata> {
   try {
     const slug = (await params).slug;
     const post = await getPostBySlug(slug);
@@ -88,7 +112,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           type: 'article',
           images: [
             {
-              url: '/images/about-me.png',
+              url: 'https://akshaygupta.live/images/about-me.png',
               width: 1200,
               height: 630,
               alt: 'Post Not Found',
@@ -100,7 +124,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
           creator: '@ashay_music',
-          images: ['/images/about-me.png'],
+          images: ['https://akshaygupta.live/images/about-me.png'],
         },
         alternates: {
           canonical: `https://akshaygupta.live/blog/${slug}`,
@@ -154,7 +178,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         type: 'article',
         images: [
           {
-            url: '/images/about-me.png',
+            url: 'https://akshaygupta.live/images/about-me.png',
             width: 1200,
             height: 630,
             alt: 'Error Loading Blog Post',
@@ -166,7 +190,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: 'Error',
         description: 'An error occurred while loading this blog post',
         creator: '@ashay_music',
-        images: ['/images/about-me.png'],
+        images: ['https://akshaygupta.live/images/about-me.png'],
       },
       alternates: {
         canonical: `https://akshaygupta.live/blog/${slug}`,

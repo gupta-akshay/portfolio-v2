@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: 'music.playlist',
     images: [
       {
-        url: '/images/about-me.png',
+        url: 'https://akshaygupta.live/images/about-me.png',
         width: 1200,
         height: 630,
         alt: 'Akshay Gupta Music',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
     creator: '@ashay_music',
-    images: ['/images/about-me.png'],
+    images: ['https://akshaygupta.live/images/about-me.png'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/music',
@@ -36,8 +36,29 @@ export const metadata: Metadata = {
 };
 
 export default function Music() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'MusicPlaylist',
+    name: 'Akshay Gupta Music Collection',
+    description: 'Listen to my remixes and music productions. Enjoy the beats!',
+    url: 'https://akshaygupta.live/music',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://akshaygupta.live/music',
+    },
+    creator: {
+      '@type': 'Person',
+      name: 'Akshay Gupta',
+      url: 'https://akshaygupta.live',
+    },
+  };
+
   return (
     <Layout>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section
         id='music'
         data-nav-tooltip='Music'

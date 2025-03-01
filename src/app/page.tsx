@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: 'Akshay Gupta',
     images: [
       {
-        url: '/images/home-banner.webp',
+        url: 'https://akshaygupta.live/images/home-banner.webp',
         width: 600,
         height: 600,
         alt: 'Akshay Gupta - Senior Staff Engineer at PeopleGrove',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
     creator: '@ashay_music',
-    images: ['/images/home-banner.webp'],
+    images: ['https://akshaygupta.live/images/home-banner.webp'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live',
@@ -39,8 +39,46 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Akshay Gupta',
+    jobTitle: 'Senior Staff Engineer',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'PeopleGrove',
+      url: 'https://www.peoplegrove.com',
+    },
+    url: 'https://akshaygupta.live',
+    image: 'https://akshaygupta.live/images/home-banner.webp',
+    description:
+      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    sameAs: [
+      'https://github.com/gupta-akshay',
+      'https://linkedin.com/in/akshayguptaujn',
+      'https://twitter.com/ashay_music',
+    ],
+    knowsAbout: [
+      'Web Development',
+      'JavaScript',
+      'React',
+      'Node.js',
+      'TypeScript',
+      'Next.js',
+      'Postgres',
+      'ElasticSearch',
+      'Redis',
+      'RabbitMQ',
+      'Google Cloud Platform',
+    ],
+  };
+
   return (
     <Layout>
+      <script
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section
         id='home'
         data-nav-tooltip='Home'
