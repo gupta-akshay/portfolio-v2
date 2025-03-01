@@ -159,9 +159,24 @@ export const useAudioPlayback = (
     setCurrentTime(0);
   }, [currentTrackIndex, audioRef]);
 
+  const startVisualizations = () => {
+    const animateWaveform = () => {
+      drawWaveform();
+      animationRef.current = requestAnimationFrame(animateWaveform);
+    };
+
+    const animateMiniVisualizer = () => {
+      drawMiniVisualizer();
+      miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+    };
+
+    animationRef.current = requestAnimationFrame(animateWaveform);
+    miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+  };
+
   const handlePlayPause = async () => {
     if (!audioRef.current || !currentTrack) {
-      console.warn('Audio element or current track is missing.');
+      console.warn('Audio element or current track is missing');
       return;
     }
 
@@ -185,118 +200,45 @@ export const useAudioPlayback = (
         console.log('AudioContext resumed successfully');
       }
 
+      // Check if audio is ready to play
+      if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
+        console.log('Audio not ready, loading...');
+        audio.load();
+        return;
+      }
+
       if (isPlaying) {
         console.log('Pausing audio...');
         audio.pause();
         setIsPlaying(false);
-
-        // Stop visualizations
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-          animationRef.current = null;
-        }
-        if (miniAnimationRef.current) {
-          cancelAnimationFrame(miniAnimationRef.current);
-          miniAnimationRef.current = null;
-        }
       } else {
-        console.log('Preparing to play audio...');
-
-        // Ensure audio is unmuted
-        audio.muted = false;
-
-        // Force reload and wait for canplaythrough if not ready
-        if (audio.readyState < 3) {
-          // HAVE_FUTURE_DATA
-          console.log(
-            'Audio not fully ready (readyState:',
-            audio.readyState,
-            '). Loading...'
-          );
-          audio.load(); // Explicitly load for iOS
-
-          console.log('Waiting for canplaythrough event...');
-          await new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
-              cleanup();
-              reject(new Error('Audio loading timeout (10s)'));
-            }, 10000);
-
-            const onCanPlayThrough = () => {
-              console.log('Received canplaythrough event');
-              cleanup();
-              resolve(true);
-            };
-
-            const onError = (e: Event) => {
-              console.error('Audio loading error:', {
-                error: audio.error?.code,
-                message: audio.error?.message,
-                networkState: audio.networkState,
-              });
-              cleanup();
-              reject(new Error(`Audio loading error: ${e}`));
-            };
-
-            const cleanup = () => {
-              clearTimeout(timeout);
-              audio.removeEventListener('canplaythrough', onCanPlayThrough);
-              audio.removeEventListener('error', onError);
-            };
-
-            audio.addEventListener('canplaythrough', onCanPlayThrough);
-            audio.addEventListener('error', onError);
-          });
-        }
-
-        console.log('Attempting to play audio...', {
-          readyState: audio.readyState,
-          networkState: audio.networkState,
-          currentSrc: audio.currentSrc,
-        });
-
+        console.log('Attempting to play audio...');
         try {
-          await audio.play();
-          console.log('Audio playback started successfully');
-          setIsPlaying(true);
+          // Ensure audio is not muted
+          audio.muted = false;
 
-          // Start visualizations after successful play
-          const animateWaveform = () => {
-            drawWaveform();
-            animationRef.current = requestAnimationFrame(animateWaveform);
-          };
+          // Set volume through gain node for better iOS compatibility
+          if (gainNodeRef.current) {
+            gainNodeRef.current.gain.value = volume;
+          }
 
-          const animateMiniVisualizer = () => {
-            drawMiniVisualizer();
-            miniAnimationRef.current = requestAnimationFrame(
-              animateMiniVisualizer
-            );
-          };
-
-          animationRef.current = requestAnimationFrame(animateWaveform);
-          miniAnimationRef.current = requestAnimationFrame(
-            animateMiniVisualizer
-          );
-        } catch (playError) {
-          console.error('Play() failed:', {
-            error: playError,
-            readyState: audio.readyState,
-            networkState: audio.networkState,
-            currentTime: audio.currentTime,
-            paused: audio.paused,
-            muted: audio.muted,
-          });
-          if (playError instanceof Error) {
-            if (playError.name === 'NotAllowedError') {
-              console.log(
-                'Playback was blocked by browser policy. User interaction required.'
-              );
-            } else if (playError.name === 'NotSupportedError') {
-              console.log('Audio format not supported by browser.');
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+            console.log('Audio playing successfully');
+            setIsPlaying(true);
+            startVisualizations();
+          }
+        } catch (error) {
+          console.error('Error playing audio:', error);
+          if (error instanceof Error) {
+            if (error.name === 'NotAllowedError') {
+              console.log('Playback was prevented by browser policy');
+            } else if (error.name === 'NotSupportedError') {
+              console.log('Audio format not supported');
             }
           }
           setIsPlaying(false);
-          throw playError;
         }
       }
     } catch (error) {
