@@ -8,27 +8,13 @@ export const metadata: Metadata = {
   title: 'My Music | Akshay Gupta',
   description:
     'Listen to my latest remixes and music productions. Enjoy the beats!',
-  openGraph: {
-    title: 'My Music | Akshay Gupta',
-    description:
-      'Listen to my latest remixes and music productions. Enjoy the beats!',
-    type: 'music.playlist',
-    images: [
-      {
-        url: 'https://akshaygupta.live/images/about-me.png',
-        width: 1200,
-        height: 630,
-        alt: 'Akshay Gupta Music',
-      },
-    ],
-  },
   twitter: {
     card: 'summary_large_image',
     title: 'My Music | Akshay Gupta',
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
     creator: '@ashay_music',
-    images: ['https://akshaygupta.live/images/about-me.png'],
+    images: ['https://akshaygupta.live/music/opengraph-image'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/music',

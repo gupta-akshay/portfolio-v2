@@ -10,31 +10,13 @@ export const metadata: Metadata = {
   title: 'About | Akshay Gupta',
   description:
     'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
-  openGraph: {
-    title: 'About Akshay Gupta | Full-Stack Developer',
-    description:
-      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
-    type: 'profile',
-    images: [
-      {
-        url: 'https://akshaygupta.live/images/about-me.png',
-        width: 560,
-        height: 560,
-        alt: 'About Akshay Gupta',
-      },
-    ],
-    firstName: 'Akshay',
-    lastName: 'Gupta',
-    username: 'akshay_gupta_',
-    gender: 'male',
-  },
   twitter: {
     card: 'summary_large_image',
     title: 'About Akshay Gupta | Full-Stack Developer',
     description:
       'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
     creator: '@ashay_music',
-    images: ['https://akshaygupta.live/images/about-me.png'],
+    images: ['https://akshaygupta.live/about/opengraph-image'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/about',

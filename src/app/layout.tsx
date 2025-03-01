@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
@@ -10,6 +11,47 @@ import 'devicon/devicon.min.css';
 import './styles/globals.scss';
 
 config.autoAddCss = false;
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://akshaygupta.live'),
+  title: {
+    default: 'Akshay Gupta | Full-Stack Web Developer',
+    template: '%s | Akshay Gupta',
+  },
+  description:
+    'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+  keywords: [
+    'web development',
+    'full-stack developer',
+    'akshay gupta',
+    'portfolio',
+    'senior staff engineer',
+    'javascript',
+    'react',
+    'next.js',
+  ],
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@ashay_music',
+    title: 'Akshay Gupta | Full-Stack Web Developer',
+    description:
+      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    images: ['https://akshaygupta.live/images/about-me.png'],
+  },
+  verification: {
+    google: 'rcbqH3Qckh-CLqTHJHg3ze_tDDYoEMWKxrS4qWy1Bb0',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function RootLayout({
   children,

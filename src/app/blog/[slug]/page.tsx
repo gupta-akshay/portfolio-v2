@@ -106,19 +106,6 @@ export async function generateMetadata({
       return {
         title: 'Post Not Found | Akshay Gupta',
         description: `The blog post you're looking for does not exist`,
-        openGraph: {
-          title: 'Post Not Found',
-          description: `The blog post you're looking for does not exist`,
-          type: 'article',
-          images: [
-            {
-              url: 'https://akshaygupta.live/images/about-me.png',
-              width: 1200,
-              height: 630,
-              alt: 'Post Not Found',
-            },
-          ],
-        },
         twitter: {
           card: 'summary_large_image',
           title: 'Post Not Found',
@@ -134,7 +121,6 @@ export async function generateMetadata({
 
     const imageUrl = urlFor(post.mainImage).width(1200).height(630).url();
 
-    // Create a description from the excerpt or fallback to title
     const description = post.excerpt || post.title;
 
     return {
