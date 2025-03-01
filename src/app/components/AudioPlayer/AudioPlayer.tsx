@@ -90,26 +90,99 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     const updateTrackUrl = async () => {
       if (currentTrack) {
         try {
+          console.log('Generating URL for track:', currentTrack.title);
           const url = await getAudioUrl(currentTrack.path);
           console.log('Generated URL:', url);
           setCurrentUrl(url);
 
           // Force load and unmute after URL is set
           if (audioRef.current) {
-            console.log('New track loaded:', currentTrack.title);
+            console.log('Setting up new track...');
             const audioElement = audioRef.current;
-            audioElement.muted = false; // Ensure it's unmuted
-            audioElement.load(); // Explicitly load the audio
 
-            setTimeout(() => {
-              console.log('Attempting to play after load...');
-              audioElement
-                .play()
-                .catch((err) => console.warn('Play blocked:', err));
-            }, 1000); // Delay slightly to let iOS process
+            // Reset states
+            setIsLoading(true);
+            setIsMetadataLoaded(false);
+            setIsPlayable(false);
+            setIsPlaying(false);
+
+            // Configure audio element
+            audioElement.muted = false;
+            audioElement.volume = volume;
+            audioElement.currentTime = 0;
+
+            console.log('Forcing audio load...');
+            audioElement.load();
+
+            // Wait for metadata to load
+            await new Promise((resolve) => {
+              const onMetadata = () => {
+                console.log('Track metadata loaded successfully');
+                audioElement.removeEventListener('loadedmetadata', onMetadata);
+                resolve(true);
+              };
+              audioElement.addEventListener('loadedmetadata', onMetadata);
+            });
+
+            // Try to preload the audio
+            console.log('Attempting to preload audio...');
+            try {
+              await new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                  cleanup();
+                  reject(new Error('Preload timeout'));
+                }, 10000);
+
+                const onCanPlayThrough = () => {
+                  console.log('Audio preloaded successfully');
+                  cleanup();
+                  resolve(true);
+                };
+
+                const onError = (e: Event) => {
+                  console.error('Preload error:', e);
+                  cleanup();
+                  reject(e);
+                };
+
+                const cleanup = () => {
+                  clearTimeout(timeout);
+                  audioElement.removeEventListener(
+                    'canplaythrough',
+                    onCanPlayThrough
+                  );
+                  audioElement.removeEventListener('error', onError);
+                };
+
+                audioElement.addEventListener(
+                  'canplaythrough',
+                  onCanPlayThrough
+                );
+                audioElement.addEventListener('error', onError);
+              });
+
+              setIsPlayable(true);
+              console.log('Track ready for playback');
+
+              // Auto-play if requested
+              if (shouldAutoPlayRef.current) {
+                console.log('Attempting auto-play...');
+                try {
+                  await audioElement.play();
+                  setIsPlaying(true);
+                  console.log('Auto-play successful');
+                } catch (playError) {
+                  console.warn('Auto-play blocked:', playError);
+                }
+              }
+            } catch (preloadError) {
+              console.warn('Preload incomplete:', preloadError);
+              // Still mark as playable, we'll retry on user interaction
+              setIsPlayable(true);
+            }
           }
         } catch (error) {
-          console.error('Error loading audio URL:', error);
+          console.error('Error setting up track:', error);
           setIsLoading(false);
           shouldAutoPlayRef.current = false;
         }
@@ -119,7 +192,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       }
     };
     updateTrackUrl();
-  }, [currentTrack]);
+  }, [currentTrack, volume, setIsPlaying]);
 
   // Handle audio loading events
   useEffect(() => {

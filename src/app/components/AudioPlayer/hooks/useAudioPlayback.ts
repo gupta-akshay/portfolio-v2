@@ -174,6 +174,7 @@ export const useAudioPlayback = (
       duration: audio.duration,
       muted: audio.muted,
       volume: audio.volume,
+      networkState: audio.networkState,
     });
 
     try {
@@ -204,44 +205,56 @@ export const useAudioPlayback = (
         // Ensure audio is unmuted
         audio.muted = false;
 
-        // Force reload if not ready
-        if (audio.readyState < 2) {
+        // Force reload and wait for canplaythrough if not ready
+        if (audio.readyState < 3) {
+          // HAVE_FUTURE_DATA
           console.log(
-            'Audio not ready (readyState:',
+            'Audio not fully ready (readyState:',
             audio.readyState,
-            '). Forcing load...'
+            '). Loading...'
           );
-          audio.load();
+          audio.load(); // Explicitly load for iOS
 
           console.log('Waiting for canplaythrough event...');
           await new Promise((resolve, reject) => {
-            const loadTimeout = setTimeout(() => {
+            const timeout = setTimeout(() => {
               cleanup();
-              reject(new Error('Audio loading timeout'));
-            }, 5000);
+              reject(new Error('Audio loading timeout (10s)'));
+            }, 10000);
 
-            const onCanPlay = () => {
+            const onCanPlayThrough = () => {
+              console.log('Received canplaythrough event');
               cleanup();
               resolve(true);
             };
 
-            const onError = (e: ErrorEvent) => {
+            const onError = (e: Event) => {
+              console.error('Audio loading error:', {
+                error: audio.error?.code,
+                message: audio.error?.message,
+                networkState: audio.networkState,
+              });
               cleanup();
-              reject(new Error(`Audio loading error: ${e.message}`));
+              reject(new Error(`Audio loading error: ${e}`));
             };
 
             const cleanup = () => {
-              clearTimeout(loadTimeout);
-              audio.removeEventListener('canplaythrough', onCanPlay);
+              clearTimeout(timeout);
+              audio.removeEventListener('canplaythrough', onCanPlayThrough);
               audio.removeEventListener('error', onError);
             };
 
-            audio.addEventListener('canplaythrough', onCanPlay);
+            audio.addEventListener('canplaythrough', onCanPlayThrough);
             audio.addEventListener('error', onError);
           });
         }
 
-        console.log('Attempting to play audio...');
+        console.log('Attempting to play audio...', {
+          readyState: audio.readyState,
+          networkState: audio.networkState,
+          currentSrc: audio.currentSrc,
+        });
+
         try {
           await audio.play();
           console.log('Audio playback started successfully');
@@ -265,7 +278,14 @@ export const useAudioPlayback = (
             animateMiniVisualizer
           );
         } catch (playError) {
-          console.error('Play() failed:', playError);
+          console.error('Play() failed:', {
+            error: playError,
+            readyState: audio.readyState,
+            networkState: audio.networkState,
+            currentTime: audio.currentTime,
+            paused: audio.paused,
+            muted: audio.muted,
+          });
           if (playError instanceof Error) {
             if (playError.name === 'NotAllowedError') {
               console.log(
