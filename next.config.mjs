@@ -29,10 +29,6 @@ const nextConfig = {
     ],
   },
 
-  // compiler: {
-  //   removeConsole: process.env.NODE_ENV === 'production',
-  // },
-
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api'],
