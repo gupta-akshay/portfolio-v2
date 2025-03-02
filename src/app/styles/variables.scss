@@ -12,6 +12,13 @@ $px-bg-1: #10101a !default; // Main BG
 $px-bg-2: #0e0e17 !default;
 $px-bg-3: #0c0c14 !default; // Menu
 $px-gray: #f7f7ff !default;
+$px-gray-light: rgba(
+  255,
+  255,
+  255,
+  0.7
+) !default; // Light gray for text in dark mode
+$px-gray-dark: rgba(0, 0, 0, 0.7) !default; // Dark gray for text in light mode
 $px-error: #dc3545;
 $px-pink: #ff00c1;
 $px-pink-comp: #00ff3e;

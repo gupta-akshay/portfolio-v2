@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, RefObject } from 'react';
-import { AudioPlayerProps } from './types';
+import { AudioPlayerProps, Track } from './types';
 import { getAudioUrl } from '@/app/utils/aws';
 import { useAudioContext, useAudioPlayback, useVisualizer } from './hooks';
 import {
@@ -12,9 +12,18 @@ import {
   EmptyPlayer,
   MiniPlayer,
   FullScreenPlayer,
+  NoSearchResults,
 } from './components';
 
-const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
+// Extend the existing AudioPlayerProps interface from types.ts
+interface ExtendedAudioPlayerProps extends AudioPlayerProps {
+  searchQuery?: string; // Add optional search query prop
+}
+
+const AudioPlayer = ({
+  tracks,
+  searchQuery = '',
+}: ExtendedAudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const miniCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,6 +38,19 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Check if we have tracks to display
   const hasTracks = tracks && tracks.length > 0;
   const isMobile = window.innerWidth <= 991;
+  const hasSearchQuery = searchQuery.trim().length > 0;
+  const isNoSearchResults = !hasTracks && hasSearchQuery;
+
+  // Log state for debugging
+  useEffect(() => {
+    console.log({
+      hasTracks,
+      hasSearchQuery,
+      isNoSearchResults,
+      tracksLength: tracks?.length || 0,
+      searchQuery,
+    });
+  }, [hasTracks, hasSearchQuery, isNoSearchResults, tracks, searchQuery]);
 
   // Custom hooks - all called unconditionally
   const {
@@ -382,16 +404,23 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         }}
       />
 
-      <TrackList
-        tracks={tracks}
-        currentTrackIndex={currentTrackIndex}
-        onTrackSelect={handleTrackSelect}
-      />
+      {/* Only render TrackList if we're not showing NoSearchResults or if we have tracks */}
+      {!isNoSearchResults && (
+        <TrackList
+          tracks={tracks}
+          currentTrackIndex={currentTrackIndex}
+          onTrackSelect={handleTrackSelect}
+          searchQuery={searchQuery}
+          isMobile={isMobile}
+        />
+      )}
 
       {/* Desktop Player */}
       {!isMobile && (
         <div className='playerControls desktop'>
-          {currentTrack ? (
+          {isNoSearchResults ? (
+            <NoSearchResults searchQuery={searchQuery} />
+          ) : currentTrack ? (
             <>
               <NowPlaying
                 currentTrack={currentTrack}
@@ -424,8 +453,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         </div>
       )}
 
-      {/* Mobile Mini Player */}
-      {currentTrack && isMobile && (
+      {/* Mobile Mini Player - Only show if we have a current track and not showing no search results */}
+      {currentTrack && isMobile && !isNoSearchResults && (
         <MiniPlayer
           currentTrack={currentTrack}
           isPlaying={isPlaying}
@@ -436,8 +465,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         />
       )}
 
-      {/* Mobile Full Screen Player */}
-      {currentTrack && isMobile && (
+      {/* Mobile Full Screen Player - Only show if we have a current track and not showing no search results */}
+      {currentTrack && isMobile && !isNoSearchResults && (
         <FullScreenPlayer
           isVisible={isFullScreenVisible}
           currentTrack={currentTrack}
@@ -456,6 +485,13 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           onVolumeChange={handleVolumeChange}
           onToggleMute={toggleMute}
         />
+      )}
+
+      {/* Show NoSearchResults for mobile when needed */}
+      {isMobile && isNoSearchResults && (
+        <div className='mobileNoResults'>
+          <NoSearchResults searchQuery={searchQuery} className='mobile' />
+        </div>
       )}
     </div>
   );

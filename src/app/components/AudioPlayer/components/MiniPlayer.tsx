@@ -35,6 +35,8 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
   const [isOverflowing, setIsOverflowing] = useState(false);
   const touchStartY = useRef<number | null>(null);
 
+  const displayTitle = currentTrack.name || currentTrack.title;
+
   useEffect(() => {
     const checkOverflow = () => {
       if (titleRef.current) {
@@ -48,7 +50,7 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
     // Also check on window resize
     window.addEventListener('resize', checkOverflow);
     return () => window.removeEventListener('resize', checkOverflow);
-  }, [currentTrack.title]); // Re-check when track title changes
+  }, [displayTitle]); // Re-check when track title changes
 
   const handleTouchStart = (e: TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
@@ -97,14 +99,19 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
         <div className='miniTrackInfo'>
           <h4 ref={titleRef} className={isOverflowing ? 'scrolling' : ''}>
             {isOverflowing ? (
-              <span className='scrollingText' data-content={currentTrack.title}>
-                {currentTrack.title}
+              <span className='scrollingText' data-content={displayTitle}>
+                {displayTitle}
               </span>
             ) : (
-              currentTrack.title
+              displayTitle
             )}
           </h4>
-          <p>{currentTrack.artist}</p>
+          <div className='miniPlayerTags'>
+            {currentTrack.type && (
+              <span className='miniTag typeTag'>{currentTrack.type}</span>
+            )}
+            <span className='miniTag artistTag'>{currentTrack.artist}</span>
+          </div>
         </div>
       </div>
       <div className='miniControls'>

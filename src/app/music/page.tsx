@@ -49,7 +49,7 @@ export default function Music() {
       <section
         id='music'
         data-nav-tooltip='Music'
-        className='pp-section pp-scrollable section'
+        className='pp-section pp-scrollable section music-section'
         tabIndex={0}
         role='region'
         aria-label='Music Section'

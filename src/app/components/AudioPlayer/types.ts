@@ -8,6 +8,10 @@ export interface Track {
   artist: string;
   path: string;
   duration?: string;
+  originalArtist?: string;
+  name?: string;
+  type?: string;
+  year?: number;
 }
 
 export interface AudioPlayerProps {
