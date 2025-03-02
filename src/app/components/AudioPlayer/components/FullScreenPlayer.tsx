@@ -81,8 +81,18 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
 
       <div className='fullScreenContent'>
         <div className='trackDetails'>
-          <h4>{currentTrack.title}</h4>
-          <p>{currentTrack.artist}</p>
+          <h4>{currentTrack.name || currentTrack.title}</h4>
+          <div className='fullScreenTags'>
+            {currentTrack.originalArtist && (
+              <span className='trackTag originalArtistTag'>
+                {currentTrack.originalArtist}
+              </span>
+            )}
+            {currentTrack.type && (
+              <span className='trackTag typeTag'>{currentTrack.type}</span>
+            )}
+            <span className='trackTag artistTag'>{currentTrack.artist}</span>
+          </div>
         </div>
 
         <div className='visualizerContainer'>

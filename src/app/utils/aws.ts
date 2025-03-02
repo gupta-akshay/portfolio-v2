@@ -75,13 +75,17 @@ export async function getAudioFilesList(): Promise<Track[]> {
     )
       .map((item) => {
         const metadata = parseTrackMetadata(item.Key || '');
+        const title = formatTrackTitle(metadata);
 
         return {
           id: item.Key || '',
-          title: formatTrackTitle(metadata),
+          title: title,
           artist: metadata.artist,
           path: item.Key || '',
           year: metadata.year,
+          originalArtist: metadata.originalArtist,
+          name: metadata.name,
+          type: metadata.type,
         };
       })
       .sort((a, b) => b.year - a.year);

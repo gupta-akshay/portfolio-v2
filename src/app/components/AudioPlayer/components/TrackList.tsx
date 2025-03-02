@@ -7,6 +7,8 @@ interface TrackListProps {
   onTrackSelect: (index: number) => void;
 }
 
+// We can remove the parsing function since we now have the metadata directly in the Track object
+
 const TrackList: React.FC<TrackListProps> = ({
   tracks,
   currentTrackIndex,
@@ -57,30 +59,42 @@ const TrackList: React.FC<TrackListProps> = ({
 
   return (
     <div className='trackList'>
-      <h4 id='playlist-heading'>Playlist</h4>
+      {/* <h4 id='playlist-heading'>Playlist</h4> */}
       <ul
         role='listbox'
         aria-labelledby='playlist-heading'
         tabIndex={0}
         className='track-list-container'
       >
-        {tracks.map((track, index) => (
-          <li
-            key={track.id}
-            className={`trackItem ${currentTrackIndex === index ? 'active' : ''}`}
-            onClick={() => onTrackSelect(index)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-            role='option'
-            aria-selected={currentTrackIndex === index}
-            tabIndex={0}
-            data-track-index={index}
-          >
-            <div className='trackInfo'>
-              <span className='trackTitle'>{track.title}</span>
-              <span className='trackArtist'>{track.artist}</span>
-            </div>
-          </li>
-        ))}
+        {tracks.map((track, index) => {
+          return (
+            <li
+              key={track.id}
+              className={`trackItem ${currentTrackIndex === index ? 'active' : ''}`}
+              onClick={() => onTrackSelect(index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              role='option'
+              aria-selected={currentTrackIndex === index}
+              tabIndex={0}
+              data-track-index={index}
+            >
+              <div className='trackInfo'>
+                <span className='trackTitle'>{track.name || track.title}</span>
+                <div className='trackTags'>
+                  {track.originalArtist && (
+                    <span className='trackTag originalArtistTag'>
+                      {track.originalArtist}
+                    </span>
+                  )}
+                  {track.type && (
+                    <span className='trackTag typeTag'>{track.type}</span>
+                  )}
+                  <span className='trackTag artistTag'>{track.artist}</span>
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
