@@ -7,6 +7,7 @@ import {
   faForward,
   faVolumeHigh,
   faVolumeMute,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons';
 import { formatTime } from '../utils';
 import LoadingSpinner from './LoadingSpinner';
@@ -24,6 +25,8 @@ export interface PlayerControlsProps {
   onTimeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onVolumeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onToggleMute: () => void;
+  onDownload?: () => void;
+  canDownload?: boolean;
 }
 
 const PlayerControls = ({
@@ -39,6 +42,8 @@ const PlayerControls = ({
   onTimeChange,
   onVolumeChange,
   onToggleMute,
+  onDownload,
+  canDownload = false,
 }: PlayerControlsProps) => {
   return (
     <>
@@ -91,6 +96,19 @@ const PlayerControls = ({
             <FontAwesomeIcon icon={faForward} />
           </button>
         </div>
+
+        {canDownload && onDownload && (
+          <div className='downloadControl'>
+            <button
+              onClick={onDownload}
+              className='controlButton downloadButton'
+              aria-label='Download track'
+              disabled={isLoading}
+            >
+              <FontAwesomeIcon icon={faDownload} />
+            </button>
+          </div>
+        )}
 
         <div className='volumeControl'>
           <button

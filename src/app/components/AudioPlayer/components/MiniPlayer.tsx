@@ -10,6 +10,7 @@ import {
   faPlay,
   faPause,
   faChevronUp,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons';
 import { Track } from '../types';
 import LoadingSpinner from './LoadingSpinner';
@@ -21,6 +22,8 @@ interface MiniPlayerProps {
   miniCanvasRef: RefObject<HTMLCanvasElement>;
   onPlayPause: () => void;
   onExpand: () => void;
+  onDownload?: () => void;
+  canDownload?: boolean;
 }
 
 const MiniPlayer: React.FC<MiniPlayerProps> = ({
@@ -30,6 +33,8 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
   miniCanvasRef,
   onPlayPause,
   onExpand,
+  onDownload,
+  canDownload = false,
 }) => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -73,7 +78,9 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
     // Don't expand if clicking on control buttons
     if (
       e.target instanceof Element &&
-      (e.target.closest('.controlButton') || e.target.closest('.expandButton'))
+      (e.target.closest('.controlButton') ||
+        e.target.closest('.expandButton') ||
+        e.target.closest('.downloadButton'))
     ) {
       return;
     }
@@ -127,6 +134,18 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
             <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
           )}
         </button>
+
+        {canDownload && onDownload && (
+          <button
+            onClick={onDownload}
+            className='controlButton downloadButton'
+            aria-label='Download track'
+            disabled={isLoading}
+          >
+            <FontAwesomeIcon icon={faDownload} />
+          </button>
+        )}
+
         <button
           onClick={onExpand}
           className='expandButton'

@@ -22,6 +22,8 @@ interface FullScreenPlayerProps {
   onTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onVolumeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onToggleMute: () => void;
+  onDownload?: () => void;
+  canDownload?: boolean;
 }
 
 const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
@@ -41,6 +43,8 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   onTimeChange,
   onVolumeChange,
   onToggleMute,
+  onDownload,
+  canDownload,
 }) => {
   const touchStartY = useRef<number | null>(null);
   const touchStartTime = useRef<number>(0);
@@ -112,6 +116,8 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
           onTimeChange={onTimeChange}
           onVolumeChange={onVolumeChange}
           onToggleMute={onToggleMute}
+          onDownload={onDownload}
+          canDownload={canDownload}
         />
       </div>
     </div>

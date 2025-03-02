@@ -334,6 +334,23 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     };
   }, [audioContextRef]);
 
+  const handleDownload = () => {
+    if (!currentUrl || !currentTrack) return;
+
+    // Create a temporary anchor element
+    const downloadLink = document.createElement('a');
+    downloadLink.href = currentUrl;
+
+    // Set the download attribute with the track title
+    const fileName = `${currentTrack.title || currentTrack.name || 'track'}.mp3`;
+    downloadLink.download = fileName;
+
+    // Append to the document, click it, and remove it
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
   return (
     <div className='cloudinaryAudioPlayer'>
       {/* Always render the audio element, but with empty src if no track */}
@@ -415,6 +432,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
                   onVolumeChange={handleVolumeChange}
                   onToggleMute={toggleMute}
                   isLoading={isLoading || !isMetadataLoaded}
+                  onDownload={handleDownload}
+                  canDownload={!!currentUrl && isPlayable}
                 />
               </div>
             </>
@@ -455,6 +474,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           onTimeChange={handleTimeChange}
           onVolumeChange={handleVolumeChange}
           onToggleMute={toggleMute}
+          onDownload={handleDownload}
+          canDownload={!!currentUrl && isPlayable}
         />
       )}
     </div>
