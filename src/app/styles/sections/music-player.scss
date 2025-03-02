@@ -64,53 +64,25 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
+    // Add focus styles for keyboard navigation
     &:focus {
       outline: 2px solid $px-theme;
       outline-offset: 2px;
     }
 
+    // Adjust for mobile
     @include down-md {
       max-height: calc(100vh - 330px);
     }
 
+    // Adjust for very small screens
     @media (max-height: 600px) {
       max-height: calc(100vh - 230px);
     }
 
+    // Adjust for large screens
     @media (min-height: 1000px) {
       max-height: 650px;
-    }
-  }
-
-  &.mobile {
-    h4 {
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-
-    .track-list-container {
-      max-height: calc(100vh - 330px);
-      min-height: 150px;
-    }
-
-    .trackItem {
-      &.mobile {
-        padding: 10px 12px;
-
-        .trackTitle {
-          font-size: 14px;
-          margin-bottom: 4px;
-        }
-
-        .trackTags {
-          gap: 3px;
-
-          .trackTag {
-            font-size: 11px;
-            padding: 2px 6px;
-          }
-        }
-      }
     }
   }
 }
@@ -157,6 +129,7 @@
     }
   }
 
+  // Add focus styles for keyboard navigation
   &:focus {
     outline: 2px solid $px-theme;
     outline-offset: -2px;
@@ -300,6 +273,7 @@
   }
 }
 
+// Styles for tags in NowPlaying component
 .nowPlayingTags {
   display: flex;
   flex-wrap: wrap;
@@ -427,6 +401,7 @@
   margin-top: 40px;
   position: relative;
 
+  // Center main controls
   .mainControls {
     display: flex;
     align-items: center;
@@ -810,6 +785,7 @@
   }
 }
 
+// Add focus styles for the music section
 .pp-section.pp-scrollable {
   &:focus {
     outline: 2px solid $px-theme;
@@ -860,6 +836,7 @@
   }
 }
 
+// Mobile-specific player styles
 @include down-md {
   .cloudinaryAudioPlayer {
     flex-direction: column;
@@ -884,6 +861,7 @@
     ul {
       max-height: calc(100vh - 330px);
 
+      // Ensure the track list doesn't get too small on small screens
       min-height: 150px;
     }
 
@@ -892,6 +870,7 @@
     }
   }
 
+  // Mini Player (Fixed to bottom)
   .miniPlayer {
     position: fixed;
     bottom: 0;
@@ -1017,6 +996,7 @@
     }
   }
 
+  // Full Screen Player
   .fullScreenPlayer {
     position: fixed;
     top: 0;
@@ -1069,6 +1049,7 @@
     }
   }
 
+  // Styles for tags in FullScreenPlayer component
   .fullScreenTags {
     display: flex;
     flex-wrap: wrap;
@@ -1081,17 +1062,20 @@
     }
   }
 
+  // Hide desktop elements in mobile
   .playerControls {
     &:not(.miniPlayer):not(.fullScreenPlayer) {
       display: none;
     }
   }
 
+  // Adjust mini visualizer size
   .miniVisualizer {
     width: 50px;
     height: 50px;
   }
 
+  // Adjust waveform for mobile
   .waveformCanvas {
     height: 250px;
   }
@@ -1106,6 +1090,7 @@
   }
 }
 
+// Add styles for the music section
 .music-section {
   padding-bottom: 0 !important;
   padding-top: 100px !important;
@@ -1115,6 +1100,7 @@
     padding-top: 100px !important;
   }
 
+  // Make title more compact
   .title {
     margin-bottom: 20px;
 
@@ -1123,6 +1109,7 @@
     }
   }
 
+  // Make description more compact
   .music-description {
     margin-bottom: 20px !important;
 
@@ -1132,204 +1119,6 @@
       &:last-child {
         margin-bottom: 0;
       }
-    }
-  }
-}
-
-.track-search-container {
-  margin-bottom: 20px;
-  width: 100%;
-}
-
-.search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: $px-bg-3;
-  border-radius: 8px;
-  padding: 0 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-
-  .theme-light & {
-    background-color: $px-gray;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-}
-
-.search-icon {
-  color: rgba($px-white, 0.5);
-  font-size: 16px;
-
-  .theme-light & {
-    color: rgba($px-dark, 0.5);
-  }
-}
-
-.search-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 12px 15px;
-  color: $px-white;
-  font-size: 16px;
-  width: 100%;
-
-  &:focus {
-    outline: none;
-  }
-
-  &::placeholder {
-    color: rgba($px-white, 0.5);
-  }
-
-  .theme-light & {
-    color: $px-dark;
-
-    &::placeholder {
-      color: rgba($px-dark, 0.5);
-    }
-  }
-}
-
-.clear-search-button {
-  background: none;
-  border: none;
-  color: rgba($px-white, 0.5);
-  cursor: pointer;
-  padding: 5px;
-  font-size: 16px;
-  transition: color 0.2s;
-
-  &:hover {
-    color: $px-theme;
-  }
-
-  .theme-light & {
-    color: rgba($px-dark, 0.5);
-
-    &:hover {
-      color: $px-theme;
-    }
-  }
-}
-
-.search-results-info {
-  margin-bottom: 15px;
-
-  .filter-info {
-    font-size: 14px;
-    color: rgba($px-white, 0.7);
-    margin: 0;
-
-    .theme-light & {
-      color: rgba($px-dark, 0.7);
-    }
-  }
-}
-
-.highlight-match {
-  background-color: rgba($px-theme, 0.3);
-  border-radius: 2px;
-  padding: 0 2px;
-  font-weight: 500;
-
-  .theme-light & {
-    background-color: rgba($px-theme, 0.2);
-  }
-
-  .trackTag & {
-    background-color: rgba($px-white, 0.2);
-
-    .theme-light & {
-      background-color: rgba($px-dark, 0.1);
-    }
-  }
-}
-
-.noSearchResults {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-  padding: 30px 20px;
-  border-radius: 8px;
-  background-color: $px-bg-2;
-  text-align: center;
-
-  .theme-light & {
-    background-color: $px-white;
-  }
-
-  &.mobile {
-    min-height: 150px;
-    padding: 20px 15px;
-
-    .noResultsIcon {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    h3 {
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-
-    p {
-      font-size: 14px;
-    }
-  }
-
-  .noResultsIcon {
-    font-size: 32px;
-    margin-bottom: 15px;
-    color: $px-theme;
-
-    .theme-light & {
-      color: $px-theme;
-    }
-  }
-
-  h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: $px-white;
-
-    .theme-light & {
-      color: $px-dark;
-    }
-  }
-
-  p {
-    font-size: 15px;
-    color: $px-gray-light;
-    line-height: 1.5;
-
-    .theme-light & {
-      color: $px-gray-dark;
-    }
-
-    strong {
-      color: $px-white;
-      font-weight: 600;
-
-      .theme-light & {
-        color: $px-dark;
-      }
-    }
-  }
-}
-
-.mobileNoResults {
-  margin-top: 20px;
-  padding: 0 15px;
-
-  .noSearchResults {
-    background-color: $px-bg-3;
-
-    .theme-light & {
-      background-color: $px-gray;
     }
   }
 }

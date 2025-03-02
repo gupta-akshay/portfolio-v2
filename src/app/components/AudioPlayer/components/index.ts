@@ -6,4 +6,3 @@ export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as Waveform } from './Waveform';
 export { default as MiniPlayer } from './MiniPlayer';
 export { default as FullScreenPlayer } from './FullScreenPlayer';
-export { default as NoSearchResults } from './NoSearchResults';
