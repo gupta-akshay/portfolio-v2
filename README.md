@@ -136,41 +136,41 @@ This project uses Google Analytics and Microsoft Clarity for basic usage analyti
    - Create a user with programmatic access
    - Attach a policy with these permissions:
 
-     ```json
-     {
-         "Version": "2012-10-17",
-         "Statement": [
-             {
-                 "Effect": "Allow",
-                 "Action": [
-                     "s3:ListBucket",
-                     "s3:GetObject"
-                 ],
-                 "Resource": [
-                     "arn:aws:s3:::your-bucket-name",
-                     "arn:aws:s3:::your-bucket-name/*"
-                 ]
-             }
-         ]
-     }
-     ```
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
+      ]
+    }
+  ]
+}
+```
 
 4. Configure CORS for your S3 bucket:
 
-   ```json
-   [
-       {
-           "AllowedOrigins": [
-               "http://localhost:3000",
-               "https://your-domain.com"
-           ],
-           "AllowedMethods": ["GET", "HEAD"],
-           "AllowedHeaders": ["*"],
-           "ExposeHeaders": ["ETag"],
-           "MaxAgeSeconds": 3600
-       }
-   ]
-   ```
+```json
+[
+  {
+    "AllowedOrigins": [
+      "http://localhost:3000",
+      "https://your-domain.com"
+    ],
+    "AllowedMethods": ["GET", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
 
 ### 4. Audio File Naming 🎵
 
