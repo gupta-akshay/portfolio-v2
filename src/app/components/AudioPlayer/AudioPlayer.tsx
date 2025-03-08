@@ -492,11 +492,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     document.body.removeChild(downloadLink);
   };
 
-  // If no tracks, show empty state
-  if (!hasTracks) {
-    return <EmptyPlayer />;
-  }
-
   return (
     <div className='cloudinaryAudioPlayer'>
       {/* Always render the audio element, but with empty src if no track */}
@@ -592,9 +587,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         </div>
       ) : (
         <div className='playerControls'>
-          <div className='emptyPlayerState'>
-            <p>Select a track to play</p>
-          </div>
+          <EmptyPlayer />
         </div>
       )}
 
