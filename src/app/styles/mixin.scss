@@ -192,7 +192,7 @@
 
 // Media Responsive
 @mixin up-xsm {
-  @media (min-width: $px-media-xsm + 1) {
+  @media (min-width: ($px-media-xsm + 1)) {
     @content;
   }
 }
@@ -204,7 +204,7 @@
 }
 
 @mixin up-sm {
-  @media (min-width: $px-media-sm + 1) {
+  @media (min-width: ($px-media-sm + 1)) {
     @content;
   }
 }
@@ -216,7 +216,7 @@
 }
 
 @mixin up-md {
-  @media (min-width: $px-media-md + 1) {
+  @media (min-width: ($px-media-md + 1)) {
     @content;
   }
 }
@@ -228,7 +228,7 @@
 }
 
 @mixin up-lg {
-  @media (min-width: $px-media-lg + 1) {
+  @media (min-width: ($px-media-lg + 1)) {
     @content;
   }
 }
