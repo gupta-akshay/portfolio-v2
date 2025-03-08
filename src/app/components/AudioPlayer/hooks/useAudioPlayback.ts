@@ -23,235 +23,172 @@ export const useAudioPlayback = (
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // Get current track if one is selected
   const currentTrack =
     currentTrackIndex !== null ? tracks[currentTrackIndex] : null;
 
-  // Define handleNext function using useCallback to avoid dependency issues
+  // Memoized next/previous handlers to avoid unnecessary re-renders
   const handleNext = useCallback(() => {
-    if (currentTrackIndex === null) {
-      if (tracks.length > 0) {
-        setCurrentTrackIndex(0);
-      }
-      return;
-    }
-
-    setCurrentTrackIndex(
-      currentTrackIndex === tracks.length - 1 ? 0 : currentTrackIndex + 1
-    );
-  }, [currentTrackIndex, tracks.length, setCurrentTrackIndex]);
+    setCurrentTrackIndex((prevIndex) => {
+      if (prevIndex === null) return tracks.length > 0 ? 0 : null;
+      return prevIndex === tracks.length - 1 ? 0 : prevIndex + 1;
+    });
+  }, [tracks.length]);
 
   const handlePrevious = useCallback(() => {
-    if (currentTrackIndex === null) {
-      if (tracks.length > 0) {
-        setCurrentTrackIndex(tracks.length - 1);
-      }
-      return;
-    }
+    setCurrentTrackIndex((prevIndex) => {
+      if (prevIndex === null)
+        return tracks.length > 0 ? tracks.length - 1 : null;
+      return prevIndex === 0 ? tracks.length - 1 : prevIndex - 1;
+    });
+  }, [tracks.length]);
 
-    setCurrentTrackIndex(
-      currentTrackIndex === 0 ? tracks.length - 1 : currentTrackIndex - 1
-    );
-  }, [currentTrackIndex, tracks.length, setCurrentTrackIndex]);
-
-  // Update CSS variables for slider fills
+  // Update slider fill styles efficiently
   useEffect(() => {
-    const progressBar = document.querySelector('.progressBar') as HTMLElement;
-    const volumeSlider = document.querySelector('.volumeSlider') as HTMLElement;
+    requestAnimationFrame(() => {
+      const progressBars = document.querySelectorAll(
+        '.progressBar'
+      ) as NodeListOf<HTMLElement>;
+      const volumeSliders = document.querySelectorAll(
+        '.volumeSlider'
+      ) as NodeListOf<HTMLElement>;
 
-    if (progressBar && duration > 0) {
-      const fillPercentage = (currentTime / duration) * 100;
-      progressBar.style.setProperty('--seek-fill', `${fillPercentage}%`);
-    }
+      if (progressBars.length > 0 && duration > 0) {
+        const fillPercentage = (currentTime / duration) * 100;
+        progressBars.forEach((bar) =>
+          bar.style.setProperty('--seek-fill', `${fillPercentage}%`)
+        );
+      }
 
-    if (volumeSlider) {
-      volumeSlider.style.setProperty('--volume-fill', `${volume * 100}%`);
-    }
+      if (volumeSliders.length > 0) {
+        volumeSliders.forEach((slider) =>
+          slider.style.setProperty('--volume-fill', `${volume * 100}%`)
+        );
+      }
+    });
   }, [currentTime, duration, volume]);
 
-  // Start/stop animation based on playback state
+  // Ensure AudioContext is resumed when playing starts
   useEffect(() => {
-    if (isPlaying) {
-      if (audioContextRef.current?.state === 'suspended') {
-        audioContextRef.current.resume();
-      }
+    if (isPlaying && audioContextRef.current?.state === 'suspended') {
+      audioContextRef.current.resume();
     }
   }, [isPlaying, audioContextRef]);
 
-  // Set up audio event listeners
+  // Setup audio event listeners (efficiently managed with cleanup)
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || currentTrackIndex === null || !currentTrack) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => {
-      setDuration(audio.duration);
-    };
-    const onEnded = () => handleNext();
-    const onPlay = () => {
-      setIsPlaying(true);
-    };
-    const onPause = () => {
-      setIsPlaying(false);
-    };
-    const onWaiting = () => {
-      setIsPlaying(false);
-    };
-    const onPlaying = () => {
-      setIsPlaying(true);
-    };
+    const updateDuration = () => setDuration(audio.duration);
+    const setPlaying = () => setIsPlaying(true);
+    const setPaused = () => setIsPlaying(false);
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', onEnded);
-    audio.addEventListener('play', onPlay);
-    audio.addEventListener('pause', onPause);
-    audio.addEventListener('waiting', onWaiting);
-    audio.addEventListener('playing', onPlaying);
+    audio.addEventListener('play', setPlaying);
+    audio.addEventListener('pause', setPaused);
+    audio.addEventListener('waiting', setPaused);
+    audio.addEventListener('playing', setPlaying);
 
-    // Set initial volume
     audio.volume = volume;
     audio.muted = isMuted;
-
-    // Set initial playing state
     setIsPlaying(!audio.paused);
 
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('ended', onEnded);
-      audio.removeEventListener('play', onPlay);
-      audio.removeEventListener('pause', onPause);
-      audio.removeEventListener('waiting', onWaiting);
-      audio.removeEventListener('playing', onPlaying);
+      audio.removeEventListener('play', setPlaying);
+      audio.removeEventListener('pause', setPaused);
+      audio.removeEventListener('waiting', setPaused);
+      audio.removeEventListener('playing', setPlaying);
     };
-  }, [currentTrackIndex, currentTrack, audioRef, handleNext, volume, isMuted]);
+  }, [currentTrackIndex, currentTrack, audioRef, volume, isMuted]);
 
-  // Update volume for both HTML5 Audio and Web Audio API
+  // Sync volume/mute state between HTML5 Audio and Web Audio API
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-    if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = volume;
-    }
+    if (audioRef.current) audioRef.current.volume = volume;
+    if (gainNodeRef.current) gainNodeRef.current.gain.value = volume;
   }, [volume, gainNodeRef, audioRef]);
 
-  // Update mute state for both HTML5 Audio and Web Audio API
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.muted = isMuted;
-    }
-    if (gainNodeRef.current) {
+    if (audioRef.current) audioRef.current.muted = isMuted;
+    if (gainNodeRef.current)
       gainNodeRef.current.gain.value = isMuted ? 0 : volume;
-    }
   }, [isMuted, volume, gainNodeRef, audioRef]);
 
   // Reset player state when track changes
   useEffect(() => {
-    if (!audioRef.current || currentTrackIndex === null) return;
-
-    // Reset current time
-    setCurrentTime(0);
+    if (audioRef.current && currentTrackIndex !== null) {
+      setCurrentTime(0);
+    }
   }, [currentTrackIndex, audioRef]);
 
   const startVisualizations = () => {
-    const animateWaveform = () => {
-      drawWaveform();
-      animationRef.current = requestAnimationFrame(animateWaveform);
+    const animate = (callback: () => void, ref: RefObject<number | null>) => {
+      callback();
+      ref.current = requestAnimationFrame(() => animate(callback, ref));
     };
 
-    const animateMiniVisualizer = () => {
-      drawMiniVisualizer();
-      miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
-    };
-
-    animationRef.current = requestAnimationFrame(animateWaveform);
-    miniAnimationRef.current = requestAnimationFrame(animateMiniVisualizer);
+    animate(drawWaveform, animationRef);
+    animate(drawMiniVisualizer, miniAnimationRef);
   };
 
   const handlePlayPause = async () => {
-    if (!audioRef.current || !currentTrack) {
-      console.warn('Audio element or current track is missing');
-      return;
-    }
+    if (!audioRef.current || !currentTrack)
+      return console.warn('Audio element or current track is missing');
 
     const audio = audioRef.current;
 
     try {
-      // Resume AudioContext if suspended (for iOS Safari)
       if (audioContextRef.current?.state === 'suspended') {
         await audioContextRef.current.resume();
       }
 
-      // Ensure audio is not muted and volume is set
       audio.muted = false;
       audio.volume = volume;
-
-      // Set volume through gain node for better Safari compatibility
-      if (gainNodeRef.current) {
-        gainNodeRef.current.gain.value = volume;
-      }
+      if (gainNodeRef.current) gainNodeRef.current.gain.value = volume;
 
       if (isPlaying) {
         audio.pause();
         setIsPlaying(false);
       } else {
-        try {
-          // Force load if needed
-          if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
-            audio.load();
+        if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
+          audio.load();
+          await new Promise<void>((resolve, reject) => {
+            // Define event handlers separately
+            const onCanPlay = () => {
+              cleanup();
+              resolve();
+            };
 
-            // Wait for canplay event
-            await new Promise<void>((resolve, reject) => {
-              const onCanPlay = () => {
-                cleanup();
-                resolve();
-              };
+            const onError = (e: Event) => {
+              console.error('Error during load:', e);
+              cleanup();
+              reject(new Error('Failed to load audio'));
+            };
 
-              const onError = (e: Event) => {
-                console.error('Error during load:', e);
-                cleanup();
-                reject(new Error('Failed to load audio'));
-              };
+            const cleanup = () => {
+              audio.removeEventListener('canplay', onCanPlay);
+              audio.removeEventListener('error', onError);
+            };
 
-              const cleanup = () => {
-                audio.removeEventListener('canplay', onCanPlay);
-                audio.removeEventListener('error', onError);
-              };
+            audio.addEventListener('canplay', onCanPlay);
+            audio.addEventListener('error', onError);
 
-              audio.addEventListener('canplay', onCanPlay);
-              audio.addEventListener('error', onError);
-
-              // Set timeout
-              setTimeout(() => {
-                cleanup();
-                reject(new Error('Timeout waiting for audio to be playable'));
-              }, 5000);
-            });
-          }
-
-          // Attempt playback
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            await playPromise;
-            setIsPlaying(true);
-            startVisualizations();
-          }
-        } catch (error) {
-          console.error('Error playing audio:', error);
-          if (error instanceof Error) {
-            if (error.name === 'NotAllowedError') {
-              console.log('Playback was prevented by browser policy');
-            } else if (error.name === 'NotSupportedError') {
-              console.log('Audio format not supported');
-            }
-          }
-          setIsPlaying(false);
+            setTimeout(() => {
+              cleanup();
+              reject(new Error('Timeout waiting for audio to be playable'));
+            }, 5000);
+          });
         }
+
+        await audio.play();
+        setIsPlaying(true);
+        startVisualizations();
       }
     } catch (error) {
-      console.error('Error in handlePlayPause:', error);
+      console.error('Error playing audio:', error);
       setIsPlaying(false);
     }
   };
@@ -259,29 +196,23 @@ export const useAudioPlayback = (
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value);
     setCurrentTime(newTime);
-    if (audioRef.current) {
-      audioRef.current.currentTime = newTime;
-    }
+    if (audioRef.current) audioRef.current.currentTime = newTime;
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
     setIsMuted(newVolume === 0);
-
-    // Update gain node directly for immediate effect
-    if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = newVolume;
-    }
+    if (gainNodeRef.current) gainNodeRef.current.gain.value = newVolume;
   };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);
-
-    // Update gain node directly for immediate effect
-    if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = !isMuted ? 0 : volume;
-    }
+    setIsMuted((prevMuted) => {
+      const newMuted = !prevMuted;
+      if (gainNodeRef.current)
+        gainNodeRef.current.gain.value = newMuted ? 0 : volume;
+      return newMuted;
+    });
   };
 
   return {

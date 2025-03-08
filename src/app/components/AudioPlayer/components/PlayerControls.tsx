@@ -8,6 +8,8 @@ import {
   faVolumeHigh,
   faVolumeMute,
   faDownload,
+  faShuffle,
+  faList,
 } from '@fortawesome/free-solid-svg-icons';
 import { formatTime } from '../utils';
 import LoadingSpinner from './LoadingSpinner';
@@ -19,14 +21,18 @@ export interface PlayerControlsProps {
   volume: number;
   isMuted: boolean;
   isLoading?: boolean;
+  isShuffleActive: boolean;
   onPlayPause: () => void;
   onPrevious: () => void;
   onNext: () => void;
   onTimeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onVolumeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onToggleMute: () => void;
+  onToggleShuffle: () => void;
   onDownload?: () => void;
   canDownload?: boolean;
+  onToggleQueue: () => void;
+  isQueueVisible: boolean;
 }
 
 const PlayerControls = ({
@@ -36,14 +42,18 @@ const PlayerControls = ({
   volume,
   isMuted,
   isLoading = false,
+  isShuffleActive,
   onPlayPause,
   onPrevious,
   onNext,
   onTimeChange,
   onVolumeChange,
   onToggleMute,
+  onToggleShuffle,
   onDownload,
   canDownload = false,
+  onToggleQueue,
+  isQueueVisible,
 }: PlayerControlsProps) => {
   return (
     <>
@@ -64,6 +74,28 @@ const PlayerControls = ({
       </div>
 
       <div className='controls'>
+        <div className='queueControl'>
+          <button
+            onClick={onToggleQueue}
+            className={`controlButton ${isQueueVisible ? 'active' : ''}`}
+            aria-label={isQueueVisible ? 'Hide queue' : 'Show queue'}
+            title={isQueueVisible ? 'Hide queue' : 'Show queue'}
+          >
+            <FontAwesomeIcon icon={faList} />
+          </button>
+        </div>
+
+        <div className='playbackControls'>
+          <button
+            onClick={onToggleShuffle}
+            className={`controlButton ${isShuffleActive ? 'active' : ''}`}
+            aria-label={isShuffleActive ? 'Disable shuffle' : 'Enable shuffle'}
+            title={isShuffleActive ? 'Disable shuffle' : 'Enable shuffle'}
+          >
+            <FontAwesomeIcon icon={faShuffle} />
+          </button>
+        </div>
+
         <div className='mainControls'>
           <button
             onClick={onPrevious}

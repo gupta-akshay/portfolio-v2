@@ -6,12 +6,7 @@ import React, {
   TouchEvent,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlay,
-  faPause,
-  faChevronUp,
-  faDownload,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faPause, faExpand } from '@fortawesome/free-solid-svg-icons';
 import { Track } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -24,6 +19,8 @@ interface MiniPlayerProps {
   onExpand: () => void;
   onDownload?: () => void;
   canDownload?: boolean;
+  onPrevious?: () => void;
+  onNext?: () => void;
 }
 
 const MiniPlayer: React.FC<MiniPlayerProps> = ({
@@ -33,95 +30,82 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
   miniCanvasRef,
   onPlayPause,
   onExpand,
-  onDownload,
-  canDownload = false,
 }) => {
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const [isOverflowing, setIsOverflowing] = useState(false);
-  const touchStartY = useRef<number | null>(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const touchStartXRef = useRef<number | null>(null);
 
-  const displayTitle = currentTrack.name || currentTrack.title;
-
+  // Check if title needs scrolling
   useEffect(() => {
-    const checkOverflow = () => {
-      if (titleRef.current) {
-        const isTextOverflowing =
-          titleRef.current.scrollWidth > titleRef.current.clientWidth;
-        setIsOverflowing(isTextOverflowing);
-      }
-    };
+    const titleElement = titleRef.current;
+    if (titleElement) {
+      setIsScrolling(titleElement.scrollWidth > titleElement.clientWidth);
+    }
+  }, [currentTrack]);
 
-    checkOverflow();
-    // Also check on window resize
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
-  }, [displayTitle]); // Re-check when track title changes
-
+  // Handle touch events for swipe to expand
   const handleTouchStart = (e: TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
+    touchStartXRef.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
-    if (touchStartY.current === null) return;
+    if (touchStartXRef.current === null) return;
 
-    const touchEndY = e.changedTouches[0].clientY;
-    const deltaY = touchEndY - touchStartY.current;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchStartXRef.current - touchEndX;
 
-    // If swipe up (negative deltaY) and the swipe distance is more than 50px
-    if (deltaY < -50) {
+    // If swiped up significantly, expand the player
+    if (diffX > 50) {
       onExpand();
     }
-    touchStartY.current = null;
+
+    touchStartXRef.current = null;
   };
 
+  // Prevent click propagation to avoid triggering parent elements
   const handleClick = (e: React.MouseEvent) => {
-    // Don't expand if clicking on control buttons
-    if (
-      e.target instanceof Element &&
-      (e.target.closest('.controlButton') ||
-        e.target.closest('.expandButton') ||
-        e.target.closest('.downloadButton'))
-    ) {
-      return;
-    }
-    onExpand();
+    e.stopPropagation();
   };
 
   return (
     <div
       className='miniPlayer'
-      onClick={handleClick}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onClick={handleClick}
     >
+      {/* Track Details */}
       <div className='miniPlayerContent'>
         <div className='miniVisualizer'>
-          <canvas
-            ref={miniCanvasRef}
-            width={50}
-            height={50}
-            className={isPlaying ? 'pulsing' : ''}
-          />
+          <canvas ref={miniCanvasRef} />
         </div>
+
         <div className='miniTrackInfo'>
-          <h4 ref={titleRef} className={isOverflowing ? 'scrolling' : ''}>
-            {isOverflowing ? (
-              <span className='scrollingText' data-content={displayTitle}>
-                {displayTitle}
-              </span>
-            ) : (
-              displayTitle
-            )}
+          <h4 ref={titleRef} className={isScrolling ? 'scrolling' : ''}>
+            <span
+              className='scrollingText'
+              data-content={currentTrack.name || currentTrack.title}
+            >
+              {currentTrack.name || currentTrack.title}
+            </span>
           </h4>
+          <p>{currentTrack.artist}</p>
           <div className='miniPlayerTags'>
             {currentTrack.type && (
               <span className='miniTag typeTag'>{currentTrack.type}</span>
             )}
-            <span className='miniTag artistTag'>{currentTrack.artist}</span>
+            {currentTrack.originalArtist && (
+              <span className='miniTag artistTag'>
+                {currentTrack.originalArtist}
+              </span>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Player Controls */}
       <div className='miniControls'>
+        {/* Play/Pause Button */}
         <button
           onClick={onPlayPause}
           className='controlButton'
@@ -135,23 +119,13 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
           )}
         </button>
 
-        {canDownload && onDownload && (
-          <button
-            onClick={onDownload}
-            className='controlButton downloadButton'
-            aria-label='Download track'
-            disabled={isLoading}
-          >
-            <FontAwesomeIcon icon={faDownload} />
-          </button>
-        )}
-
+        {/* Expand Button */}
         <button
           onClick={onExpand}
           className='expandButton'
-          aria-label='Show full player'
+          aria-label='Expand player'
         >
-          <FontAwesomeIcon icon={faChevronUp} />
+          <FontAwesomeIcon icon={faExpand} />
         </button>
       </div>
     </div>
