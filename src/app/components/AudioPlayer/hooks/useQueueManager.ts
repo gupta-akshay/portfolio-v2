@@ -3,7 +3,7 @@ import { Track } from '../types';
 
 export const useQueueManager = (tracks: Track[]) => {
   const [queue, setQueue] = useState<Track[]>([]);
-  const [queuedTrackIds, setQueuedTrackIds] = useState<Set<string>>(new Set());
+  const [queuedTrackIds, setQueuedTrackIds] = useState(new Set<string>());
   const [isShuffleActive, setIsShuffleActive] = useState(false);
   const [isQueueVisible, setIsQueueVisible] = useState(false);
 
@@ -11,6 +11,7 @@ export const useQueueManager = (tracks: Track[]) => {
   const addToQueue = useCallback((track: Track) => {
     setQueue((prevQueue) => [...prevQueue, track]);
     setQueuedTrackIds((prevIds) => {
+      if (prevIds.has(track.id)) return prevIds;
       const newIds = new Set(prevIds);
       newIds.add(track.id);
       return newIds;
@@ -20,21 +21,20 @@ export const useQueueManager = (tracks: Track[]) => {
   // Remove a track from the queue
   const removeFromQueue = useCallback((index: number) => {
     setQueue((prevQueue) => {
-      const newQueue = [...prevQueue];
-      const removedTrack = newQueue.splice(index, 1)[0];
+      if (index < 0 || index >= prevQueue.length) return prevQueue;
 
-      // Check if this track appears elsewhere in the queue
-      const stillInQueue = newQueue.some(
-        (track) => track.id === removedTrack.id
-      );
+      const newQueue = prevQueue
+        .slice(0, index)
+        .concat(prevQueue.slice(index + 1));
+      const removedTrack = prevQueue[index];
 
-      if (!stillInQueue) {
-        setQueuedTrackIds((prevIds) => {
-          const newIds = new Set(prevIds);
-          newIds.delete(removedTrack.id);
-          return newIds;
-        });
-      }
+      setQueuedTrackIds((prevIds) => {
+        if (newQueue.some((track) => track.id === removedTrack.id))
+          return prevIds;
+        const newIds = new Set(prevIds);
+        newIds.delete(removedTrack.id);
+        return newIds;
+      });
 
       return newQueue;
     });
@@ -42,6 +42,8 @@ export const useQueueManager = (tracks: Track[]) => {
 
   // Reorder the queue (for drag and drop)
   const reorderQueue = useCallback((fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+
     setQueue((prevQueue) => {
       const newQueue = [...prevQueue];
       const [movedItem] = newQueue.splice(fromIndex, 1);
@@ -56,12 +58,11 @@ export const useQueueManager = (tracks: Track[]) => {
       const newShuffleState = !prev;
 
       if (newShuffleState) {
-        // Shuffle the queue when activated
         setQueue((prevQueue) => {
           if (prevQueue.length <= 1) return prevQueue;
 
           const newQueue = [...prevQueue];
-          // Fisher-Yates shuffle algorithm
+          // Fisher-Yates shuffle
           for (let i = newQueue.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [newQueue[i], newQueue[j]] = [newQueue[j], newQueue[i]];
@@ -85,71 +86,40 @@ export const useQueueManager = (tracks: Track[]) => {
     setQueuedTrackIds(new Set());
   }, []);
 
-  // Get the next track based on current index and queue
+  // Get the next track index
   const getNextTrackIndex = useCallback(
     (currentIndex: number | null) => {
-      // If no tracks, return null
       if (tracks.length === 0) return null;
 
-      // If no current track, start with the first one
       if (currentIndex === null) return 0;
 
-      // If queue has tracks, play from queue
       if (queue.length > 0) {
-        // Remove the first track from queue and return its index in the main tracks array
         const nextTrack = queue[0];
         setQueue((prevQueue) => prevQueue.slice(1));
 
-        // Check if this track appears elsewhere in the queue
-        const stillInQueue = queue
-          .slice(1)
-          .some((track) => track.id === nextTrack.id);
-        if (!stillInQueue) {
-          setQueuedTrackIds((prevIds) => {
-            const newIds = new Set(prevIds);
-            newIds.delete(nextTrack.id);
-            return newIds;
-          });
-        }
+        setQueuedTrackIds((prevIds) => {
+          if (queue.slice(1).some((track) => track.id === nextTrack.id))
+            return prevIds;
+          const newIds = new Set(prevIds);
+          newIds.delete(nextTrack.id);
+          return newIds;
+        });
 
-        // Find the index of this track in the main tracks array
-        const trackIndex = tracks.findIndex(
-          (track) => track.id === nextTrack.id
-        );
-        return trackIndex >= 0 ? trackIndex : 0;
+        return tracks.findIndex((track) => track.id === nextTrack.id) || 0;
       }
 
-      // Normal sequential playback
-      const nextIndex = currentIndex + 1;
-
-      // If we've reached the end, stay on the last track
-      if (nextIndex >= tracks.length) {
-        return currentIndex;
-      }
-
-      return nextIndex;
+      return Math.min(currentIndex + 1, tracks.length - 1);
     },
     [tracks, queue]
   );
 
-  // Get the previous track based on current index
+  // Get the previous track index
   const getPreviousTrackIndex = useCallback(
     (currentIndex: number | null) => {
-      // If no tracks, return null
       if (tracks.length === 0) return null;
-
-      // If no current track, start with the last one
-      if (currentIndex === null) return tracks.length - 1;
-
-      // Normal sequential playback
-      const prevIndex = currentIndex - 1;
-
-      // If we've reached the beginning, stay on the first track
-      if (prevIndex < 0) {
-        return 0;
-      }
-
-      return prevIndex;
+      return currentIndex === null
+        ? tracks.length - 1
+        : Math.max(currentIndex - 1, 0);
     },
     [tracks.length]
   );
