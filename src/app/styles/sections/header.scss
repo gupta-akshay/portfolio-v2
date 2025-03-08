@@ -209,7 +209,7 @@
   .header-left {
     @include transition(ease all 0.35s);
     left: -300px;
-    z-index: 222;
+    z-index: 1222;
     &.menu-open {
       left: 0;
     }
