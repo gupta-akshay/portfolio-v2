@@ -156,20 +156,25 @@ export const useAudioPlayback = (
         if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
           audio.load();
           await new Promise<void>((resolve, reject) => {
-            const cleanup = () => {
-              audio.removeEventListener('canplay', resolve);
-              audio.removeEventListener('error', reject);
-            };
-
-            audio.addEventListener('canplay', () => {
+            // Define event handlers separately
+            const onCanPlay = () => {
               cleanup();
               resolve();
-            });
-            audio.addEventListener('error', (e) => {
+            };
+
+            const onError = (e: Event) => {
               console.error('Error during load:', e);
               cleanup();
               reject(new Error('Failed to load audio'));
-            });
+            };
+
+            const cleanup = () => {
+              audio.removeEventListener('canplay', onCanPlay);
+              audio.removeEventListener('error', onError);
+            };
+
+            audio.addEventListener('canplay', onCanPlay);
+            audio.addEventListener('error', onError);
 
             setTimeout(() => {
               cleanup();
