@@ -1,13 +1,13 @@
 'use client';
 
 import { useRef, useEffect, useState, RefObject } from 'react';
-import { AudioPlayerProps, Track, RepeatMode } from './types';
+import { AudioPlayerProps } from './types';
 import { getAudioUrl } from '@/app/utils/aws';
-import { 
-  useAudioContext, 
-  useAudioPlayback, 
+import {
+  useAudioContext,
+  useAudioPlayback,
   useVisualizer,
-  useQueueManager
+  useQueueManager,
 } from './hooks';
 import {
   TrackList,
@@ -86,17 +86,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     queue,
     queuedTrackIds,
     isShuffleActive,
-    repeatMode,
     isQueueVisible,
     addToQueue,
     removeFromQueue,
     reorderQueue,
     toggleShuffle,
-    toggleRepeat,
     toggleQueueVisibility,
     clearQueue,
     getNextTrackIndex,
-    getPreviousTrackIndex
+    getPreviousTrackIndex,
   } = useQueueManager(hasTracks ? tracks : []);
 
   // Enhanced next/previous handlers that use queue management
@@ -130,7 +128,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     }
 
     playAttemptInProgressRef.current = true;
-    
+
     try {
       baseHandlePlayPause();
     } catch (error) {
@@ -154,27 +152,30 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const handleQueueTrackSelect = (index: number) => {
     if (index >= 0 && index < queue.length) {
       // Find the track in the main tracks array
-      const trackIndex = tracks.findIndex(track => track.id === queue[index].id);
+      const trackIndex = tracks.findIndex(
+        (track) => track.id === queue[index].id
+      );
       if (trackIndex !== -1) {
         // Remove all tracks before this one from the queue
         const newQueue = queue.slice(index + 1);
-        
+
         // Update queue
         const removedTrackIds = new Set<string>();
-        queue.slice(0, index + 1).forEach(track => {
+        queue.slice(0, index + 1).forEach((track) => {
           // Check if this track appears elsewhere in the remaining queue
-          const stillInQueue = newQueue.some(t => t.id === track.id) || 
-                              track.id === tracks[trackIndex].id;
+          const stillInQueue =
+            newQueue.some((t) => t.id === track.id) ||
+            track.id === tracks[trackIndex].id;
           if (!stillInQueue) {
             removedTrackIds.add(track.id);
           }
         });
-        
+
         // Update queue state
         setCurrentTrackIndex(trackIndex);
-        
+
         // Update queuedTrackIds
-        queuedTrackIds.forEach(id => {
+        queuedTrackIds.forEach((id) => {
           if (removedTrackIds.has(id)) {
             queuedTrackIds.delete(id);
           }
@@ -326,7 +327,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         // Auto-play if needed, with safety checks
         if (shouldAutoPlayRef.current) {
           shouldAutoPlayRef.current = false;
-          
+
           // Small delay to ensure everything is ready
           setTimeout(async () => {
             try {
@@ -435,15 +436,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   const handleTrackSelect = (index: number) => {
     setCurrentTrackIndex(index);
-    
+
     // Add all tracks after the selected track to the queue
     if (hasTracks && tracks.length > index + 1) {
       // Get all tracks after the selected one
       const tracksToAdd = tracks.slice(index + 1);
-      
+
       // Clear the existing queue
       clearQueue();
-      
+
       // Add all subsequent tracks to the queue
       // Use setTimeout to ensure the queue is cleared before adding new tracks
       setTimeout(() => {
@@ -542,6 +543,10 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         onPause={() => {
           setIsPlaying(false);
         }}
+        onEnded={() => {
+          shouldAutoPlayRef.current = true;
+          handleNext();
+        }}
         onError={(e) => {
           const audio = e.target as HTMLAudioElement;
           setIsLoading(false);
@@ -582,9 +587,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
               duration={duration}
               volume={volume}
               isMuted={isMuted}
-              isLoading={isLoading || !isMetadataLoaded}
+              isLoading={isLoading}
               isShuffleActive={isShuffleActive}
-              repeatMode={repeatMode}
               onPlayPause={handlePlayPause}
               onPrevious={handlePrevious}
               onNext={handleNext}
@@ -592,9 +596,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
               onVolumeChange={handleVolumeChange}
               onToggleMute={toggleMute}
               onToggleShuffle={toggleShuffle}
-              onToggleRepeat={toggleRepeat}
               onDownload={handleDownload}
-              canDownload={!!currentUrl && isPlayable}
+              canDownload={!!currentTrack}
               onToggleQueue={toggleQueueVisibility}
               isQueueVisible={isQueueVisible}
             />
@@ -628,9 +631,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           duration={duration}
           volume={volume}
           isMuted={isMuted}
-          isLoading={isLoading || !isMetadataLoaded}
+          isLoading={isLoading}
           isShuffleActive={isShuffleActive}
-          repeatMode={repeatMode}
           canvasRef={canvasRef as RefObject<HTMLCanvasElement>}
           onClose={handleCloseFullScreen}
           onPlayPause={handlePlayPause}
@@ -640,9 +642,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           onVolumeChange={handleVolumeChange}
           onToggleMute={toggleMute}
           onToggleShuffle={toggleShuffle}
-          onToggleRepeat={toggleRepeat}
           onDownload={handleDownload}
-          canDownload={!!currentUrl && isPlayable}
+          canDownload={!!currentTrack}
           isQueueVisible={isQueueVisible}
           onToggleQueue={toggleQueueVisibility}
         />

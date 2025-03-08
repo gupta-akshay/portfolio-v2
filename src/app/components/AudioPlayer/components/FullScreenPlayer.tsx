@@ -1,7 +1,7 @@
 import React, { RefObject, TouchEvent, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faRepeat } from '@fortawesome/free-solid-svg-icons';
-import { Track, RepeatMode } from '../types';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { Track } from '../types';
 import PlayerControls from './PlayerControls';
 import Waveform from './Waveform';
 
@@ -15,7 +15,6 @@ interface FullScreenPlayerProps {
   isMuted: boolean;
   isLoading: boolean;
   isShuffleActive?: boolean;
-  repeatMode?: RepeatMode;
   canvasRef: RefObject<HTMLCanvasElement>;
   onClose: () => void;
   onPlayPause: () => void;
@@ -25,7 +24,6 @@ interface FullScreenPlayerProps {
   onVolumeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onToggleMute: () => void;
   onToggleShuffle?: () => void;
-  onToggleRepeat?: () => void;
   onDownload?: () => void;
   canDownload?: boolean;
   isQueueVisible?: boolean;
@@ -42,7 +40,6 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   isMuted,
   isLoading,
   isShuffleActive = false,
-  repeatMode = RepeatMode.OFF,
   canvasRef,
   onClose,
   onPlayPause,
@@ -52,7 +49,6 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   onVolumeChange,
   onToggleMute,
   onToggleShuffle,
-  onToggleRepeat,
   onDownload,
   canDownload = false,
   isQueueVisible = false,
@@ -76,23 +72,6 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
     }
 
     touchStartYRef.current = null;
-  };
-
-  const getRepeatIcon = () => {
-    switch (repeatMode) {
-      case RepeatMode.ONE:
-        return (
-          <>
-            <FontAwesomeIcon icon={faRepeat} className='repeatIcon' />
-            <span className='repeatOneIndicator'>1</span>
-          </>
-        );
-      case RepeatMode.ALL:
-        return <FontAwesomeIcon icon={faRepeat} />;
-      case RepeatMode.OFF:
-      default:
-        return <FontAwesomeIcon icon={faRepeat} />;
-    }
   };
 
   return (
@@ -137,7 +116,6 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
           isMuted={isMuted}
           isLoading={isLoading}
           isShuffleActive={isShuffleActive}
-          repeatMode={repeatMode}
           onPlayPause={onPlayPause}
           onPrevious={onPrevious}
           onNext={onNext}
@@ -145,7 +123,6 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
           onVolumeChange={onVolumeChange}
           onToggleMute={onToggleMute}
           onToggleShuffle={onToggleShuffle || (() => {})}
-          onToggleRepeat={onToggleRepeat || (() => {})}
           onDownload={onDownload}
           canDownload={canDownload}
           onToggleQueue={onToggleQueue || (() => {})}

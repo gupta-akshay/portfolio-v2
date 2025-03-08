@@ -6,11 +6,7 @@ import React, {
   TouchEvent,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlay,
-  faPause,
-  faExpand,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faPause, faExpand } from '@fortawesome/free-solid-svg-icons';
 import { Track } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -73,47 +69,46 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
 
   return (
     <div
-      className="miniPlayer"
+      className='miniPlayer'
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onClick={handleClick}
     >
       {/* Track Details */}
-      <div className="miniPlayerContent">
-        <div className="miniVisualizer">
+      <div className='miniPlayerContent'>
+        <div className='miniVisualizer'>
           <canvas ref={miniCanvasRef} />
         </div>
 
-        <div className="miniTrackInfo">
-          <h4
-            ref={titleRef}
-            className={isScrolling ? 'scrolling' : ''}
-          >
+        <div className='miniTrackInfo'>
+          <h4 ref={titleRef} className={isScrolling ? 'scrolling' : ''}>
             <span
-              className="scrollingText"
+              className='scrollingText'
               data-content={currentTrack.name || currentTrack.title}
             >
               {currentTrack.name || currentTrack.title}
             </span>
           </h4>
           <p>{currentTrack.artist}</p>
-          <div className="miniPlayerTags">
+          <div className='miniPlayerTags'>
             {currentTrack.type && (
-              <span className="miniTag typeTag">{currentTrack.type}</span>
+              <span className='miniTag typeTag'>{currentTrack.type}</span>
             )}
             {currentTrack.originalArtist && (
-              <span className="miniTag artistTag">{currentTrack.originalArtist}</span>
+              <span className='miniTag artistTag'>
+                {currentTrack.originalArtist}
+              </span>
             )}
           </div>
         </div>
       </div>
 
       {/* Player Controls */}
-      <div className="miniControls">
+      <div className='miniControls'>
         {/* Play/Pause Button */}
         <button
           onClick={onPlayPause}
-          className="controlButton"
+          className='controlButton'
           aria-label={isPlaying ? 'Pause' : 'Play'}
           disabled={isLoading}
         >
@@ -123,12 +118,12 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
             <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
           )}
         </button>
-        
+
         {/* Expand Button */}
         <button
           onClick={onExpand}
-          className="expandButton"
-          aria-label="Expand player"
+          className='expandButton'
+          aria-label='Expand player'
         >
           <FontAwesomeIcon icon={faExpand} />
         </button>

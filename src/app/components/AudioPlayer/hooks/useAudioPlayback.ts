@@ -57,20 +57,24 @@ export const useAudioPlayback = (
   // Update CSS variables for slider fills
   useEffect(() => {
     // Target all progress bars and volume sliders in the app
-    const progressBars = document.querySelectorAll('.progressBar') as NodeListOf<HTMLElement>;
-    const volumeSliders = document.querySelectorAll('.volumeSlider') as NodeListOf<HTMLElement>;
+    const progressBars = document.querySelectorAll(
+      '.progressBar'
+    ) as NodeListOf<HTMLElement>;
+    const volumeSliders = document.querySelectorAll(
+      '.volumeSlider'
+    ) as NodeListOf<HTMLElement>;
 
     // Update all progress bars
     if (progressBars.length > 0 && duration > 0) {
       const fillPercentage = (currentTime / duration) * 100;
-      progressBars.forEach(progressBar => {
+      progressBars.forEach((progressBar) => {
         progressBar.style.setProperty('--seek-fill', `${fillPercentage}%`);
       });
     }
 
     // Update all volume sliders
     if (volumeSliders.length > 0) {
-      volumeSliders.forEach(volumeSlider => {
+      volumeSliders.forEach((volumeSlider) => {
         volumeSlider.style.setProperty('--volume-fill', `${volume * 100}%`);
       });
     }
@@ -94,7 +98,6 @@ export const useAudioPlayback = (
     const updateDuration = () => {
       setDuration(audio.duration);
     };
-    const onEnded = () => handleNext();
     const onPlay = () => {
       setIsPlaying(true);
     };
@@ -110,7 +113,6 @@ export const useAudioPlayback = (
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', onEnded);
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
     audio.addEventListener('waiting', onWaiting);
@@ -126,13 +128,12 @@ export const useAudioPlayback = (
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('ended', onEnded);
       audio.removeEventListener('play', onPlay);
       audio.removeEventListener('pause', onPause);
       audio.removeEventListener('waiting', onWaiting);
       audio.removeEventListener('playing', onPlaying);
     };
-  }, [currentTrackIndex, currentTrack, audioRef, handleNext, volume, isMuted]);
+  }, [currentTrackIndex, currentTrack, audioRef, volume, isMuted]);
 
   // Update volume for both HTML5 Audio and Web Audio API
   useEffect(() => {

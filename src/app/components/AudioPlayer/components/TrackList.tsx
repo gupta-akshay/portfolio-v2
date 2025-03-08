@@ -18,7 +18,7 @@ const TrackList: React.FC<TrackListProps> = ({
   currentTrackIndex,
   onTrackSelect,
   onAddToQueue,
-  queuedTrackIds
+  queuedTrackIds,
 }) => {
   // Handle keyboard navigation
   const handleKeyDown = (e: KeyboardEvent<HTMLLIElement>, index: number) => {
@@ -74,7 +74,7 @@ const TrackList: React.FC<TrackListProps> = ({
       >
         {tracks.map((track, index) => {
           const isQueued = queuedTrackIds.has(track.id);
-          
+
           return (
             <li
               key={track.id}
@@ -100,21 +100,21 @@ const TrackList: React.FC<TrackListProps> = ({
                   <span className='trackTag artistTag'>{track.artist}</span>
                 </div>
               </div>
-              
-              <div className="trackActions">
+
+              <div className='trackActions'>
                 {isQueued && (
-                  <span className="inQueueIndicator" title="In queue">
+                  <span className='inQueueIndicator' title='In queue'>
                     <FontAwesomeIcon icon={faList} />
                   </span>
                 )}
-                <button 
-                  className="addToQueueButton" 
+                <button
+                  className='addToQueueButton'
                   onClick={(e) => {
                     e.stopPropagation();
                     onAddToQueue(index);
                   }}
                   aria-label={`Add ${track.name || track.title} to queue`}
-                  title="Add to queue"
+                  title='Add to queue'
                 >
                   <FontAwesomeIcon icon={faPlus} />
                 </button>
