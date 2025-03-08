@@ -56,16 +56,23 @@ export const useAudioPlayback = (
 
   // Update CSS variables for slider fills
   useEffect(() => {
-    const progressBar = document.querySelector('.progressBar') as HTMLElement;
-    const volumeSlider = document.querySelector('.volumeSlider') as HTMLElement;
+    // Target all progress bars and volume sliders in the app
+    const progressBars = document.querySelectorAll('.progressBar') as NodeListOf<HTMLElement>;
+    const volumeSliders = document.querySelectorAll('.volumeSlider') as NodeListOf<HTMLElement>;
 
-    if (progressBar && duration > 0) {
+    // Update all progress bars
+    if (progressBars.length > 0 && duration > 0) {
       const fillPercentage = (currentTime / duration) * 100;
-      progressBar.style.setProperty('--seek-fill', `${fillPercentage}%`);
+      progressBars.forEach(progressBar => {
+        progressBar.style.setProperty('--seek-fill', `${fillPercentage}%`);
+      });
     }
 
-    if (volumeSlider) {
-      volumeSlider.style.setProperty('--volume-fill', `${volume * 100}%`);
+    // Update all volume sliders
+    if (volumeSliders.length > 0) {
+      volumeSliders.forEach(volumeSlider => {
+        volumeSlider.style.setProperty('--volume-fill', `${volume * 100}%`);
+      });
     }
   }, [currentTime, duration, volume]);
 

@@ -400,20 +400,141 @@
   flex-wrap: nowrap;
   margin-top: 40px;
   position: relative;
+  width: 100%;
+  height: 50px;
+  padding: 0 150px;
 
-  // Center main controls
+  // Queue Control
+  .queueControl {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      width: 1px;
+      margin-right: 10px;
+      background-color: rgba($px-white, 0.2);
+      
+      .theme-light & {
+        background-color: rgba($px-dark, 0.2);
+      }
+    }
+  }
+
+  // Playback Controls (Shuffle & Repeat)
+  .playbackControls {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    // Remove gap between shuffle and repeat buttons
+    .controlButton {
+      margin: 0;
+      
+      &:first-child {
+        margin-right: 0;
+      }
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      width: 1px;
+      background-color: rgba($px-white, 0.2);
+      
+      .theme-light & {
+        background-color: rgba($px-dark, 0.2);
+      }
+    }
+  }
+
+  // Main Controls (Previous, Play/Pause, Next)
   .mainControls {
     display: flex;
     align-items: center;
     justify-content: center;
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 
-    @include down-md {
+  // Download Control
+  .downloadControl {
+    position: absolute;
+    right: 150px;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 24px;
+      width: 1px;
+      background-color: rgba($px-white, 0.2);
+      
+      .theme-light & {
+        background-color: rgba($px-dark, 0.2);
+      }
+    }
+  }
+
+  // Volume Control
+  .volumeControl {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+  }
+
+  @include down-md {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0;
+    
+    .queueControl, 
+    .playbackControls,
+    .mainControls, 
+    .downloadControl, 
+    .volumeControl {
       position: static;
+      margin: 5px;
       transform: none;
-      margin-right: auto;
+      
+      &::after,
+      &::before {
+        display: none;
+      }
+    }
+    
+    .playbackControls .controlButton {
+      margin: 0 5px;
+    }
+    
+    .volumeControl {
+      width: 100%;
+      justify-content: center;
+      margin-top: 15px;
     }
   }
 }
@@ -424,7 +545,6 @@
   font-size: 1.2rem;
   color: rgba($px-white, 0.8);
   cursor: pointer;
-  margin: 0 10px;
   padding: 0;
   width: 40px;
   height: 40px;
@@ -469,6 +589,7 @@
     width: 50px;
     height: 50px;
     box-shadow: 4px 4px $px-white;
+    margin: 0 15px;
 
     .theme-light & {
       box-shadow: 4px 4px $px-dark;
@@ -506,21 +627,46 @@
       }
     }
   }
+  
+  // Main controls specific margins
+  .mainControls & {
+    margin: 0 10px;
+  }
+  
+  // Active state for shuffle and repeat buttons
+  &.active {
+    color: $px-theme;
+    background-color: rgba($px-theme, 0.1);
+  }
+
+  // Styling for repeat one mode
+  &.repeatOne {
+    position: relative;
+
+    .repeatOneIndicator {
+      position: absolute;
+      font-size: 0.6rem;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: $px-theme;
+    }
+
+    .repeatIcon {
+      opacity: 0.7;
+    }
+  }
 }
 
 .volumeControl {
   display: flex;
   align-items: center;
-  position: absolute;
-  right: 0;
   width: 120px;
 }
 
 .downloadControl {
   display: flex;
   align-items: center;
-  position: absolute;
-  right: 130px;
 }
 
 .downloadButton {
@@ -1064,6 +1210,34 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 40px 0;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .fullScreenTrackInfo {
+      text-align: center;
+      margin-bottom: 30px;
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        color: $px-white;
+
+        .theme-light & {
+          color: $px-dark;
+        }
+      }
+
+      h3 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: rgba($px-white, 0.8);
+
+        .theme-light & {
+          color: rgba($px-dark, 0.8);
+        }
+      }
     }
 
     .visualizerContainer {
@@ -1071,8 +1245,153 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 20px;
       margin: 20px 0;
+    }
+
+    .fullScreenTags {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    // Override controls layout for full screen
+    .controls {
+      max-width: 600px;
+      margin: 30px auto 0;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      height: auto;
+      padding: 0;
+      
+      // Main row: queue, shuffle, repeat, previous, play/pause, next
+      .queueControl, 
+      .playbackControls,
+      .mainControls {
+        position: static;
+        transform: none;
+        display: flex;
+        align-items: center;
+        margin: 0;
+        
+        &::after,
+        &::before {
+          display: none;
+        }
+      }
+      
+      // Queue control
+      .queueControl {
+        order: 1;
+        margin-right: 10px;
+        margin-bottom: 30px;
+      }
+      
+      // Playback controls (shuffle, repeat)
+      .playbackControls {
+        order: 2;
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        
+        .controlButton {
+          margin: 0;
+          
+          &:first-child {
+            margin-right: 0;
+          }
+        }
+      }
+      
+      // Main controls (previous, play/pause, next)
+      .mainControls {
+        order: 3;
+        margin: 0 10px;
+        margin-bottom: 30px;
+      }
+      
+      // Bottom row: download (left) and volume (right)
+      .downloadControl, 
+      .volumeControl {
+        position: absolute;
+        bottom: -60px;
+        transform: none;
+        
+        &::after,
+        &::before {
+          display: none;
+        }
+      }
+      
+      // Download control (bottom left)
+      .downloadControl {
+        left: 0;
+      }
+      
+      // Volume control (bottom right)
+      .volumeControl {
+        right: 0;
+        width: auto;
+        max-width: 120px;
+      }
+    }
+    
+    // Time controls (audio seeker)
+    .timeControls {
+      margin: 20px 0 60px;
+      
+      .progressBar {
+        &::-webkit-slider-runnable-track {
+          background: linear-gradient(
+            to right,
+            $px-theme 0%,
+            $px-theme var(--seek-fill, 0%),
+            rgba($px-white, 0.2) var(--seek-fill, 0%)
+          );
+          
+          .theme-light & {
+            background: linear-gradient(
+              to right,
+              $px-theme 0%,
+              $px-theme var(--seek-fill, 0%),
+              rgba($px-dark, 0.1) var(--seek-fill, 0%)
+            );
+          }
+        }
+        
+        &::-moz-range-progress {
+          background: $px-theme;
+        }
+      }
+    }
+    
+    // Volume control in full screen
+    .volumeControl {
+      .volumeSlider {
+        &::-webkit-slider-runnable-track {
+          background: linear-gradient(
+            to right,
+            $px-theme 0%,
+            $px-theme var(--volume-fill, 0%),
+            rgba($px-white, 0.2) var(--volume-fill, 0%)
+          );
+          
+          .theme-light & {
+            background: linear-gradient(
+              to right,
+              $px-theme 0%,
+              $px-theme var(--volume-fill, 0%),
+              rgba($px-dark, 0.1) var(--volume-fill, 0%)
+            );
+          }
+        }
+        
+        &::-moz-range-progress {
+          background: $px-theme;
+        }
+      }
     }
   }
 
@@ -1148,4 +1467,487 @@
       }
     }
   }
+}
+
+// Queue Panel Styles
+.queuePanel {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100vh;
+  background-color: $px-bg-2;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  z-index: 1200;
+  transition: right 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .theme-light & {
+    background-color: $px-white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  &.visible {
+    right: 0;
+  }
+
+  @include down-md {
+    width: 300px;
+    right: -300px;
+  }
+}
+
+.queueHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba($px-white, 0.1);
+
+  .theme-light & {
+    border-bottom: 1px solid rgba($px-dark, 0.1);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    color: $px-white;
+
+    .theme-light & {
+      color: $px-dark;
+    }
+
+    .queueIcon {
+      margin-right: 10px;
+      color: $px-theme;
+    }
+  }
+
+  .closeQueueButton {
+    background: none;
+    border: none;
+    color: rgba($px-white, 0.7);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s;
+
+    .theme-light & {
+      color: rgba($px-dark, 0.7);
+    }
+
+    &:hover {
+      color: $px-theme;
+    }
+  }
+}
+
+.queueContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: $px-theme transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $px-theme;
+    border-radius: 6px;
+  }
+}
+
+.nowPlayingInQueue {
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba($px-white, 0.1);
+
+  .theme-light & {
+    border-bottom: 1px solid rgba($px-dark, 0.1);
+  }
+
+  h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: $px-theme;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .nowPlayingItem {
+    background-color: rgba($px-theme, 0.1);
+    border-left: 3px solid $px-theme;
+  }
+
+  .nowPlayingIcon {
+    color: $px-theme;
+    margin-right: 10px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+}
+
+.upNextSection {
+  padding: 15px 20px;
+
+  h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: rgba($px-white, 0.7);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    .theme-light & {
+      color: rgba($px-dark, 0.7);
+    }
+  }
+}
+
+.queueTrackList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.queueTrackItem {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  background-color: rgba($px-white, 0.05);
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  .theme-light & {
+    background-color: rgba($px-dark, 0.05);
+  }
+
+  &:hover {
+    background-color: rgba($px-white, 0.1);
+
+    .theme-light & {
+      background-color: rgba($px-dark, 0.1);
+    }
+
+    .removeFromQueueButton {
+      opacity: 1;
+    }
+  }
+
+  &.nowPlayingItem {
+    background-color: rgba($px-theme, 0.15);
+
+    .theme-light & {
+      background-color: rgba($px-theme, 0.1);
+    }
+  }
+
+  &.drag-over {
+    border: 2px dashed $px-theme;
+    background-color: rgba($px-theme, 0.1);
+  }
+}
+
+.queueDragHandle {
+  color: rgba($px-white, 0.4);
+  margin-right: 10px;
+  cursor: grab;
+
+  .theme-light & {
+    color: rgba($px-dark, 0.4);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.queueTrackInfo {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+}
+
+.queueTrackDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.queueTrackTitle {
+  font-weight: 500;
+  color: $px-white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .theme-light & {
+    color: $px-dark;
+  }
+}
+
+.queueTrackArtist {
+  font-size: 0.85rem;
+  color: rgba($px-white, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .theme-light & {
+    color: rgba($px-dark, 0.7);
+  }
+}
+
+.removeFromQueueButton {
+  background: none;
+  border: none;
+  color: rgba($px-white, 0.6);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px;
+  opacity: 0.5;
+  transition: all 0.2s;
+
+  .theme-light & {
+    color: rgba($px-dark, 0.6);
+  }
+
+  &:hover {
+    color: $px-theme;
+    transform: scale(1.1);
+  }
+}
+
+.emptyQueue {
+  padding: 30px 20px;
+  text-align: center;
+  color: rgba($px-white, 0.5);
+
+  .theme-light & {
+    color: rgba($px-dark, 0.5);
+  }
+
+  p {
+    margin: 0 0 10px 0;
+    font-style: italic;
+  }
+
+  .emptyQueueSubtext {
+    font-size: 0.85rem;
+  }
+}
+
+// Toast Notification Styles
+.toastContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 350px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 8px;
+  background-color: $px-bg-2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out forwards;
+  color: $px-white;
+
+  .theme-light & {
+    background-color: $px-white;
+    color: $px-dark;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &.success {
+    border-left: 4px solid #4CAF50;
+    .toastIcon {
+      color: #4CAF50;
+    }
+  }
+
+  &.error {
+    border-left: 4px solid #F44336;
+    .toastIcon {
+      color: #F44336;
+    }
+  }
+
+  &.info {
+    border-left: 4px solid $px-theme;
+    .toastIcon {
+      color: $px-theme;
+    }
+  }
+}
+
+.toastIcon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.toastMessage {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.toastCloseButton {
+  background: none;
+  border: none;
+  color: rgba($px-white, 0.6);
+  cursor: pointer;
+  padding: 5px;
+  margin-left: 10px;
+  transition: color 0.2s;
+
+  .theme-light & {
+    color: rgba($px-dark, 0.6);
+  }
+
+  &:hover {
+    color: $px-theme;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Add to Queue Button Styles
+.trackActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.addToQueueButton {
+  background: none;
+  border: none;
+  color: rgba($px-white, 0.6);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 5px;
+  opacity: 0.7;
+  transition: all 0.2s;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .theme-light & {
+    color: rgba($px-dark, 0.6);
+  }
+
+  &:hover {
+    color: $px-theme;
+    background-color: rgba($px-theme, 0.1);
+    opacity: 1;
+  }
+}
+
+.inQueueIndicator {
+  color: $px-theme;
+  font-size: 0.9rem;
+}
+
+// Mini Player Controls
+.miniControls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  .controlButton {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    
+    &.playButton {
+      width: 42px;
+      height: 42px;
+    }
+  }
+
+  .expandButton {
+    margin-left: 5px;
+    background: none;
+    border: none;
+    color: $px-theme;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// Mini Player Layout
+.miniPlayer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $px-bg-2;
+  padding: 10px 15px;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+
+  .theme-light & {
+    background-color: $px-white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .miniPlayerContent {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    margin-right: 15px;
+  }
+
+  .miniTrackInfo {
+    flex: 1;
+    min-width: 0;
+    margin: 0 10px;
+    overflow: hidden;
+  }
+}
+
+// Playback Controls (Shuffle & Repeat)
+.playbackControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  order: 2;
 }

@@ -8,9 +8,14 @@ import {
   faVolumeHigh,
   faVolumeMute,
   faDownload,
+  faShuffle,
+  faRepeat,
+  fa1,
+  faList
 } from '@fortawesome/free-solid-svg-icons';
 import { formatTime } from '../utils';
 import LoadingSpinner from './LoadingSpinner';
+import { RepeatMode } from '../types';
 
 export interface PlayerControlsProps {
   isPlaying: boolean;
@@ -19,14 +24,20 @@ export interface PlayerControlsProps {
   volume: number;
   isMuted: boolean;
   isLoading?: boolean;
+  isShuffleActive: boolean;
+  repeatMode: RepeatMode;
   onPlayPause: () => void;
   onPrevious: () => void;
   onNext: () => void;
   onTimeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onVolumeChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onToggleMute: () => void;
+  onToggleShuffle: () => void;
+  onToggleRepeat: () => void;
   onDownload?: () => void;
   canDownload?: boolean;
+  onToggleQueue: () => void;
+  isQueueVisible: boolean;
 }
 
 const PlayerControls = ({
@@ -36,15 +47,38 @@ const PlayerControls = ({
   volume,
   isMuted,
   isLoading = false,
+  isShuffleActive,
+  repeatMode,
   onPlayPause,
   onPrevious,
   onNext,
   onTimeChange,
   onVolumeChange,
   onToggleMute,
+  onToggleShuffle,
+  onToggleRepeat,
   onDownload,
   canDownload = false,
+  onToggleQueue,
+  isQueueVisible
 }: PlayerControlsProps) => {
+  const getRepeatIcon = () => {
+    switch (repeatMode) {
+      case RepeatMode.ONE:
+        return (
+          <>
+            <FontAwesomeIcon icon={faRepeat} className="repeatIcon" />
+            <span className="repeatOneIndicator">1</span>
+          </>
+        );
+      case RepeatMode.ALL:
+        return <FontAwesomeIcon icon={faRepeat} />;
+      case RepeatMode.OFF:
+      default:
+        return <FontAwesomeIcon icon={faRepeat} />;
+    }
+  };
+
   return (
     <>
       <div className='timeControls'>
@@ -64,6 +98,37 @@ const PlayerControls = ({
       </div>
 
       <div className='controls'>
+        <div className="queueControl">
+          <button
+            onClick={onToggleQueue}
+            className={`controlButton ${isQueueVisible ? 'active' : ''}`}
+            aria-label={isQueueVisible ? 'Hide queue' : 'Show queue'}
+            title={isQueueVisible ? 'Hide queue' : 'Show queue'}
+          >
+            <FontAwesomeIcon icon={faList} />
+          </button>
+        </div>
+
+        <div className="playbackControls">
+          <button
+            onClick={onToggleShuffle}
+            className={`controlButton ${isShuffleActive ? 'active' : ''}`}
+            aria-label={isShuffleActive ? 'Disable shuffle' : 'Enable shuffle'}
+            title={isShuffleActive ? 'Disable shuffle' : 'Enable shuffle'}
+          >
+            <FontAwesomeIcon icon={faShuffle} />
+          </button>
+
+          <button
+            onClick={onToggleRepeat}
+            className={`controlButton ${repeatMode !== RepeatMode.OFF ? 'active' : ''} ${repeatMode === RepeatMode.ONE ? 'repeatOne' : ''}`}
+            aria-label={`Repeat mode: ${repeatMode}`}
+            title={`Repeat mode: ${repeatMode}`}
+          >
+            {getRepeatIcon()}
+          </button>
+        </div>
+
         <div className='mainControls'>
           <button
             onClick={onPrevious}

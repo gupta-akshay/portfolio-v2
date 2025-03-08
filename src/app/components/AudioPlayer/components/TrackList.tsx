@@ -1,10 +1,14 @@
 import React, { KeyboardEvent } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faList } from '@fortawesome/free-solid-svg-icons';
 import { Track } from '../types';
 
 interface TrackListProps {
   tracks: Track[];
   currentTrackIndex: number | null;
   onTrackSelect: (index: number) => void;
+  onAddToQueue: (index: number) => void;
+  queuedTrackIds: Set<string>;
 }
 
 // We can remove the parsing function since we now have the metadata directly in the Track object
@@ -13,6 +17,8 @@ const TrackList: React.FC<TrackListProps> = ({
   tracks,
   currentTrackIndex,
   onTrackSelect,
+  onAddToQueue,
+  queuedTrackIds
 }) => {
   // Handle keyboard navigation
   const handleKeyDown = (e: KeyboardEvent<HTMLLIElement>, index: number) => {
@@ -67,6 +73,8 @@ const TrackList: React.FC<TrackListProps> = ({
         className='track-list-container'
       >
         {tracks.map((track, index) => {
+          const isQueued = queuedTrackIds.has(track.id);
+          
           return (
             <li
               key={track.id}
@@ -91,6 +99,25 @@ const TrackList: React.FC<TrackListProps> = ({
                   )}
                   <span className='trackTag artistTag'>{track.artist}</span>
                 </div>
+              </div>
+              
+              <div className="trackActions">
+                {isQueued && (
+                  <span className="inQueueIndicator" title="In queue">
+                    <FontAwesomeIcon icon={faList} />
+                  </span>
+                )}
+                <button 
+                  className="addToQueueButton" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToQueue(index);
+                  }}
+                  aria-label={`Add ${track.name || track.title} to queue`}
+                  title="Add to queue"
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                </button>
               </div>
             </li>
           );

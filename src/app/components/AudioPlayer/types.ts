@@ -26,6 +26,20 @@ export interface ExtendedHTMLCanvasElement extends HTMLCanvasElement {
   prevScaleFactor?: number;
 }
 
+// Define repeat mode types
+export enum RepeatMode {
+  OFF = 'off',
+  ONE = 'one',
+  ALL = 'all'
+}
+
+// Define toast notification types
+export interface ToastNotification {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
+
 // Declare global AudioContext for TypeScript
 // eslint-disable-next-line
 declare global {
