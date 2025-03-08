@@ -7,4 +7,3 @@ export { default as MiniPlayer } from './MiniPlayer';
 export { default as FullScreenPlayer } from './FullScreenPlayer';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as QueuePanel } from './QueuePanel';
-export { default as ToastContainer } from './Toast';

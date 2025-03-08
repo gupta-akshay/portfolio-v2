@@ -18,7 +18,6 @@ import {
   MiniPlayer,
   FullScreenPlayer,
   QueuePanel,
-  ToastContainer
 } from './components';
 
 const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
@@ -88,7 +87,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     queuedTrackIds,
     isShuffleActive,
     repeatMode,
-    toasts,
     isQueueVisible,
     addToQueue,
     removeFromQueue,
@@ -96,7 +94,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     toggleShuffle,
     toggleRepeat,
     toggleQueueVisibility,
-    closeToast,
+    clearQueue,
     getNextTrackIndex,
     getPreviousTrackIndex
   } = useQueueManager(hasTracks ? tracks : []);
@@ -437,6 +435,23 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   const handleTrackSelect = (index: number) => {
     setCurrentTrackIndex(index);
+    
+    // Add all tracks after the selected track to the queue
+    if (hasTracks && tracks.length > index + 1) {
+      // Get all tracks after the selected one
+      const tracksToAdd = tracks.slice(index + 1);
+      
+      // Clear the existing queue
+      clearQueue();
+      
+      // Add all subsequent tracks to the queue
+      // Use setTimeout to ensure the queue is cleared before adding new tracks
+      setTimeout(() => {
+        for (let i = 0; i < tracksToAdd.length; i++) {
+          addToQueue(tracksToAdd[i]);
+        }
+      }, 0);
+    }
   };
 
   const handleExpandPlayer = () => {
@@ -642,8 +657,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         onRemoveFromQueue={removeFromQueue}
         onReorderQueue={reorderQueue}
       />
-
-      <ToastContainer toasts={toasts} onClose={closeToast} />
     </div>
   );
 };

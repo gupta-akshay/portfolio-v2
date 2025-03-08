@@ -1,12 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
-import { Track, RepeatMode, ToastNotification } from '../types';
+import { useState, useCallback } from 'react';
+import { Track, RepeatMode } from '../types';
 
 export const useQueueManager = (tracks: Track[]) => {
   const [queue, setQueue] = useState<Track[]>([]);
   const [queuedTrackIds, setQueuedTrackIds] = useState<Set<string>>(new Set());
   const [isShuffleActive, setIsShuffleActive] = useState(false);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>(RepeatMode.OFF);
-  const [toasts, setToasts] = useState<ToastNotification[]>([]);
   const [isQueueVisible, setIsQueueVisible] = useState(false);
 
   // Add a track to the queue
@@ -17,14 +16,6 @@ export const useQueueManager = (tracks: Track[]) => {
       newIds.add(track.id);
       return newIds;
     });
-
-    // Show toast notification
-    const newToast: ToastNotification = {
-      id: `toast-${Date.now()}`,
-      message: `Added "${track.name || track.title}" to queue`,
-      type: 'success'
-    };
-    setToasts(prevToasts => [...prevToasts, newToast]);
   }, []);
 
   // Remove a track from the queue
@@ -102,9 +93,10 @@ export const useQueueManager = (tracks: Track[]) => {
     setIsQueueVisible(prev => !prev);
   }, []);
 
-  // Close a toast notification
-  const closeToast = useCallback((id: string) => {
-    setToasts(prevToasts => prevToasts.filter(toast => toast.id !== id));
+  // Clear the queue
+  const clearQueue = useCallback(() => {
+    setQueue([]);
+    setQueuedTrackIds(new Set());
   }, []);
 
   // Get the next track based on current index, queue, and playback settings
@@ -191,7 +183,6 @@ export const useQueueManager = (tracks: Track[]) => {
     queuedTrackIds,
     isShuffleActive,
     repeatMode,
-    toasts,
     isQueueVisible,
     addToQueue,
     removeFromQueue,
@@ -199,7 +190,7 @@ export const useQueueManager = (tracks: Track[]) => {
     toggleShuffle,
     toggleRepeat,
     toggleQueueVisibility,
-    closeToast,
+    clearQueue,
     getNextTrackIndex,
     getPreviousTrackIndex
   };
