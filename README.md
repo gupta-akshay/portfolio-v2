@@ -38,6 +38,8 @@ Because one framework is never enough:
   - Smart metadata parsing (It reads file names better than I read documentation)
   - Volume control (For when your neighbors complain)
   - Keyboard controls (For the mouse-averse)
+  - Queue management (Add tracks, reorder with drag & drop, and play what's next)
+  - Shuffle mode (For the musically indecisive)
   - Mobile-optimized UI:
     - Swipe gestures (Up to expand, Down to minimize)
     - Mini player with scrolling track names
@@ -244,6 +246,15 @@ Then visit [http://localhost:3000](http://localhost:3000) and marvel at your cre
 - Timeout handling for slow connections (5-second limit)
 - Automatic retry mechanism for failed loads
 - Proper cleanup of event listeners
+
+### Queue Management System
+
+- Add tracks to queue from the track list
+- Drag and drop interface for reordering queued tracks
+- Visual indicators for currently queued tracks
+- Automatic playback continuation through the queue
+- Queue persistence during player state changes
+- Shuffle mode that respects the queue order
 
 ### Visualizer Optimizations
 
