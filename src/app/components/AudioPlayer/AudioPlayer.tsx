@@ -396,7 +396,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       isMounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTrackIndex, tracks, volume]);
+  }, [currentTrackIndex, tracks]);
 
   // Set up audio context and analyzer when track starts playing
   useEffect(() => {
@@ -457,6 +457,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         miniAnimationRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentTrackIndex,
     isPlaying,
@@ -560,12 +561,13 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     if (!audio) return;
 
     // Ensure audio is properly configured for Safari
-    audio.volume = volume;
+    // Use the current volume state directly from the audio element
+    // This avoids recreating this callback when volume changes
     audio.muted = false;
 
     setIsPlayable(true);
     setIsLoading(false);
-  }, [volume]);
+  }, []);
 
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
