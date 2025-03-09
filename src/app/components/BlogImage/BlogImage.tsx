@@ -23,6 +23,7 @@ const BlogImage = ({
         objectFit: 'contain' as const,
         maxWidth: '100%',
         height: 'auto',
+        maxHeight: '500px',
       };
 
   return (
