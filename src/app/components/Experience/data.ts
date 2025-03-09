@@ -1,6 +1,20 @@
 const data = [
   {
     id: 0,
+    date: '2024-05-01',
+    role: 'Senior Staff Engineer',
+    company: 'PeopleGrove',
+    timeInRole: 'May, 2024 - Present',
+    location: 'Remote, India',
+    responsibilities: `
+      <ul>
+        <li>Developed an AI-powered Support ChatBot to automate recurring client issue resolution, reducing human dependency and improving response efficiency, while also redesigning and standardizing logging mechanisms, cutting Google Cloud Logging costs by 40%.</li>
+      </ul>
+    `,
+    imgSrc: '/images/peoplegrove.png',
+  },
+  {
+    id: 1,
     date: '2024-01-01',
     role: 'Staff Engineer',
     company: 'PeopleGrove',
@@ -14,7 +28,7 @@ const data = [
     imgSrc: '/images/peoplegrove.png',
   },
   {
-    id: 1,
+    id: 2,
     date: '2022-04-01',
     role: 'Engineering Manager',
     company: 'PeopleGrove',
@@ -28,7 +42,7 @@ const data = [
     imgSrc: '/images/peoplegrove.png',
   },
   {
-    id: 2,
+    id: 3,
     date: '2021-04-01',
     role: 'Senior Software Development Engineer',
     company: 'PeopleGrove',
@@ -42,7 +56,7 @@ const data = [
     imgSrc: '/images/peoplegrove.png',
   },
   {
-    id: 3,
+    id: 4,
     date: '2020-04-01',
     role: 'Software Development Engineer II',
     company: 'PeopleGrove',
@@ -56,7 +70,7 @@ const data = [
     imgSrc: '/images/peoplegrove.png',
   },
   {
-    id: 4,
+    id: 5,
     date: '2019-03-18',
     role: 'Software Development Engineer I',
     company: 'PeopleGrove',
@@ -70,7 +84,7 @@ const data = [
     imgSrc: '/images/peoplegrove.png',
   },
   {
-    id: 5,
+    id: 6,
     date: '2018-10-14',
     role: 'Assistant System Engineer',
     company: 'Tata Consultancy Services',
@@ -84,7 +98,7 @@ const data = [
     imgSrc: '/images/tcs.svg',
   },
   {
-    id: 6,
+    id: 7,
     date: '2017-09-13',
     role: 'Assistant System Engineer - Trainee',
     company: 'Tata Consultancy Services',
