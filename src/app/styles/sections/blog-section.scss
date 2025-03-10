@@ -5,6 +5,7 @@
 .blog-grid {
   .blog-img {
     overflow: hidden;
+    border-radius: 10px;
     .blog-image {
       max-height: 360px;
       object-fit: cover;
