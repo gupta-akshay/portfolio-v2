@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import AudioPlayer from '@/app/components/AudioPlayer';
+import { useEffect, useState, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import MusicLoadingIndicator from './MusicLoadingIndicator';
 import { Track } from '@/app/components/AudioPlayer/types';
 import { getAudioFilesList } from '@/app/utils/aws';
+
+const AudioPlayer = dynamic(() => import('@/app/components/AudioPlayer'), {
+  loading: () => <MusicLoadingIndicator />,
+  ssr: false,
+});
 
 function MusicTracks() {
   const [tracks, setTracks] = useState<Track[]>([]);

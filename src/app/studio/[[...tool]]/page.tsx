@@ -8,10 +8,7 @@
  */
 
 import type { Metadata } from 'next';
-import { NextStudio } from 'next-sanity/studio';
-import config from '../../../../sanity.config';
-
-export const dynamic = 'force-static';
+import StudioWrapper from '@/app/studio/[[...tool]]/studio-wrapper';
 
 export const metadata: Metadata = {
   title: 'Content Studio',
@@ -25,5 +22,5 @@ export const metadata: Metadata = {
 export { viewport } from 'next-sanity/studio';
 
 export default function StudioPage() {
-  return <NextStudio config={config} />;
+  return <StudioWrapper />;
 }

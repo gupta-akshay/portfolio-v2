@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   },
 };
 
+// Set revalidation time for ISR
+export const revalidate = 3600; // Revalidate every hour
+
 // Separate component for blog posts to use with Suspense
 async function BlogPosts() {
   const posts = await getPosts();
