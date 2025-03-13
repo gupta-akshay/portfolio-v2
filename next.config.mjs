@@ -24,6 +24,7 @@ const nextConfig = {
       'resend',
       'sanitize-html',
       'sanity',
+      'next-sanity',
       'typed.js',
       'zod',
     ],

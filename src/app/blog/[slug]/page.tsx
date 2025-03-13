@@ -1,15 +1,23 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
-import SingleBlog from '@/app/components/SingleBlog';
 import BlogImage from '@/app/components/BlogImage';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
 
+const SingleBlog = dynamic(() => import('@/app/components/SingleBlog'), {
+  loading: () => <div className='loading-blog-content'>Loading content...</div>,
+  ssr: true,
+});
+
 interface SingleBlogPageProps {
   params: Promise<{ slug: string }>;
 }
+
+export const revalidate = 3600;
 
 const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   const slug = (await params).slug;
@@ -83,7 +91,15 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
                   </div>
                 </div>
                 <div className='article-content'>
-                  <SingleBlog post={post} />
+                  <Suspense
+                    fallback={
+                      <div className='loading-blog-content'>
+                        Loading content...
+                      </div>
+                    }
+                  >
+                    <SingleBlog post={post} />
+                  </Suspense>
                 </div>
               </article>
             </div>
