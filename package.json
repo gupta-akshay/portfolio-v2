@@ -23,6 +23,7 @@
     "@sanity/icons": "^3.6.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.77.2",
+    "@tanstack/react-form": "^1.0.5",
     "bootstrap": "^5.3.3",
     "critters": "^0.0.25",
     "devicon": "^2.16.0",
