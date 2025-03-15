@@ -116,7 +116,7 @@ export default function Contact() {
                           name='name'
                           validators={{
                             onChange: ({ value }) =>
-                              !value ? 'Name is required' : undefined,
+                              !value?.trim() ? 'Name is required' : undefined,
                           }}
                         >
                           {(field) => (
@@ -149,7 +149,7 @@ export default function Contact() {
                           name='email'
                           validators={{
                             onChange: ({ value }) => {
-                              if (!value) return 'Email is required';
+                              if (!value?.trim()) return 'Email is required';
                               if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
                                 return 'Invalid email address';
                               }
@@ -187,7 +187,9 @@ export default function Contact() {
                           name='subject'
                           validators={{
                             onChange: ({ value }) =>
-                              !value ? 'Subject is required' : undefined,
+                              !value?.trim()
+                                ? 'Subject is required'
+                                : undefined,
                           }}
                         >
                           {(field) => (
@@ -220,7 +222,9 @@ export default function Contact() {
                           name='message'
                           validators={{
                             onChange: ({ value }) =>
-                              !value ? 'Message is required' : undefined,
+                              !value?.trim()
+                                ? 'Message is required'
+                                : undefined,
                           }}
                         >
                           {(field) => (
