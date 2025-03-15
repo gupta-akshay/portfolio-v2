@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
@@ -11,13 +10,29 @@ export const metadata: Metadata = {
   title: 'About | Akshay Gupta',
   description:
     'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+  openGraph: {
+    type: 'profile',
+    title: 'About Akshay Gupta | Full-Stack Developer',
+    description:
+      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
+    url: 'https://akshaygupta.live/about',
+    siteName: 'Akshay Gupta Portfolio',
+    images: [
+      {
+        url: 'https://akshaygupta.live/about/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Akshay Gupta - About Page',
+      },
+    ],
+  },
   twitter: {
     card: 'summary_large_image',
     title: 'About Akshay Gupta | Full-Stack Developer',
     description:
       'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, and experience.',
     creator: '@ashay_music',
-    images: ['https://akshaygupta.live/about/opengraph-image'],
+    images: ['https://akshaygupta.live/about/opengraph-image.png'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/about',
@@ -27,9 +42,7 @@ export const metadata: Metadata = {
 const calculateExperience = (): number => {
   const startDate = new Date('2017-09-13').getTime();
   const currentDate = new Date().getTime();
-  const diffInMilliseconds = currentDate - startDate;
-  const diffInYears = diffInMilliseconds / (1000 * 60 * 60 * 24 * 365);
-  return Math.floor(diffInYears);
+  return Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 365));
 };
 
 const EducationAndSkills = () => (
@@ -69,7 +82,7 @@ const EducationAndSkills = () => (
 );
 
 export default function About() {
-  const yearsOfExperience = useMemo(calculateExperience, []);
+  const yearsOfExperience = calculateExperience();
 
   const jsonLd = {
     '@context': 'https://schema.org',

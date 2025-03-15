@@ -5,13 +5,29 @@ export const metadata: Metadata = {
   title: 'Contact | Akshay Gupta',
   description:
     'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
+  openGraph: {
+    type: 'website',
+    title: 'Contact Akshay Gupta',
+    description:
+      'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
+    url: 'https://akshaygupta.live/contact',
+    siteName: 'Akshay Gupta',
+    images: [
+      {
+        url: 'https://akshaygupta.live/contact/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Contact Akshay Gupta',
+      },
+    ],
+  },
   twitter: {
     card: 'summary_large_image',
     title: 'Contact Akshay Gupta',
     description:
       'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
     creator: '@ashay_music',
-    images: ['https://akshaygupta.live/contact/opengraph-image'],
+    images: ['https://akshaygupta.live/contact/opengraph-image.png'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/contact',
@@ -40,9 +56,14 @@ export default function ContactLayout({
       url: 'https://akshaygupta.live',
     },
     provider: {
-      '@type': 'Person',
-      name: 'Akshay Gupta',
-      email: 'contact@akshaygupta.live',
+      '@type': 'Organization',
+      name: 'Akshay Gupta Portfolio',
+      url: 'https://akshaygupta.live',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'contact@akshaygupta.live',
+        contactType: 'customer support',
+      },
     },
   };
 

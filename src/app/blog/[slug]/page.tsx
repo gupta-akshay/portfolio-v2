@@ -28,14 +28,16 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
     notFound();
   }
 
+  const imageUrl = post.mainImage
+    ? urlFor(post.mainImage).width(1200).height(630).url()
+    : 'https://akshaygupta.live/images/about-me.png';
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt || post.title,
-    image: post.mainImage
-      ? urlFor(post.mainImage).width(1200).height(630).url()
-      : 'https://akshaygupta.live/images/about-me.png',
+    image: imageUrl,
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
     author: {
@@ -110,7 +112,6 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   );
 };
 
-// Add generateMetadata function for dynamic blog posts
 export async function generateMetadata({
   params,
 }: SingleBlogPageProps): Promise<Metadata> {
@@ -120,15 +121,29 @@ export async function generateMetadata({
 
     if (!post) {
       return {
-        metadataBase: new URL(`https://akshaygupta.live/blog/${slug}`),
         title: 'Post Not Found | Akshay Gupta',
         description: `The blog post you're looking for does not exist`,
+        metadataBase: new URL('https://akshaygupta.live'),
+        openGraph: {
+          title: 'Post Not Found',
+          description: `The blog post you're looking for does not exist`,
+          type: 'article',
+          url: `https://akshaygupta.live/blog/${slug}`,
+          images: [
+            {
+              url: 'https://akshaygupta.live/images/about-me.png',
+              width: 1200,
+              height: 630,
+              alt: 'Blog Post Not Found',
+            },
+          ],
+        },
         twitter: {
           card: 'summary_large_image',
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
-          creator: '@ashay_music',
           images: ['https://akshaygupta.live/images/about-me.png'],
+          creator: '@ashay_music',
         },
         alternates: {
           canonical: `https://akshaygupta.live/blog/${slug}`,
@@ -141,14 +156,17 @@ export async function generateMetadata({
     const description = post.excerpt || post.title;
 
     return {
-      metadataBase: new URL(`https://akshaygupta.live/blog/${slug}`),
       title: `${post.title} | Akshay Gupta's Blog`,
       description: description,
+      metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
         title: post.title,
         description: description,
         type: 'article',
+        url: `https://akshaygupta.live/blog/${slug}`,
+        siteName: 'Akshay Gupta',
         publishedTime: post.publishedAt,
+        modifiedTime: post.publishedAt,
         authors: [post.author.name],
         images: [
           {
@@ -171,7 +189,6 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
-    const slug = (await params).slug;
     console.error('Error generating metadata:', error);
     return {
       title: 'Error | Akshay Gupta',
@@ -180,6 +197,7 @@ export async function generateMetadata({
         title: 'Error',
         description: 'An error occurred while loading this blog post',
         type: 'article',
+        url: 'https://akshaygupta.live/blog',
         images: [
           {
             url: 'https://akshaygupta.live/images/about-me.png',
@@ -197,7 +215,7 @@ export async function generateMetadata({
         images: ['https://akshaygupta.live/images/about-me.png'],
       },
       alternates: {
-        canonical: `https://akshaygupta.live/blog/${slug}`,
+        canonical: 'https://akshaygupta.live/blog',
       },
     };
   }

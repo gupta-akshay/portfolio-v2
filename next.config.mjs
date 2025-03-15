@@ -45,14 +45,15 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'res.cloudinary.com',
+        hostname: 'akshaygupta.live',
         port: '',
         pathname: '/**',
       },
     ],
-    // Optimize images
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; img-src * data: blob:;",
   },
 
   async headers() {
@@ -64,9 +65,9 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: https://www.clarity.ms https://www.googletagmanager.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live",
               "font-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",
@@ -116,8 +117,8 @@ const nextConfig = {
     // Optimize chunks
     config.optimization.splitChunks = {
       chunks: 'all',
-      minSize: 20000,
-      maxSize: 244000,
+      minSize: 30000, // Increased minSize for better chunk splitting
+      maxSize: 250000, // Prevents oversized chunks
       minChunks: 1,
       maxAsyncRequests: 30,
       maxInitialRequests: 30,
@@ -166,6 +167,10 @@ const nextConfig = {
         },
       },
     };
+
+    if (!isServer) {
+      config.resolve.fallback = { fs: false }; // Avoid fs dependency issue
+    }
 
     return config;
   },
