@@ -1,120 +1,64 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMap, faInbox, faMobile } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { useForm } from '@tanstack/react-form';
 
 import Layout from '@/app/components/Layout';
 
-const emailRegex = /\S+@\S+\.\S+/;
-
-interface FormData {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
-
-interface ErrorMap {
-  name: boolean;
-  email: boolean;
-  subject: boolean;
-  message: boolean;
-}
-
 export default function Contact() {
   const [mapLoaded, setMapLoaded] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
-  const [errorMap, setErrorMap] = useState<ErrorMap>({
-    name: false,
-    email: false,
-    subject: false,
-    message: false,
-  });
   const [isSending, setIsSending] = useState<boolean>(false);
 
   useEffect(() => {
     setMapLoaded(true);
   }, []);
 
-  const handleInputChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
-      setErrorMap((prev) => ({
-        ...prev,
-        [name]:
-          name === 'email'
-            ? value.length > 0 &&
-              (!emailRegex.test(value) || value.trim().length === 0)
-            : value.trim().length === 0,
-      }));
-    },
-    []
-  );
-
-  const resetFormState = useCallback(() => {
-    setFormData({
+  const form = useForm({
+    defaultValues: {
       name: '',
       email: '',
       subject: '',
       message: '',
-    });
-    setErrorMap({
-      name: false,
-      email: false,
-      subject: false,
-      message: false,
-    });
-  }, []);
-
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSending(true);
-    try {
-      await toast.promise(
-        fetch('/api/sendMail', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+    },
+    onSubmit: async ({ value }) => {
+      setIsSending(true);
+      try {
+        await toast.promise(
+          fetch('/api/sendMail', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(value),
+          }),
+          {
+            loading: 'Sending Message...',
+            success: () => {
+              form.reset();
+              setIsSending(false);
+              return 'Message sent successfully!';
+            },
+            error: () => {
+              setIsSending(false);
+              return 'Some error occurred. Please try again!';
+            },
           },
-          body: JSON.stringify(formData),
-        }),
-        {
-          loading: 'Sending Message...',
-          success: () => {
-            resetFormState();
-            setIsSending(false);
-            return 'Message sent successfully!';
-          },
-          error: () => {
-            setIsSending(false);
-            return 'Some error occurred. Please try again!';
-          },
-        },
-        {
-          success: {
-            duration: 3000,
-          },
-        }
-      );
-    } catch (error) {
-      console.error('Error while submitting the form', error);
-      setIsSending(false);
-    }
-  };
-
-  const isButtonDisabled =
-    Object.values(errorMap).some((value) => value) ||
-    Object.values(formData).some((value) => value.trim().length === 0);
+          {
+            success: {
+              duration: 3000,
+            },
+          }
+        );
+      } catch (error) {
+        console.error('Error while submitting the form', error);
+        setIsSending(false);
+      }
+    },
+  });
 
   return (
     <Layout>
@@ -158,105 +102,168 @@ export default function Contact() {
             <div className='col-lg-7 col-xl-8 m-15px-tb'>
               <div className='contact-form'>
                 <h4>Send your message here</h4>
-                <form id='contact-form' onSubmit={onSubmit}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    void form.handleSubmit();
+                  }}
+                >
                   <div className='row'>
                     <div className='col-md-6'>
                       <div className='form-group'>
-                        <input
+                        <form.Field
                           name='name'
-                          id='name'
-                          placeholder='Full Name'
-                          className={`form-control${errorMap.name ? ' invalid' : ''}`}
-                          type='text'
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          disabled={isSending}
-                          required
-                        />
-                        <span
-                          className='warning-text text-danger'
-                          style={{ display: errorMap.name ? 'block' : 'none' }}
+                          validators={{
+                            onChange: ({ value }) =>
+                              !value?.trim() ? 'Name is required' : undefined,
+                          }}
                         >
-                          The name is invalid.
-                        </span>
+                          {(field) => (
+                            <>
+                              <input
+                                id='name'
+                                placeholder='Full Name'
+                                className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
+                                type='text'
+                                value={field.state.value}
+                                onChange={(e) =>
+                                  field.handleChange(e.target.value)
+                                }
+                                onBlur={field.handleBlur}
+                                disabled={isSending}
+                              />
+                              {field.state.meta.errors.length > 0 && (
+                                <span className='warning-text text-danger'>
+                                  {field.state.meta.errors[0]}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </form.Field>
                       </div>
                     </div>
                     <div className='col-md-6'>
                       <div className='form-group'>
-                        <input
+                        <form.Field
                           name='email'
-                          id='email'
-                          placeholder='Your Email'
-                          className={`form-control${errorMap.email ? ' invalid' : ''}`}
-                          type='text'
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          disabled={isSending}
-                          required
-                        />
-                        <span
-                          className='warning-text text-danger'
-                          style={{ display: errorMap.email ? 'block' : 'none' }}
+                          validators={{
+                            onChange: ({ value }) => {
+                              if (!value?.trim()) return 'Email is required';
+                              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                                return 'Invalid email address';
+                              }
+                              return undefined;
+                            },
+                          }}
                         >
-                          The email is invalid.
-                        </span>
+                          {(field) => (
+                            <>
+                              <input
+                                id='email'
+                                placeholder='Your Email'
+                                className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
+                                type='email'
+                                value={field.state.value}
+                                onChange={(e) =>
+                                  field.handleChange(e.target.value)
+                                }
+                                onBlur={field.handleBlur}
+                                disabled={isSending}
+                              />
+                              {field.state.meta.errors.length > 0 && (
+                                <span className='warning-text text-danger'>
+                                  {field.state.meta.errors[0]}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </form.Field>
                       </div>
                     </div>
                     <div className='col-md-12'>
                       <div className='form-group'>
-                        <input
+                        <form.Field
                           name='subject'
-                          id='subject'
-                          placeholder='Email Subject'
-                          className={`form-control${errorMap.subject ? ' invalid' : ''}`}
-                          type='text'
-                          value={formData.subject}
-                          onChange={handleInputChange}
-                          disabled={isSending}
-                          required
-                        />
-                        <span
-                          className='warning-text text-danger'
-                          style={{
-                            display: errorMap.subject ? 'block' : 'none',
+                          validators={{
+                            onChange: ({ value }) =>
+                              !value?.trim()
+                                ? 'Subject is required'
+                                : undefined,
                           }}
                         >
-                          The subject is invalid.
-                        </span>
+                          {(field) => (
+                            <>
+                              <input
+                                id='subject'
+                                placeholder='Email Subject'
+                                className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
+                                type='text'
+                                value={field.state.value}
+                                onChange={(e) =>
+                                  field.handleChange(e.target.value)
+                                }
+                                onBlur={field.handleBlur}
+                                disabled={isSending}
+                              />
+                              {field.state.meta.errors.length > 0 && (
+                                <span className='warning-text text-danger'>
+                                  {field.state.meta.errors[0]}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </form.Field>
                       </div>
                     </div>
                     <div className='col-md-12'>
                       <div className='form-group'>
-                        <textarea
+                        <form.Field
                           name='message'
-                          id='message'
-                          placeholder='Write Your Message'
-                          className={`form-control${errorMap.message ? ' invalid' : ''}`}
-                          rows={5}
-                          value={formData.message}
-                          onChange={handleInputChange}
-                          disabled={isSending}
-                          required
-                        />
-                        <span
-                          className='warning-text text-danger'
-                          style={{
-                            display: errorMap.message ? 'block' : 'none',
+                          validators={{
+                            onChange: ({ value }) =>
+                              !value?.trim()
+                                ? 'Message is required'
+                                : undefined,
                           }}
                         >
-                          The message is invalid.
-                        </span>
+                          {(field) => (
+                            <>
+                              <textarea
+                                id='message'
+                                placeholder='Write Your Message'
+                                className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
+                                rows={5}
+                                value={field.state.value}
+                                onChange={(e) =>
+                                  field.handleChange(e.target.value)
+                                }
+                                onBlur={field.handleBlur}
+                                disabled={isSending}
+                              />
+                              {field.state.meta.errors.length > 0 && (
+                                <span className='warning-text text-danger'>
+                                  {field.state.meta.errors[0]}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </form.Field>
                       </div>
                     </div>
                     <div className='col-md-12'>
                       <div className='send'>
-                        <button
-                          className='px-btn px-btn-theme'
-                          type='submit'
-                          disabled={isButtonDisabled || isSending}
-                        >
-                          Submit
-                        </button>
+                        <form.Subscribe>
+                          {(state) => (
+                            <button
+                              className='px-btn px-btn-theme'
+                              type='submit'
+                              disabled={!state.canSubmit || isSending}
+                            >
+                              {isSending ? 'Sending...' : 'Submit'}
+                            </button>
+                          )}
+                        </form.Subscribe>
                       </div>
                     </div>
                   </div>
