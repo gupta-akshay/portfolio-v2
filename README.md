@@ -76,7 +76,6 @@ The `/music` route features a Spotify-inspired music player that's built from sc
 
 2. **Player Features:**
   - Custom audio visualizer using Web Audio API's analyzer node
-  - Global player state persists across route changes
   - Drag-and-drop queue management
   - Mini player that follows you around the site
   - Keyboard shortcuts for playback control
