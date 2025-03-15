@@ -8,13 +8,21 @@ Live at [akshaygupta.live](https://akshaygupta.live) - Where code meets creativi
 
 Because one framework is never enough:
 
-- React 19 (Because 18 was so last year)
 - Next.js 15 (Making SEO great again!)
+- React 19 (Because 18 was so last year)
 - TypeScript (JavaScript with a safety helmet)
 - Sass (CSS with superpowers)
 - Bootstrap 5 (For when you need to look good fast)
 - FontAwesome (Icons that speak louder than words)
 - Web Audio API (Making waves, literally!)
+- TanStack Form (Form handling with superpowers)
+- React Hot Toast (Notifications that look good enough to eat)
+- Typed.js (Making text come alive)
+- Devicon (Tech icons for the win)
+- Microsoft Clarity & Google Analytics (Keeping track of who's watching)
+- ESLint & Prettier (Because clean code is happy code)
+- Critters (Critical CSS extraction)
+- Next Bundle Analyzer (Keeping our bundles in check)
 
 ### 🌟 Special Ingredients
 
@@ -30,7 +38,12 @@ Because one framework is never enough:
 
 - 🌃 Dark/Light theme (For both vampires and humans)
 - 📝 Blog with CMS (Because WordPress is too mainstream)
-- 📧 Contact form (Spam bots, please ignore)
+- 📧 Contact form with validation:
+  - Real-time field validation
+  - Smart error handling
+  - Spam protection
+  - Email delivery tracking
+  - Mobile-optimized layout
 - 🎵 Audio Player Extraordinaire:
   - Waveform visualization (It's not just a line, it's art!)
   - Mini visualizer (Like a disco ball for your ears)
@@ -40,12 +53,94 @@ Because one framework is never enough:
   - Keyboard controls (For the mouse-averse)
   - Queue management (Add tracks, reorder with drag & drop, and play what's next)
   - Shuffle mode (For the musically indecisive)
+  - Progressive loading:
+    - Smart buffering
+    - Automatic retry on failures
+    - Timeout handling
   - Mobile-optimized UI:
     - Swipe gestures (Up to expand, Down to minimize)
     - Mini player with scrolling track names
     - Fullscreen mode with touch-friendly controls
     - Responsive visualizations
     - Auto-adjusting layout for different screen sizes
+
+## 🎵 Music Player System
+
+The `/music` route features a Spotify-inspired music player that's built from scratch using the Web Audio API. Here's how it works:
+
+1. **Content Delivery:**
+
+  - Music files are stored in AWS S3 and served through CloudFront CDN
+  - Signed URLs ensure secure access to audio files
+  - Smart file naming convention automatically extracts metadata
+
+2. **Player Features:**
+  - Custom audio visualizer using Web Audio API's analyzer node
+  - Global player state persists across route changes
+  - Drag-and-drop queue management
+  - Mini player that follows you around the site
+  - Keyboard shortcuts for playback control
+
+## 📝 Blog System
+
+The `/blog` route implements a modern blog platform using Sanity.io as the headless CMS:
+
+1. **Content Management:**
+
+  - Sanity Studio for content creation and management
+  - Custom schemas for rich blog post structure
+  - Real-time preview of content changes
+
+2. **Features:**
+  - Server-side rendering for optimal SEO
+  - Code syntax highlighting
+  - Rich text editor with custom components
+  - Automatic image optimization
+  - Categories and tags support
+
+## 🎯 Performance Features
+
+- Next.js App Router & Server Components
+- Optimized chunk splitting (Because loading the entire internet isn't cool)
+- Aggressive caching strategies:
+  - Static page caching
+  - API response caching
+  - Asset caching with versioning
+- Image optimization with next/image:
+  - Automatic WebP/AVIF conversion
+  - Responsive sizes
+  - Lazy loading
+- CSP headers (Keeping the bad guys out)
+- Custom error boundaries with fallbacks
+- Performance monitoring:
+  - Real-time metrics
+  - Error tracking
+  - User experience monitoring
+
+## 🧬 Under The Hood
+
+- Web Audio API for real-time audio visualization:
+  - 60 FPS target with frame limiting
+  - Gradient caching
+  - Canvas optimization
+  - Memory leak prevention
+- React Suspense for smooth loading states
+- Custom hooks for:
+  - Audio playback
+  - Visualization
+  - Form handling
+  - Theme management
+  - Analytics
+- TypeScript for type safety
+- SCSS modules with:
+  - Dynamic theming
+  - Responsive mixins
+  - Performance optimizations
+- Responsive design:
+  - Mobile-first approach
+  - Progressive enhancement
+  - Touch optimization
+  - Accessibility features
 
 ## 📸 Screenshots
 
@@ -57,18 +152,18 @@ Because one framework is never enough:
 
 #### About Section
 
-![About 1](screenshots/desktop/about-1.png) | ![About 2](screenshots/desktop/about-2.png)
-:-------------------------:|:-------------------------:
+| ![About 1](screenshots/desktop/about-1.png) | ![About 2](screenshots/desktop/about-2.png) |
+| :-----------------------------------------: | :-----------------------------------------: |
 
 #### Blog Section
 
-![Blog 1](screenshots/desktop/blog-1.png) | ![Blog 2](screenshots/desktop/blog-2.png)
-:-------------------------:|:-------------------------:
+| ![Blog 1](screenshots/desktop/blog-1.png) | ![Blog 2](screenshots/desktop/blog-2.png) |
+| :---------------------------------------: | :---------------------------------------: |
 
 #### Music Section
 
-![Music 1](screenshots/desktop/music-1.png) | ![Music 2](screenshots/desktop/music-2.png)
-:-------------------------:|:-------------------------:
+| ![Music 1](screenshots/desktop/music-1.png) | ![Music 2](screenshots/desktop/music-2.png) |
+| :-----------------------------------------: | :-----------------------------------------: |
 
 #### Contact Page
 
@@ -76,9 +171,9 @@ Because one framework is never enough:
 
 ### 📱 Mobile View
 
-![Home](screenshots/mobile/home.png) | ![About 1](screenshots/mobile/about-1.png) | ![About 2](screenshots/mobile/about-2.png) | ![Blog 1](screenshots/mobile/blog-1.png)
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-![Blog 2](screenshots/mobile/blog-2.png) | ![Music 1](screenshots/mobile/music-1.png) | ![Music 2](screenshots/mobile/music-2.png) | ![Contact](screenshots/mobile/contact.png)
+|   ![Home](screenshots/mobile/home.png)   | ![About 1](screenshots/mobile/about-1.png) | ![About 2](screenshots/mobile/about-2.png) |  ![Blog 1](screenshots/mobile/blog-1.png)  |
+| :--------------------------------------: | :----------------------------------------: | :----------------------------------------: | :----------------------------------------: |
+| ![Blog 2](screenshots/mobile/blog-2.png) | ![Music 1](screenshots/mobile/music-1.png) | ![Music 2](screenshots/mobile/music-2.png) | ![Contact](screenshots/mobile/contact.png) |
 
 ## 🚀 Quick Start
 
@@ -108,35 +203,38 @@ NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
 This project uses Google Analytics and Microsoft Clarity for basic usage analytics:
 
 1. **Google Analytics**:
-   - Create a GA4 property at [Google Analytics](https://analytics.google.com)
-   - Get your Measurement ID (starts with 'G-')
-   - Add it to `.env.local` as `NEXT_PUBLIC_GOOGLE_ANALYTICS`
+
+  - Create a GA4 property at [Google Analytics](https://analytics.google.com)
+  - Get your Measurement ID (starts with 'G-')
+  - Add it to `.env.local` as `NEXT_PUBLIC_GOOGLE_ANALYTICS`
 
 2. **Microsoft Clarity**:
-   - Create a project at [Microsoft Clarity](https://clarity.microsoft.com)
-   - Get your tracking code
-   - Add it to `.env.local` as `NEXT_PUBLIC_CLARITY_APP_CODE`
+  - Create a project at [Microsoft Clarity](https://clarity.microsoft.com)
+  - Get your tracking code
+  - Add it to `.env.local` as `NEXT_PUBLIC_CLARITY_APP_CODE`
 
 > Note: These analytics tools are used solely to understand usage patterns and improve user experience. No personal data is collected or processed beyond standard analytics metrics.
 
 ### 3. Audio Files Setup 🎵
 
 1. Create an S3 bucket:
-   - Go to AWS Console → S3
-   - Create a new bucket
-   - Block all public access (for security)
-   - Enable CORS for your domains
+
+  - Go to AWS Console → S3
+  - Create a new bucket
+  - Block all public access (for security)
+  - Enable CORS for your domains
 
 2. Set up CloudFront (Optional but recommended):
-   - Create a CloudFront distribution
-   - Use your S3 bucket as origin
-   - Set up Origin Access Identity (OAI)
-   - Create a CloudFront key pair for signed URLs
-   - Configure your bucket policy to allow CloudFront access
+
+  - Create a CloudFront distribution
+  - Use your S3 bucket as origin
+  - Set up Origin Access Identity (OAI)
+  - Create a CloudFront key pair for signed URLs
+  - Configure your bucket policy to allow CloudFront access
 
 3. Create an IAM user:
-   - Create a user with programmatic access
-   - Attach a policy with these permissions:
+  - Create a user with programmatic access
+  - Attach a policy with these permissions:
 
 ```json
 {
@@ -144,10 +242,7 @@ This project uses Google Analytics and Microsoft Clarity for basic usage analyti
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetObject"
-      ],
+      "Action": ["s3:ListBucket", "s3:GetObject"],
       "Resource": [
         "arn:aws:s3:::your-bucket-name",
         "arn:aws:s3:::your-bucket-name/*"
@@ -162,10 +257,7 @@ This project uses Google Analytics and Microsoft Clarity for basic usage analyti
 ```json
 [
   {
-    "AllowedOrigins": [
-      "http://localhost:3000",
-      "https://your-domain.com"
-    ],
+    "AllowedOrigins": ["http://localhost:3000", "https://your-domain.com"],
     "AllowedMethods": ["GET", "HEAD"],
     "AllowedHeaders": ["*"],
     "ExposeHeaders": ["ETag"],
@@ -198,86 +290,6 @@ bun dev     # For the cool kids
 ```
 
 Then visit [http://localhost:3000](http://localhost:3000) and marvel at your creation.
-
-## 🎯 Performance Features
-
-- Optimized chunk splitting (Because loading the entire internet isn't cool)
-- Aggressive caching (Time travelers welcome)
-- Image optimization with next/image (Making images light as a feather)
-- CSP headers (Keeping the bad guys out)
-- Custom error handling (Because errors deserve love too)
-
-## 🧬 Under The Hood
-
-- Web Audio API for real-time audio visualization
-- React Suspense for smooth loading states
-- Custom hooks for audio playback and visualization
-- TypeScript for catching bugs before they catch you
-- SCSS modules for style organization
-- Responsive design (Works on everything except your grandma's flip phone)
-
-## 🌐 Browser Compatibility & Audio Handling
-
-### Safari & iOS Specific Optimizations
-
-- Audio Context initialization with `sampleRate: 44100` for Safari compatibility
-- Explicit `audio.load()` call before playback to ensure metadata loading
-- Audio element attributes for iOS:
-
-  ```html
-  <audio
-    preload="auto"
-    playsInline
-    x-webkit-airplay="allow"
-    webkit-playsinline="true"
-    x-webkit-playsinline="true"
-  />
-  ```
-
-- Volume and mute state management before playback starts
-- Proper cleanup of audio nodes to prevent memory leaks
-
-### Audio Loading Strategy
-
-- Progressive loading with state tracking:
-  1. `HAVE_METADATA` state for initial track info
-  2. `canplay` event for basic playback readiness
-  3. `canplaythrough` event for buffered playback
-- Timeout handling for slow connections (5-second limit)
-- Automatic retry mechanism for failed loads
-- Proper cleanup of event listeners
-
-### Queue Management System
-
-- Add tracks to queue from the track list
-- Drag and drop interface for reordering queued tracks
-- Visual indicators for currently queued tracks
-- Automatic playback continuation through the queue
-- Queue persistence during player state changes
-- Shuffle mode that respects the queue order
-
-### Visualizer Optimizations
-
-- Frame rate limiting for performance (30fps target)
-- Canvas size optimization based on device capabilities
-- Gradient caching to reduce render overhead
-- Smooth transitions between visualization states
-- Separate animation frames for waveform and mini visualizer
-
-### Error Handling & Recovery
-
-- Automatic recovery from audio context suspension
-- Graceful degradation when Web Audio API is unavailable
-- Proper cleanup of audio resources on unmount
-- Clear error messaging for various failure scenarios
-
-### Performance Considerations
-
-- Lazy loading of audio resources
-- Efficient audio node connection/disconnection
-- Memory leak prevention through proper cleanup
-- Throttled progress updates
-- Optimized canvas drawing operations
 
 ## 🔄 Version History
 
