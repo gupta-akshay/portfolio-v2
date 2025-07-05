@@ -134,7 +134,6 @@ export async function getAudioUrl(path: string): Promise<string> {
       }
     }
 
-    console.log('Using S3 Fallback URL');
     const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,
       Key: path,

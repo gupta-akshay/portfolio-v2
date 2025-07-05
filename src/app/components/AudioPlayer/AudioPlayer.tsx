@@ -509,7 +509,9 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         if (audioContextRef.current?.state === 'suspended') {
           audioContextRef.current
             .resume()
-            .then(() => console.log('AudioContext resumed successfully'))
+            .then(() => {
+              // console.log('AudioContext resumed successfully')
+            })
             .catch((error) =>
               console.error('Failed to resume AudioContext:', error)
             );

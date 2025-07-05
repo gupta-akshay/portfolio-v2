@@ -21,7 +21,6 @@ Because one framework is never enough:
 - Devicon (Tech icons for the win)
 - Microsoft Clarity & Google Analytics (Keeping track of who's watching)
 - ESLint & Prettier (Because clean code is happy code)
-- Critters (Critical CSS extraction)
 - Next Bundle Analyzer (Keeping our bundles in check)
 
 ### 🌟 Special Ingredients
