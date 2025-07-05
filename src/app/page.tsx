@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import Image from 'next/image';
 import TypingAnimation from '@/app/components/TypingAnimation';
 import Layout from '@/app/components/Layout';
@@ -98,13 +99,12 @@ export default function Home() {
                   </p>
                   <p className='desc'>
                     Hey there! 👋 I&apos;m currently a Senior Staff Engineer at{' '}
-                    <a
+                    <Link
                       href='https://www.peoplegrove.com'
                       target='_blank'
-                      rel='noopener noreferrer'
                     >
                       PeopleGrove
-                    </a>
+                    </Link>
                     . I love building websites and apps that are both
                     user-friendly and powerful under the hood. Think of me as
                     someone who enjoys creating digital solutions that make
