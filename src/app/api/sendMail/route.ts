@@ -7,7 +7,7 @@ import { z } from 'zod';
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address'),
-  subject: z.string().optional(),
+  subject: z.string().optional().default(''),
   message: z.string().min(1, 'Message is required'),
 });
 
@@ -24,15 +24,16 @@ export async function POST(req: NextRequest) {
     const rateLimitResult = await rateLimit(req, 5, 15 * 60 * 1000);
     
     if (!rateLimitResult.success) {
+      const retryAfter = Math.ceil((rateLimitResult.reset - Date.now()) / 1000);
       return NextResponse.json(
         {
           message: 'Too many requests. Please try again later.',
-          retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000),
+          retryAfter,
         },
         { 
           status: 429,
           headers: {
-            'Retry-After': Math.ceil((rateLimitResult.reset - Date.now()) / 1000).toString(),
+            'Retry-After': retryAfter.toString(),
           },
         }
       );
@@ -92,6 +93,24 @@ export async function POST(req: NextRequest) {
     );
   } catch (e) {
     console.error('Error in sending mail:', e);
+    
+    // Check for specific error types
+    if (e instanceof Error) {
+      if (e.message.includes('rate limit') || e.message.includes('429')) {
+        return NextResponse.json(
+          { message: 'Too many requests. Please try again later.' },
+          { status: 429 }
+        );
+      }
+      
+      if (e.message.includes('invalid') || e.message.includes('validation')) {
+        return NextResponse.json(
+          { message: 'Invalid request data' },
+          { status: 400 }
+        );
+      }
+    }
+    
     return NextResponse.json(
       { message: 'Error in sending mail' },
       { status: 500 }

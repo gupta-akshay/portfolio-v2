@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { Redis } from '@upstash/redis'
+import requestIp from 'request-ip';
 
 // Upstash Redis client
 let redis: Redis | null = null;
@@ -31,12 +32,14 @@ export async function rateLimit(
   limit: number = 5, // Max 5 requests
   windowMs: number = 15 * 60 * 1000 // 15 minutes
 ): Promise<RateLimitResult> {
-  // Get client IP (handle various proxy scenarios)
-  const ip = 
-    req.headers.get('x-forwarded-for')?.split(',')[0] ||
-    req.headers.get('x-real-ip') ||
-    req.headers.get('cf-connecting-ip') ||
-    '127.0.0.1';
+  // Convert NextRequest to request-ip compatible format
+  const adaptedReq = {
+    headers: Object.fromEntries(req.headers.entries()),
+    connection: { remoteAddress: undefined },
+    socket: { remoteAddress: undefined },
+  };
+  
+  const ip = requestIp.getClientIp(adaptedReq) || '127.0.0.1';
 
   const now = Date.now();
   const key = `rate_limit:${ip}`;
@@ -45,15 +48,17 @@ export async function rateLimit(
   try {
     if (redis) {
       // Use Upstash Redis for production
-      const current = await redis.incr(key);
+      // Use a single atomic operation with expiration to prevent race conditions
+      const pipe = redis.pipeline();
+      pipe.incr(key);
+      pipe.expire(key, windowSeconds);
+      const results = await pipe.exec();
       
-      if (current === 1) {
-        // First request in window, set expiration
-        await redis.expire(key, windowSeconds);
-      }
+      const current = results[0] as number;
       
+      // Get TTL for accurate reset time
       const ttl = await redis.ttl(key);
-      const resetTime = now + (ttl * 1000);
+      const resetTime = ttl > 0 ? now + (ttl * 1000) : now + windowMs;
       
       if (current > limit) {
         return {
@@ -124,14 +129,26 @@ export function cleanupRateLimit() {
   const now = Date.now();
   const windowMs = 15 * 60 * 1000; // 15 minutes
   
-  for (const [key, entry] of rateLimitMap.entries()) {
-    if (now - entry.lastReset > windowMs) {
-      rateLimitMap.delete(key);
+  // Only cleanup if the map is getting large to avoid unnecessary work
+  if (rateLimitMap.size > 100) {
+    const keysToDelete: string[] = [];
+    
+    for (const [key, entry] of rateLimitMap.entries()) {
+      if (now - entry.lastReset > windowMs) {
+        keysToDelete.push(key);
+      }
+    }
+    
+    // Delete in batch to avoid iterator issues
+    keysToDelete.forEach(key => rateLimitMap.delete(key));
+    
+    if (keysToDelete.length > 0) {
+      console.log(`Cleaned up ${keysToDelete.length} expired rate limit entries`);
     }
   }
 }
 
-// Run cleanup every hour (only in development)
-if (typeof window === 'undefined' && !redis) {
+// Run cleanup periodically (only in development and non-serverless environments)
+if (typeof window === 'undefined' && !redis && process.env.NODE_ENV === 'development') {
   setInterval(cleanupRateLimit, 60 * 60 * 1000);
 }
