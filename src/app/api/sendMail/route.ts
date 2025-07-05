@@ -14,11 +14,30 @@ const contactSchema = z.object({
 import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
 import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
+import { rateLimit } from '@/app/utils/apiUtils/rateLimit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
+    // Apply rate limiting (5 requests per 15 minutes)
+    const rateLimitResult = await rateLimit(req, 5, 15 * 60 * 1000);
+    
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          message: 'Too many requests. Please try again later.',
+          retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000),
+        },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': Math.ceil((rateLimitResult.reset - Date.now()) / 1000).toString(),
+          },
+        }
+      );
+    }
+
     const body = await req.json();
 
     // Validate input using Zod

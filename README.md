@@ -29,6 +29,7 @@ Because one framework is never enough:
 - [Sanity.io](https://www.sanity.io) - Where my blog posts live their best life
 - [AWS S3](https://aws.amazon.com/s3/) - For reliable and scalable music storage
 - [AWS CloudFront](https://aws.amazon.com/cloudfront/) - Making music streaming fast worldwide
+- [Upstash Redis](https://upstash.com) - For serverless rate limiting that actually works
 - Custom Audio Player - Like Spotify, but with more bugs (kidding!)
 
 ## ✨ Features
@@ -40,7 +41,8 @@ Because one framework is never enough:
 - 📧 Contact form with validation:
   - Real-time field validation
   - Smart error handling
-  - Spam protection
+  - Rate limiting (5 requests per 15 minutes)
+  - Spam protection with Upstash Redis
   - Email delivery tracking
   - Mobile-optimized layout
 - 🎵 Audio Player Extraordinaire:
@@ -194,6 +196,8 @@ NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY=your_cloudfront_private_key
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
 NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
+UPSTASH_REDIS_REST_URL=your_upstash_redis_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
 ```
 
 ### 2. Analytics Setup 📊
@@ -213,7 +217,31 @@ This project uses Google Analytics and Microsoft Clarity for basic usage analyti
 
 > Note: These analytics tools are used solely to understand usage patterns and improve user experience. No personal data is collected or processed beyond standard analytics metrics.
 
-### 3. Audio Files Setup 🎵
+### 3. Rate Limiting Setup 🛡️
+
+This project uses Upstash Redis for serverless rate limiting to prevent spam and abuse:
+
+1. **Upstash Redis Setup**:
+  - Create a free account at [Upstash](https://upstash.com)
+  - Create a new Redis database
+  - Copy the REST URL and REST TOKEN
+  - Add them to your `.env.local` file
+
+2. **Benefits**:
+  - ✅ 10,000 requests/day free tier
+  - ✅ Serverless and auto-scaling
+  - ✅ Perfect for Netlify/Vercel deployments
+  - ✅ Automatic failover to in-memory storage during development
+
+3. **How it works**:
+  - Contact form is limited to 5 requests per 15 minutes per IP
+  - Redis stores request counts with automatic expiration
+  - Graceful degradation if Redis is unavailable
+  - Clear error messages for rate-limited users
+
+> Note: If you don't set up Redis, the system will fall back to in-memory storage (works fine for development but won't persist across serverless function calls in production).
+
+### 4. Audio Files Setup 🎵
 
 1. Create an S3 bucket:
 
@@ -264,7 +292,7 @@ This project uses Google Analytics and Microsoft Clarity for basic usage analyti
 ]
 ```
 
-### 4. Audio File Naming 🎵
+### 5. Audio File Naming 🎵
 
 Name your audio files like this:
 
@@ -275,7 +303,7 @@ Example: [2024][The Beatles][Hey Jude][Remix][A-Shay].mp3
 
 > Pro tip: The brackets are important. Very important.
 
-### 5. Fire It Up! 🔥
+### 6. Fire It Up! 🔥
 
 ```bash
 npm run dev
