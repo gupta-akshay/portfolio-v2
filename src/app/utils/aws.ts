@@ -5,7 +5,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getSignedUrl as getCloudfrontSignedUrl } from '@aws-sdk/cloudfront-signer';
-import { Track } from '@/app/components/AudioPlayer/types';
+import { Track } from '@/app/types';
 
 const s3Client = new S3Client({
   region: process.env.NEXT_PUBLIC_AWS_REGION || 'ap-south-1',
@@ -33,7 +33,7 @@ const parseTrackMetadata = (fileKey: string) => {
   const parts = matches.map((m) => m.slice(1, -1));
 
   return {
-    year: parseInt(parts[0], 10) || 9999,
+    year: parseInt(parts[0] || '9999', 10),
     originalArtist: parts[1] || '',
     name: parts[2] || '',
     type: parts[3] || '',
@@ -45,9 +45,9 @@ const parseTrackMetadata = (fileKey: string) => {
  * Format track title based on metadata
  */
 const formatTrackTitle = (metadata: {
-  originalArtist: string,
-  name: string,
-  type: string,
+  originalArtist: string;
+  name: string;
+  type: string;
 }): string => {
   const { originalArtist, name, type } = metadata;
   const typeString = type.trim().length > 0 ? ` - ${type}` : '';

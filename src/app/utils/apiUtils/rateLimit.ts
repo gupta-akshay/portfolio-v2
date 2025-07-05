@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { Redis } from '@upstash/redis';
 import requestIp from 'request-ip';
+import { RateLimitResult } from '@/app/types/api';
 
 // Upstash Redis client
 let redis: Redis | null = null;
@@ -24,13 +25,6 @@ if (
 
 // Fallback in-memory storage for development
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
-
-export interface RateLimitResult {
-  success: boolean;
-  limit: number;
-  remaining: number;
-  reset: number;
-}
 
 // Lua script for atomic rate limiting
 // This eliminates race conditions by making the entire operation atomic
@@ -104,22 +98,26 @@ export async function rateLimit(
       // Calculate expiry time for the window
       const windowEndTime = windowStart + windowMs;
       const secondsUntilWindowEnd = Math.ceil((windowEndTime - now) / 1000);
-      
+
       // Execute the atomic rate limiting script
-      const result = await redis.eval(
+      const result = (await redis.eval(
         rateLimitScript,
         [key], // KEYS
-        [limit.toString(), Math.max(1, secondsUntilWindowEnd).toString(), now.toString()] // ARGV
-      ) as number[];
+        [
+          limit.toString(),
+          Math.max(1, secondsUntilWindowEnd).toString(),
+          now.toString(),
+        ] // ARGV
+      )) as number[];
 
       // Parse the result: [success, limit, remaining, reset]
       const [success, returnedLimit, remaining, reset] = result;
 
       return {
         success: success === 1,
-        limit: returnedLimit,
-        remaining: remaining,
-        reset: reset,
+        limit: returnedLimit ?? 0,
+        remaining: remaining ?? 0,
+        reset: reset ?? 0,
       };
     } else {
       // Fallback to in-memory storage (development)

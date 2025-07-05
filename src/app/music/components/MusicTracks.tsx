@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import MusicLoadingIndicator from './MusicLoadingIndicator';
 import { Track } from '@/app/components/AudioPlayer/types';

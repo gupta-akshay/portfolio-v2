@@ -37,7 +37,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const [isPlayable, setIsPlayable] = useState(false);
   const [isFullScreenVisible, setIsFullScreenVisible] = useState(false);
   const shouldAutoPlayRef = useRef(false);
-  const [error, setError] = useState<string | null>(null);
   const playAttemptInProgressRef = useRef(false);
 
   // Memoize derived values
@@ -165,7 +164,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const handleAddToQueue = useCallback(
     (index: number) => {
       if (index >= 0 && index < tracks.length) {
-        addToQueue(tracks[index]);
+        addToQueue(tracks[index]!);
       }
     },
     [tracks, addToQueue]
@@ -174,10 +173,10 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Handle selecting a track from the queue
   const handleQueueTrackSelect = useCallback(
     (index: number) => {
-      if (index >= 0 && index < queue.length) {
+      if (index >= 0 && index < queue.length && queue[index]) {
         // Find the track in the main tracks array
         const trackIndex = tracks.findIndex(
-          (track) => track.id === queue[index].id
+          (track) => track.id === queue[index]!.id
         );
         if (trackIndex !== -1) {
           // Remove all tracks before this one from the queue
@@ -189,7 +188,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             // Check if this track appears elsewhere in the remaining queue
             const stillInQueue =
               newQueue.some((t) => t.id === track.id) ||
-              track.id === tracks[trackIndex].id;
+              track.id === tracks[trackIndex]?.id;
             if (!stillInQueue) {
               removedTrackIds.add(track.id);
             }
@@ -258,7 +257,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         setIsMetadataLoaded(false);
         setIsPlayable(false);
         setIsPlaying(false);
-        setError(null);
         setCurrentUrl(newUrl);
 
         // Wait for audio element to be available
@@ -381,7 +379,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       } catch (error) {
         console.error('Error setting up track:', error);
         if (isMounted) {
-          setError(error instanceof Error ? error.message : 'Unknown error');
           setIsLoading(false);
           // Still mark as playable even if preload fails
           setIsPlayable(true);
@@ -483,7 +480,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         // Use setTimeout to ensure the queue is cleared before adding new tracks
         setTimeout(() => {
           for (let i = 0; i < tracksToAdd.length; i++) {
-            addToQueue(tracksToAdd[i]);
+            addToQueue(tracksToAdd[i]!);
           }
         }, 0);
       }
@@ -501,7 +498,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Add unmute effect after user interaction
   useEffect(() => {
-    const handleFirstInteraction = (event: Event) => {
+    const handleFirstInteraction = () => {
       if (audioRef.current) {
         audioRef.current.muted = false;
 
@@ -537,6 +534,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     // Create a temporary anchor element
     const downloadLink = document.createElement('a');
     downloadLink.href = currentUrl;
+    downloadLink.target = '_blank';
 
     // Set the download attribute with the track title
     const fileName = `${currentTrack.title || currentTrack.name || 'track'}.mp3`;
@@ -586,7 +584,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   const handleError = useCallback(() => {
     setIsLoading(false);
-    setError('Failed to load audio');
   }, []);
 
   const handleWaiting = useCallback(() => {
@@ -749,7 +746,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const queuePanelProps = useMemo(
     () => ({
       isVisible: isQueueVisible,
-      currentTrack,
+      currentTrack: currentTrack ?? null,
       queueTracks: queue,
       onClose: toggleQueueVisibility,
       onTrackSelect: handleQueueTrackSelect,

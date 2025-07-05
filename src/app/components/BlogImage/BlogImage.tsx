@@ -54,11 +54,9 @@ const BlogImage = ({
               : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
         }
         placeholder={isAuthor ? 'empty' : 'blur'}
-        blurDataURL={
-          isAuthor
-            ? undefined
-            : `data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`
-        }
+        {...(!isAuthor && {
+          blurDataURL: `data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`,
+        })}
       />
     </div>
   );

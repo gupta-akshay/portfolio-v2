@@ -87,7 +87,7 @@ export const useVisualizer = (
       const verticalScale = 0.9;
 
       for (let i = 0; i < bufferLength; i += skipFactor) {
-        const v = dataArray[i] / 128.0;
+        const v = (dataArray[i] ?? 0) / 128.0;
         const y = height / 2 + (((v - 1) * height) / 2) * verticalScale;
 
         if (i === 0) ctx.moveTo(x, y);
@@ -188,7 +188,7 @@ export const useVisualizer = (
       let sum = 0,
         count = 0;
       for (let i = 0; i < bufferLength; i += sampleRate) {
-        sum += dataArray[i];
+        sum += dataArray[i] ?? 0;
         count++;
       }
       const avgRaw = sum / count;

@@ -57,13 +57,15 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   const touchStartYRef = useRef<number | null>(null);
 
   const handleTouchStart = (e: TouchEvent) => {
-    touchStartYRef.current = e.touches[0].clientY;
+    touchStartYRef.current = e.touches[0]?.clientY ?? null;
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
     if (touchStartYRef.current === null) return;
 
-    const touchEndY = e.changedTouches[0].clientY;
+    const touchEndY = e.changedTouches[0]?.clientY;
+    if (touchEndY === undefined) return;
+
     const diffY = touchEndY - touchStartYRef.current;
 
     // If swiped down significantly, close the player
@@ -123,7 +125,7 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
           onVolumeChange={onVolumeChange}
           onToggleMute={onToggleMute}
           onToggleShuffle={onToggleShuffle || (() => {})}
-          onDownload={onDownload}
+          onDownload={onDownload || (() => {})}
           canDownload={canDownload}
           onToggleQueue={onToggleQueue || (() => {})}
           isQueueVisible={isQueueVisible}

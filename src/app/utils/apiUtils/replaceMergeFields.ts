@@ -1,16 +1,16 @@
 type MergeFields = {
-  name: string,
-  email?: string,
-  subject?: string,
-  message?: string,
+  name: string;
+  email?: string;
+  subject?: string;
+  message?: string;
 };
 
 export const replaceMergeFields = ({
   messageString,
   mergeFields: { name = '', email = '', subject = '', message = '' },
 }: {
-  messageString: string,
-  mergeFields: MergeFields,
+  messageString: string;
+  mergeFields: MergeFields;
 }): string => {
   const mergeTags = [
     {

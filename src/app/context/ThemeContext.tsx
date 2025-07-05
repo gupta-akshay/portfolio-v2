@@ -4,19 +4,18 @@ import React, {
   createContext,
   useContext,
   useState,
-  ReactNode,
   useEffect,
+  useCallback,
 } from 'react';
-
-type ThemeContextType = {
-  isLightMode: boolean,
-  toggleTheme: () => void,
-};
+import { ThemeMode, ThemeContextType, ThemeProviderProps } from '@/app/types';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [isLightMode, setIsLightMode] = useState(false);
+export function ThemeProvider({
+  children,
+  defaultTheme = 'dark',
+}: ThemeProviderProps) {
+  const [isLightMode, setIsLightMode] = useState(defaultTheme === 'light');
 
   // Initialize theme from localStorage when component mounts
   useEffect(() => {
@@ -45,21 +44,48 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [isLightMode]);
 
-  const toggleTheme = () => {
-    setIsLightMode(!isLightMode);
+  const toggleTheme = useCallback(() => {
+    setIsLightMode((prev) => !prev);
+  }, []);
+
+  const setTheme = useCallback((mode: ThemeMode) => {
+    setIsLightMode(mode === 'light');
+  }, []);
+
+  const value: ThemeContextType = {
+    isLightMode,
+    mode: isLightMode ? 'light' : 'dark',
+    toggleTheme,
+    setTheme,
   };
 
   return (
-    <ThemeContext.Provider value={{ isLightMode, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 
-export function useTheme() {
+export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
+}
+
+// Custom hook for theme preferences
+export function useThemePreference() {
+  const { mode, setTheme } = useTheme();
+
+  const setSystemTheme = useCallback(() => {
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
+    setTheme(prefersDark ? 'dark' : 'light');
+  }, [setTheme]);
+
+  return {
+    mode,
+    setTheme,
+    setSystemTheme,
+  };
 }

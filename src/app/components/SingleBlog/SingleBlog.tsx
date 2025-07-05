@@ -35,8 +35,8 @@ const InternalLink = ({
   value,
   children,
 }: PortableTextMarkComponentProps<{
-  _type: string,
-  slug: { current: string },
+  _type: string;
+  slug: { current: string };
 }>) => {
   const router = useRouter();
   const { startLoading } = useLoading();
@@ -70,9 +70,9 @@ const ExternalLink = ({
   value,
   children,
 }: PortableTextMarkComponentProps<{
-  _type: string,
-  blank?: boolean,
-  href: string,
+  _type: string;
+  blank?: boolean;
+  href: string;
 }>) => {
   if (!value?.href) return null;
   const { blank, href } = value;

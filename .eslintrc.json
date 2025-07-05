@@ -8,13 +8,7 @@
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": [
-      "warn",
-      {
-        "singleQuote": true,
-        "parser": "flow"
-      }
-    ],
+    "prettier/prettier": "warn",
     "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }]
   }
 }
