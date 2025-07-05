@@ -47,7 +47,6 @@ export async function rateLimit(
   const ip = requestIp.getClientIp(adaptedReq) || '127.0.0.1';
 
   const now = Date.now();
-  const windowSeconds = Math.floor(windowMs / 1000);
 
   // Create a fixed window key based on current time window
   const windowStart = Math.floor(now / windowMs) * windowMs;
@@ -55,17 +54,58 @@ export async function rateLimit(
 
   try {
     if (redis) {
-      // Use Upstash Redis for production with fixed window approach
-      // Get current count
-      const current = await redis.get(key);
-      const currentCount = current
-        ? typeof current === 'number'
-          ? current
-          : parseInt(current.toString(), 10)
-        : 0;
-
-      // Check if limit exceeded before incrementing
-      if (currentCount >= limit) {
+      // Use atomic increment to avoid race conditions
+      // Strategy: Increment first, then check if we exceeded limit
+      // If exceeded, decrement and return failure
+      // This prevents the race condition where multiple concurrent requests
+      // could all read the same count and all think they're under the limit
+      const pipe = redis.pipeline();
+      pipe.incr(key);
+      
+      // Calculate correct expiration time - expire at end of window, not windowSeconds from now
+      const windowEndTime = windowStart + windowMs;
+      const secondsUntilWindowEnd = Math.ceil((windowEndTime - now) / 1000);
+      
+      // Only set expiration if the key is new (has TTL of -1)
+      // This prevents resetting expiration on existing keys
+      pipe.ttl(key);
+      
+      const results = await pipe.exec();
+      
+      // Validate pipeline results
+      if (!results || results.length < 2) {
+        throw new Error('Redis pipeline failed to execute');
+      }
+      
+      const incrResult = results[0];
+      const ttlResult = results[1];
+      
+      // Check for errors in pipeline operations
+      if (incrResult instanceof Error) {
+        throw incrResult;
+      }
+      if (ttlResult instanceof Error) {
+        throw ttlResult;
+      }
+      
+      // Safely extract the count
+      const newCount = typeof incrResult === 'number' 
+        ? incrResult 
+        : parseInt(incrResult?.toString() || '0', 10);
+      
+      const currentTtl = typeof ttlResult === 'number'
+        ? ttlResult
+        : parseInt(ttlResult?.toString() || '-1', 10);
+      
+      // If this is a new key (TTL is -1), set expiration
+      if (currentTtl === -1) {
+        await redis.expire(key, Math.max(1, secondsUntilWindowEnd));
+      }
+      
+      // Check if limit exceeded after incrementing
+      if (newCount > limit) {
+        // Atomically decrement back since we exceeded the limit
+        await redis.decr(key);
         const resetTime = windowStart + windowMs;
         return {
           success: false,
@@ -75,15 +115,7 @@ export async function rateLimit(
         };
       }
 
-      // Increment count and set expiration only if key doesn't exist
-      const pipe = redis.pipeline();
-      pipe.incr(key);
-      pipe.expire(key, windowSeconds);
-      const results = await pipe.exec();
-
-      const newCount = results[0] as number;
       const resetTime = windowStart + windowMs;
-
       return {
         success: true,
         limit,
