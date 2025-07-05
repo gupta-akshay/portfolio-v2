@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
+import { ContactFormData, ContactAPIResponse } from '@/app/types/api';
+import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
+import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
+import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
+import { rateLimit } from '@/app/utils/apiUtils/rateLimit';
 
 // Define a schema for input validation
 const contactSchema = z.object({
@@ -11,32 +16,34 @@ const contactSchema = z.object({
   message: z.string().min(1, 'Message is required'),
 });
 
-import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
-import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
-import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
-import { rateLimit } from '@/app/utils/apiUtils/rateLimit';
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(req: NextRequest) {
+/**
+ * Handle contact form submission
+ * @param req - Next.js request object
+ * @returns API response with success/error status
+ */
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<ContactAPIResponse>> {
   try {
     // Apply rate limiting (5 requests per 15 minutes)
     const rateLimitResult = await rateLimit(req, 5, 15 * 60 * 1000);
-    
+
     if (!rateLimitResult.success) {
       const retryAfter = Math.ceil((rateLimitResult.reset - Date.now()) / 1000);
-      return NextResponse.json(
-        {
-          message: 'Too many requests. Please try again later.',
-          retryAfter,
+      const response: ContactAPIResponse = {
+        success: false,
+        message: 'Too many requests. Please try again later.',
+        statusCode: 429,
+      };
+
+      return NextResponse.json(response, {
+        status: 429,
+        headers: {
+          'Retry-After': retryAfter.toString(),
         },
-        { 
-          status: 429,
-          headers: {
-            'Retry-After': retryAfter.toString(),
-          },
-        }
-      );
+      });
     }
 
     const body = await req.json();
@@ -45,19 +52,20 @@ export async function POST(req: NextRequest) {
     const result = contactSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json(
-        {
-          message: 'Invalid input',
-          errors: result.error.flatten().fieldErrors,
-        },
-        { status: 400 }
-      );
+      const response: ContactAPIResponse = {
+        success: false,
+        message: 'Invalid input',
+        errors: result.error.flatten().fieldErrors,
+        statusCode: 400,
+      };
+
+      return NextResponse.json(response, { status: 400 });
     }
 
     const { name, email, subject, message } = result.data;
 
     // Sanitize inputs
-    const sanitizedData = {
+    const sanitizedData: ContactFormData = {
       name: sanitizeHtml(name.trim()),
       email: sanitizeHtml(email.trim()),
       subject: sanitizeHtml(subject?.trim() ?? ''),
@@ -87,33 +95,48 @@ export async function POST(req: NextRequest) {
       }),
     ]);
 
-    return NextResponse.json(
-      { message: 'Email sent successfully' },
-      { status: 200 }
-    );
+    const successResponse: ContactAPIResponse = {
+      success: true,
+      message: 'Email sent successfully',
+      data: {
+        emailSent: true,
+        timestamp: new Date(),
+      },
+      statusCode: 200,
+    };
+
+    return NextResponse.json(successResponse, { status: 200 });
   } catch (e) {
     console.error('Error in sending mail:', e);
-    
+
     // Check for specific error types
     if (e instanceof Error) {
       if (e.message.includes('rate limit') || e.message.includes('429')) {
-        return NextResponse.json(
-          { message: 'Too many requests. Please try again later.' },
-          { status: 429 }
-        );
+        const response: ContactAPIResponse = {
+          success: false,
+          message: 'Too many requests. Please try again later.',
+          statusCode: 429,
+        };
+        return NextResponse.json(response, { status: 429 });
       }
-      
+
       if (e.message.includes('invalid') || e.message.includes('validation')) {
-        return NextResponse.json(
-          { message: 'Invalid request data' },
-          { status: 400 }
-        );
+        const response: ContactAPIResponse = {
+          success: false,
+          message: 'Invalid request data',
+          statusCode: 400,
+        };
+        return NextResponse.json(response, { status: 400 });
       }
     }
-    
-    return NextResponse.json(
-      { message: 'Error in sending mail' },
-      { status: 500 }
-    );
+
+    const errorResponse: ContactAPIResponse = {
+      success: false,
+      message: 'Error in sending mail',
+      error: e instanceof Error ? e.message : 'Unknown error',
+      statusCode: 500,
+    };
+
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

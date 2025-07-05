@@ -73,7 +73,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
 export async function generateImageMetadata({
   params,
 }: {
-  params: { slug: string },
+  params: { slug: string };
 }) {
   const post = await getPostBySlug(params.slug);
   return [

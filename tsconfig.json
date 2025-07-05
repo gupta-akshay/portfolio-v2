@@ -26,7 +26,20 @@
         "./src/*"
       ]
     },
-    "target": "ES2017"
+    "target": "ES2020",
+    // Additional strict checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    // Better error reporting
+    "pretty": true,
+    "preserveWatchOutput": true,
+    // Type checking improvements
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "next-env.d.ts",

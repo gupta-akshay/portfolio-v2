@@ -21,9 +21,9 @@ export async function sanityFetch<QueryResponse>({
   qParams,
   tags,
 }: {
-  query: string,
-  qParams: QueryParams,
-  tags: string[],
+  query: string;
+  qParams: QueryParams;
+  tags: string[];
 }): Promise<QueryResponse> {
   const data = await client.fetch<QueryResponse>(query, qParams, {
     cache: 'force-cache',

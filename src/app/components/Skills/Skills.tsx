@@ -1,13 +1,22 @@
 import { getSkillsArray } from '@/app/utils';
+import { SkillsProps } from '@/app/types/components';
 
-export default function Skills() {
-  const skills = getSkillsArray();
+export default function Skills({
+  skills,
+  showCategories = false,
+}: SkillsProps = {}) {
+  const skillsData = skills || getSkillsArray();
+
   return (
     <div className='skills'>
-      {skills.map((el) => (
-        <span className='skills__pill' key={el.id}>
-          {el.icon && <i className={`${el.icon} skills__pill--icon`} />}
-          {el.name}
+      {skillsData.map((skill) => (
+        <span
+          className='skills__pill'
+          key={skill.id}
+          data-category={showCategories ? skill.category : undefined}
+        >
+          {skill.icon && <i className={`${skill.icon} skills__pill--icon`} />}
+          {skill.name}
         </span>
       ))}
     </div>

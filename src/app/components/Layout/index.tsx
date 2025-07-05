@@ -7,8 +7,8 @@ const Layout = ({
   children,
   isBlog = false,
 }: {
-  children: ReactNode,
-  isBlog?: boolean,
+  children: ReactNode;
+  isBlog?: boolean;
 }) => {
   return (
     <Fragment>

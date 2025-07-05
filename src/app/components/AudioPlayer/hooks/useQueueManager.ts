@@ -28,13 +28,15 @@ export const useQueueManager = (tracks: Track[]) => {
         .concat(prevQueue.slice(index + 1));
       const removedTrack = prevQueue[index];
 
-      setQueuedTrackIds((prevIds) => {
-        if (newQueue.some((track) => track.id === removedTrack.id))
-          return prevIds;
-        const newIds = new Set(prevIds);
-        newIds.delete(removedTrack.id);
-        return newIds;
-      });
+      if (removedTrack) {
+        setQueuedTrackIds((prevIds) => {
+          if (newQueue.some((track) => track.id === removedTrack.id))
+            return prevIds;
+          const newIds = new Set(prevIds);
+          newIds.delete(removedTrack.id);
+          return newIds;
+        });
+      }
 
       return newQueue;
     });
@@ -47,7 +49,9 @@ export const useQueueManager = (tracks: Track[]) => {
     setQueue((prevQueue) => {
       const newQueue = [...prevQueue];
       const [movedItem] = newQueue.splice(fromIndex, 1);
-      newQueue.splice(toIndex, 0, movedItem);
+      if (movedItem) {
+        newQueue.splice(toIndex, 0, movedItem);
+      }
       return newQueue;
     });
   }, []);
@@ -65,7 +69,11 @@ export const useQueueManager = (tracks: Track[]) => {
           // Fisher-Yates shuffle
           for (let i = newQueue.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [newQueue[i], newQueue[j]] = [newQueue[j], newQueue[i]];
+            const itemI = newQueue[i];
+            const itemJ = newQueue[j];
+            if (itemI && itemJ) {
+              [newQueue[i], newQueue[j]] = [itemJ, itemI];
+            }
           }
           return newQueue;
         });
@@ -95,6 +103,8 @@ export const useQueueManager = (tracks: Track[]) => {
 
       if (queue.length > 0) {
         const nextTrack = queue[0];
+        if (!nextTrack) return Math.min(currentIndex + 1, tracks.length - 1);
+
         setQueue((prevQueue) => prevQueue.slice(1));
 
         setQueuedTrackIds((prevIds) => {

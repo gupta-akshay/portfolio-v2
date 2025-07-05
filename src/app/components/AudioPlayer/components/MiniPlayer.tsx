@@ -45,13 +45,15 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
 
   // Handle touch events for swipe to expand
   const handleTouchStart = (e: TouchEvent) => {
-    touchStartXRef.current = e.touches[0].clientX;
+    touchStartXRef.current = e.touches[0]?.clientX ?? null;
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
     if (touchStartXRef.current === null) return;
 
-    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndX = e.changedTouches[0]?.clientX;
+    if (touchEndX === undefined) return;
+
     const diffX = touchStartXRef.current - touchEndX;
 
     // If swiped up significantly, expand the player

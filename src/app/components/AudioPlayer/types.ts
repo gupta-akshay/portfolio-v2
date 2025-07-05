@@ -2,21 +2,14 @@
  * Type definitions for the audio player
  */
 
-export interface Track {
-  id: string;
-  title: string;
-  artist: string;
-  path: string;
-  duration?: string;
-  originalArtist?: string;
-  name?: string;
-  type?: string;
-  year?: number;
-}
+import { Track } from '@/app/types';
 
 export interface AudioPlayerProps {
   tracks: Track[];
 }
+
+// Re-export Track for convenience
+export type { Track };
 
 // Define available waveform styles
 export type WaveformStyleType = 'wave';
