@@ -8,20 +8,25 @@ Live at [akshaygupta.live](https://akshaygupta.live) - Where code meets creativi
 
 Because one framework is never enough:
 
-- Next.js 15 (Making SEO great again!)
-- React 19 (Because 18 was so last year)
-- TypeScript (JavaScript with a safety helmet)
-- Sass (CSS with superpowers)
-- Bootstrap 5 (For when you need to look good fast)
-- FontAwesome (Icons that speak louder than words)
-- Web Audio API (Making waves, literally!)
-- TanStack Form (Form handling with superpowers)
-- React Hot Toast (Notifications that look good enough to eat)
-- Typed.js (Making text come alive)
-- Devicon (Tech icons for the win)
-- Microsoft Clarity & Google Analytics (Keeping track of who's watching)
-- ESLint & Prettier (Because clean code is happy code)
-- Next Bundle Analyzer (Keeping our bundles in check)
+- **Next.js 15** (Making SEO great again!)
+- **React 19** (Because 18 was so last year)
+- **TypeScript** (JavaScript with a safety helmet)
+- **Sass** (CSS with superpowers)
+- **Bootstrap 5** (For when you need to look good fast)
+- **FontAwesome** (Icons that speak louder than words)
+- **Web Audio API** (Making waves, literally!)
+- **TanStack Form** (Form handling with superpowers)
+- **React Hot Toast** (Notifications that look good enough to eat)
+- **Typed.js** (Making text come alive)
+- **Devicon** (Tech icons for the win)
+- **Zod** (Runtime type checking and validation)
+- **Styled Components** (CSS-in-JS with component styling)
+- **Sanitize HTML** (Keeping user inputs clean and safe)
+- **React Syntax Highlighter** (Beautiful code blocks in blog posts)
+- **Portable Text** (Rich text rendering from Sanity CMS)
+- **Microsoft Clarity & Google Analytics** (Keeping track of who's watching)
+- **ESLint & Prettier** (Because clean code is happy code)
+- **Next Bundle Analyzer** (Keeping our bundles in check)
 
 ### 🌟 Special Ingredients
 
@@ -39,31 +44,39 @@ Because one framework is never enough:
 - 🌃 Dark/Light theme (For both vampires and humans)
 - 📝 Blog with CMS (Because WordPress is too mainstream)
 - 📧 Contact form with validation:
-  - Real-time field validation
-  - Smart error handling
-  - Rate limiting (5 requests per 15 minutes)
-  - Spam protection with Upstash Redis
-  - Email delivery tracking
-  - Mobile-optimized layout
+  - **TanStack Form** for reactive form management
+  - **Zod schema validation** for type-safe input validation
+  - Real-time field validation with instant feedback
+  - Smart error handling with specific error messages
+  - Rate limiting (5 requests per 15 minutes) with atomic operations
+  - Spam protection with Upstash Redis (fallback to in-memory)
+  - Email delivery tracking with Resend
+  - HTML sanitization for security
+  - Mobile-optimized layout with responsive design
 - 🎵 Audio Player Extraordinaire:
-  - Waveform visualization (It's not just a line, it's art!)
-  - Mini visualizer (Like a disco ball for your ears)
-  - AWS S3 + CloudFront streaming (Global CDN-powered tunes)
-  - Smart metadata parsing (It reads file names better than I read documentation)
-  - Volume control (For when your neighbors complain)
-  - Keyboard controls (For the mouse-averse)
-  - Queue management (Add tracks, reorder with drag & drop, and play what's next)
-  - Shuffle mode (For the musically indecisive)
-  - Progressive loading:
-    - Smart buffering
-    - Automatic retry on failures
-    - Timeout handling
-  - Mobile-optimized UI:
-    - Swipe gestures (Up to expand, Down to minimize)
-    - Mini player with scrolling track names
+  - **Web Audio API** with real-time waveform visualization (It's not just a line, it's art!)
+  - **Mini visualizer** with 60 FPS target and frame limiting (Like a disco ball for your ears)
+  - **AWS S3 + CloudFront streaming** with signed URLs (Global CDN-powered tunes)
+  - **Smart metadata parsing** from file names (It reads file names better than I read documentation)
+  - **Volume control** with gain node integration (For when your neighbors complain)
+  - **Keyboard controls** for accessibility (For the mouse-averse)
+  - **Advanced queue management**:
+    - Add tracks to queue with one click
+    - Drag & drop reordering functionality
+    - Shuffle mode with smart track selection
+    - Auto-queue remaining tracks when playing
+  - **Progressive loading** with robust error handling:
+    - Smart buffering with metadata preloading
+    - Automatic retry on failures with exponential backoff
+    - Timeout handling for slow connections
+    - Atomic audio context management
+  - **Mobile-optimized UI**:
+    - Touch gestures (Swipe up to expand, down to minimize)
+    - Mini player with animated scrolling track names
     - Fullscreen mode with touch-friendly controls
-    - Responsive visualizations
-    - Auto-adjusting layout for different screen sizes
+    - Responsive visualizations that adapt to screen size
+    - Auto-adjusting layout for different orientations
+  - **Download functionality** with direct file access
 
 ## 🎵 Music Player System
 
@@ -87,60 +100,73 @@ The `/blog` route implements a modern blog platform using Sanity.io as the headl
 
 1. **Content Management:**
 
-  - Sanity Studio for content creation and management
-  - Custom schemas for rich blog post structure
-  - Real-time preview of content changes
+  - **Sanity Studio** for content creation and management
+  - **Custom schemas** for rich blog post structure with authors, categories, and tags
+  - **Real-time preview** of content changes with live updates
+  - **Portable Text** support for rich content rendering
 
 2. **Features:**
-  - Server-side rendering for optimal SEO
-  - Code syntax highlighting
-  - Rich text editor with custom components
-  - Automatic image optimization
-  - Categories and tags support
+  - **Server-side rendering** for optimal SEO with static generation
+  - **React Syntax Highlighter** for beautiful code blocks with multiple themes
+  - **Rich text editor** with custom components and formatting
+  - **Automatic image optimization** with Sanity's image pipeline
+  - **Categories and tags support** with filtering capabilities
+  - **OpenGraph image generation** for social media sharing
+  - **Structured data** with JSON-LD for search engines
 
 ## 🎯 Performance Features
 
-- Next.js App Router & Server Components
-- Optimized chunk splitting (Because loading the entire internet isn't cool)
-- Aggressive caching strategies:
-  - Static page caching
-  - API response caching
+- **Next.js App Router & Server Components** with React 19 features
+- **Optimized chunk splitting** with Next.js bundle analyzer (Because loading the entire internet isn't cool)
+- **Aggressive caching strategies**:
+  - Static page caching with ISR
+  - API response caching with proper headers
   - Asset caching with versioning
-- Image optimization with next/image:
+  - Redis-based rate limiting cache
+- **Image optimization** with next/image:
   - Automatic WebP/AVIF conversion
-  - Responsive sizes
-  - Lazy loading
-- CSP headers (Keeping the bad guys out)
-- Custom error boundaries with fallbacks
-- Performance monitoring:
-  - Real-time metrics
-  - Error tracking
-  - User experience monitoring
+  - Responsive sizes with multiple breakpoints
+  - Lazy loading with intersection observer
+  - Sanity image pipeline integration
+- **Security headers** (Keeping the bad guys out):
+  - CSP headers for XSS protection
+  - Input sanitization with sanitize-html
+  - Zod validation for type safety
+- **Custom error boundaries** with graceful fallbacks
+- **Performance monitoring**:
+  - Google Analytics 4 for user metrics
+  - Microsoft Clarity for session recordings
+  - Real-time error tracking
+  - Web Vitals monitoring
 
 ## 🧬 Under The Hood
 
-- Web Audio API for real-time audio visualization:
-  - 60 FPS target with frame limiting
-  - Gradient caching
-  - Canvas optimization
-  - Memory leak prevention
-- React Suspense for smooth loading states
-- Custom hooks for:
-  - Audio playback
-  - Visualization
-  - Form handling
-  - Theme management
-  - Analytics
-- TypeScript for type safety
-- SCSS modules with:
-  - Dynamic theming
-  - Responsive mixins
-  - Performance optimizations
-- Responsive design:
-  - Mobile-first approach
-  - Progressive enhancement
-  - Touch optimization
-  - Accessibility features
+- **Web Audio API** for real-time audio visualization:
+  - 60 FPS target with frame limiting and performance optimization
+  - Gradient caching for smooth animations
+  - Canvas optimization with memory management
+  - Memory leak prevention with proper cleanup
+  - Atomic audio context management
+- **React Suspense** for smooth loading states and progressive enhancement
+- **Custom hooks** for modular functionality:
+  - `useAudioPlayback` for playback state management
+  - `useAudioContext` for Web Audio API integration
+  - `useVisualizer` for canvas-based visualizations
+  - `useQueueManager` for queue operations
+  - Theme management with context
+  - Analytics tracking
+- **TypeScript** for compile-time type safety and better DX
+- **SCSS modules** with advanced features:
+  - Dynamic theming with CSS custom properties
+  - Responsive mixins for consistent breakpoints
+  - Performance optimizations with efficient selectors
+  - Component-scoped styling
+- **Responsive design** with modern approaches:
+  - Mobile-first development approach
+  - Progressive enhancement for all devices
+  - Touch optimization with gesture support
+  - Accessibility features (ARIA labels, keyboard navigation)
+  - Container queries for component-based responsiveness
 
 ## 📸 Screenshots
 
@@ -182,10 +208,17 @@ The `/blog` route implements a modern blog platform using Sanity.io as the headl
 Create `.env.local` with these magical incantations:
 
 ```env
+# Email service (Required)
 RESEND_API_KEY=your_key_here
+
+# Sanity CMS (Required)
 NEXT_PUBLIC_SANITY_PROJECT_ID=your_id_here
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_HOOK_SECRET=your_secret_here
+# Optional: defaults to 2024-09-25 if not set
+NEXT_PUBLIC_SANITY_API_VERSION=2024-09-25
+
+# AWS S3 + CloudFront (Required for music player)
 NEXT_PUBLIC_AWS_REGION=your_aws_region
 NEXT_PUBLIC_AWS_ACCESS_KEY_ID=your_aws_access_key
 NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=your_aws_secret_key
@@ -193,11 +226,17 @@ NEXT_PUBLIC_AWS_BUCKET_NAME=your_s3_bucket_name
 NEXT_PUBLIC_CLOUDFRONT_DOMAIN=your_cloudfront_domain
 NEXT_PUBLIC_CLOUDFRONT_KEY_PAIR_ID=your_cloudfront_key_pair_id
 NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY=your_cloudfront_private_key
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Analytics (Optional)
 NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
 NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
+
+# Rate limiting (Optional - falls back to in-memory if not set)
 UPSTASH_REDIS_REST_URL=your_upstash_redis_url
 UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
+
+# Base URL (Optional - defaults to localhost:3000)
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
 ### 2. Analytics Setup 📊
@@ -235,9 +274,12 @@ This project uses Upstash Redis for serverless rate limiting to prevent spam and
 
 3. **How it works**:
   - Contact form is limited to 5 requests per 15 minutes per IP
+  - **Atomic operations** using Lua scripts to prevent race conditions
   - Redis stores request counts with automatic expiration
-  - Graceful degradation if Redis is unavailable
-  - Clear error messages for rate-limited users
+  - **Fixed-window rate limiting** for consistent behavior
+  - Graceful degradation to in-memory storage if Redis is unavailable
+  - Clear error messages for rate-limited users with retry-after headers
+  - IP extraction with proper proxy support
 
 > Note: If you don't set up Redis, the system will fall back to in-memory storage (works fine for development but won't persist across serverless function calls in production).
 
