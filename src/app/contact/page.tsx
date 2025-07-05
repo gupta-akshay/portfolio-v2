@@ -28,13 +28,22 @@ export default function Contact() {
       setIsSending(true);
       try {
         await toast.promise(
-          fetch('/api/sendMail', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(value),
-          }),
+          (async () => {
+            const response = await fetch('/api/sendMail', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(value),
+            });
+            
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+            
+            return response;
+          })(),
           {
             loading: 'Sending Message...',
             success: () => {
@@ -42,8 +51,12 @@ export default function Contact() {
               setIsSending(false);
               return 'Message sent successfully!';
             },
-            error: () => {
+            error: (error) => {
               setIsSending(false);
+              // Handle specific error messages
+              if (error.message.includes('Too many requests')) {
+                return 'Too many requests. Please try again later.';
+              }
               return 'Some error occurred. Please try again!';
             },
           },
