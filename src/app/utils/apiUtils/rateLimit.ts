@@ -32,6 +32,53 @@ export interface RateLimitResult {
   reset: number;
 }
 
+// Lua script for atomic rate limiting
+// This eliminates race conditions by making the entire operation atomic
+const rateLimitScript = `
+  local key = KEYS[1]
+  local limit = tonumber(ARGV[1])
+  local expiry = tonumber(ARGV[2])
+  local current_time = tonumber(ARGV[3])
+  
+  -- Get current count
+  local current = redis.call('GET', key)
+  if current == false then
+      current = 0
+  else
+      current = tonumber(current)
+  end
+  
+  -- Check if limit exceeded
+  if current >= limit then
+      -- Get TTL to calculate reset time
+      local ttl = redis.call('TTL', key)
+      local reset_time
+      if ttl > 0 then
+          reset_time = current_time + (ttl * 1000)
+      else
+          reset_time = current_time + (expiry * 1000)
+      end
+      
+      -- Return: [success, limit, remaining, reset]
+      return {0, limit, 0, reset_time}
+  end
+  
+  -- Increment counter
+  local new_count = redis.call('INCR', key)
+  
+  -- Set expiry if this is a new key
+  if new_count == 1 then
+      redis.call('EXPIRE', key, expiry)
+  end
+  
+  -- Calculate reset time
+  local ttl = redis.call('TTL', key)
+  local reset_time = current_time + (ttl * 1000)
+  
+  -- Return: [success, limit, remaining, reset]
+  return {1, limit, limit - new_count, reset_time}
+`;
+
 export async function rateLimit(
   req: NextRequest,
   limit: number = 5, // Max 5 requests
@@ -54,73 +101,25 @@ export async function rateLimit(
 
   try {
     if (redis) {
-      // Use atomic increment to avoid race conditions
-      // Strategy: Increment first, then check if we exceeded limit
-      // If exceeded, decrement and return failure
-      // This prevents the race condition where multiple concurrent requests
-      // could all read the same count and all think they're under the limit
-      const pipe = redis.pipeline();
-      pipe.incr(key);
-      
-      // Calculate correct expiration time - expire at end of window, not windowSeconds from now
+      // Calculate expiry time for the window
       const windowEndTime = windowStart + windowMs;
       const secondsUntilWindowEnd = Math.ceil((windowEndTime - now) / 1000);
       
-      // Only set expiration if the key is new (has TTL of -1)
-      // This prevents resetting expiration on existing keys
-      pipe.ttl(key);
-      
-      const results = await pipe.exec();
-      
-      // Validate pipeline results
-      if (!results || results.length < 2) {
-        throw new Error('Redis pipeline failed to execute');
-      }
-      
-      const incrResult = results[0];
-      const ttlResult = results[1];
-      
-      // Check for errors in pipeline operations
-      if (incrResult instanceof Error) {
-        throw incrResult;
-      }
-      if (ttlResult instanceof Error) {
-        throw ttlResult;
-      }
-      
-      // Safely extract the count
-      const newCount = typeof incrResult === 'number' 
-        ? incrResult 
-        : parseInt(incrResult?.toString() || '0', 10);
-      
-      const currentTtl = typeof ttlResult === 'number'
-        ? ttlResult
-        : parseInt(ttlResult?.toString() || '-1', 10);
-      
-      // If this is a new key (TTL is -1), set expiration
-      if (currentTtl === -1) {
-        await redis.expire(key, Math.max(1, secondsUntilWindowEnd));
-      }
-      
-      // Check if limit exceeded after incrementing
-      if (newCount > limit) {
-        // Atomically decrement back since we exceeded the limit
-        await redis.decr(key);
-        const resetTime = windowStart + windowMs;
-        return {
-          success: false,
-          limit,
-          remaining: 0,
-          reset: resetTime,
-        };
-      }
+      // Execute the atomic rate limiting script
+      const result = await redis.eval(
+        rateLimitScript,
+        [key], // KEYS
+        [limit.toString(), Math.max(1, secondsUntilWindowEnd).toString(), now.toString()] // ARGV
+      ) as number[];
 
-      const resetTime = windowStart + windowMs;
+      // Parse the result: [success, limit, remaining, reset]
+      const [success, returnedLimit, remaining, reset] = result;
+
       return {
-        success: true,
-        limit,
-        remaining: limit - newCount,
-        reset: resetTime,
+        success: success === 1,
+        limit: returnedLimit,
+        remaining: remaining,
+        reset: reset,
       };
     } else {
       // Fallback to in-memory storage (development)
@@ -167,51 +166,4 @@ export async function rateLimit(
       reset: now + windowMs,
     };
   }
-}
-
-// Cleanup old entries periodically (only for in-memory fallback)
-export function cleanupRateLimit() {
-  if (redis) return; // Skip cleanup if using Redis
-
-  const now = Date.now();
-  const windowMs = 15 * 60 * 1000; // 15 minutes
-
-  // Only cleanup if the map is getting large to avoid unnecessary work
-  if (rateLimitMap.size > 100) {
-    const keysToDelete: string[] = [];
-
-    for (const [key, entry] of rateLimitMap.entries()) {
-      // Extract window start time from the key format: rate_limit:IP:TIMESTAMP
-      const keyParts = key.split(':');
-      if (keyParts.length >= 3) {
-        const windowStart = parseInt(keyParts[2], 10);
-        if (!isNaN(windowStart) && now - windowStart > windowMs) {
-          keysToDelete.push(key);
-        }
-      } else {
-        // Old format fallback - check entry timestamp
-        if (now - entry.lastReset > windowMs) {
-          keysToDelete.push(key);
-        }
-      }
-    }
-
-    // Delete in batch to avoid iterator issues
-    keysToDelete.forEach((key) => rateLimitMap.delete(key));
-
-    if (keysToDelete.length > 0) {
-      console.log(
-        `Cleaned up ${keysToDelete.length} expired rate limit entries`
-      );
-    }
-  }
-}
-
-// Run cleanup periodically (only in development and non-serverless environments)
-if (
-  typeof window === 'undefined' &&
-  !redis &&
-  process.env.NODE_ENV === 'development'
-) {
-  setInterval(cleanupRateLimit, 60 * 60 * 1000);
 }
