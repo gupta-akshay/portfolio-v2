@@ -46,3 +46,5 @@ certificates
 /.sanity
 
 /dist
+# Local Netlify folder
+.netlify
