@@ -20,6 +20,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
   const [userReactions, setUserReactions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isFetched, setIsFetched] = useState(false);
 
   // Load reactions on component mount
   useEffect(() => {
@@ -32,13 +33,17 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
 
   const fetchReactions = async () => {
     try {
-      const response = await fetch(`/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}`);
+      const fingerprint = getOrCreateFingerprint();
+      const response = await fetch(`/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}`);
       if (response.ok) {
         const data = await response.json();
         setReactions(data.reactions || []);
+        setUserReactions(data.userReactions || []);
       }
     } catch (error) {
       console.error('Error fetching reactions:', error);
+    } finally {
+      setIsFetched(true);
     }
   };
 
@@ -86,7 +91,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
     return reaction ? reaction.count : 0;
   };
 
-  if (!isVisible) return null;
+  if (!isVisible || !isFetched) return null;
 
   return (
     <div className="emoji-reactions-container">

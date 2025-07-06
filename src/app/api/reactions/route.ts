@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const blogSlug = searchParams.get('blogSlug');
+    const fingerprint = searchParams.get('fingerprint');
 
     if (!blogSlug) {
       return NextResponse.json(
@@ -43,7 +44,36 @@ export async function GET(request: NextRequest) {
       .where(eq(blogReactions.blogSlug, blogSlug))
       .groupBy(blogReactions.emoji);
 
-    return NextResponse.json({ reactions });
+    // If fingerprint is provided, get the user's reactions for this blog post
+    let userReactions: string[] = [];
+    if (fingerprint) {
+      const user = await db
+        .select()
+        .from(anonymousUsers)
+        .where(eq(anonymousUsers.fingerprint, fingerprint))
+        .limit(1);
+
+      if (user.length > 0 && user[0]?.id) {
+        const userReactionData = await db
+          .select({
+            emoji: blogReactions.emoji,
+          })
+          .from(blogReactions)
+          .where(
+            and(
+              eq(blogReactions.blogSlug, blogSlug),
+              eq(blogReactions.userId, user[0].id)
+            )
+          );
+
+        userReactions = userReactionData.map((r) => r.emoji);
+      }
+    }
+
+    return NextResponse.json({
+      reactions,
+      userReactions,
+    });
   } catch (error) {
     console.error('Error fetching reactions:', error);
     return NextResponse.json(
@@ -70,9 +100,8 @@ export async function POST(request: NextRequest) {
     }
 
     const adaptedReq = {
+      ...request,
       headers: Object.fromEntries(request.headers.entries()),
-      connection: { remoteAddress: undefined },
-      socket: { remoteAddress: undefined },
     };
 
     // Get client IP and generate server-side fingerprint as fallback

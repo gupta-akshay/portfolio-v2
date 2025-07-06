@@ -80,9 +80,8 @@ export async function rateLimit(
 ): Promise<RateLimitResult> {
   // Convert NextRequest to request-ip compatible format
   const adaptedReq = {
+    ...req,
     headers: Object.fromEntries(req.headers.entries()),
-    connection: { remoteAddress: undefined },
-    socket: { remoteAddress: undefined },
   };
 
   const ip = requestIp.getClientIp(adaptedReq) || '127.0.0.1';
