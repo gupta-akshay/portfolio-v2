@@ -26,9 +26,20 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
     try {
       const { signal } = new AbortController();
       const fingerprint = getOrCreateFingerprint();
+
+      // Add timestamp to prevent any caching
+      const timestamp = Date.now();
       const response = await fetch(
-        `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}`,
-        { signal, cache: 'no-store' }
+        `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}&t=${timestamp}`,
+        {
+          signal,
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+            Expires: '0',
+          },
+        }
       );
       if (response.ok) {
         const data = await response.json();
