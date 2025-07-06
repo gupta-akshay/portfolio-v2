@@ -50,6 +50,28 @@ const Header = () => {
     return () => setActiveSection('home');
   }, [pathname]);
 
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (sideBarToggle) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [sideBarToggle]);
+
+  const handleSidebarToggle = () => {
+    setSideBarToggle(!sideBarToggle);
+  };
+
+  const handleOverlayClick = () => {
+    setSideBarToggle(false);
+  };
+
   return (
     <Fragment>
       {/* Mobile Header */}
@@ -62,7 +84,7 @@ const Header = () => {
           </div>
           <button
             className={`toggler-menu ${sideBarToggle ? 'open' : ''}`}
-            onClick={() => setSideBarToggle(!sideBarToggle)}
+            onClick={handleSidebarToggle}
             aria-label={`${sideBarToggle ? 'close' : 'open'} menu`}
           >
             <span />
@@ -72,6 +94,16 @@ const Header = () => {
         </div>
       </div>
       {/* End Mobile Header */}
+
+      {/* Overlay for mobile sidebar */}
+      {sideBarToggle && (
+        <div
+          className='sidebar-overlay'
+          onClick={handleOverlayClick}
+          aria-hidden='true'
+        />
+      )}
+
       <header
         className={`header-left ${
           sideBarToggle ? 'menu-open menu-open-desk' : ''
@@ -97,7 +129,11 @@ const Header = () => {
           </div>
           <ul className='nav nav-menu' id='pp-menu'>
             <li className={activeSection === 'home' ? 'active' : ''}>
-              <Link className='nav-link' href='/'>
+              <Link
+                className='nav-link'
+                href='/'
+                onClick={() => setSideBarToggle(false)}
+              >
                 <FontAwesomeIcon
                   icon={faHouse as IconProp}
                   height={20}
@@ -107,7 +143,11 @@ const Header = () => {
               </Link>
             </li>
             <li className={activeSection === 'about' ? 'active' : ''}>
-              <Link className='nav-link' href='/about'>
+              <Link
+                className='nav-link'
+                href='/about'
+                onClick={() => setSideBarToggle(false)}
+              >
                 <FontAwesomeIcon
                   icon={faIdBadge as IconProp}
                   height={20}
@@ -117,7 +157,11 @@ const Header = () => {
               </Link>
             </li>
             <li className={activeSection === 'blog' ? 'active' : ''}>
-              <Link className='nav-link' href='/blog'>
+              <Link
+                className='nav-link'
+                href='/blog'
+                onClick={() => setSideBarToggle(false)}
+              >
                 <FontAwesomeIcon
                   icon={faBlog as IconProp}
                   height={20}
@@ -127,7 +171,11 @@ const Header = () => {
               </Link>
             </li>
             <li className={activeSection === 'music' ? 'active' : ''}>
-              <Link className='nav-link' href='/music'>
+              <Link
+                className='nav-link'
+                href='/music'
+                onClick={() => setSideBarToggle(false)}
+              >
                 <FontAwesomeIcon
                   icon={faMusic as IconProp}
                   height={20}
@@ -137,7 +185,11 @@ const Header = () => {
               </Link>
             </li>
             <li className={activeSection === 'contact' ? 'active' : ''}>
-              <Link className='nav-link' href='/contact'>
+              <Link
+                className='nav-link'
+                href='/contact'
+                onClick={() => setSideBarToggle(false)}
+              >
                 <FontAwesomeIcon
                   icon={faMapLocation as IconProp}
                   height={20}
