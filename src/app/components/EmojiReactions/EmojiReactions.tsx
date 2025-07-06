@@ -24,9 +24,11 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
 
   const fetchReactions = useCallback(async () => {
     try {
+      const { signal } = new AbortController();
       const fingerprint = getOrCreateFingerprint();
       const response = await fetch(
-        `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}`
+        `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}`,
+        { signal, cache: 'no-store' }
       );
       if (response.ok) {
         const data = await response.json();
@@ -79,7 +81,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
         setIsLoading(false);
       }
     },
-    [blogSlug, isLoading]
+    [blogSlug]
   );
 
   // Load reactions on component mount
