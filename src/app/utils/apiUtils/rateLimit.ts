@@ -7,10 +7,7 @@ import { RateLimitResult } from '@/app/types/api';
 let redis: Redis | null = null;
 
 // Initialize Redis client only if environment variables are present
-if (
-  process.env.KV_REST_API_URL &&
-  process.env.KV_REST_API_TOKEN
-) {
+if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
   try {
     redis = new Redis({
       url: process.env.KV_REST_API_URL,

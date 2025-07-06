@@ -99,10 +99,7 @@ export default function Home() {
                   </p>
                   <p className='desc'>
                     Hey there! 👋 I&apos;m currently a Senior Staff Engineer at{' '}
-                    <Link
-                      href='https://www.peoplegrove.com'
-                      target='_blank'
-                    >
+                    <Link href='https://www.peoplegrove.com' target='_blank'>
                       PeopleGrove
                     </Link>
                     . I love building websites and apps that are both
