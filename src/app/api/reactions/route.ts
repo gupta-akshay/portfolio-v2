@@ -44,6 +44,8 @@ export async function GET(request: NextRequest) {
       .where(eq(blogReactions.blogSlug, blogSlug))
       .groupBy(blogReactions.emoji);
 
+    console.log('reactions', blogSlug, fingerprint, reactions);
+
     // If fingerprint is provided, get the user's reactions for this blog post
     let userReactions: string[] = [];
     if (fingerprint) {
