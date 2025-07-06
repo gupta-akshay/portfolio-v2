@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import BlogImage from '@/app/components/BlogImage';
@@ -89,10 +90,59 @@ const CodeMarkComponent = ({ children }: PortableTextMarkComponentProps) => {
   return <code>{children}</code>;
 };
 
+// Helper component to render a row of images
+const ImageRow = ({ images }: { images: any[] }) => (
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '1rem',
+      margin: '1.5rem 0',
+    }}
+  >
+    {images.map((img, idx) => (
+      <div
+        key={idx}
+        style={{ flex: 1, display: 'flex', justifyContent: 'center' }}
+      >
+        <BlogImage value={img} />
+      </div>
+    ))}
+  </div>
+);
+
+// Transform the PortableText body to group consecutive images
+function groupConsecutiveImages(blocks: any[]) {
+  const result: any[] = [];
+  let imageBuffer: any[] = [];
+
+  for (const block of blocks) {
+    if (block._type === 'image') {
+      imageBuffer.push(block);
+    } else {
+      if (imageBuffer.length === 1) {
+        result.push(imageBuffer[0]);
+      } else if (imageBuffer.length > 1) {
+        result.push({ _type: 'imageRow', images: imageBuffer });
+      }
+      imageBuffer = [];
+      result.push(block);
+    }
+  }
+  // Flush any remaining images
+  if (imageBuffer.length === 1) {
+    result.push(imageBuffer[0]);
+  } else if (imageBuffer.length > 1) {
+    result.push({ _type: 'imageRow', images: imageBuffer });
+  }
+  return result;
+}
+
 const components = {
   types: {
     image: BlogImage,
     code: CodeComponent,
+    imageRow: ({ value }: any) => <ImageRow images={value.images} />,
   },
   marks: {
     internalLink: InternalLink,
@@ -102,7 +152,11 @@ const components = {
 };
 
 const SingleBlog = ({ post }: { post: Blog }) => {
-  return <PortableText value={post?.body} components={components} />;
+  const groupedBody = useMemo(
+    () => groupConsecutiveImages(post?.body || []),
+    [post?.body]
+  );
+  return <PortableText value={groupedBody} components={components} />;
 };
 
 export default SingleBlog;
