@@ -78,14 +78,11 @@ export async function rateLimit(
   limit: number = 5, // Max 5 requests
   windowMs: number = 15 * 60 * 1000 // 15 minutes
 ): Promise<RateLimitResult> {
-  // Convert NextRequest to request-ip compatible format
-  const adaptedReq = {
-    headers: Object.fromEntries(req.headers.entries()),
-    connection: { remoteAddress: undefined },
-    socket: { remoteAddress: undefined },
+  const fakeRequest = {
+    headers: Object.fromEntries(req.headers), // Convert Headers into plain object
   };
 
-  const ip = requestIp.getClientIp(adaptedReq) || '127.0.0.1';
+  const ip = requestIp.getClientIp(fakeRequest) || '127.0.0.1';
 
   const now = Date.now();
 

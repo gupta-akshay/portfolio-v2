@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import BlogImage from '@/app/components/BlogImage';
+import EmojiReactions from '@/app/components/EmojiReactions';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
@@ -107,6 +108,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
             </div>
           </div>
         </div>
+        <EmojiReactions blogSlug={post.slug.current} />
       </div>
     </Layout>
   );

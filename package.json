@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "netlify dev:exec drizzle-kit migrate",
+    "db:studio": "netlify dev:exec drizzle-kit studio"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",
@@ -16,6 +19,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@netlify/neon": "^0.1.0",
     "@next/bundle-analyzer": "^15.3.5",
     "@portabletext/react": "^3.2.1",
     "@sanity/asset-utils": "^2.2.1",
@@ -27,6 +31,7 @@
     "@upstash/redis": "^1.35.1",
     "bootstrap": "^5.3.7",
     "devicon": "^2.16.0",
+    "drizzle-orm": "^0.44.2",
     "next": "15.3.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -45,6 +50,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/request-ip": "^0.0.41",
     "@types/sanitize-html": "^2.16.0",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9.30.1",
     "eslint-config-next": "15.3.5",
     "eslint-config-prettier": "^10.1.5",

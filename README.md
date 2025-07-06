@@ -24,6 +24,8 @@ Because one framework is never enough:
 - **Sanitize HTML** (Keeping user inputs clean and safe)
 - **React Syntax Highlighter** (Beautiful code blocks in blog posts)
 - **Portable Text** (Rich text rendering from Sanity CMS)
+- **Drizzle ORM** (Type-safe database operations)
+- **Neon Database** (Serverless PostgreSQL for reactions)
 - **Microsoft Clarity & Google Analytics** (Keeping track of who's watching)
 - **ESLint & Prettier** (Because clean code is happy code)
 - **Next Bundle Analyzer** (Keeping our bundles in check)
@@ -43,6 +45,7 @@ Because one framework is never enough:
 
 - 🌃 Dark/Light theme (For both vampires and humans)
 - 📝 Blog with CMS (Because WordPress is too mainstream)
+- 😄 Emoji Reactions (Like dev.to, but with more personality)
 - 📧 Contact form with validation:
   - **TanStack Form** for reactive form management
   - **Zod schema validation** for type-safe input validation
@@ -113,6 +116,33 @@ The `/blog` route implements a modern blog platform using Sanity.io as the headl
   - **Categories and tags support** with filtering capabilities
   - **OpenGraph image generation** for social media sharing
   - **Structured data** with JSON-LD for search engines
+  - **Emoji Reactions System** with anonymous user tracking
+
+## 😄 Emoji Reactions System
+
+The blog posts feature an interactive emoji reactions system similar to dev.to:
+
+1. **User Experience:**
+  - **Floating reaction bar** that appears on blog posts
+  - **Multiple emoji options**: 👍, ❤️, 😄, 😮, 🎉, 🔥
+  - **Toggle functionality** - click to add, click again to remove
+  - **Real-time updates** with immediate visual feedback
+  - **Dark/Light mode support** with smooth transitions
+
+2. **Technical Features:**
+  - **Anonymous user tracking** without requiring registration
+  - **Multi-layered fingerprinting** for unique user identification
+  - **Client-side fingerprinting** with canvas, screen properties, timezone
+  - **Server-side fallback** with user agent and IP hashing
+  - **Local storage persistence** for consistent user experience
+  - **Responsive design** optimized for mobile and desktop
+
+3. **Database Architecture:**
+  - **Neon PostgreSQL** for serverless database operations
+  - **Drizzle ORM** for type-safe database queries
+  - **Anonymous users table** for tracking unique visitors
+  - **Blog reactions table** for storing emoji reactions
+  - **Proper indexing** for optimal performance
 
 ## 🎯 Performance Features
 
@@ -218,6 +248,9 @@ NEXT_PUBLIC_SANITY_HOOK_SECRET=your_secret_here
 # Optional: defaults to 2024-09-25 if not set
 NEXT_PUBLIC_SANITY_API_VERSION=2024-09-25
 
+# Neon Database (Required for emoji reactions)
+NETLIFY_DATABASE_URL=your_neon_database_url_here
+
 # AWS S3 + CloudFront (Required for music player)
 NEXT_PUBLIC_AWS_REGION=your_aws_region
 NEXT_PUBLIC_AWS_ACCESS_KEY_ID=your_aws_access_key
@@ -283,7 +316,34 @@ This project uses Upstash Redis for serverless rate limiting to prevent spam and
 
 > Note: If you don't set up Redis, the system will fall back to in-memory storage (works fine for development but won't persist across serverless function calls in production).
 
-### 4. Audio Files Setup 🎵
+### 4. Database Setup 🗄️
+
+This project uses Neon PostgreSQL for the emoji reactions feature:
+
+1. **Neon Database Setup**:
+   - Create a free account at [Neon](https://neon.tech)
+   - Create a new PostgreSQL database
+   - Copy the connection string
+   - Add it to your `.env.local` file as `NETLIFY_DATABASE_URL`
+
+2. **Database Migration**:
+   ```bash
+   # Generate migration files
+   npm run db:generate
+   
+   # Apply migrations
+   npm run db:migrate
+   ```
+
+3. **Benefits**:
+   - ✅ Serverless PostgreSQL with auto-scaling
+   - ✅ Perfect for Netlify/Vercel deployments
+   - ✅ Type-safe operations with Drizzle ORM
+   - ✅ Automatic connection pooling
+
+> Note: The emoji reactions feature requires a database connection. Without it, the reactions won't persist.
+
+### 5. Audio Files Setup 🎵
 
 1. Create an S3 bucket:
 
@@ -334,7 +394,7 @@ This project uses Upstash Redis for serverless rate limiting to prevent spam and
 ]
 ```
 
-### 5. Audio File Naming 🎵
+### 6. Audio File Naming 🎵
 
 Name your audio files like this:
 
@@ -345,7 +405,7 @@ Example: [2024][The Beatles][Hey Jude][Remix][A-Shay].mp3
 
 > Pro tip: The brackets are important. Very important.
 
-### 6. Fire It Up! 🔥
+### 7. Fire It Up! 🔥
 
 ```bash
 npm run dev

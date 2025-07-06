@@ -142,7 +142,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Enhanced play/pause handler with safety checks
   const handlePlayPause = useCallback(() => {
     if (playAttemptInProgressRef.current) {
-      console.log('Play attempt already in progress, ignoring request');
+      // console.log('Play attempt already in progress, ignoring request');
       return;
     }
 
