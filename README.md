@@ -26,6 +26,7 @@ Because one framework is never enough:
 - **Portable Text** (Rich text rendering from Sanity CMS)
 - **Drizzle ORM** (Type-safe database operations)
 - **Neon Database** (Serverless PostgreSQL for reactions)
+- **dotenv** (Environment variable management)
 - **Microsoft Clarity & Google Analytics** (Keeping track of who's watching)
 - **ESLint & Prettier** (Because clean code is happy code)
 - **Next Bundle Analyzer** (Keeping our bundles in check)
@@ -36,7 +37,7 @@ Because one framework is never enough:
 - [Sanity.io](https://www.sanity.io) - Where my blog posts live their best life
 - [AWS S3](https://aws.amazon.com/s3/) - For reliable and scalable music storage
 - [AWS CloudFront](https://aws.amazon.com/cloudfront/) - Making music streaming fast worldwide
-- [Upstash Redis](https://upstash.com) - For serverless rate limiting that actually works
+- [Upstash Redis](https://upstash.com) - For serverless rate limiting with atomic operations
 - Custom Audio Player - Like Spotify, but with more bugs (kidding!)
 
 ## ✨ Features
@@ -51,8 +52,8 @@ Because one framework is never enough:
   - **Zod schema validation** for type-safe input validation
   - Real-time field validation with instant feedback
   - Smart error handling with specific error messages
-  - Rate limiting (5 requests per 15 minutes) with atomic operations
-  - Spam protection with Upstash Redis (fallback to in-memory)
+  - Rate limiting (5 requests per 15 minutes) with atomic Lua operations
+  - Spam protection with Upstash Redis (fallback to in-memory storage)
   - Email delivery tracking with Resend
   - HTML sanitization for security
   - Mobile-optimized layout with responsive design
@@ -140,9 +141,10 @@ The blog posts feature an interactive emoji reactions system similar to dev.to:
 3. **Database Architecture:**
   - **Neon PostgreSQL** for serverless database operations
   - **Drizzle ORM** for type-safe database queries
-  - **Anonymous users table** for tracking unique visitors
-  - **Blog reactions table** for storing emoji reactions
-  - **Proper indexing** for optimal performance
+- **Anonymous users table** for tracking unique visitors
+- **Blog reactions table** for storing emoji reactions
+- **Proper indexing** for optimal performance
+- **Environment-aware database configuration** with conditional dotenv loading
 
 ## 🎯 Performance Features
 
@@ -152,7 +154,7 @@ The blog posts feature an interactive emoji reactions system similar to dev.to:
   - Static page caching with ISR
   - API response caching with proper headers
   - Asset caching with versioning
-  - Redis-based rate limiting cache
+  - Redis-based rate limiting cache with atomic operations
 - **Image optimization** with next/image:
   - Automatic WebP/AVIF conversion
   - Responsive sizes with multiple breakpoints
@@ -249,7 +251,7 @@ NEXT_PUBLIC_SANITY_HOOK_SECRET=your_secret_here
 NEXT_PUBLIC_SANITY_API_VERSION=2024-09-25
 
 # Neon Database (Required for emoji reactions)
-NETLIFY_DATABASE_URL=your_neon_database_url_here
+DATABASE_URL=your_neon_database_url_here
 
 # AWS S3 + CloudFront (Required for music player)
 NEXT_PUBLIC_AWS_REGION=your_aws_region
@@ -265,8 +267,8 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
 NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
 
 # Rate limiting (Optional - falls back to in-memory if not set)
-UPSTASH_REDIS_REST_URL=your_upstash_redis_url
-UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
+KV_REST_API_URL=your_upstash_redis_url
+KV_REST_API_TOKEN=your_upstash_redis_token
 
 # Base URL (Optional - defaults to localhost:3000)
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
@@ -297,49 +299,52 @@ This project uses Upstash Redis for serverless rate limiting to prevent spam and
   - Create a free account at [Upstash](https://upstash.com)
   - Create a new Redis database
   - Copy the REST URL and REST TOKEN
-  - Add them to your `.env.local` file
+  - Add them to your `.env.local` file as `KV_REST_API_URL` and `KV_REST_API_TOKEN`
 
 2. **Benefits**:
   - ✅ 10,000 requests/day free tier
   - ✅ Serverless and auto-scaling
-  - ✅ Perfect for Netlify/Vercel deployments
+  - ✅ Perfect for Vercel deployments
   - ✅ Automatic failover to in-memory storage during development
 
 3. **How it works**:
-  - Contact form is limited to 5 requests per 15 minutes per IP
-  - **Atomic operations** using Lua scripts to prevent race conditions
-  - Redis stores request counts with automatic expiration
-  - **Fixed-window rate limiting** for consistent behavior
-  - Graceful degradation to in-memory storage if Redis is unavailable
-  - Clear error messages for rate-limited users with retry-after headers
-  - IP extraction with proper proxy support
+   - Contact form is limited to 5 requests per 15 minutes per IP
+   - **Atomic operations** using Lua scripts to prevent race conditions
+   - Redis stores request counts with automatic expiration
+   - **Fixed-window rate limiting** for consistent behavior
+   - Graceful degradation to in-memory storage if Redis is unavailable
+   - Clear error messages for rate-limited users with retry-after headers
+   - IP extraction with proper proxy support
+   - **Environment-aware configuration** - only loads dotenv when needed
 
 > Note: If you don't set up Redis, the system will fall back to in-memory storage (works fine for development but won't persist across serverless function calls in production).
 
 ### 4. Database Setup 🗄️
 
-This project uses Neon PostgreSQL for the emoji reactions feature:
+This project uses Neon PostgreSQL for the emoji reactions feature with smart environment configuration:
 
 1. **Neon Database Setup**:
    - Create a free account at [Neon](https://neon.tech)
    - Create a new PostgreSQL database
    - Copy the connection string
-   - Add it to your `.env.local` file as `NETLIFY_DATABASE_URL`
+   - Add it to your `.env.local` file as `DATABASE_URL`
 
 2. **Database Migration**:
    ```bash
    # Generate migration files
-   npm run db:generate
+   pnpm db:generate
    
    # Apply migrations
-   npm run db:migrate
+   pnpm db:migrate
    ```
 
 3. **Benefits**:
    - ✅ Serverless PostgreSQL with auto-scaling
-   - ✅ Perfect for Netlify/Vercel deployments
+   - ✅ Perfect for Vercel deployments
    - ✅ Type-safe operations with Drizzle ORM
    - ✅ Automatic connection pooling
+   - ✅ Environment-aware configuration with conditional dotenv loading
+   - ✅ Compatible with both development and production environments
 
 > Note: The emoji reactions feature requires a database connection. Without it, the reactions won't persist.
 
@@ -408,13 +413,13 @@ Example: [2024][The Beatles][Hey Jude][Remix][A-Shay].mp3
 ### 7. Fire It Up! 🔥
 
 ```bash
-npm run dev
-# or
-yarn dev    # For the yarn enthusiasts
-# or
 pnpm dev    # For the storage optimizers
 # or
-bun dev     # For the cool kids
+npm run dev  # For the npm enthusiasts
+# or
+yarn dev     # For the yarn enthusiasts
+# or
+bun dev      # For the cool kids
 ```
 
 Then visit [http://localhost:3000](http://localhost:3000) and marvel at your creation.

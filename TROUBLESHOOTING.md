@@ -522,6 +522,124 @@ pnpm dev -- -p 3001
 }
 ```
 
+## 🚀 Vercel Deployment Issues
+
+### 1. Environment Variables Not Working
+
+**Symptoms:**
+- Features work locally but not in production
+- Database connections fail
+- API keys not found
+
+**Solutions:**
+
+1. **Check Vercel Environment Variables:**
+   - Go to your Vercel project dashboard
+   - Navigate to Settings → Environment Variables
+   - Ensure all required variables are set:
+     - `NETLIFYL_DATABASE_URL` (Neon database connection)
+     - `RESEND_API_KEY` (Email service)
+     - `NEXT_PUBLIC_SANITY_PROJECT_ID` (CMS)
+     - `UPSTASH_REDIS_REST_URL` (Rate limiting)
+     - All AWS variables for audio player
+
+2. **Verify Variable Names:**
+   - Make sure variable names match exactly (case-sensitive)
+   - Check for trailing spaces or special characters
+   - Ensure `NEXT_PUBLIC_` prefix for client-side variables
+
+3. **Redeploy After Changes:**
+   ```bash
+   # Trigger a new deployment
+   git commit --allow-empty -m "Trigger deployment"
+   git push
+   ```
+
+### 2. Database Connection Issues
+
+**Symptoms:**
+- Emoji reactions not working
+- Database queries failing
+- Connection timeouts
+
+**Solutions:**
+
+1. **Check Neon Database:**
+   - Verify your Neon database is active
+   - Check connection string format
+   - Ensure database migrations are applied
+
+2. **Run Migrations on Vercel:**
+   ```bash
+   # Add this to package.json scripts
+   "db:migrate:vercel": "drizzle-kit migrate"
+   
+   # Or run manually in Vercel CLI
+   vercel env pull .env.local
+   npx drizzle-kit migrate
+   ```
+
+3. **Test Database Connection:**
+   ```bash
+   # Test locally with production database
+   VERCEL_DATABASE_URL=your_production_db_url npx drizzle-kit studio
+   ```
+
+### 3. Build Failures
+
+**Symptoms:**
+- Deployment fails during build
+- TypeScript errors in production
+- Missing dependencies
+
+**Solutions:**
+
+1. **Check Build Logs:**
+   - Review Vercel build logs for specific errors
+   - Look for missing environment variables
+   - Check for TypeScript compilation errors
+
+2. **Optimize Build:**
+   ```bash
+   # Test build locally
+   npm run build
+   
+   # Check bundle size
+   npm run analyze
+   ```
+
+3. **Update Dependencies:**
+   ```bash
+   # Update to latest stable versions
+   npm update
+   npm audit fix
+   ```
+
+### 4. Function Timeout Issues
+
+**Symptoms:**
+- API routes timing out
+- Database queries taking too long
+- Cold start delays
+
+**Solutions:**
+
+1. **Optimize Database Queries:**
+   - Add proper indexes to your database
+   - Use connection pooling
+   - Implement caching strategies
+
+2. **Increase Function Timeout:**
+   ```typescript
+   // In your API routes, add timeout handling
+   export const maxDuration = 30; // 30 seconds
+   ```
+
+3. **Use Edge Runtime for Simple APIs:**
+   ```typescript
+   export const runtime = 'edge';
+   ```
+
 ## 📞 Getting Additional Help
 
 ### 1. Debug Information

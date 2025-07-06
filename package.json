@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "netlify dev:exec drizzle-kit migrate",
-    "db:studio": "netlify dev:exec drizzle-kit studio"
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",
@@ -19,7 +19,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@netlify/neon": "^0.1.0",
+    "@neondatabase/serverless": "^1.0.1",
     "@next/bundle-analyzer": "^15.3.5",
     "@portabletext/react": "^3.2.1",
     "@sanity/asset-utils": "^2.2.1",
@@ -29,9 +29,11 @@
     "@sanity/vision": "^3.97.1",
     "@tanstack/react-form": "^1.13.1",
     "@upstash/redis": "^1.35.1",
+    "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "bootstrap": "^5.3.7",
     "devicon": "^2.16.0",
+    "dotenv": "^17.0.1",
     "drizzle-orm": "^0.44.2",
     "next": "15.3.5",
     "react": "19.1.0",
@@ -69,6 +71,7 @@
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
+      "@vercel/speed-insights",
       "esbuild",
       "sharp",
       "unrs-resolver"
