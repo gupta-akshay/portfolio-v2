@@ -302,7 +302,7 @@ This project uses Upstash Redis for serverless rate limiting to prevent spam and
 2. **Benefits**:
   - ✅ 10,000 requests/day free tier
   - ✅ Serverless and auto-scaling
-  - ✅ Perfect for Netlify/Vercel deployments
+  - ✅ Perfect for Vercel deployments
   - ✅ Automatic failover to in-memory storage during development
 
 3. **How it works**:
@@ -337,7 +337,7 @@ This project uses Neon PostgreSQL for the emoji reactions feature:
 
 3. **Benefits**:
    - ✅ Serverless PostgreSQL with auto-scaling
-   - ✅ Perfect for Netlify/Vercel deployments
+   - ✅ Perfect for Vercel deployments
    - ✅ Type-safe operations with Drizzle ORM
    - ✅ Automatic connection pooling
 
