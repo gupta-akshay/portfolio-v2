@@ -55,12 +55,26 @@ export function generateClientFingerprint(): string {
 // Store fingerprint in localStorage for persistence
 export function getOrCreateFingerprint(): string {
   const storageKey = 'blog_reactions_fingerprint';
-  let fingerprint = localStorage.getItem(storageKey);
-
-  if (!fingerprint) {
-    fingerprint = generateClientFingerprint();
-    localStorage.setItem(storageKey, fingerprint);
+  
+  // Check if localStorage is available
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    // Fallback to generating a new fingerprint for each session
+    return generateClientFingerprint();
   }
+  
+  try {
+    let fingerprint = localStorage.getItem(storageKey);
 
-  return fingerprint;
+    if (!fingerprint) {
+      fingerprint = generateClientFingerprint();
+      localStorage.setItem(storageKey, fingerprint);
+    }
+
+    return fingerprint;
+  } catch (error) {
+    // If localStorage fails (e.g., private browsing, quota exceeded), 
+    // fallback to generating a new fingerprint for this session
+    console.warn('localStorage not available, using session fingerprint:', error);
+    return generateClientFingerprint();
+  }
 }
