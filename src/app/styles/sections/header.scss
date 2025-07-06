@@ -125,17 +125,114 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 12px 0;
+    padding: 20px 0;
+    background: linear-gradient(180deg, transparent 0%, rgba($px-bg-3, 0.8) 100%);
+    border-top: 1px solid rgba($px-theme, 0.1);
+    
+    .theme-light & {
+      background: linear-gradient(180deg, transparent 0%, rgba($px-white, 0.95) 100%);
+      border-top: 1px solid rgba($px-theme, 0.15);
+    }
+    
     a {
-      color: $px-white;
-      font-size: 14px;
-      margin-right: 17px;
+      color: rgba($px-white, 0.7);
+      font-size: 18px;
+      margin: 0 8px;
+      padding: 8px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      
       .theme-light & {
-        color: $px-dark;
+        color: rgba($px-dark, 0.6);
       }
+      
       &:hover {
-        color: $px-theme;
+        transform: translateY(-2px) scale(1.1);
+        box-shadow: 0 4px 12px rgba($px-theme, 0.3);
+        
+        .theme-light & {
+          box-shadow: 0 4px 12px rgba($px-theme, 0.2);
+        }
       }
+      
+      // Brand-specific hover colors
+      &[aria-label="Github"]:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #333, #24292e);
+        box-shadow: 0 4px 12px rgba(36, 41, 46, 0.4);
+      }
+      
+      &[aria-label="Linkedin"]:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #0077b5, #005885);
+        box-shadow: 0 4px 12px rgba(0, 119, 181, 0.4);
+      }
+      
+      &[aria-label="Medium"]:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #12100e, #000);
+        box-shadow: 0 4px 12px rgba(18, 16, 14, 0.4);
+      }
+      
+      &[aria-label="Dev.to"]:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #0a0a0a, #000);
+        box-shadow: 0 4px 12px rgba(10, 10, 10, 0.4);
+      }
+      
+      &[aria-label="Instagram"]:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+        box-shadow: 0 4px 12px rgba(131, 58, 180, 0.4);
+      }
+      
+      &[aria-label="Facebook"]:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #1877f2, #165ed0);
+        box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
+      }
+      
+      &[aria-label="Soundcloud"]:hover {
+        color: #fff;
+        background: linear-gradient(135deg, #ff5500, #ff3300);
+        box-shadow: 0 4px 12px rgba(255, 85, 0, 0.4);
+      }
+      
+      // Add a subtle pulse animation on hover
+      &:hover::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background: inherit;
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+        animation: pulse 1.5s infinite;
+      }
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0.7;
+    }
+    70% {
+      transform: translate(-50%, -50%) scale(1.4);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1.4);
+      opacity: 0;
     }
   }
 }
@@ -231,6 +328,22 @@
       &:after {
         width: 310px;
         height: 310px;
+      }
+    }
+    
+    // Improved mobile social icons
+    .social-icons {
+      padding: 15px 0;
+      
+      a {
+        font-size: 16px;
+        width: 32px;
+        height: 32px;
+        margin: 0 6px;
+        
+        &:hover {
+          transform: translateY(-1px) scale(1.05);
+        }
       }
     }
   }
