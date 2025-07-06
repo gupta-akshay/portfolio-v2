@@ -99,13 +99,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const adaptedReq = {
-      ...request,
-      headers: Object.fromEntries(request.headers.entries()),
+    const fakeRequest = {
+      headers: Object.fromEntries(request.headers), // Convert Headers into plain object
     };
 
     // Get client IP and generate server-side fingerprint as fallback
-    const ip = requestIp.getClientIp(adaptedReq) || '127.0.0.1';
+    const ip = requestIp.getClientIp(fakeRequest) || '127.0.0.1';
+    console.log('ip', ip);
     const ipHash = hashIP(ip || 'unknown');
     const serverFingerprint = generateFingerprint(request);
     const userAgent = request.headers.get('user-agent') || '';
