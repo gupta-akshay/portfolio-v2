@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
@@ -68,6 +69,7 @@ export default function RootLayout({
           <LoadingProvider>{children}</LoadingProvider>
         </ThemeProvider>
         <Metrics />
+        <SpeedInsights />
       </body>
     </html>
   );
