@@ -105,7 +105,6 @@ export async function POST(request: NextRequest) {
 
     // Get client IP and generate server-side fingerprint as fallback
     const ip = requestIp.getClientIp(fakeRequest) || '127.0.0.1';
-    console.log('ip', ip);
     const ipHash = hashIP(ip || 'unknown');
     const serverFingerprint = generateFingerprint(request);
     const userAgent = request.headers.get('user-agent') || '';
