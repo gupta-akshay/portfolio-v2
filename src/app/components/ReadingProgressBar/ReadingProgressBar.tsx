@@ -29,14 +29,26 @@ const ReadingProgressBar = ({
       // Calculate progress based on how much of the target element has been scrolled
       const scrollStart = elementTop;
       const scrollEnd = elementTop + elementHeight - windowHeight;
+      const scrollableDistance = scrollEnd - scrollStart;
 
       let progressPercentage = 0;
 
-      if (scrollTop >= scrollStart && scrollTop <= scrollEnd) {
-        progressPercentage =
-          ((scrollTop - scrollStart) / (scrollEnd - scrollStart)) * 100;
-      } else if (scrollTop > scrollEnd) {
-        progressPercentage = 100;
+      // Handle edge case where element is shorter than or equal to viewport height
+      if (scrollableDistance <= 0) {
+        // If the entire element fits within the viewport, show progress based on visibility
+        if (scrollTop >= scrollStart) {
+          progressPercentage = 100;
+        } else {
+          progressPercentage = 0;
+        }
+      } else {
+        // Normal calculation for elements taller than viewport
+        if (scrollTop >= scrollStart && scrollTop <= scrollEnd) {
+          progressPercentage =
+            ((scrollTop - scrollStart) / scrollableDistance) * 100;
+        } else if (scrollTop > scrollEnd) {
+          progressPercentage = 100;
+        }
       }
 
       setProgress(Math.min(100, Math.max(0, progressPercentage)));

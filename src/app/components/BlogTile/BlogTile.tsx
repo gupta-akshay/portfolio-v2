@@ -46,6 +46,19 @@ const measureText = (
   return width;
 };
 
+// Helper function to compare blog body content
+const compareBody = (prevBody: any[], nextBody: any[]): boolean => {
+  if (prevBody.length !== nextBody.length) return false;
+
+  // Use JSON.stringify for deep comparison - efficient for small to medium content
+  try {
+    return JSON.stringify(prevBody) === JSON.stringify(nextBody);
+  } catch {
+    // Fallback to reference equality if JSON.stringify fails
+    return prevBody === nextBody;
+  }
+};
+
 const BlogTile = memo(
   ({ blog }: { blog: Blog }) => {
     const { mainImage } = blog;
@@ -226,7 +239,7 @@ const BlogTile = memo(
       prevProps.blog.title === nextProps.blog.title &&
       prevProps.blog.publishedAt === nextProps.blog.publishedAt &&
       prevProps.blog.categories.length === nextProps.blog.categories.length &&
-      prevProps.blog.body === nextProps.blog.body
+      compareBody(prevProps.blog.body, nextProps.blog.body)
     );
   }
 );
