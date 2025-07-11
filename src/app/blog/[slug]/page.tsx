@@ -5,8 +5,9 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import BlogImage from '@/app/components/BlogImage';
 import EmojiReactions from '@/app/components/EmojiReactions';
+import ReadingProgressBar from '@/app/components/ReadingProgressBar';
 import { getPostBySlug } from '@/sanity/lib/client';
-import { formatDate } from '@/app/utils';
+import { formatDate, calculateReadingTime } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
 
 const SingleBlog = dynamic(() => import('@/app/components/SingleBlog'), {
@@ -32,6 +33,8 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   const imageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(630).url()
     : 'https://akshaygupta.live/images/about-me.png';
+
+  const readingTime = calculateReadingTime(post.body);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -62,6 +65,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   return (
     <Layout isBlog>
+      <ReadingProgressBar />
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -89,7 +93,9 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
                     </div>
                     <div className='media-body'>
                       <label>{post.author.name}</label>
-                      <span>{formatDate(post.publishedAt)}</span>
+                      <span>
+                        {formatDate(post.publishedAt)} • {readingTime.text}
+                      </span>
                     </div>
                   </div>
                 </div>

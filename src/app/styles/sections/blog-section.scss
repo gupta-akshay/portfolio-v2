@@ -57,6 +57,15 @@
         color: $px-theme;
         border-bottom: 1px solid $px-theme;
       }
+
+      .hashtag-more {
+        font-size: 12px;
+        font-weight: 600px;
+        color: $px-theme;
+        border-bottom: 1px solid $px-theme;
+        opacity: 0.8;
+        font-style: italic;
+      }
     }
 
     p {
@@ -145,6 +154,16 @@
         margin-bottom: 14px;
         color: $px-theme;
         border-bottom: 1px solid $px-theme;
+      }
+
+      .hashtag-more {
+        font-size: 12px;
+        font-weight: 600px;
+        margin-bottom: 14px;
+        color: $px-theme;
+        border-bottom: 1px solid $px-theme;
+        opacity: 0.8;
+        font-style: italic;
       }
     }
     h2 {
