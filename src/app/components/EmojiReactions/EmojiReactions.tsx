@@ -92,7 +92,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
         setIsLoading(false);
       }
     },
-    [blogSlug]
+    [blogSlug, isLoading]
   );
 
   // Load reactions on component mount
