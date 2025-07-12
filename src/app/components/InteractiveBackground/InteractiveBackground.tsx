@@ -45,15 +45,9 @@ const InteractiveBackground = ({
   const shapesRef = useRef<Shape[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  // Initialize shapes
+  // Initialize shapes when canvas has proper dimensions
   useEffect(() => {
-    if (disabled) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    setDimensions({ width: rect.width, height: rect.height });
+    if (disabled || dimensions.width === 0 || dimensions.height === 0) return;
 
     const shapes: Shape[] = [];
     const shapeTypes: Shape['type'][] = [
@@ -67,8 +61,8 @@ const InteractiveBackground = ({
     for (let i = 0; i < count; i++) {
       shapes.push({
         id: i,
-        x: Math.random() * rect.width,
-        y: Math.random() * rect.height,
+        x: Math.random() * dimensions.width,
+        y: Math.random() * dimensions.height,
         size: Math.random() * size + 10,
         rotation: Math.random() * 360,
         opacity: Math.random() * 0.5 + 0.5,
@@ -81,7 +75,15 @@ const InteractiveBackground = ({
     }
 
     shapesRef.current = shapes;
-  }, [disabled, count, color, size, speed]);
+  }, [
+    disabled,
+    count,
+    color,
+    size,
+    speed,
+    dimensions.width,
+    dimensions.height,
+  ]);
 
   // Handle mouse movement
   useEffect(() => {
@@ -274,9 +276,24 @@ const InteractiveBackground = ({
         shape.y += shape.vy;
         shape.rotation += 0.5;
 
-        // Bounce off edges
-        if (shape.x <= 0 || shape.x >= canvas.width) shape.vx *= -1;
-        if (shape.y <= 0 || shape.y >= canvas.height) shape.vy *= -1;
+        // Bounce off edges - account for shape size and clamp position
+        const radius = shape.size / 2;
+
+        if (shape.x - radius <= 0) {
+          shape.x = radius; // Clamp to boundary
+          shape.vx = Math.abs(shape.vx); // Ensure velocity points inward
+        } else if (shape.x + radius >= canvas.width) {
+          shape.x = canvas.width - radius; // Clamp to boundary
+          shape.vx = -Math.abs(shape.vx); // Ensure velocity points inward
+        }
+
+        if (shape.y - radius <= 0) {
+          shape.y = radius; // Clamp to boundary
+          shape.vy = Math.abs(shape.vy); // Ensure velocity points inward
+        } else if (shape.y + radius >= canvas.height) {
+          shape.y = canvas.height - radius; // Clamp to boundary
+          shape.vy = -Math.abs(shape.vy); // Ensure velocity points inward
+        }
 
         // Mouse interaction
         if (interactive) {
