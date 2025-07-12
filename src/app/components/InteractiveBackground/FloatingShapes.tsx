@@ -174,8 +174,16 @@ const FloatingShapes = ({
               scale: 0.8,
             }}
             animate={{
-              x: [`${shape.x}vw`, `${(shape.x + 20) % 100}vw`, `${shape.x}vw`],
-              y: [`${shape.y}vh`, `${(shape.y + 15) % 100}vh`, `${shape.y}vh`],
+              x: [
+                `${shape.x}vw`,
+                `${Math.max(10, Math.min(90, shape.x + 20))}vw`,
+                `${shape.x}vw`,
+              ],
+              y: [
+                `${shape.y}vh`,
+                `${Math.max(10, Math.min(90, shape.y + 15))}vh`,
+                `${shape.y}vh`,
+              ],
               rotate: [0, 360, 0],
               scale: [0.8, 1.2, 0.8],
             }}
