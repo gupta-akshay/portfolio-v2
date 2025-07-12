@@ -8,8 +8,8 @@
   transform: translateY(-50%);
   width: 250px;
   max-height: 60vh;
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
+  background: $px-bg-1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -19,6 +19,12 @@
   transition: all 0.3s ease;
   overflow-y: auto;
 
+  .theme-light & {
+    background: $px-white;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
   &.visible {
     opacity: 1;
     visibility: visible;
@@ -27,13 +33,21 @@
   .toc-header {
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .theme-light & {
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
 
     h4 {
       margin: 0;
       font-size: 1rem;
       font-weight: 600;
-      color: var(--text-color);
+      color: $px-white;
+
+      .theme-light & {
+        color: $px-dark;
+      }
     }
   }
 
@@ -49,7 +63,7 @@
         .toc-link {
           display: block;
           padding: 0.5rem 0;
-          color: var(--text-color-secondary);
+          color: $px-body;
           text-decoration: none;
           font-size: 0.875rem;
           line-height: 1.4;
@@ -57,13 +71,17 @@
           border-left: 2px solid transparent;
           padding-left: 0.5rem;
 
+          .theme-light & {
+            color: $px-body-light;
+          }
+
           &:hover {
-            color: var(--primary-color);
+            color: $px-theme;
           }
 
           &.active {
-            color: var(--primary-color);
-            border-left-color: var(--primary-color);
+            color: $px-theme;
+            border-left-color: $px-theme;
             font-weight: 500;
           }
         }
@@ -105,30 +123,6 @@
   }
 }
 
-// Dark mode adjustments
-[data-theme='dark'] .table-of-contents {
-  background: var(--bg-color-dark);
-  border-color: var(--border-color-dark);
-  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
-
-  .toc-header {
-    border-bottom-color: var(--border-color-dark);
-
-    h4 {
-      color: var(--text-color-dark);
-    }
-  }
-
-  .toc-nav .toc-list .toc-item .toc-link {
-    color: var(--text-color-secondary-dark);
-
-    &:hover,
-    &.active {
-      color: var(--primary-color);
-    }
-  }
-}
-
 // Reduced motion
 @media (prefers-reduced-motion: reduce) {
   .table-of-contents {
@@ -144,9 +138,14 @@
     display: block;
     margin: 2rem 0;
     padding: 1rem;
-    background: var(--bg-color-secondary);
+    background: $px-bg-2;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    .theme-light & {
+      background: $px-gray;
+      border-color: rgba(0, 0, 0, 0.1);
+    }
 
     .toc-header {
       margin-bottom: 1rem;
@@ -154,7 +153,11 @@
       h4 {
         margin: 0;
         font-size: 1.1rem;
-        color: var(--text-color);
+        color: $px-white;
+
+        .theme-light & {
+          color: $px-dark;
+        }
       }
     }
 
@@ -169,19 +172,23 @@
         .toc-link {
           display: block;
           padding: 0.5rem;
-          color: var(--text-color-secondary);
+          color: $px-body;
           text-decoration: none;
           border-radius: 4px;
           transition: background-color 0.2s ease;
 
+          .theme-light & {
+            color: $px-body-light;
+          }
+
           &:hover {
-            background-color: var(--primary-color-light);
-            color: var(--primary-color);
+            background-color: $px-theme-rgb-2;
+            color: $px-theme;
           }
 
           &.active {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: $px-theme;
+            color: $px-white;
           }
         }
 
