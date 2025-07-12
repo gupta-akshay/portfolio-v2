@@ -18,47 +18,57 @@ export default function ContactFormInteractive() {
 
   // Add cursor interactions for form elements
   useEffect(() => {
+    const cleanupFunctions: (() => void)[] = [];
+
     if (nameRef.current) {
-      addCursorInteraction(nameRef.current, {
+      const cleanup = addCursorInteraction(nameRef.current, {
         onHover: 'text',
         onText: 'Enter your full name',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (emailRef.current) {
-      addCursorInteraction(emailRef.current, {
+      const cleanup = addCursorInteraction(emailRef.current, {
         onHover: 'text',
         onText: 'Enter your email address',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (subjectRef.current) {
-      addCursorInteraction(subjectRef.current, {
+      const cleanup = addCursorInteraction(subjectRef.current, {
         onHover: 'text',
         onText: 'What is this about?',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (messageRef.current) {
-      addCursorInteraction(messageRef.current, {
+      const cleanup = addCursorInteraction(messageRef.current, {
         onHover: 'text',
         onText: 'Tell me more details',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (submitRef.current) {
-      addCursorInteraction(submitRef.current, {
+      const cleanup = addCursorInteraction(submitRef.current, {
         onHover: 'hover',
         onText: 'Send your message',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
-    return undefined;
+    // Return cleanup function that calls all individual cleanup functions
+    return () => {
+      cleanupFunctions.forEach((cleanup) => cleanup());
+    };
   }, [addCursorInteraction]);
 
   const form = useForm({

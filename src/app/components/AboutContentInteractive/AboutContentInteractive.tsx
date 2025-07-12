@@ -17,11 +17,12 @@ export default function AboutContentInteractive({
   // Add cursor interactions
   useEffect(() => {
     if (workTogetherRef.current) {
-      addCursorInteraction(workTogetherRef.current, {
+      const cleanup = addCursorInteraction(workTogetherRef.current, {
         onHover: 'hover',
         onText: "Let's work together!",
         onClick: 'click',
       });
+      return cleanup;
     }
     return undefined;
   }, [addCursorInteraction]);

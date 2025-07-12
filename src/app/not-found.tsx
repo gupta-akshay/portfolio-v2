@@ -11,11 +11,12 @@ export default function NotFound() {
   // Add cursor interactions
   useEffect(() => {
     if (goBackRef.current) {
-      addCursorInteraction(goBackRef.current, {
+      const cleanup = addCursorInteraction(goBackRef.current, {
         onHover: 'hover',
         onText: 'Go back to home',
         onClick: 'click',
       });
+      return cleanup;
     }
     return undefined;
   }, [addCursorInteraction]);

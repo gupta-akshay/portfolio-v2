@@ -8,6 +8,7 @@ import { Blog } from '@/sanity/types/blog';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
+import { useCursor } from '@/app/context/CursorContext';
 
 // Global cache for text measurements to avoid recalculation across all BlogTile instances
 const textMeasurementCache = new Map<string, number>();
@@ -66,6 +67,7 @@ const BlogTile = memo(
     const router = useRouter();
     const { startLoading } = useLoading();
     const { addCursorInteraction } = useCursorInteractions();
+    const { setCursorVariant, setCursorText } = useCursor();
     const metaRef = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLDivElement>(null);
     const titleRef = useRef<HTMLDivElement>(null);
@@ -157,23 +159,29 @@ const BlogTile = memo(
 
     // Add cursor interactions
     useEffect(() => {
+      const cleanupFunctions: (() => void)[] = [];
+
       if (imageRef.current) {
-        addCursorInteraction(imageRef.current, {
+        const cleanup = addCursorInteraction(imageRef.current, {
           onHover: 'hover',
           onText: 'Read this article',
           onClick: 'click',
         });
+        if (cleanup) cleanupFunctions.push(cleanup);
       }
 
       if (titleRef.current) {
-        addCursorInteraction(titleRef.current, {
+        const cleanup = addCursorInteraction(titleRef.current, {
           onHover: 'hover',
           onText: 'Read this article',
           onClick: 'click',
         });
+        if (cleanup) cleanupFunctions.push(cleanup);
       }
 
-      return undefined;
+      return () => {
+        cleanupFunctions.forEach((cleanup) => cleanup());
+      };
     }, [addCursorInteraction]);
 
     // Use ResizeObserver for better performance + initial calculation
@@ -217,10 +225,10 @@ const BlogTile = memo(
       e.preventDefault();
       startLoading();
 
-      // Use setTimeout to ensure the loading state is set before navigation
-      setTimeout(() => {
-        router.push(`/blog/${blog.slug.current}`);
-      }, 10);
+      setCursorVariant('default');
+      setCursorText('');
+
+      router.push(`/blog/${blog.slug.current}`);
     };
 
     return (
