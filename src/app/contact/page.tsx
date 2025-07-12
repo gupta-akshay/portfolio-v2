@@ -11,6 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import Layout from '@/app/components/Layout';
 import ContactFormInteractive from '@/app/components/ContactFormInteractive';
 import MapSection from '@/app/components/MapSection';
+import { InteractiveBackground } from '@/app/components';
 
 export default function Contact() {
   return (
@@ -20,8 +21,16 @@ export default function Contact() {
         id='contact'
         data-nav-tooltip='Contact Me'
         className='pp-section pp-scrollable section dark-bg'
+        style={{ position: 'relative', minHeight: '100vh' }}
       >
-        <div className='container'>
+        <InteractiveBackground
+          variant='grid'
+          intensity={0.9}
+          color='#2fbf71'
+          interactive={true}
+          className='contact-background'
+        />
+        <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <div className='title'>
             <h3>Get in touch.</h3>
           </div>

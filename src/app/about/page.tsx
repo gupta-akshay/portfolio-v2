@@ -4,6 +4,11 @@ import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 import AboutContentInteractive from '@/app/components/AboutContentInteractive';
+import {
+  InteractiveBackground,
+  MagneticHover,
+  RippleEffect,
+} from '@/app/components';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live/about'),
@@ -138,8 +143,19 @@ export default function About() {
         id='about'
         data-nav-tooltip='About'
         className='pp-section pp-scrollable section about-section'
+        style={{ position: 'relative', minHeight: '100vh' }}
       >
-        <div className='container'>
+        <InteractiveBackground
+          variant='grid'
+          count={15}
+          color='#2fbf71'
+          size={40}
+          speed={0.5}
+          intensity={0.4}
+          interactive={true}
+          className='about-background'
+        />
+        <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <div className='row align-items-center justify-content-center'>
             <div className='col-lg-6 m-15px-tb d-none d-sm-block'>
               <div className='about-img'>
@@ -178,9 +194,13 @@ export default function About() {
                     to refresh your mind! 🌊
                   </p>
                   <div className='btn-bar'>
-                    <AboutContentInteractive>
-                      <span>Let&apos;s Work Together!</span>
-                    </AboutContentInteractive>
+                    <MagneticHover intensity={0.4} glowEffect={true}>
+                      <RippleEffect>
+                        <AboutContentInteractive>
+                          <span>Let&apos;s Work Together!</span>
+                        </AboutContentInteractive>
+                      </RippleEffect>
+                    </MagneticHover>
                   </div>
                 </div>
               </div>

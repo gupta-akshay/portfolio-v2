@@ -1,0 +1,386 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+@use '../3d-effects' as *;
+
+// Enhanced hover states
+.enhanced-hover {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow, filter;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+    .theme-light & {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba($px-theme, 0.1),
+      rgba($px-theme, 0.05),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Magnetic hover effects
+.magnetic-hover {
+  position: relative;
+  cursor: pointer;
+  will-change: transform;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: radial-gradient(
+      circle at center,
+      rgba($px-theme, 0.1) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    animation: magnetic-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes magnetic-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+// Glow effects
+.glow-hover {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(
+      45deg,
+      $px-theme,
+      $px-pink,
+      $px-teal,
+      $px-theme
+    );
+    background-size: 300% 300%;
+    opacity: 0;
+    filter: blur(5px);
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+    z-index: -1;
+    animation: glow-rotate 4s linear infinite;
+  }
+
+  &:hover::before {
+    opacity: 0.7;
+  }
+
+  &:hover {
+    box-shadow: 0 0 30px rgba($px-theme, 0.5);
+  }
+}
+
+@keyframes glow-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+// Ripple effects
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: scale(0);
+    animation: ripple-animation 0.6s ease-out;
+  }
+}
+
+@keyframes ripple-animation {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+// Gradient border effects
+.gradient-border-container {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: inherit;
+    border-radius: inherit;
+    z-index: -1;
+    filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 0.6;
+  }
+}
+
+// Morphing hover effects
+.morph-hover {
+  position: relative;
+  border-radius: 8px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  &:hover {
+    border-radius: 20px;
+    transform: scale(1.05) rotate(2deg);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba($px-theme, 0.2),
+        transparent
+      );
+      border-radius: inherit;
+      z-index: -1;
+      animation: morph-glow 1s ease-in-out;
+    }
+  }
+}
+
+@keyframes morph-glow {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+// Tilt effects
+.tilt-hover {
+  position: relative;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: rotateX(5deg) rotateY(5deg) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+
+    .theme-light & {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Particle hover effects
+.particle-hover {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba($px-theme, 0.2) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Neon hover effects
+.neon-hover {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    color: $px-theme;
+    text-shadow:
+      0 0 5px $px-theme,
+      0 0 10px $px-theme,
+      0 0 20px $px-theme,
+      0 0 40px $px-theme;
+    box-shadow:
+      0 0 10px rgba($px-theme, 0.5),
+      0 0 20px rgba($px-theme, 0.3),
+      0 0 40px rgba($px-theme, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: $px-theme;
+      opacity: 0.1;
+      filter: blur(3px);
+      border-radius: inherit;
+      z-index: -1;
+    }
+  }
+}
+
+// Accessibility and performance optimizations
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-hover,
+  .magnetic-hover,
+  .glow-hover,
+  .morph-hover,
+  .tilt-hover,
+  .particle-hover,
+  .neon-hover {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+
+    &::before,
+    &::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    &:hover {
+      transform: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+// Mobile optimizations
+@media (max-width: $px-media-md) {
+  .enhanced-hover,
+  .magnetic-hover,
+  .glow-hover,
+  .morph-hover,
+  .tilt-hover,
+  .particle-hover,
+  .neon-hover {
+    &:hover {
+      transform: scale(1.02) !important;
+
+      &::before,
+      &::after {
+        display: none;
+      }
+    }
+  }
+}
+
+// Touch device optimizations
+@media (hover: none) and (pointer: coarse) {
+  .enhanced-hover,
+  .magnetic-hover,
+  .glow-hover,
+  .morph-hover,
+  .tilt-hover,
+  .particle-hover,
+  .neon-hover {
+    &:hover {
+      transform: none !important;
+      box-shadow: none !important;
+
+      &::before,
+      &::after {
+        display: none !important;
+      }
+    }
+  }
+}

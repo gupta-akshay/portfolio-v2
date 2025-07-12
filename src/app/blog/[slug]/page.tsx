@@ -11,6 +11,7 @@ import TableOfContents from '@/app/components/TableOfContents';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
+import { InteractiveBackground } from '@/app/components';
 
 const SingleBlog = dynamic(() => import('@/app/components/SingleBlog'), {
   loading: () => <div className='loading-blog-content'>Loading content...</div>,
@@ -78,8 +79,22 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div id={post.slug.current} className='single-blog'>
-        <div className='container'>
+      <div
+        id={post.slug.current}
+        className='single-blog'
+        style={{ position: 'relative', minHeight: '100vh' }}
+      >
+        <InteractiveBackground
+          variant='grid'
+          count={8}
+          color='#2fbf71'
+          size={40}
+          speed={0.8}
+          intensity={0.9}
+          interactive={true}
+          className='blog-post-background'
+        />
+        <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <div className='blog-feature-img'>
             <BlogImage value={post.mainImage} isCoverImage />
           </div>
