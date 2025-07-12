@@ -27,7 +27,6 @@ export { default as Skills } from './Skills';
 
 // Re-export types that are actively used
 export type {
-  BackButtonProps,
   DayNightToggleProps,
   LoadingIndicatorProps,
   TypingAnimationProps,
