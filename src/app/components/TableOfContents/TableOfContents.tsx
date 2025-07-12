@@ -1,0 +1,215 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { PortableTextBlock } from 'sanity';
+import { generateHeadingId } from '@/app/utils/helpers';
+
+interface HeadingBlock {
+  _type: 'block';
+  style: 'h1' | 'h2' | 'h3' | 'h4';
+  children: Array<{
+    text: string;
+    _type: 'span';
+    marks?: string[];
+  }>;
+}
+
+interface TOCItem {
+  id: string;
+  text: string;
+  level: number;
+  children?: TOCItem[];
+}
+
+interface TableOfContentsProps {
+  content: PortableTextBlock[];
+  minHeadings?: number;
+  className?: string;
+}
+
+const extractTextFromBlock = (block: HeadingBlock): string => {
+  return block.children
+    .map((child) => child.text)
+    .join('')
+    .trim();
+};
+
+const extractHeadings = (content: PortableTextBlock[]): TOCItem[] => {
+  const headings: TOCItem[] = [];
+
+  content.forEach((block) => {
+    if (
+      block._type === 'block' &&
+      block.style &&
+      typeof block.style === 'string' &&
+      ['h1', 'h2', 'h3', 'h4'].includes(block.style)
+    ) {
+      const headingBlock = block as HeadingBlock;
+      const text = extractTextFromBlock(headingBlock);
+
+      if (text) {
+        const level = parseInt(headingBlock.style.charAt(1));
+        headings.push({
+          id: generateHeadingId(text),
+          text,
+          level,
+        });
+      }
+    }
+  });
+
+  return headings;
+};
+
+const buildNestedTOC = (headings: TOCItem[]): TOCItem[] => {
+  const result: TOCItem[] = [];
+  const stack: TOCItem[] = [];
+
+  headings.forEach((heading) => {
+    // Remove items from stack that are same level or deeper
+    while (stack.length > 0) {
+      const lastItem = stack[stack.length - 1];
+      if (lastItem && lastItem.level >= heading.level) {
+        stack.pop();
+      } else {
+        break;
+      }
+    }
+
+    const newItem: TOCItem = {
+      ...heading,
+      children: [],
+    };
+
+    if (stack.length === 0) {
+      result.push(newItem);
+    } else {
+      const parent = stack[stack.length - 1];
+      if (parent) {
+        if (!parent.children) {
+          parent.children = [];
+        }
+        parent.children.push(newItem);
+      }
+    }
+
+    stack.push(newItem);
+  });
+
+  return result;
+};
+
+const scrollToHeading = (id: string) => {
+  const element = document.getElementById(id);
+  if (element) {
+    const headerOffset = 80; // Account for fixed header
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth',
+    });
+  }
+};
+
+const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
+  items,
+  activeId,
+}) => {
+  if (items.length === 0) return null;
+
+  return (
+    <ul className='toc-list'>
+      {items.map((item) => (
+        <li key={item.id} className={`toc-item toc-level-${item.level}`}>
+          <a
+            href={`#${item.id}`}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToHeading(item.id);
+            }}
+            className={`toc-link ${activeId === item.id ? 'active' : ''}`}
+          >
+            {item.text}
+          </a>
+          {item.children && item.children.length > 0 && (
+            <TOCList items={item.children} activeId={activeId} />
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const TableOfContents: React.FC<TableOfContentsProps> = ({
+  content,
+  minHeadings = 3,
+  className = '',
+}) => {
+  const [activeId, setActiveId] = useState<string>('');
+  const [isVisible, setIsVisible] = useState(false);
+
+  const headings = extractHeadings(content);
+  const nestedHeadings = buildNestedTOC(headings);
+
+  useEffect(() => {
+    // Only set up observer if we have enough headings
+    if (headings.length < minHeadings) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: '-80px 0px -80% 0px',
+      }
+    );
+
+    // Observe all headings
+    headings.forEach((heading) => {
+      const element = document.getElementById(heading.id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [headings, minHeadings]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsVisible(scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Don't render if not enough headings
+  if (headings.length < minHeadings) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`table-of-contents ${isVisible ? 'visible' : ''} ${className}`}
+    >
+      <div className='toc-header'>
+        <h4>Table of Contents</h4>
+      </div>
+      <nav className='toc-nav'>
+        <TOCList items={nestedHeadings} activeId={activeId} />
+      </nav>
+    </div>
+  );
+};
+
+export default TableOfContents;

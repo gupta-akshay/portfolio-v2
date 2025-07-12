@@ -13,6 +13,10 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Blog } from '@/sanity/types/blog';
 import { useLoading } from '@/app/context/LoadingContext';
+import {
+  generateHeadingId,
+  extractTextFromChildren,
+} from '@/app/utils/helpers';
 
 const CodeComponent = ({ value }: any) => {
   return (
@@ -138,6 +142,25 @@ function groupConsecutiveImages(blocks: any[]) {
   return result;
 }
 
+// Custom heading components with IDs
+const HeadingComponent = ({ level, children, value }: any) => {
+  const text = extractTextFromChildren(children);
+  const id = generateHeadingId(text);
+
+  switch (level) {
+    case 1:
+      return <h1 id={id}>{children}</h1>;
+    case 2:
+      return <h2 id={id}>{children}</h2>;
+    case 3:
+      return <h3 id={id}>{children}</h3>;
+    case 4:
+      return <h4 id={id}>{children}</h4>;
+    default:
+      return <h2 id={id}>{children}</h2>;
+  }
+};
+
 const components = {
   types: {
     image: BlogImage,
@@ -148,6 +171,28 @@ const components = {
     internalLink: InternalLink,
     link: ExternalLink,
     code: CodeMarkComponent,
+  },
+  block: {
+    h1: ({ children, value }: any) => (
+      <HeadingComponent level={1} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
+    h2: ({ children, value }: any) => (
+      <HeadingComponent level={2} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
+    h3: ({ children, value }: any) => (
+      <HeadingComponent level={3} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
+    h4: ({ children, value }: any) => (
+      <HeadingComponent level={4} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
   },
 };
 
