@@ -50,7 +50,7 @@ const extractHeadings = (content: PortableTextBlock[]): TOCItem[] => {
       if (text) {
         const level = parseInt(headingBlock.style.charAt(1));
         headings.push({
-          id: headingBlock._key,
+          id: headingBlock._key || '',
           text,
           level,
         });
