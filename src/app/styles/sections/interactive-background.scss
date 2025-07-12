@@ -77,12 +77,11 @@
   }
 
   &-triangle {
-    filter: blur(0.5px);
-    filter: drop-shadow(0 0 20px rgba(47, 191, 113, 0.5))
+    filter: blur(0.5px) drop-shadow(0 0 20px rgba(47, 191, 113, 0.5))
       drop-shadow(0 0 40px rgba(47, 191, 113, 0.3));
 
     &:hover {
-      filter: drop-shadow(0 0 30px rgba(47, 191, 113, 0.7))
+      filter: blur(0.5px) drop-shadow(0 0 30px rgba(47, 191, 113, 0.7))
         drop-shadow(0 0 60px rgba(47, 191, 113, 0.5));
     }
   }
