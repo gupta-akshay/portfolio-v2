@@ -149,6 +149,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
 }) => {
   const [activeId, setActiveId] = useState<string>('');
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const headings = extractHeadings(content);
   const nestedHeadings = buildNestedTOC(headings);
@@ -230,15 +231,28 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
       setIsVisible(scrollY > 300);
     };
 
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1200);
+    };
+
+    // Initial check
+    handleResize();
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
-  // Don't render if not enough headings
-  if (headings.length < minHeadings) {
+  // Don't render if not enough headings or on mobile
+  if (headings.length < minHeadings || isMobile) {
     return null;
   }
 
+  // Desktop version only - fixed sidebar, appears on scroll
   return (
     <div
       className={`table-of-contents ${isVisible ? 'visible' : ''} ${className}`}
