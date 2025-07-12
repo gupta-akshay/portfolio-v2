@@ -27,11 +27,11 @@ export default function SocialShare({
   const { addCursorInteraction } = useCursorInteractions();
 
   // Social share button refs
-  const twitterRef = useRef<HTMLButtonElement>(null);
-  const facebookRef = useRef<HTMLButtonElement>(null);
-  const linkedinRef = useRef<HTMLButtonElement>(null);
-  const whatsappRef = useRef<HTMLButtonElement>(null);
-  const emailRef = useRef<HTMLButtonElement>(null);
+  const twitterRef = useRef<HTMLDivElement>(null);
+  const facebookRef = useRef<HTMLDivElement>(null);
+  const linkedinRef = useRef<HTMLDivElement>(null);
+  const whatsappRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLButtonElement>(null);
 
   // Add cursor interactions
@@ -133,53 +133,51 @@ export default function SocialShare({
       <div className='social-share-bar'>
         <div className='social-share-title'>Share</div>
 
-        <TwitterShareButton
-          url={shareConfig.url}
-          title={shareConfig.title}
-          hashtags={['blog', 'tech', 'development']}
-          className='social-share-btn'
-          ref={twitterRef}
-        >
-          <TwitterIcon size={32} round />
-        </TwitterShareButton>
+        <div ref={twitterRef} className='social-share-btn'>
+          <TwitterShareButton
+            url={shareConfig.url}
+            title={shareConfig.title}
+            hashtags={['blog', 'tech', 'development']}
+          >
+            <TwitterIcon size={32} round />
+          </TwitterShareButton>
+        </div>
 
-        <FacebookShareButton
-          url={shareConfig.url}
-          className='social-share-btn'
-          ref={facebookRef}
-        >
-          <FacebookIcon size={32} round />
-        </FacebookShareButton>
+        <div ref={facebookRef} className='social-share-btn'>
+          <FacebookShareButton url={shareConfig.url}>
+            <FacebookIcon size={32} round />
+          </FacebookShareButton>
+        </div>
 
-        <LinkedinShareButton
-          url={shareConfig.url}
-          title={shareConfig.title}
-          summary={shareConfig.quote}
-          className='social-share-btn'
-          ref={linkedinRef}
-        >
-          <LinkedinIcon size={32} round />
-        </LinkedinShareButton>
+        <div ref={linkedinRef} className='social-share-btn'>
+          <LinkedinShareButton
+            url={shareConfig.url}
+            title={shareConfig.title}
+            summary={shareConfig.quote}
+          >
+            <LinkedinIcon size={32} round />
+          </LinkedinShareButton>
+        </div>
 
-        <WhatsappShareButton
-          url={shareConfig.url}
-          title={shareConfig.title}
-          separator=' - '
-          className='social-share-btn'
-          ref={whatsappRef}
-        >
-          <WhatsappIcon size={32} round />
-        </WhatsappShareButton>
+        <div ref={whatsappRef} className='social-share-btn'>
+          <WhatsappShareButton
+            url={shareConfig.url}
+            title={shareConfig.title}
+            separator=' - '
+          >
+            <WhatsappIcon size={32} round />
+          </WhatsappShareButton>
+        </div>
 
-        <EmailShareButton
-          url={shareConfig.url}
-          subject={shareConfig.title}
-          body={`Check out this article: ${shareConfig.title}`}
-          className='social-share-btn'
-          ref={emailRef}
-        >
-          <EmailIcon size={32} round />
-        </EmailShareButton>
+        <div ref={emailRef} className='social-share-btn'>
+          <EmailShareButton
+            url={shareConfig.url}
+            subject={shareConfig.title}
+            body={`Check out this article: ${shareConfig.title}`}
+          >
+            <EmailIcon size={32} round />
+          </EmailShareButton>
+        </div>
 
         <button
           onClick={handleCopyLink}
