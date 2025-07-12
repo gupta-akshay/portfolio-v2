@@ -172,6 +172,8 @@ const BlogTile = memo(
           onClick: 'click',
         });
       }
+
+      return undefined;
     }, [addCursorInteraction]);
 
     // Use ResizeObserver for better performance + initial calculation

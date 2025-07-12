@@ -84,6 +84,8 @@ export default function SocialShare({
         onClick: 'click',
       });
     }
+
+    return undefined;
   }, [addCursorInteraction]);
 
   useEffect(() => {

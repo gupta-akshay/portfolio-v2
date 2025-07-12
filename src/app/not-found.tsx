@@ -17,6 +17,7 @@ export default function NotFound() {
         onClick: 'click',
       });
     }
+    return undefined;
   }, [addCursorInteraction]);
 
   return (

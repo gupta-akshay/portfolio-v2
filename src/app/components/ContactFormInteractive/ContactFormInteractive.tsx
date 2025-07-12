@@ -57,6 +57,8 @@ export default function ContactFormInteractive() {
         onClick: 'click',
       });
     }
+
+    return undefined;
   }, [addCursorInteraction]);
 
   const form = useForm({

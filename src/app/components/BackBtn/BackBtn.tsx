@@ -31,6 +31,7 @@ const BackBtn = ({
         onClick: 'click',
       });
     }
+    return undefined;
   }, [addCursorInteraction]);
 
   const handleBack = () => {

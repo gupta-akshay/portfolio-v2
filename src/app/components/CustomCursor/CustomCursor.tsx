@@ -8,7 +8,6 @@ import './CustomCursor.scss';
 const CustomCursor = () => {
   const { cursorVariant, cursorText } = useCursor();
   const [isVisible, setIsVisible] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   // Motion values for smooth cursor movement (no spring)
   const cursorX = useMotionValue(-100);
@@ -19,7 +18,6 @@ const CustomCursor = () => {
       const x = e.clientX;
       const y = e.clientY;
 
-      setMousePosition({ x, y });
       cursorX.set(x - 16);
       cursorY.set(y - 16);
 

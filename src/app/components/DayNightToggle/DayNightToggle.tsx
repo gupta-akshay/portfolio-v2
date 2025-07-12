@@ -37,14 +37,14 @@ const DayNightToggle = ({
   // Add cursor interactions
   useEffect(() => {
     if (buttonRef.current) {
-      const cleanup = addCursorInteraction(buttonRef.current, {
+      return addCursorInteraction(buttonRef.current, {
         onHover: 'hover',
         onText: toggleText,
         onClick: 'click',
       });
-
-      return cleanup;
     }
+
+    return undefined;
   }, [addCursorInteraction, lightMode, toggleText]);
 
   // Track hover state manually to know when to update cursor text

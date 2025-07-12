@@ -154,6 +154,8 @@ const Header = () => {
         onClick: 'click',
       });
     }
+
+    return undefined;
   }, [addCursorInteraction]);
 
   useEffect(() => {

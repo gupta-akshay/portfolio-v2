@@ -23,6 +23,7 @@ export default function AboutContentInteractive({
         onClick: 'click',
       });
     }
+    return undefined;
   }, [addCursorInteraction]);
 
   return (

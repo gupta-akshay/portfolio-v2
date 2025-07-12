@@ -34,6 +34,8 @@ const CursorInteractive = ({
 
       return addCursorInteraction(ref.current, cursorOptions);
     }
+
+    return undefined;
   }, [addCursorInteraction, variant, text, onHover, onClick]);
 
   return (

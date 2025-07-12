@@ -73,5 +73,6 @@ export const useAutoCursorInteraction = (
     if (ref.current) {
       return addCursorInteraction(ref.current, options);
     }
+    return undefined;
   }, [ref, options, addCursorInteraction]);
 };

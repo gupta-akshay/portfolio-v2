@@ -32,8 +32,10 @@ export default function HomeContentInteractive({
         },
       };
 
-      addCursorInteraction(elementRef.current, interactions[type]);
+      return addCursorInteraction(elementRef.current, interactions[type]);
     }
+
+    return undefined;
   }, [addCursorInteraction, type]);
 
   if (type === 'downloadButton') {
