@@ -84,6 +84,9 @@ const BlogTile = memo(
       (containerWidth: number) => {
         if (containerWidth === 0) return blog.categories.length;
 
+        // Return 0 if there are no categories
+        if (blog.categories.length === 0) return 0;
+
         // Get the actual font family from the container if available
         let fontFamily = 'inherit';
         if (metaRef.current) {
@@ -116,17 +119,24 @@ const BlogTile = memo(
 
         // If we need to show +n, reserve space for it
         if (fittingCategories < blog.categories.length) {
-          const remainingCount = blog.categories.length - fittingCategories;
-          const plusWidth =
-            measureText(`+${remainingCount}`, 12, fontFamily) + 8;
-
           // Check if we need to reduce visible categories to fit +n
-          while (
-            fittingCategories > 0 &&
-            usedWidth + plusWidth > containerWidth - 40
-          ) {
+          while (fittingCategories > 0) {
+            // Recalculate remaining count and plus width for current fitting categories
+            const remainingCount = blog.categories.length - fittingCategories;
+            const plusWidth =
+              measureText(`+${remainingCount}`, 12, fontFamily) + 8;
+
+            // If current layout fits, we're done
+            if (usedWidth + plusWidth <= containerWidth - 40) {
+              break;
+            }
+
+            // Remove the last category and try again
             const lastCategory = blog.categories[fittingCategories - 1];
-            if (!lastCategory) break;
+            if (!lastCategory) {
+              fittingCategories--;
+              continue;
+            }
 
             const lastCategoryText = `#${lastCategory.title}`;
             const lastCategoryWidth =
@@ -136,7 +146,7 @@ const BlogTile = memo(
           }
         }
 
-        return Math.max(1, fittingCategories);
+        return fittingCategories;
       },
       [blog.categories, formattedDate, readingTime.text]
     );
