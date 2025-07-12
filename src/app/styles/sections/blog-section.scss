@@ -1,8 +1,15 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 @use 'sass:color';
 
 .blog-grid {
+  // Add 3D card tilt effect
+  @include card-3d-tilt(3deg, 1.02, 0.12);
+  @include stacking-cards(2, 6px);
+  @include responsive-3d-effects;
+  background-color: transparent;
+
   .blog-img {
     overflow: hidden;
     border-radius: 10px;
@@ -137,7 +144,6 @@
       }
     }
   }
-
 }
 
 .article {
@@ -169,6 +175,11 @@
     h2 {
       color: $px-white;
       font-weight: 600;
+      
+      // Add 3D text shadow effect
+      @include text-3d-shadow(2px, 1px);
+      @include responsive-3d-effects;
+      
       .theme-light & {
         color: $px-dark;
       }

@@ -17,7 +17,10 @@ export const client = createClient({
 });
 
 // Utility function to generate a unique key for blocks
-const generateBlockKey = (index: number, blockType: string = 'block'): string => {
+const generateBlockKey = (
+  index: number,
+  blockType: string = 'block'
+): string => {
   return `${blockType}_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`;
 };
 

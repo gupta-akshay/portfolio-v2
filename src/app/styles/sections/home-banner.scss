@@ -1,9 +1,14 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .home-banner {
   overflow: hidden;
   position: relative;
+  
+  // Add subtle parallax background effect
+  @include perspective-container;
+  
   &:after {
     content: '';
     position: absolute;
@@ -15,6 +20,7 @@
     background: $px-dark;
     z-index: 0;
     transition: background-color 0.2s ease-in-out;
+    transform: translateZ(-2px) scale(1.02);
     .theme-light & {
       background: $px-gray;
     }
@@ -64,6 +70,11 @@
       line-height: 1;
       margin: 0 0 20px;
       color: $px-white;
+      
+      // Add 3D text shadow effect
+      @include text-3d-shadow(3px, 2px);
+      @include responsive-3d-effects;
+      
       .theme-light & {
         color: $px-dark;
       }

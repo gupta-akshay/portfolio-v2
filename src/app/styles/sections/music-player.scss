@@ -1,5 +1,6 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .cloudinaryAudioPlayer {
   display: flex;
@@ -97,6 +98,11 @@
   transition:
     background-color 0.2s,
     border-left 0.2s;
+  border-radius: 8px;
+  
+  // Add 3D card tilt effect
+  @include card-3d-tilt(2deg, 1.01, 0.08);
+  @include responsive-3d-effects;
 
   .theme-light & {
     border-bottom: 1px solid rgba($px-dark, 0.05);
@@ -543,6 +549,10 @@
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s;
+  
+  // Add 3D button press effect
+  @include floating-3d(2px, 0.06);
+  @include responsive-3d-effects;
 
   .theme-light & {
     color: rgba($px-dark, 0.7);
@@ -961,10 +971,13 @@
     align-items: center;
     justify-content: space-between;
     height: 70px;
+    
+    border-top: 1px solid rgba($px-white, 0.1);
 
     .theme-light & {
       background-color: $px-white;
       box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      border-top: 1px solid rgba($px-dark, 0.1);
     }
 
     .miniPlayerContent {

@@ -1,6 +1,7 @@
 @use 'sass:color';
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .about-section {
   .about-img {
@@ -137,6 +138,11 @@
       align-items: center;
       gap: 10px;
       @include transition(ease all 0.4s);
+      
+      // Add stacking cards effect for depth
+      @include stacking-cards(2, 3px);
+      @include responsive-3d-effects;
+      
       .theme-light & {
         color: $px-dark;
         background: $px-gray;
@@ -165,6 +171,13 @@
   width: 100%;
   margin-top: 15px;
   background: $px-dark;
+  border-radius: 8px;
+  
+  // Add stacking cards effect
+  @include stacking-cards(2, 5px);
+  @include floating-3d(2px, 0.08);
+  @include responsive-3d-effects;
+  
   .theme-light & {
     background: $px-gray;
   }
