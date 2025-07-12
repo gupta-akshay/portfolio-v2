@@ -1,11 +1,13 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .emoji-reactions-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 1000;
+  border-radius: 50px;
   animation: slideIn 0.3s ease-out;
 }
 
@@ -19,11 +21,20 @@
   border: 1px solid rgba($px-white, 0.1);
   gap: 4px;
   transition: all 0.3s ease-in-out;
+  
+  // Add 3D floating effects with glassmorphism
+  @include floating-3d(4px, 0.1);
+  @include glassmorphism-3d(15px, 0.08);
+  @include responsive-3d-effects;
 
   .theme-light & {
     background: rgba($px-white, 0.95);
     border: 1px solid rgba($px-black, 0.1);
     box-shadow: 0 4px 20px rgba($px-black, 0.1);
+  }
+
+  &::before {
+    border-radius: 50px;
   }
 }
 
@@ -40,14 +51,17 @@
   min-width: 40px;
   position: relative;
   color: $px-body;
+  
+  // Add 3D button press effects
+  @include floating-3d(1px, 0.05);
+  @include responsive-3d-effects;
 
   &:hover {
     background: rgba($px-white, 0.05);
-    transform: scale(1.1);
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.95) translateY(1px);
   }
 
   &.user-reacted {

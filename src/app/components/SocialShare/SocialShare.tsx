@@ -13,8 +13,8 @@ import {
   WhatsappIcon,
   EmailIcon,
 } from 'react-share';
-import { toast } from 'react-hot-toast';
 import { SocialShareProps } from '@/app/types/components';
+import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 export default function SocialShare({
   url,
@@ -24,6 +24,68 @@ export default function SocialShare({
   const [isVisible, setIsVisible] = useState(false);
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { addCursorInteraction } = useCursorInteractions();
+
+  // Social share button refs
+  const twitterRef = useRef<HTMLDivElement>(null);
+  const facebookRef = useRef<HTMLDivElement>(null);
+  const linkedinRef = useRef<HTMLDivElement>(null);
+  const whatsappRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLButtonElement>(null);
+
+  // Add cursor interactions
+  useEffect(() => {
+    if (twitterRef.current) {
+      addCursorInteraction(twitterRef.current, {
+        onHover: 'hover',
+        onText: 'Share on Twitter',
+        onClick: 'click',
+      });
+    }
+
+    if (facebookRef.current) {
+      addCursorInteraction(facebookRef.current, {
+        onHover: 'hover',
+        onText: 'Share on Facebook',
+        onClick: 'click',
+      });
+    }
+
+    if (linkedinRef.current) {
+      addCursorInteraction(linkedinRef.current, {
+        onHover: 'hover',
+        onText: 'Share on LinkedIn',
+        onClick: 'click',
+      });
+    }
+
+    if (whatsappRef.current) {
+      addCursorInteraction(whatsappRef.current, {
+        onHover: 'hover',
+        onText: 'Share on WhatsApp',
+        onClick: 'click',
+      });
+    }
+
+    if (emailRef.current) {
+      addCursorInteraction(emailRef.current, {
+        onHover: 'hover',
+        onText: 'Share via Email',
+        onClick: 'click',
+      });
+    }
+
+    if (copyRef.current) {
+      addCursorInteraction(copyRef.current, {
+        onHover: 'hover',
+        onText: 'Copy link to clipboard',
+        onClick: 'click',
+      });
+    }
+
+    return undefined;
+  }, [addCursorInteraction]);
 
   useEffect(() => {
     // Show the social share bar after a short delay
@@ -44,7 +106,6 @@ export default function SocialShare({
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      toast.success('Link copied to clipboard!');
 
       // Clear any existing timeout
       if (copyTimeoutRef.current) {
@@ -54,7 +115,7 @@ export default function SocialShare({
       // Reset copied state after 2 seconds
       copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast.error('Failed to copy link');
+      console.error('Failed to copy link', error);
     }
   };
 
@@ -72,50 +133,57 @@ export default function SocialShare({
       <div className='social-share-bar'>
         <div className='social-share-title'>Share</div>
 
-        <TwitterShareButton
-          url={shareConfig.url}
-          title={shareConfig.title}
-          hashtags={['blog', 'tech', 'development']}
-          className='social-share-btn'
-        >
-          <TwitterIcon size={32} round />
-        </TwitterShareButton>
+        <div ref={twitterRef} className='social-share-btn'>
+          <TwitterShareButton
+            url={shareConfig.url}
+            title={shareConfig.title}
+            hashtags={['blog', 'tech', 'development']}
+          >
+            <TwitterIcon size={32} round />
+          </TwitterShareButton>
+        </div>
 
-        <FacebookShareButton url={shareConfig.url} className='social-share-btn'>
-          <FacebookIcon size={32} round />
-        </FacebookShareButton>
+        <div ref={facebookRef} className='social-share-btn'>
+          <FacebookShareButton url={shareConfig.url}>
+            <FacebookIcon size={32} round />
+          </FacebookShareButton>
+        </div>
 
-        <LinkedinShareButton
-          url={shareConfig.url}
-          title={shareConfig.title}
-          summary={shareConfig.quote}
-          className='social-share-btn'
-        >
-          <LinkedinIcon size={32} round />
-        </LinkedinShareButton>
+        <div ref={linkedinRef} className='social-share-btn'>
+          <LinkedinShareButton
+            url={shareConfig.url}
+            title={shareConfig.title}
+            summary={shareConfig.quote}
+          >
+            <LinkedinIcon size={32} round />
+          </LinkedinShareButton>
+        </div>
 
-        <WhatsappShareButton
-          url={shareConfig.url}
-          title={shareConfig.title}
-          separator=' - '
-          className='social-share-btn'
-        >
-          <WhatsappIcon size={32} round />
-        </WhatsappShareButton>
+        <div ref={whatsappRef} className='social-share-btn'>
+          <WhatsappShareButton
+            url={shareConfig.url}
+            title={shareConfig.title}
+            separator=' - '
+          >
+            <WhatsappIcon size={32} round />
+          </WhatsappShareButton>
+        </div>
 
-        <EmailShareButton
-          url={shareConfig.url}
-          subject={shareConfig.title}
-          body={`Check out this article: ${shareConfig.title}`}
-          className='social-share-btn'
-        >
-          <EmailIcon size={32} round />
-        </EmailShareButton>
+        <div ref={emailRef} className='social-share-btn'>
+          <EmailShareButton
+            url={shareConfig.url}
+            subject={shareConfig.title}
+            body={`Check out this article: ${shareConfig.title}`}
+          >
+            <EmailIcon size={32} round />
+          </EmailShareButton>
+        </div>
 
         <button
           onClick={handleCopyLink}
           className={`social-share-btn copy-link-btn ${copied ? 'copied' : ''}`}
           title='Copy link'
+          ref={copyRef}
         >
           <div className='copy-icon'>{copied ? '✓' : '🔗'}</div>
         </button>

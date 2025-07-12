@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBlog,
@@ -22,11 +22,141 @@ import {
   faDev,
 } from '@fortawesome/free-brands-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 const Header = () => {
   const [sideBarToggle, setSideBarToggle] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const pathname = usePathname();
+  const { addCursorInteraction } = useCursorInteractions();
+
+  // Navigation refs
+  const homeRef = useRef<HTMLAnchorElement>(null);
+  const aboutRef = useRef<HTMLAnchorElement>(null);
+  const blogRef = useRef<HTMLAnchorElement>(null);
+  const musicRef = useRef<HTMLAnchorElement>(null);
+  const contactRef = useRef<HTMLAnchorElement>(null);
+
+  // Social media refs
+  const githubRef = useRef<HTMLAnchorElement>(null);
+  const linkedinRef = useRef<HTMLAnchorElement>(null);
+  const mediumRef = useRef<HTMLAnchorElement>(null);
+  const devRef = useRef<HTMLAnchorElement>(null);
+  const instagramRef = useRef<HTMLAnchorElement>(null);
+  const facebookRef = useRef<HTMLAnchorElement>(null);
+  const soundcloudRef = useRef<HTMLAnchorElement>(null);
+  const logoRef = useRef<HTMLAnchorElement>(null);
+
+  // Add cursor interactions
+  useEffect(() => {
+    // Navigation links
+    if (homeRef.current) {
+      addCursorInteraction(homeRef.current, {
+        onHover: 'hover',
+        onText: 'Go to Home',
+        onClick: 'click',
+      });
+    }
+
+    if (aboutRef.current) {
+      addCursorInteraction(aboutRef.current, {
+        onHover: 'hover',
+        onText: 'Learn about me',
+        onClick: 'click',
+      });
+    }
+
+    if (blogRef.current) {
+      addCursorInteraction(blogRef.current, {
+        onHover: 'hover',
+        onText: 'Read my blog posts',
+        onClick: 'click',
+      });
+    }
+
+    if (musicRef.current) {
+      addCursorInteraction(musicRef.current, {
+        onHover: 'hover',
+        onText: 'Listen to my music',
+        onClick: 'click',
+      });
+    }
+
+    if (contactRef.current) {
+      addCursorInteraction(contactRef.current, {
+        onHover: 'hover',
+        onText: 'Get in touch',
+        onClick: 'click',
+      });
+    }
+
+    // Social media links
+    if (githubRef.current) {
+      addCursorInteraction(githubRef.current, {
+        onHover: 'hover',
+        onText: 'View GitHub profile',
+        onClick: 'click',
+      });
+    }
+
+    if (linkedinRef.current) {
+      addCursorInteraction(linkedinRef.current, {
+        onHover: 'hover',
+        onText: 'Connect on LinkedIn',
+        onClick: 'click',
+      });
+    }
+
+    if (mediumRef.current) {
+      addCursorInteraction(mediumRef.current, {
+        onHover: 'hover',
+        onText: 'Read on Medium',
+        onClick: 'click',
+      });
+    }
+
+    if (devRef.current) {
+      addCursorInteraction(devRef.current, {
+        onHover: 'hover',
+        onText: 'Check out Dev.to',
+        onClick: 'click',
+      });
+    }
+
+    if (instagramRef.current) {
+      addCursorInteraction(instagramRef.current, {
+        onHover: 'hover',
+        onText: 'Follow on Instagram',
+        onClick: 'click',
+      });
+    }
+
+    if (facebookRef.current) {
+      addCursorInteraction(facebookRef.current, {
+        onHover: 'hover',
+        onText: 'Like on Facebook',
+        onClick: 'click',
+      });
+    }
+
+    if (soundcloudRef.current) {
+      addCursorInteraction(soundcloudRef.current, {
+        onHover: 'hover',
+        onText: 'Listen on SoundCloud',
+        onClick: 'click',
+      });
+    }
+
+    if (logoRef.current) {
+      addCursorInteraction(logoRef.current, {
+        onHover: 'hover',
+        onText: 'Go to home',
+        onClick: 'click',
+      });
+    }
+
+    return undefined;
+  }, [addCursorInteraction]);
 
   useEffect(() => {
     switch (true) {
@@ -78,7 +208,7 @@ const Header = () => {
       <div className='mob-header' role='banner'>
         <div className='d-flex'>
           <div className='navbar-brand'>
-            <Link href='/'>
+            <Link href='/' ref={logoRef}>
               <span className='logo-text'>Akshay</span>
             </Link>
           </div>
@@ -133,6 +263,7 @@ const Header = () => {
                 className='nav-link'
                 href='/'
                 onClick={() => setSideBarToggle(false)}
+                ref={homeRef}
               >
                 <FontAwesomeIcon
                   icon={faHouse as IconProp}
@@ -147,6 +278,7 @@ const Header = () => {
                 className='nav-link'
                 href='/about'
                 onClick={() => setSideBarToggle(false)}
+                ref={aboutRef}
               >
                 <FontAwesomeIcon
                   icon={faIdBadge as IconProp}
@@ -161,6 +293,7 @@ const Header = () => {
                 className='nav-link'
                 href='/blog'
                 onClick={() => setSideBarToggle(false)}
+                ref={blogRef}
               >
                 <FontAwesomeIcon
                   icon={faBlog as IconProp}
@@ -175,6 +308,7 @@ const Header = () => {
                 className='nav-link'
                 href='/music'
                 onClick={() => setSideBarToggle(false)}
+                ref={musicRef}
               >
                 <FontAwesomeIcon
                   icon={faMusic as IconProp}
@@ -189,6 +323,7 @@ const Header = () => {
                 className='nav-link'
                 href='/contact'
                 onClick={() => setSideBarToggle(false)}
+                ref={contactRef}
               >
                 <FontAwesomeIcon
                   icon={faMapLocation as IconProp}
@@ -209,6 +344,7 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Github'
+            ref={githubRef}
           >
             <FontAwesomeIcon icon={faGithub as IconProp} />
           </Link>
@@ -217,6 +353,7 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Linkedin'
+            ref={linkedinRef}
           >
             <FontAwesomeIcon icon={faLinkedin as IconProp} />
           </Link>
@@ -225,6 +362,7 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Medium'
+            ref={mediumRef}
           >
             <FontAwesomeIcon icon={faMedium as IconProp} />
           </Link>
@@ -233,6 +371,7 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Dev.to'
+            ref={devRef}
           >
             <FontAwesomeIcon icon={faDev as IconProp} />
           </Link>
@@ -241,6 +380,7 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Instagram'
+            ref={instagramRef}
           >
             <FontAwesomeIcon icon={faInstagram as IconProp} />
           </Link>
@@ -249,14 +389,16 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Facebook'
+            ref={facebookRef}
           >
             <FontAwesomeIcon icon={faFacebook as IconProp} />
           </Link>
           <Link
-            href='https://soundcloud.com/deejay-a-shay'
+            href='https://soundcloud.com/dj_ashay'
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Soundcloud'
+            ref={soundcloudRef}
           >
             <FontAwesomeIcon icon={faSoundcloud as IconProp} />
           </Link>

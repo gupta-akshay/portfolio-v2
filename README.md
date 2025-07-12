@@ -6,6 +6,7 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 
 - **Next.js 15** & **React 19**
 - **TypeScript** & **Sass**
+- **Motion** (framer-motion) for animations
 - **TanStack Form** & **Zod** validation
 - **Web Audio API** for music player
 - **Drizzle ORM** & **Neon Database**
@@ -17,6 +18,12 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 ## ✨ Features
 
 - 🌃 **Dark/Light Theme** with smooth transitions
+- 🖱️ **Custom Cursor System** with motion animations:
+  - Interactive hover states with contextual text
+  - Smooth animations with spring physics
+  - Accessibility-first design (hidden on mobile/touch)
+  - Mix-blend-mode effects for visibility across backgrounds
+  - Comprehensive cursor interactions across all interactive elements
 - 📝 **Blog with CMS** powered by Sanity:
   - Table of Contents with active section highlighting
   - Reading Progress Bar with real-time tracking
@@ -30,6 +37,15 @@ Live at [akshaygupta.live](https://akshaygupta.live)
   - Queue management with drag & drop
   - Touch gestures and keyboard controls
   - Mobile-optimized interface
+
+## 🏗️ Architecture
+
+- **Server-Side Rendering (SSR)** with Next.js App Router
+- **Client-Server Component Separation** for optimal performance
+- **Metadata Support** for SEO while maintaining interactivity
+- **Custom Hooks** for cursor interactions and state management
+- **Context-based State Management** for theme and cursor states
+- **Performance Optimized** with React 19 features and best practices
 
 ## 🚀 Quick Start
 

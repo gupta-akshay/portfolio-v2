@@ -1,5 +1,6 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .main-right {
   @include up-lg {
@@ -110,6 +111,12 @@
         letter-spacing: 3px;
         text-transform: uppercase;
         line-height: 18px;
+        border-radius: 8px;
+        
+        // Add 3D button press effect
+        @include floating-3d(2px, 0.05);
+        @include responsive-3d-effects;
+        
         .theme-light & {
           color: rgba($px-dark, 0.7);
           font-weight: 400;
@@ -174,12 +181,16 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       
+      // Add 3D icon rotation effect
+      @include icon-3d-rotate(180deg);
+      @include floating-3d(4px, 0.08);
+      @include responsive-3d-effects;
+      
       .theme-light & {
         color: rgba($px-dark, 0.6);
       }
       
       &:hover {
-        transform: translateY(-2px) scale(1.1);
         box-shadow: 0 4px 12px rgba($px-theme, 0.3);
         
         .theme-light & {

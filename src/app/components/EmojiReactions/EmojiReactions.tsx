@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { toast } from 'react-hot-toast';
 import { getOrCreateFingerprint } from '@/app/utils/fingerprint';
 
 interface Reaction {
@@ -82,12 +81,9 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
           } else {
             setUserReactions((prev) => prev.filter((r) => r !== emoji));
           }
-        } else {
-          toast.error('Failed to add reaction');
         }
       } catch (error) {
         console.error('Error adding reaction:', error);
-        toast.error('Failed to add reaction');
       } finally {
         setIsLoading(false);
       }

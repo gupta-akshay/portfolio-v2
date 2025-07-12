@@ -7,6 +7,7 @@ import BlogImage from '@/app/components/BlogImage';
 import { Blog } from '@/sanity/types/blog';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
+import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 // Global cache for text measurements to avoid recalculation across all BlogTile instances
 const textMeasurementCache = new Map<string, number>();
@@ -64,7 +65,10 @@ const BlogTile = memo(
     const { mainImage } = blog;
     const router = useRouter();
     const { startLoading } = useLoading();
+    const { addCursorInteraction } = useCursorInteractions();
     const metaRef = useRef<HTMLDivElement>(null);
+    const imageRef = useRef<HTMLDivElement>(null);
+    const titleRef = useRef<HTMLDivElement>(null);
     const [visibleCategories, setVisibleCategories] = useState(
       blog.categories.length
     );
@@ -151,6 +155,27 @@ const BlogTile = memo(
       [blog.categories, formattedDate, readingTime.text]
     );
 
+    // Add cursor interactions
+    useEffect(() => {
+      if (imageRef.current) {
+        addCursorInteraction(imageRef.current, {
+          onHover: 'hover',
+          onText: 'Read this article',
+          onClick: 'click',
+        });
+      }
+
+      if (titleRef.current) {
+        addCursorInteraction(titleRef.current, {
+          onHover: 'hover',
+          onText: 'Read this article',
+          onClick: 'click',
+        });
+      }
+
+      return undefined;
+    }, [addCursorInteraction]);
+
     // Use ResizeObserver for better performance + initial calculation
     useEffect(() => {
       if (!metaRef.current) return;
@@ -202,14 +227,16 @@ const BlogTile = memo(
       <div className='col-md-6 m-15px-tb'>
         <article className='blog-grid'>
           <div className='blog-img'>
-            <Link
-              href={`/blog/${blog.slug.current}`}
-              prefetch={false}
-              aria-label={`Read more about ${blog.title}`}
-              onClick={handleClick}
-            >
-              <BlogImage value={mainImage} isTileImage alt={blog.title} />
-            </Link>
+            <div ref={imageRef}>
+              <Link
+                href={`/blog/${blog.slug.current}`}
+                prefetch={false}
+                aria-label={`Read more about ${blog.title}`}
+                onClick={handleClick}
+              >
+                <BlogImage value={mainImage} isTileImage alt={blog.title} />
+              </Link>
+            </div>
           </div>
           <div className='blog-info'>
             <div className='meta' aria-label='Post metadata' ref={metaRef}>
@@ -229,13 +256,15 @@ const BlogTile = memo(
               )}
             </div>
             <h2 className='blog-title'>
-              <Link
-                href={`/blog/${blog.slug.current}`}
-                prefetch={false}
-                onClick={handleClick}
-              >
-                {blog.title}
-              </Link>
+              <div ref={titleRef}>
+                <Link
+                  href={`/blog/${blog.slug.current}`}
+                  prefetch={false}
+                  onClick={handleClick}
+                >
+                  {blog.title}
+                </Link>
+              </div>
             </h2>
           </div>
         </article>
