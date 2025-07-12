@@ -67,8 +67,8 @@ const BlogTile = memo(
     const { startLoading } = useLoading();
     const { addCursorInteraction } = useCursorInteractions();
     const metaRef = useRef<HTMLDivElement>(null);
-    const imageRef = useRef<HTMLAnchorElement>(null);
-    const titleRef = useRef<HTMLAnchorElement>(null);
+    const imageRef = useRef<HTMLDivElement>(null);
+    const titleRef = useRef<HTMLDivElement>(null);
     const [visibleCategories, setVisibleCategories] = useState(
       blog.categories.length
     );
@@ -227,15 +227,16 @@ const BlogTile = memo(
       <div className='col-md-6 m-15px-tb'>
         <article className='blog-grid'>
           <div className='blog-img'>
-            <Link
-              href={`/blog/${blog.slug.current}`}
-              prefetch={false}
-              aria-label={`Read more about ${blog.title}`}
-              onClick={handleClick}
-              ref={imageRef}
-            >
-              <BlogImage value={mainImage} isTileImage alt={blog.title} />
-            </Link>
+            <div ref={imageRef}>
+              <Link
+                href={`/blog/${blog.slug.current}`}
+                prefetch={false}
+                aria-label={`Read more about ${blog.title}`}
+                onClick={handleClick}
+              >
+                <BlogImage value={mainImage} isTileImage alt={blog.title} />
+              </Link>
+            </div>
           </div>
           <div className='blog-info'>
             <div className='meta' aria-label='Post metadata' ref={metaRef}>
@@ -255,14 +256,15 @@ const BlogTile = memo(
               )}
             </div>
             <h2 className='blog-title'>
-              <Link
-                href={`/blog/${blog.slug.current}`}
-                prefetch={false}
-                onClick={handleClick}
-                ref={titleRef}
-              >
-                {blog.title}
-              </Link>
+              <div ref={titleRef}>
+                <Link
+                  href={`/blog/${blog.slug.current}`}
+                  prefetch={false}
+                  onClick={handleClick}
+                >
+                  {blog.title}
+                </Link>
+              </div>
             </h2>
           </div>
         </article>
