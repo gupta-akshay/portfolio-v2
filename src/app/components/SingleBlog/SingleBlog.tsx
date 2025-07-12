@@ -141,7 +141,7 @@ function groupConsecutiveImages(blocks: any[]) {
 // Custom heading components with IDs
 const HeadingComponent = ({ level, children, value }: any) => {
   // Use the Sanity block key as ID for consistency
-  const id = value?._key || '';
+  const id = value._key;
 
   switch (level) {
     case 1:
