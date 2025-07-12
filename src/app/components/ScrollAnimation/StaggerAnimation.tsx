@@ -7,14 +7,6 @@ import ScrollAnimation from './ScrollAnimation';
 interface StaggerAnimationProps {
   children: ReactNode;
   className?: string;
-  animation?:
-    | 'fadeIn'
-    | 'slideUp'
-    | 'slideDown'
-    | 'slideLeft'
-    | 'slideRight'
-    | 'scale'
-    | 'rotate';
   duration?: number;
   staggerDelay?: number;
   threshold?: number;
@@ -40,7 +32,6 @@ const containerVariants = {
 const StaggerAnimation = ({
   children,
   className = '',
-  animation = 'fadeIn',
   duration = 0.6,
   staggerDelay = 0.1,
   threshold = 0.1,
