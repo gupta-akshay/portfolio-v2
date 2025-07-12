@@ -9,7 +9,10 @@ interface HomeContentInteractiveProps {
   type: 'downloadButton' | 'peopleGroveLink';
 }
 
-export default function HomeContentInteractive({ children, type }: HomeContentInteractiveProps) {
+export default function HomeContentInteractive({
+  children,
+  type,
+}: HomeContentInteractiveProps) {
   const { addCursorInteraction } = useCursorInteractions();
   const elementRef = useRef<HTMLAnchorElement>(null);
 
@@ -48,15 +51,11 @@ export default function HomeContentInteractive({ children, type }: HomeContentIn
 
   if (type === 'peopleGroveLink') {
     return (
-      <Link 
-        href='https://www.peoplegrove.com' 
-        target='_blank'
-        ref={elementRef}
-      >
+      <Link href='https://www.peoplegrove.com' target='_blank' ref={elementRef}>
         {children}
       </Link>
     );
   }
 
   return null;
-} 
+}
