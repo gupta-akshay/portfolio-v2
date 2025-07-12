@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   TwitterShareButton,
   FacebookShareButton,
@@ -23,11 +23,21 @@ export default function SocialShare({
 }: SocialShareProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Show the social share bar after a short delay
     const timer = setTimeout(() => setIsVisible(true), 1000);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    // Cleanup timeout on unmount
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
   }, []);
 
   const handleCopyLink = async () => {
@@ -36,8 +46,13 @@ export default function SocialShare({
       setCopied(true);
       toast.success('Link copied to clipboard!');
 
+      // Clear any existing timeout
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+
       // Reset copied state after 2 seconds
-      setTimeout(() => setCopied(false), 2000);
+      copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       toast.error('Failed to copy link');
     }
