@@ -7,6 +7,7 @@ import BlogImage from '@/app/components/BlogImage';
 import { Blog } from '@/sanity/types/blog';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
+import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 // Global cache for text measurements to avoid recalculation across all BlogTile instances
 const textMeasurementCache = new Map<string, number>();
@@ -64,7 +65,10 @@ const BlogTile = memo(
     const { mainImage } = blog;
     const router = useRouter();
     const { startLoading } = useLoading();
+    const { addCursorInteraction } = useCursorInteractions();
     const metaRef = useRef<HTMLDivElement>(null);
+    const imageRef = useRef<HTMLAnchorElement>(null);
+    const titleRef = useRef<HTMLAnchorElement>(null);
     const [visibleCategories, setVisibleCategories] = useState(
       blog.categories.length
     );
@@ -151,6 +155,25 @@ const BlogTile = memo(
       [blog.categories, formattedDate, readingTime.text]
     );
 
+    // Add cursor interactions
+    useEffect(() => {
+      if (imageRef.current) {
+        addCursorInteraction(imageRef.current, {
+          onHover: 'hover',
+          onText: 'Read this article',
+          onClick: 'click',
+        });
+      }
+
+      if (titleRef.current) {
+        addCursorInteraction(titleRef.current, {
+          onHover: 'hover',
+          onText: 'Read this article',
+          onClick: 'click',
+        });
+      }
+    }, [addCursorInteraction]);
+
     // Use ResizeObserver for better performance + initial calculation
     useEffect(() => {
       if (!metaRef.current) return;
@@ -207,6 +230,7 @@ const BlogTile = memo(
               prefetch={false}
               aria-label={`Read more about ${blog.title}`}
               onClick={handleClick}
+              ref={imageRef}
             >
               <BlogImage value={mainImage} isTileImage alt={blog.title} />
             </Link>
@@ -233,6 +257,7 @@ const BlogTile = memo(
                 href={`/blog/${blog.slug.current}`}
                 prefetch={false}
                 onClick={handleClick}
+                ref={titleRef}
               >
                 {blog.title}
               </Link>

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import Image from 'next/image';
 import TypingAnimation from '@/app/components/TypingAnimation';
 import Layout from '@/app/components/Layout';
+import HomeContentInteractive from '@/app/components/HomeContentInteractive';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live'),
@@ -99,9 +99,9 @@ export default function Home() {
                   </p>
                   <p className='desc'>
                     Hey there! 👋 I&apos;m currently a Senior Staff Engineer at{' '}
-                    <Link href='https://www.peoplegrove.com' target='_blank'>
+                    <HomeContentInteractive type='peopleGroveLink'>
                       PeopleGrove
-                    </Link>
+                    </HomeContentInteractive>
                     . I love building websites and apps that are both
                     user-friendly and powerful under the hood. Think of me as
                     someone who enjoys creating digital solutions that make
@@ -112,13 +112,9 @@ export default function Home() {
                     solving complex technical challenges, I&apos;m your guy!
                   </p>
                   <div className='btn-bar'>
-                    <a
-                      className='px-btn px-btn-theme'
-                      href='/assets/akshay-cv.pdf'
-                      download
-                    >
+                    <HomeContentInteractive type='downloadButton'>
                       Download CV
-                    </a>
+                    </HomeContentInteractive>
                   </div>
                 </div>
               </div>

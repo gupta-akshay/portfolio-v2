@@ -5,6 +5,8 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { CursorProvider } from './context/CursorContext';
+import CustomCursor from './components/CustomCursor';
 import Metrics from './metrics';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -67,7 +69,10 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ThemeProvider>
-          <LoadingProvider>{children}</LoadingProvider>
+          <CursorProvider>
+            <LoadingProvider>{children}</LoadingProvider>
+            <CustomCursor />
+          </CursorProvider>
         </ThemeProvider>
         <Metrics />
         <SpeedInsights />

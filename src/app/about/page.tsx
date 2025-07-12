@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
+import AboutContentInteractive from '@/app/components/AboutContentInteractive';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live/about'),
@@ -178,9 +178,9 @@ export default function About() {
                     to refresh your mind! 🌊
                   </p>
                   <div className='btn-bar'>
-                    <Link className='px-btn px-btn-theme' href='/contact'>
+                    <AboutContentInteractive>
                       <span>Let&apos;s Work Together!</span>
-                    </Link>
+                    </AboutContentInteractive>
                   </div>
                 </div>
               </div>

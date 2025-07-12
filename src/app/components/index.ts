@@ -14,6 +14,8 @@ export { default as EmojiReactions } from './EmojiReactions';
 export { default as ReadingProgressBar } from './ReadingProgressBar';
 export { default as SocialShare } from './SocialShare';
 export { default as TableOfContents } from './TableOfContents';
+export { default as CustomCursor } from './CustomCursor';
+export { default as CursorInteractive } from './CursorInteractive';
 // export { default as ParticlesBackground } from './ParticlesBackground'; // TODO: Fix ParticlesBackground component
 
 // Content Components
