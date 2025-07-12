@@ -52,14 +52,6 @@ export interface DayNightToggleProps {
   className?: string;
 }
 
-// BackButton component types
-export interface BackButtonProps {
-  onClick?: () => void;
-  text?: string;
-  className?: string;
-  showIcon?: boolean;
-}
-
 // SocialShare component types
 export interface SocialShareProps {
   url: string;
