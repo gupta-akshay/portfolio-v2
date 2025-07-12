@@ -1,4 +1,5 @@
-import type { Metadata } from 'next';
+'use client';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEnvelope,
@@ -6,48 +7,15 @@ import {
   faMobile,
 } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { Toaster } from 'react-hot-toast';
 import Layout from '@/app/components/Layout';
 import ContactFormInteractive from '@/app/components/ContactFormInteractive';
 import MapSection from '@/app/components/MapSection';
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live/contact'),
-  title: 'Contact | Akshay Gupta',
-  description:
-    'Get in touch with me for collaboration opportunities, freelance projects, or just to say hello!',
-  openGraph: {
-    title: 'Contact Akshay Gupta | Full-Stack Developer',
-    description:
-      'Get in touch with me for collaboration opportunities, freelance projects, or just to say hello!',
-    url: 'https://akshaygupta.live/contact',
-    siteName: 'Akshay Gupta Portfolio',
-    images: [
-      {
-        url: 'https://akshaygupta.live/contact/opengraph-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Contact Akshay Gupta',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Contact Akshay Gupta | Full-Stack Developer',
-    description:
-      'Get in touch with me for collaboration opportunities, freelance projects, or just to say hello!',
-    creator: '@ashay_music',
-    images: ['https://akshaygupta.live/contact/opengraph-image.png'],
-  },
-  alternates: {
-    canonical: 'https://akshaygupta.live/contact',
-  },
-};
-
 export default function Contact() {
   return (
     <Layout>
+      <Toaster />
       <section
         id='contact'
         data-nav-tooltip='Contact Me'

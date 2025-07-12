@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { useForm } from '@tanstack/react-form';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 export default function ContactFormInteractive() {

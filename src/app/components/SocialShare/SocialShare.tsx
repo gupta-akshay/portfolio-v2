@@ -13,7 +13,6 @@ import {
   WhatsappIcon,
   EmailIcon,
 } from 'react-share';
-import { toast } from 'react-hot-toast';
 import { SocialShareProps } from '@/app/types/components';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
@@ -107,7 +106,6 @@ export default function SocialShare({
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      toast.success('Link copied to clipboard!');
 
       // Clear any existing timeout
       if (copyTimeoutRef.current) {
@@ -117,7 +115,7 @@ export default function SocialShare({
       // Reset copied state after 2 seconds
       copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast.error('Failed to copy link');
+      console.error('Failed to copy link', error);
     }
   };
 
