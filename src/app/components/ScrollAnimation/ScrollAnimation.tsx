@@ -74,7 +74,6 @@ const ScrollAnimation = ({
 }: ScrollAnimationProps) => {
   const controls = useAnimation();
   const ref = useRef<HTMLDivElement>(null);
-  const [isInView, setIsInView] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
@@ -85,7 +84,6 @@ const ScrollAnimation = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setIsInView(true);
             if (!hasAnimated) {
               if (onAnimationStart) onAnimationStart();
               controls.start('visible');
@@ -94,7 +92,6 @@ const ScrollAnimation = ({
               }
             }
           } else if (!triggerOnce) {
-            setIsInView(false);
             controls.start('hidden');
           }
         });
