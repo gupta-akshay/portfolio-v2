@@ -138,6 +138,25 @@ function groupConsecutiveImages(blocks: any[]) {
   return result;
 }
 
+// Custom heading components with IDs
+const HeadingComponent = ({ level, children, value }: any) => {
+  // Use the Sanity block key as ID for consistency
+  const id = value._key;
+
+  switch (level) {
+    case 1:
+      return <h1 id={id}>{children}</h1>;
+    case 2:
+      return <h2 id={id}>{children}</h2>;
+    case 3:
+      return <h3 id={id}>{children}</h3>;
+    case 4:
+      return <h4 id={id}>{children}</h4>;
+    default:
+      return <h2 id={id}>{children}</h2>;
+  }
+};
+
 const components = {
   types: {
     image: BlogImage,
@@ -149,13 +168,35 @@ const components = {
     link: ExternalLink,
     code: CodeMarkComponent,
   },
+  block: {
+    h1: ({ children, value }: any) => (
+      <HeadingComponent level={1} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
+    h2: ({ children, value }: any) => (
+      <HeadingComponent level={2} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
+    h3: ({ children, value }: any) => (
+      <HeadingComponent level={3} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
+    h4: ({ children, value }: any) => (
+      <HeadingComponent level={4} value={value}>
+        {children}
+      </HeadingComponent>
+    ),
+  },
 };
 
 const SingleBlog = ({ post }: { post: Blog }) => {
-  const groupedBody = useMemo(
-    () => groupConsecutiveImages(post?.body || []),
-    [post?.body]
-  );
+  const groupedBody = useMemo(() => {
+    return groupConsecutiveImages(post?.body || []);
+  }, [post?.body]);
+
   return <PortableText value={groupedBody} components={components} />;
 };
 

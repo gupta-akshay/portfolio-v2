@@ -12,6 +12,7 @@
 @use './sections/music-player' as *;
 @use './sections/emoji-reactions' as *;
 @use './sections/social-share' as *;
+@use './sections/table-of-contents' as *;
 
 // Reset & Base Styles
 * {
@@ -28,7 +29,7 @@
 
   // Webkit (Chrome, Safari, Edge)
   &::-webkit-scrollbar {
-    width: 8px;  // Vertical scrollbar width
+    width: 8px; // Vertical scrollbar width
     height: 8px; // Horizontal scrollbar height
   }
 
@@ -70,7 +71,7 @@ body {
   font-weight: 400;
   background: $px-bg-1;
   transition: background-color 0.3s ease-in-out;
-  
+
   &.theme-light {
     background: $px-white;
     color: $px-body-light;
@@ -82,7 +83,7 @@ a {
   color: $px-theme;
   text-decoration: underline;
   transition: color 0.2s ease-in-out;
-  
+
   @include px-hover {
     color: color.adjust($px-theme, $lightness: -8%);
   }
@@ -95,7 +96,12 @@ a {
 }
 
 // Ensure interactive elements have visible focus states
-a, button, input, textarea, [role="button"], [tabindex="0"] {
+a,
+button,
+input,
+textarea,
+[role='button'],
+[tabindex='0'] {
   &:focus-visible {
     outline: 3px solid $px-theme !important;
     outline-offset: 2px !important;
@@ -114,7 +120,7 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
   align-items: center;
   background-color: $px-bg-1;
   z-index: 9999;
-  
+
   .theme-light & {
     background-color: $px-white;
   }
@@ -211,18 +217,18 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
 .code-block-wrapper {
   position: relative;
   margin: 1.5rem 0;
-  
+
   .keyboard-accessible-code {
     &:focus {
       outline: 3px solid $px-theme !important;
       outline-offset: 2px !important;
     }
-    
-    &[tabindex="0"] {
+
+    &[tabindex='0'] {
       cursor: text;
-      
+
       &::before {
-        content: "Keyboard accessible: use arrow keys to scroll";
+        content: 'Keyboard accessible: use arrow keys to scroll';
         display: block;
         position: absolute;
         top: -1.5rem;
@@ -232,7 +238,7 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
         opacity: 0;
         transition: opacity 0.2s ease;
       }
-      
+
       &:focus::before {
         opacity: 1;
       }

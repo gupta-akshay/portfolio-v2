@@ -1,0 +1,209 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+
+.table-of-contents {
+  position: fixed;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
+  width: 250px;
+  max-height: 60vh;
+  background: $px-bg-1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+
+  .theme-light & {
+    background: $px-white;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .toc-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .theme-light & {
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
+
+    h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: $px-white;
+
+      .theme-light & {
+        color: $px-dark;
+      }
+    }
+  }
+
+  .toc-nav {
+    .toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .toc-item {
+        margin-bottom: 0.25rem;
+
+        .toc-link {
+          display: block;
+          padding: 0.5rem 0;
+          color: $px-body;
+          text-decoration: none;
+          font-size: 0.875rem;
+          line-height: 1.4;
+          transition: color 0.2s ease;
+          border-left: 2px solid transparent;
+          padding-left: 0.5rem;
+
+          .theme-light & {
+            color: $px-body-light;
+          }
+
+          &:hover {
+            color: $px-theme;
+          }
+
+          &.active {
+            color: $px-theme;
+            border-left-color: $px-theme;
+            font-weight: 500;
+          }
+        }
+
+        // Nested levels
+        &.toc-level-1 .toc-link {
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        &.toc-level-2 .toc-link {
+          padding-left: 1rem;
+          font-size: 0.875rem;
+        }
+
+        &.toc-level-3 .toc-link {
+          padding-left: 1.5rem;
+          font-size: 0.8rem;
+        }
+
+        &.toc-level-4 .toc-link {
+          padding-left: 2rem;
+          font-size: 0.75rem;
+        }
+
+        // Nested lists
+        .toc-list {
+          margin-top: 0.25rem;
+        }
+      }
+    }
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 1200px) {
+  .table-of-contents {
+    display: none;
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .table-of-contents {
+    transition: none;
+  }
+}
+
+// Alternative mobile TOC (could be implemented later)
+.mobile-toc {
+  display: none;
+
+  @media (max-width: 1200px) {
+    display: block;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: $px-bg-2;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    .theme-light & {
+      background: $px-gray;
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-header {
+      margin-bottom: 1rem;
+
+      h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: $px-white;
+
+        .theme-light & {
+          color: $px-dark;
+        }
+      }
+    }
+
+    .toc-nav .toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .toc-item {
+        margin-bottom: 0.5rem;
+
+        .toc-link {
+          display: block;
+          padding: 0.5rem;
+          color: $px-body;
+          text-decoration: none;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+
+          .theme-light & {
+            color: $px-body-light;
+          }
+
+          &:hover {
+            background-color: $px-theme-rgb-2;
+            color: $px-theme;
+          }
+
+          &.active {
+            background-color: $px-theme;
+            color: $px-white;
+          }
+        }
+
+        &.toc-level-2 .toc-link {
+          margin-left: 1rem;
+        }
+
+        &.toc-level-3 .toc-link {
+          margin-left: 2rem;
+        }
+
+        &.toc-level-4 .toc-link {
+          margin-left: 3rem;
+        }
+      }
+    }
+  }
+}

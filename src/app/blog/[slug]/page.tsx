@@ -7,6 +7,7 @@ import BlogImage from '@/app/components/BlogImage';
 import EmojiReactions from '@/app/components/EmojiReactions';
 import SocialShare from '@/app/components/SocialShare';
 import ReadingProgressBar from '@/app/components/ReadingProgressBar';
+import TableOfContents from '@/app/components/TableOfContents';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
@@ -67,6 +68,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   return (
     <Layout isBlog>
       <ReadingProgressBar />
+      <TableOfContents content={post.body} />
       <SocialShare
         url={`https://akshaygupta.live/blog/${slug}`}
         title={post.title}

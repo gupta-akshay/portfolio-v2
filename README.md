@@ -18,6 +18,7 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 
 - 🌃 **Dark/Light Theme** with smooth transitions
 - 📝 **Blog with CMS** powered by Sanity:
+  - Table of Contents with active section highlighting
   - Reading Progress Bar with real-time tracking
   - Estimated Reading Time calculation
   - Smart Category Overflow with "+n" indicators
