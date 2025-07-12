@@ -203,6 +203,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
 
     let observer: IntersectionObserver | null = null;
     let retryCount = 0;
+    let timeoutId: NodeJS.Timeout | null = null;
     const maxRetries = 50; // Maximum number of retries (5 seconds with 100ms intervals)
 
     const trySetupObserver = () => {
@@ -211,7 +212,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
       if (!observer && retryCount < maxRetries) {
         retryCount++;
         // Retry after a short delay
-        setTimeout(trySetupObserver, 100);
+        timeoutId = setTimeout(trySetupObserver, 100);
       }
     };
 
@@ -221,6 +222,9 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
     return () => {
       if (observer) {
         observer.disconnect();
+      }
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
   }, [setupObserver, headings, minHeadings]);
