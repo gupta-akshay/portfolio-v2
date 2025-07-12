@@ -13,10 +13,6 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Blog } from '@/sanity/types/blog';
 import { useLoading } from '@/app/context/LoadingContext';
-import {
-  generateHeadingId,
-  extractTextFromChildren,
-} from '@/app/utils/helpers';
 
 const CodeComponent = ({ value }: any) => {
   return (
@@ -144,8 +140,8 @@ function groupConsecutiveImages(blocks: any[]) {
 
 // Custom heading components with IDs
 const HeadingComponent = ({ level, children, value }: any) => {
-  const text = extractTextFromChildren(children);
-  const id = generateHeadingId(text);
+  // Use the Sanity block key as ID for consistency
+  const id = value?._key || '';
 
   switch (level) {
     case 1:
@@ -197,10 +193,10 @@ const components = {
 };
 
 const SingleBlog = ({ post }: { post: Blog }) => {
-  const groupedBody = useMemo(
-    () => groupConsecutiveImages(post?.body || []),
-    [post?.body]
-  );
+  const groupedBody = useMemo(() => {
+    return groupConsecutiveImages(post?.body || []);
+  }, [post?.body]);
+
   return <PortableText value={groupedBody} components={components} />;
 };
 
