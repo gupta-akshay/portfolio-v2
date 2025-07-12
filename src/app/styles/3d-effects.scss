@@ -1,3 +1,4 @@
+@use 'sass:math';
 @use 'sass:color';
 @use './variables' as *;
 
@@ -58,10 +59,10 @@
   }
 
   &:active {
-    transform: translateY(-#{$depth / 2}) translateZ(0);
+    transform: translateY(-#{math.div($depth, 2)}) translateZ(0);
     box-shadow:
       0 #{$depth} #{$depth * 2} rgba(0, 0, 0, 0.15),
-      0 #{$depth / 2} #{$depth} rgba(0, 0, 0, 0.075);
+      0 #{math.div($depth, 2)} #{$depth} rgba(0, 0, 0, 0.075);
   }
 }
 
@@ -127,13 +128,13 @@
 
   box-shadow:
     0 #{$depth} #{$depth * 2} rgba(0, 0, 0, 0.1),
-    0 #{$depth / 2} #{$depth} rgba(0, 0, 0, 0.05);
+    0 #{math.div($depth, 2)} #{$depth} rgba(0, 0, 0, 0.05);
 
   &:hover {
-    transform: translateZ(#{$hover-depth / 2});
+    transform: translateZ(#{math.div($hover-depth, 2)});
     box-shadow:
       0 #{$hover-depth} #{$hover-depth * 2} rgba(0, 0, 0, 0.15),
-      0 #{$hover-depth / 2} #{$hover-depth} rgba(0, 0, 0, 0.075);
+      0 #{math.div($hover-depth, 2)} #{$hover-depth} rgba(0, 0, 0, 0.075);
   }
 }
 

@@ -49,113 +49,131 @@ const Header = () => {
 
   // Add cursor interactions
   useEffect(() => {
+    const cleanupFunctions: (() => void)[] = [];
+
     // Navigation links
     if (homeRef.current) {
-      addCursorInteraction(homeRef.current, {
+      const cleanup = addCursorInteraction(homeRef.current, {
         onHover: 'hover',
         onText: 'Go to Home',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (aboutRef.current) {
-      addCursorInteraction(aboutRef.current, {
+      const cleanup = addCursorInteraction(aboutRef.current, {
         onHover: 'hover',
         onText: 'Learn about me',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (blogRef.current) {
-      addCursorInteraction(blogRef.current, {
+      const cleanup = addCursorInteraction(blogRef.current, {
         onHover: 'hover',
         onText: 'Read my blog posts',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (musicRef.current) {
-      addCursorInteraction(musicRef.current, {
+      const cleanup = addCursorInteraction(musicRef.current, {
         onHover: 'hover',
         onText: 'Listen to my music',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (contactRef.current) {
-      addCursorInteraction(contactRef.current, {
+      const cleanup = addCursorInteraction(contactRef.current, {
         onHover: 'hover',
         onText: 'Get in touch',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     // Social media links
     if (githubRef.current) {
-      addCursorInteraction(githubRef.current, {
+      const cleanup = addCursorInteraction(githubRef.current, {
         onHover: 'hover',
         onText: 'View GitHub profile',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (linkedinRef.current) {
-      addCursorInteraction(linkedinRef.current, {
+      const cleanup = addCursorInteraction(linkedinRef.current, {
         onHover: 'hover',
         onText: 'Connect on LinkedIn',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (mediumRef.current) {
-      addCursorInteraction(mediumRef.current, {
+      const cleanup = addCursorInteraction(mediumRef.current, {
         onHover: 'hover',
         onText: 'Read on Medium',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (devRef.current) {
-      addCursorInteraction(devRef.current, {
+      const cleanup = addCursorInteraction(devRef.current, {
         onHover: 'hover',
         onText: 'Check out Dev.to',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (instagramRef.current) {
-      addCursorInteraction(instagramRef.current, {
+      const cleanup = addCursorInteraction(instagramRef.current, {
         onHover: 'hover',
         onText: 'Follow on Instagram',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (facebookRef.current) {
-      addCursorInteraction(facebookRef.current, {
+      const cleanup = addCursorInteraction(facebookRef.current, {
         onHover: 'hover',
         onText: 'Like on Facebook',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (soundcloudRef.current) {
-      addCursorInteraction(soundcloudRef.current, {
+      const cleanup = addCursorInteraction(soundcloudRef.current, {
         onHover: 'hover',
         onText: 'Listen on SoundCloud',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
     if (logoRef.current) {
-      addCursorInteraction(logoRef.current, {
+      const cleanup = addCursorInteraction(logoRef.current, {
         onHover: 'hover',
         onText: 'Go to home',
         onClick: 'click',
       });
+      if (cleanup) cleanupFunctions.push(cleanup);
     }
 
-    return undefined;
+    // Return cleanup function that calls all individual cleanup functions
+    return () => {
+      cleanupFunctions.forEach((cleanup) => cleanup());
+    };
   }, [addCursorInteraction]);
 
   useEffect(() => {
