@@ -7,7 +7,6 @@ interface MagneticHoverProps {
   children: ReactNode;
   className?: string;
   intensity?: number;
-  distance?: number;
   springConfig?: {
     damping: number;
     stiffness: number;
@@ -24,7 +23,6 @@ const MagneticHover = ({
   children,
   className = '',
   intensity = 0.3,
-  distance = 100,
   springConfig = { damping: 20, stiffness: 300, mass: 0.5 },
   glowEffect = true,
   glowColor = 'var(--px-theme)',
