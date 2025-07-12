@@ -1,0 +1,115 @@
+@use '../../styles/variables' as *;
+@use 'sass:color';
+
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .reading-progress-fill {
+    height: 100%;
+    // Fallback for browsers that don't support color.adjust
+    background: linear-gradient(90deg, #2fbf71 0%, #1e8a52 100%);
+    background: linear-gradient(
+      90deg,
+      $px-theme 0%,
+      color.adjust($px-theme, $lightness: -10%) 100%
+    );
+    transition: width 0.3s ease;
+    border-radius: 0 5px 5px 0;
+    box-shadow:
+      0 0 10px rgba(47, 191, 113, 0.6),
+      0 0 20px rgba(47, 191, 113, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 0 10px rgba($px-theme, 0.6),
+      0 0 20px rgba($px-theme, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 2px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 0 5px 5px 0;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    }
+  }
+}
+
+// Dark mode styles
+[data-theme='dark'] .reading-progress-bar,
+body.theme-dark .reading-progress-bar {
+  background-color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  .reading-progress-fill {
+    // Fallback for dark mode
+    background: linear-gradient(90deg, #2fbf71 0%, #1a6b42 100%);
+    background: linear-gradient(
+      90deg,
+      $px-theme 0%,
+      color.adjust($px-theme, $lightness: -15%) 100%
+    );
+    box-shadow:
+      0 0 12px rgba(47, 191, 113, 0.8),
+      0 0 24px rgba(47, 191, 113, 0.4),
+      0 2px 6px rgba(0, 0, 0, 0.3);
+    box-shadow:
+      0 0 12px rgba($px-theme, 0.8),
+      0 0 24px rgba($px-theme, 0.4),
+      0 2px 6px rgba(0, 0, 0, 0.3);
+
+    &::after {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+// Light mode styles
+[data-theme='light'] .reading-progress-bar,
+body.theme-light .reading-progress-bar {
+  background-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .reading-progress-fill {
+    // Fallback for light mode
+    background: linear-gradient(90deg, #2fbf71 0%, #1e8a52 100%);
+    background: linear-gradient(
+      90deg,
+      $px-theme 0%,
+      color.adjust($px-theme, $lightness: -12%) 100%
+    );
+    box-shadow:
+      0 0 10px rgba(47, 191, 113, 0.5),
+      0 0 20px rgba(47, 191, 113, 0.2),
+      0 2px 4px rgba(0, 0, 0, 0.15);
+    box-shadow:
+      0 0 10px rgba($px-theme, 0.5),
+      0 0 20px rgba($px-theme, 0.2),
+      0 2px 4px rgba(0, 0, 0, 0.15);
+
+    &::after {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+    }
+  }
+}
+
+// Reduce motion for accessibility
+@media (prefers-reduced-motion: reduce) {
+  .reading-progress-bar .reading-progress-fill {
+    transition: none;
+  }
+}
