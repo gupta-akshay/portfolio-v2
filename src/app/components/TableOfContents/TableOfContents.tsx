@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PortableTextBlock } from 'sanity';
 import { generateHeadingId } from '@/app/utils/helpers';
 
@@ -153,10 +153,23 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
   const headings = extractHeadings(content);
   const nestedHeadings = buildNestedTOC(headings);
 
-  useEffect(() => {
-    // Only set up observer if we have enough headings
+  const setupObserver = useCallback(() => {
     if (headings.length < minHeadings) {
-      return;
+      return null;
+    }
+
+    // Check if all heading elements exist in the DOM
+    const headingElements = headings.map((heading) =>
+      document.getElementById(heading.id)
+    );
+
+    const allElementsExist = headingElements.every(
+      (element) => element !== null
+    );
+
+    if (!allElementsExist) {
+      // If elements don't exist yet, return null to retry later
+      return null;
     }
 
     const observer = new IntersectionObserver(
@@ -172,16 +185,44 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
       }
     );
 
-    // Observe all headings
-    headings.forEach((heading) => {
-      const element = document.getElementById(heading.id);
+    // Observe all headings (we know they exist at this point)
+    headingElements.forEach((element) => {
       if (element) {
         observer.observe(element);
       }
     });
 
-    return () => observer.disconnect();
+    return observer;
   }, [headings, minHeadings]);
+
+  useEffect(() => {
+    if (headings.length < minHeadings) {
+      return;
+    }
+
+    let observer: IntersectionObserver | null = null;
+    let retryCount = 0;
+    const maxRetries = 50; // Maximum number of retries (5 seconds with 100ms intervals)
+
+    const trySetupObserver = () => {
+      observer = setupObserver();
+
+      if (!observer && retryCount < maxRetries) {
+        retryCount++;
+        // Retry after a short delay
+        setTimeout(trySetupObserver, 100);
+      }
+    };
+
+    // Initial setup attempt
+    trySetupObserver();
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+  }, [setupObserver, headings, minHeadings]);
 
   useEffect(() => {
     const handleScroll = () => {
