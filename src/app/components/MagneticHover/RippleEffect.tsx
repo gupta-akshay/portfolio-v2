@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, ReactNode } from 'react';
+import { useState, useRef, ReactNode, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface RippleEffectProps {
@@ -30,6 +30,17 @@ const RippleEffect = ({
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const nextRippleId = useRef(0);
+  const timeoutIds = useRef<Set<NodeJS.Timeout>>(new Set());
+
+  // Clean up timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutIds.current.forEach((timeoutId) => {
+        clearTimeout(timeoutId);
+      });
+      timeoutIds.current.clear();
+    };
+  }, []);
 
   const addRipple = (event: React.MouseEvent<HTMLDivElement>) => {
     if (disabled) return;
@@ -51,9 +62,12 @@ const RippleEffect = ({
     setRipples((prev) => [...prev, newRipple]);
 
     // Remove ripple after animation
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
+      timeoutIds.current.delete(timeoutId);
     }, duration * 1000);
+
+    timeoutIds.current.add(timeoutId);
   };
 
   return (
