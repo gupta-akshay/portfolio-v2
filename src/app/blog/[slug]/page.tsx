@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import BlogImage from '@/app/components/BlogImage';
 import EmojiReactions from '@/app/components/EmojiReactions';
+import SocialShare from '@/app/components/SocialShare';
 import ReadingProgressBar from '@/app/components/ReadingProgressBar';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate, calculateReadingTime } from '@/app/utils';
@@ -66,6 +67,11 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   return (
     <Layout isBlog>
       <ReadingProgressBar />
+      <SocialShare
+        url={`https://akshaygupta.live/blog/${slug}`}
+        title={post.title}
+        description={post.excerpt || post.title}
+      />
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

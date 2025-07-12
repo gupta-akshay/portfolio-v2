@@ -59,3 +59,11 @@ export interface BackButtonProps {
   className?: string;
   showIcon?: boolean;
 }
+
+// SocialShare component types
+export interface SocialShareProps {
+  url: string;
+  title: string;
+  description?: string;
+  className?: string;
+}
