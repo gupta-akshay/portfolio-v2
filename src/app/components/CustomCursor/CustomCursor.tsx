@@ -13,13 +13,32 @@ const CustomCursor = () => {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
+  // Function to get cursor size based on variant
+  const getCursorSize = (variant: string): number => {
+    switch (variant) {
+      case 'text':
+        return 64;
+      case 'hover':
+        return 80;
+      case 'click':
+        return 24;
+      case 'default':
+      default:
+        return 32;
+    }
+  };
+
   useEffect(() => {
     const moveCursor = (e: MouseEvent) => {
       const x = e.clientX;
       const y = e.clientY;
 
-      cursorX.set(x - 16);
-      cursorY.set(y - 16);
+      // Calculate offset based on current cursor size
+      const cursorSize = getCursorSize(cursorVariant);
+      const offset = cursorSize / 2;
+
+      cursorX.set(x - offset);
+      cursorY.set(y - offset);
 
       // Ensure cursor is visible when mouse moves
       if (!isVisible) {
@@ -54,7 +73,7 @@ const CustomCursor = () => {
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [cursorX, cursorY, isVisible]);
+  }, [cursorX, cursorY, isVisible, cursorVariant]);
 
   // Cursor animation variants
   const variants = {
