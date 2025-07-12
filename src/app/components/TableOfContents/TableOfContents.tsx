@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { PortableTextBlock } from 'sanity';
-import { generateHeadingId } from '@/app/utils/helpers';
+import { generateHeadingId, resetHeadingIds } from '@/app/utils/helpers';
 
 interface HeadingBlock {
   _type: 'block';
@@ -35,6 +35,9 @@ const extractTextFromBlock = (block: HeadingBlock): string => {
 };
 
 const extractHeadings = (content: PortableTextBlock[]): TOCItem[] => {
+  // Reset heading IDs for each new content processing
+  resetHeadingIds();
+
   const headings: TOCItem[] = [];
 
   content.forEach((block) => {
