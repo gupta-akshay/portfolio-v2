@@ -7,7 +7,7 @@ import {
   LinkedinShareButton,
   WhatsappShareButton,
   EmailShareButton,
-  TwitterIcon,
+  XIcon,
   FacebookIcon,
   LinkedinIcon,
   WhatsappIcon,
@@ -78,7 +78,7 @@ export default function SocialShare({
             title={shareConfig.title}
             hashtags={['blog', 'tech', 'development']}
           >
-            <TwitterIcon size={32} round />
+            <XIcon size={32} round />
           </TwitterShareButton>
         </div>
 
