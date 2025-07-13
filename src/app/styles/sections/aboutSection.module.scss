@@ -1,0 +1,147 @@
+@use 'sass:color';
+@use '../variables' as *;
+@use '../mixin' as *;
+@use '../3d-effects' as *;
+
+// 🌞 Light theme overrides
+:global(body.theme-light) {
+  .aboutText h4 {
+    color: $px-dark;
+  }
+
+  .aboutText p {
+    color: $px-body-light;
+  }
+
+  .educationBox {
+    background: $px-gray;
+  }
+
+  .educationBox p {
+    color: $px-body-light;
+  }
+
+  .educationBox h6 {
+    color: $px-dark;
+  }
+
+  .educationBox li + li {
+    border-top: 1px solid rgba($px-dark, 0.05);
+  }
+
+  .skillsBox h3 {
+    color: $px-dark;
+  }
+
+  .skillsBox p {
+    color: $px-body-light;
+  }
+}
+
+.aboutSection {
+  .aboutImg {
+    img {
+      @include up-md {
+        max-width: inherit;
+        float: right;
+      }
+    }
+
+    @include down-md {
+      text-align: center;
+    }
+  }
+
+  .aboutInfo {
+    @include up-lg {
+      padding-left: 50px;
+    }
+
+    .aboutText {
+      h4 {
+        color: $px-white;
+        margin-bottom: 25px;
+      }
+
+      p {
+        color: $px-body;
+      }
+    }
+
+    .btnBar {
+      padding-top: 35px;
+
+      .pxBtn {
+        min-width: 150px;
+        text-align: center;
+
+        + .pxBtn {
+          margin-left: 22px;
+        }
+      }
+    }
+  }
+}
+
+.educationBox {
+  margin: 0;
+  padding: 0;
+  background: $px-dark;
+  list-style: none;
+
+  @include down-md {
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin: 0;
+    color: $px-body;
+  }
+
+  h6 {
+    color: $px-white;
+    margin: 5px 0;
+  }
+
+  span {
+    background: $px-theme;
+    color: #000000;
+    font-size: 11px;
+    padding: 1px 8px;
+    display: inline-block;
+    vertical-align: top;
+    letter-spacing: 1px;
+    margin-left: -24px;
+    position: relative;
+    margin-bottom: 9px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      border-top: 5px solid color.adjust($px-theme, $lightness: -25%);
+      border-left: 5px solid transparent;
+    }
+  }
+
+  li {
+    padding: 20px;
+
+    + li {
+      border-top: 1px solid rgba($px-white, 0.05);
+    }
+  }
+}
+
+.skillsBox {
+  h3 {
+    color: $px-white;
+    margin: 0 0 15px;
+  }
+
+  p {
+    padding-bottom: 10px;
+    color: $px-body;
+  }
+}

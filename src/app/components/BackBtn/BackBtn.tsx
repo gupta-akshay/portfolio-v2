@@ -10,6 +10,8 @@ import { useLoading } from '@/app/context/LoadingContext';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useCursor } from '@/app/context/CursorContext';
 
+import styles from './BackBtn.module.scss';
+
 const BackBtn = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -18,7 +20,6 @@ const BackBtn = () => {
   const { setCursorVariant, setCursorText } = useCursor();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Add cursor interactions
   useEffect(() => {
     if (buttonRef.current) {
       return addCursorInteraction(buttonRef.current, {
@@ -46,11 +47,11 @@ const BackBtn = () => {
   };
 
   return (
-    <div className='back-btn-wrapper'>
+    <div style={{ position: 'relative', display: 'inline-block' }}>
       <button
         ref={buttonRef}
         type='button'
-        className='back-btn'
+        className={styles.backBtn}
         onClick={handleBack}
         onKeyDown={(e) => handleKeyDown(e, handleBack)}
         aria-label='Go back to previous page'

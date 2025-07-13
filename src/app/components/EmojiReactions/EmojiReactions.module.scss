@@ -1,8 +1,58 @@
-@use '../variables' as *;
-@use '../mixin' as *;
-@use '../3d-effects' as *;
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
 
-.emoji-reactions-container {
+// Theme override for light mode
+:global(body.theme-light) {
+  .emojiReactionsBar {
+    background: rgba($px-white, 0.95);
+    border: 1px solid rgba($px-black, 0.1);
+    box-shadow: 0 4px 20px rgba($px-black, 0.1);
+  }
+
+  .emojiReactionBtn {
+    color: $px-body-light;
+
+    &:hover {
+      background: rgba($px-black, 0.05);
+      backdrop-filter: blur(3px);
+      box-shadow: 0 2px 6px rgba($px-black, 0.1);
+
+      &::before {
+        background: linear-gradient(
+          45deg,
+          rgba($px-black, 0.05),
+          rgba($px-black, 0.02)
+        );
+      }
+    }
+
+    &.userReacted {
+      background: rgba($px-theme, 0.1);
+      border: 1px solid rgba($px-theme, 0.3);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 2px 8px rgba($px-theme, 0.2);
+
+      &::before {
+        background: linear-gradient(
+          45deg,
+          rgba($px-theme, 0.05),
+          rgba($px-theme, 0.02)
+        );
+      }
+    }
+  }
+
+  .count {
+    color: rgba($px-body-light, 0.7);
+
+    .userReacted & {
+      color: $px-theme;
+    }
+  }
+}
+
+.emojiReactionsContainer {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -11,7 +61,7 @@
   animation: slideIn 0.3s ease-out;
 }
 
-.emoji-reactions-bar {
+.emojiReactionsBar {
   display: flex;
   background: rgba($px-bg-1, 0.95);
   backdrop-filter: blur(10px);
@@ -22,23 +72,16 @@
   gap: 4px;
   transition: all 0.3s ease-in-out;
 
-  // Add 3D floating effects with glassmorphism
   @include floating-3d(4px, 0.1);
   @include glassmorphism-3d(15px, 0.08);
   @include responsive-3d-effects;
-
-  .theme-light & {
-    background: rgba($px-white, 0.95);
-    border: 1px solid rgba($px-black, 0.1);
-    box-shadow: 0 4px 20px rgba($px-black, 0.1);
-  }
 
   &::before {
     border-radius: 50px;
   }
 }
 
-.emoji-reaction-btn {
+.emojiReactionBtn {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,7 +95,6 @@
   position: relative;
   color: $px-body;
 
-  // Add 3D button press effects
   @include floating-3d(1px, 0.05);
   @include responsive-3d-effects;
 
@@ -83,7 +125,7 @@
     transform: scale(0.95) translateY(1px);
   }
 
-  &.user-reacted {
+  &.userReacted {
     background: rgba($px-theme, 0.1);
     border: 1px solid rgba($px-theme, 0.3);
     backdrop-filter: blur(5px);
@@ -110,39 +152,6 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
-
-  .theme-light & {
-    color: $px-body-light;
-
-    &:hover {
-      background: rgba($px-black, 0.05);
-      backdrop-filter: blur(3px);
-      box-shadow: 0 2px 6px rgba($px-black, 0.1);
-
-      &::before {
-        background: linear-gradient(
-          45deg,
-          rgba($px-black, 0.05),
-          rgba($px-black, 0.02)
-        );
-      }
-    }
-
-    &.user-reacted {
-      background: rgba($px-theme, 0.1);
-      border: 1px solid rgba($px-theme, 0.3);
-      backdrop-filter: blur(5px);
-      box-shadow: 0 2px 8px rgba($px-theme, 0.2);
-
-      &::before {
-        background: linear-gradient(
-          45deg,
-          rgba($px-theme, 0.05),
-          rgba($px-theme, 0.02)
-        );
-      }
-    }
-  }
 }
 
 .emoji {
@@ -159,17 +168,9 @@
   text-align: center;
   transition: color 0.2s ease-in-out;
 
-  .user-reacted & {
+  .userReacted & {
     color: $px-theme;
     font-weight: 700;
-  }
-
-  .theme-light & {
-    color: rgba($px-body-light, 0.7);
-
-    .user-reacted & {
-      color: $px-theme;
-    }
   }
 }
 
@@ -184,19 +185,19 @@
   }
 }
 
-// Responsive design
+// Responsive
 @media (max-width: $px-media-sm) {
-  .emoji-reactions-container {
+  .emojiReactionsContainer {
     bottom: 10px;
     right: 10px;
   }
 
-  .emoji-reactions-bar {
+  .emojiReactionsBar {
     padding: 6px 12px;
     gap: 2px;
   }
 
-  .emoji-reaction-btn {
+  .emojiReactionBtn {
     padding: 6px 2px;
     min-width: 36px;
   }
@@ -210,13 +211,13 @@
   }
 }
 
-// Accessibility improvements
+// Accessibility
 @media (prefers-reduced-motion: reduce) {
-  .emoji-reactions-container {
+  .emojiReactionsContainer {
     animation: none;
   }
 
-  .emoji-reaction-btn {
+  .emojiReactionBtn {
     transition: none;
 
     &:hover {
@@ -229,13 +230,13 @@
   }
 }
 
-// High contrast mode support
+// High Contrast
 @media (prefers-contrast: high) {
-  .emoji-reactions-bar {
+  .emojiReactionsBar {
     border: 2px solid $px-theme;
   }
 
-  .emoji-reaction-btn.user-reacted {
+  .emojiReactionBtn.userReacted {
     border: 2px solid $px-theme;
     background: $px-theme;
     color: $px-white;

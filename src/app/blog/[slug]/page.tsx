@@ -17,6 +17,8 @@ import {
   StaggerAnimation,
 } from '@/app/components';
 
+import styles from '../../styles/sections/blogSection.module.scss';
+
 const SingleBlog = dynamic(() => import('@/app/components/SingleBlog'), {
   loading: () => <div className='loading-blog-content'>Loading content...</div>,
   ssr: true,
@@ -85,8 +87,12 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
       />
       <div
         id={post.slug.current}
-        className='single-blog'
-        style={{ position: 'relative', minHeight: '100vh' }}
+        className={styles.singleBlog}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          overflowX: 'hidden',
+        }}
       >
         <InteractiveBackground
           variant='grid'
@@ -99,34 +105,46 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           className='blog-post-background'
         />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <ScrollAnimation animation='scale' duration={0.8}>
-            <div className='blog-feature-img'>
+          <ScrollAnimation
+            animation='scale'
+            duration={0.8}
+            parallax={true}
+            parallaxSpeed='slow'
+          >
+            <div className={styles.blogFeatureImg}>
               <BlogImage value={post.mainImage} isCoverImage />
             </div>
           </ScrollAnimation>
           <div className='row justify-content-center'>
             <div className='col-lg-8'>
-              <article className='article'>
-                <StaggerAnimation staggerDelay={0.2}>
+              <article className={styles.article}>
+                <StaggerAnimation
+                  staggerDelay={0.2}
+                  useIntersectionObserver={true}
+                >
                   <ScrollAnimation
                     animation='slideUp'
                     duration={0.8}
                     delay={0.2}
+                    scrollReveal={true}
                   >
-                    <div className='article-title'>
-                      <div className='hashtags'>
+                    <div className={styles.articleTitle}>
+                      <div className={styles.hashtags}>
                         {post.categories.map((category) => (
-                          <span key={category.slug.current} className='hashtag'>
+                          <span
+                            key={category.slug.current}
+                            className={styles.hashtag}
+                          >
                             #{category.title}
                           </span>
                         ))}
                       </div>
                       <h2>{post.title}</h2>
-                      <div className='media'>
-                        <div className='avatar'>
+                      <div className={styles.media}>
+                        <div className={styles.avatar}>
                           <BlogImage value={post.author.image} isAuthor />
                         </div>
-                        <div className='media-body'>
+                        <div className={styles.mediaBody}>
                           <label>{post.author.name}</label>
                           <span>
                             {formatDate(post.publishedAt)} • {readingTime.text}
@@ -140,7 +158,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
                     duration={0.8}
                     delay={0.4}
                   >
-                    <div className='article-content'>
+                    <div className={styles.articleContent}>
                       <Suspense
                         fallback={
                           <div className='loading-blog-content'>

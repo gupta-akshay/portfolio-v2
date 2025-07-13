@@ -59,7 +59,9 @@ const EasterEggHints: React.FC = () => {
         if (!hint) return;
 
         const timeoutId1 = setTimeout(() => {
-          setVisibleHints((prev) => [...prev, hint.id]);
+          setVisibleHints((prev) =>
+            prev.includes(hint.id) ? prev : [...prev, hint.id]
+          );
 
           // Hide hint after 5 seconds
           const timeoutId2 = setTimeout(() => {

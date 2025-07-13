@@ -1,6 +1,6 @@
-@use '../variables' as *;
-@use '../mixin' as *;
-@use '../3d-effects' as *;
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
 
 .table-of-contents {
   position: fixed;

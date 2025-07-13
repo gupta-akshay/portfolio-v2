@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { PortableTextBlock } from 'sanity';
 
+import './TableOfContents.scss';
+
 interface HeadingBlock {
   _type: 'block';
   _key: string;

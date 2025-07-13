@@ -1,0 +1,61 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+
+// Light theme override
+:global(body.theme-light) {
+  .googleMap {
+    border: 5px solid $px-white;
+  }
+}
+
+.googleMap {
+  margin-top: 50px;
+
+  @include down-sm {
+    margin-top: 15px;
+  }
+
+  .embedResponsive21by9 {
+    filter: grayscale(1);
+    -webkit-filter: grayscale(1);
+
+    &::before {
+      content: '';
+      padding-top: 30%;
+
+      @include down-sm {
+        padding-top: 55%;
+      }
+    }
+  }
+}
+
+.embedResponsive {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+
+  &::before {
+    display: block;
+    content: '';
+  }
+
+  .embedResponsiveItem,
+  iframe {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}
+
+.embedResponsive21by9 {
+  &::before {
+    padding-top: 42.857143%;
+  }
+}

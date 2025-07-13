@@ -130,28 +130,6 @@
   }
 }
 
-.google-map {
-  margin-top: 50px;
-  .theme-light & {
-    border: 5px solid $px-white;
-  }
-  @include down-sm {
-    margin-top: 15px;
-  }
-  .embed-responsive-21by9 {
-    filter: grayscale(1);
-    -webkit-filter: grayscale(1);
-    &:before {
-      content: block;
-      content: '';
-      padding-top: 30%;
-      @include down-sm {
-        padding-top: 55%;
-      }
-    }
-  }
-}
-
 @keyframes fade_in_show {
   0% {
     opacity: 0;

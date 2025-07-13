@@ -15,6 +15,7 @@ import {
   InteractiveBackground,
   ScrollAnimation,
   StaggerAnimation,
+  TextAnimation,
 } from '@/app/components';
 
 export default function Contact() {
@@ -35,11 +36,11 @@ export default function Contact() {
           className='contact-background'
         />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <ScrollAnimation animation='fadeIn' duration={0.8}>
+          <TextAnimation duration={1.0} delay={0.2}>
             <div className='title'>
               <h3>Get in touch.</h3>
             </div>
-          </ScrollAnimation>
+          </TextAnimation>
           <StaggerAnimation staggerDelay={0.2}>
             <div className='row'>
               <div className='col-lg-5 col-xl-4 m-15px-tb'>

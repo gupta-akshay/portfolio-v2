@@ -1,17 +1,34 @@
-@use '../variables' as *;
-@use '../mixin' as *;
-@use '../3d-effects' as *;
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
 
-.social-share-container {
+// Theme-light overrides
+:global(body.theme-light) {
+  .socialShareBar {
+    background: rgba($px-white, 0.95);
+    border: 1px solid rgba($px-black, 0.1);
+    box-shadow: 0 4px 20px rgba($px-black, 0.1);
+  }
+
+  .socialShareTitle {
+    color: rgba($px-body-light, 0.7);
+  }
+
+  .socialShareBtn:hover {
+    box-shadow: 0 4px 12px rgba($px-black, 0.15);
+  }
+}
+
+.socialShareContainer {
   position: fixed;
   top: 50%;
-  left: 320px; // To the right of the header
+  left: 320px;
   transform: translateY(-50%);
   z-index: 1000;
   animation: slideInLeft 0.3s ease-out;
 }
 
-.social-share-bar {
+.socialShareBar {
   display: flex;
   flex-direction: column;
   background: rgba($px-bg-1, 0.95);
@@ -24,23 +41,16 @@
   transition: all 0.3s ease-in-out;
   align-items: center;
 
-  // Add glassmorphism effects
   @include glassmorphism-3d(12px, 0.08);
   @include floating-3d(3px, 0.1);
   @include responsive-3d-effects;
-
-  .theme-light & {
-    background: rgba($px-white, 0.95);
-    border: 1px solid rgba($px-black, 0.1);
-    box-shadow: 0 4px 20px rgba($px-black, 0.1);
-  }
 
   &::before {
     border-radius: 50px;
   }
 }
 
-.social-share-title {
+.socialShareTitle {
   font-size: 12px;
   font-weight: 600;
   color: rgba($px-body, 0.7);
@@ -50,13 +60,9 @@
   text-orientation: mixed;
   letter-spacing: 1px;
   text-transform: uppercase;
-
-  .theme-light & {
-    color: rgba($px-body-light, 0.7);
-  }
 }
 
-.social-share-btn {
+.socialShareBtn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,13 +84,6 @@
     transform: scale(0.95);
   }
 
-  .theme-light & {
-    &:hover {
-      box-shadow: 0 4px 12px rgba($px-black, 0.15);
-    }
-  }
-
-  // Override react-share button styles
   > div {
     display: flex !important;
     align-items: center !important;
@@ -92,7 +91,7 @@
   }
 }
 
-.copy-link-btn {
+.copyLinkBtn {
   background: rgba($px-theme, 0.1);
   border: 1px solid rgba($px-theme, 0.3);
   color: $px-theme;
@@ -102,7 +101,7 @@
   position: relative;
   overflow: hidden;
 
-  &:before {
+  &::before {
     content: '';
     position: absolute;
     top: 0;
@@ -130,7 +129,7 @@
     color: #2fbf71;
     box-shadow: 0 2px 8px rgba(46, 191, 113, 0.3);
 
-    &:before {
+    &::before {
       background: linear-gradient(
         45deg,
         rgba(46, 191, 113, 0.05),
@@ -138,13 +137,14 @@
       );
     }
   }
-
-  .copy-icon {
-    font-size: 14px;
-    line-height: 1;
-  }
 }
 
+.copyIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+// Keyframe animations
 @keyframes slideInLeft {
   from {
     transform: translateX(-100%) translateY(-50%);
@@ -156,93 +156,89 @@
   }
 }
 
-// Mobile responsive design
+@keyframes slideInBottom {
+  from {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+// Media Queries
 @media (max-width: $px-media-lg) {
-  .social-share-container {
+  .socialShareContainer {
     top: auto;
     left: 65%;
-    bottom: 120px; // Above emoji reactions
+    bottom: 120px;
     transform: translateX(-50%);
     animation: slideInBottom 0.3s ease-out;
   }
 
-  .social-share-bar {
+  .socialShareBar {
     flex-direction: row;
     padding: 8px 16px;
     gap: 4px;
   }
 
-  .social-share-title {
+  .socialShareTitle {
     writing-mode: horizontal-tb;
-    text-orientation: mixed;
     margin-bottom: 0;
     margin-right: 8px;
   }
 
-  .social-share-btn {
+  .socialShareBtn {
     width: 36px;
     height: 36px;
-  }
-
-  @keyframes slideInBottom {
-    from {
-      transform: translateX(-50%) translateY(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
   }
 }
 
 @media (max-width: $px-media-sm) {
-  .social-share-container {
-    bottom: 80px; // Closer to emoji reactions on small screens
+  .socialShareContainer {
+    bottom: 80px;
   }
 
-  .social-share-bar {
+  .socialShareBar {
     padding: 6px 12px;
     gap: 2px;
   }
 
-  .social-share-btn {
+  .socialShareBtn {
     width: 32px;
     height: 32px;
   }
 
-  .social-share-title {
+  .socialShareTitle {
     font-size: 11px;
     margin-right: 6px;
   }
 }
 
-// Accessibility improvements
+// Accessibility
 @media (prefers-reduced-motion: reduce) {
-  .social-share-container {
+  .socialShareContainer {
     animation: none;
   }
 
-  .social-share-btn {
+  .socialShareBtn {
     transition: none;
 
-    &:hover {
-      transform: none;
-    }
-
+    &:hover,
     &:active {
       transform: none;
     }
   }
 }
 
-// High contrast mode support
+// High Contrast
 @media (prefers-contrast: high) {
-  .social-share-bar {
+  .socialShareBar {
     border: 2px solid $px-theme;
   }
 
-  .copy-link-btn {
+  .copyLinkBtn {
     border: 2px solid $px-theme;
     background: $px-theme;
     color: $px-white;

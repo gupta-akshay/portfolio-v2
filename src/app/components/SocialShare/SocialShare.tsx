@@ -15,6 +15,8 @@ import {
 } from 'react-share';
 import { SocialShareProps } from '@/app/types/components';
 
+import styles from './SocialShare.module.scss';
+
 export default function SocialShare({
   url,
   title,
@@ -66,11 +68,11 @@ export default function SocialShare({
   };
 
   return (
-    <div className='social-share-container'>
-      <div className='social-share-bar'>
-        <div className='social-share-title'>Share</div>
+    <div className={styles.socialShareContainer}>
+      <div className={styles.socialShareBar}>
+        <div className={styles.socialShareTitle}>Share</div>
 
-        <div className='social-share-btn'>
+        <div className={styles.socialShareBtn}>
           <TwitterShareButton
             url={shareConfig.url}
             title={shareConfig.title}
@@ -80,13 +82,13 @@ export default function SocialShare({
           </TwitterShareButton>
         </div>
 
-        <div className='social-share-btn'>
+        <div className={styles.socialShareBtn}>
           <FacebookShareButton url={shareConfig.url}>
             <FacebookIcon size={32} round />
           </FacebookShareButton>
         </div>
 
-        <div className='social-share-btn'>
+        <div className={styles.socialShareBtn}>
           <LinkedinShareButton
             url={shareConfig.url}
             title={shareConfig.title}
@@ -96,7 +98,7 @@ export default function SocialShare({
           </LinkedinShareButton>
         </div>
 
-        <div className='social-share-btn'>
+        <div className={styles.socialShareBtn}>
           <WhatsappShareButton
             url={shareConfig.url}
             title={shareConfig.title}
@@ -106,7 +108,7 @@ export default function SocialShare({
           </WhatsappShareButton>
         </div>
 
-        <div className='social-share-btn'>
+        <div className={styles.socialShareBtn}>
           <EmailShareButton
             url={shareConfig.url}
             subject={shareConfig.title}
@@ -118,10 +120,10 @@ export default function SocialShare({
 
         <button
           onClick={handleCopyLink}
-          className={`social-share-btn copy-link-btn ${copied ? 'copied' : ''}`}
+          className={`${styles.socialShareBtn} ${styles.copyLinkBtn} ${copied ? styles.copied : ''}`}
           title='Copy link'
         >
-          <div className='copy-icon'>{copied ? '✓' : '🔗'}</div>
+          <div className={styles.copyIcon}>{copied ? '✓' : '🔗'}</div>
         </button>
       </div>
     </div>

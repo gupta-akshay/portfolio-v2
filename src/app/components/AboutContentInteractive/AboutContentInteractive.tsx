@@ -14,7 +14,6 @@ export default function AboutContentInteractive({
   const { addCursorInteraction } = useCursorInteractions();
   const workTogetherRef = useRef<HTMLAnchorElement>(null);
 
-  // Add cursor interactions
   useEffect(() => {
     if (workTogetherRef.current) {
       const cleanup = addCursorInteraction(workTogetherRef.current, {
