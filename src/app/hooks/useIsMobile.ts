@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 
-const useIsMobile = (): boolean => {
+const useIsMobile = (breakpoint: number = 768): boolean => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
-      // Check screen width (768px is typical mobile/tablet breakpoint)
-      const screenWidth = window.innerWidth <= 768;
+      // Check screen width using the provided breakpoint
+      const screenWidth = window.innerWidth <= breakpoint;
 
       // Also check user agent for mobile devices
       const userAgent = navigator.userAgent.toLowerCase();
@@ -43,7 +43,7 @@ const useIsMobile = (): boolean => {
       window.removeEventListener('resize', checkIsMobile);
       window.removeEventListener('orientationchange', checkIsMobile);
     };
-  }, []);
+  }, [breakpoint]);
 
   return isMobile;
 };

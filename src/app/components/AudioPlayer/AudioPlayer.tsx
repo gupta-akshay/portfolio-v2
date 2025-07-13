@@ -42,7 +42,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Memoize derived values
   const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(991);
 
   // Custom hooks - all called unconditionally
   const {
