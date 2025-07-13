@@ -69,7 +69,8 @@
     "overrides": {
       "@types/react": "npm:types-react@19.0.0-rc.1",
       "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-      "prismjs": ">=1.30.0"
+      "prismjs": ">=1.30.0",
+      "esbuild": ">=0.25.0"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
