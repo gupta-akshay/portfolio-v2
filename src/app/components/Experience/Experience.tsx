@@ -3,6 +3,8 @@ import { getExperienceData } from '@/app/utils/data/experience';
 import { ExperienceProps } from '@/app/types/components';
 import { formatDateRange } from '@/app/utils/helpers/format';
 
+import styles from './Experience.module.scss';
+
 export default function Experience({
   experiences,
   showLogos = true,
@@ -18,13 +20,13 @@ export default function Experience({
       <div className='title'>
         <h3>Experience</h3>
       </div>
-      <div className='experience-box'>
+      <div className={styles.experienceBox}>
         {experienceData.map((experience) => (
-          <div className='experience-row' key={experience.id}>
+          <div className={styles.experienceRow} key={experience.id}>
             <div className='row'>
               {showLogos && (
                 <div className='col-sm-3 col-md-3 col-xl-2'>
-                  <div className='experience-row--left'>
+                  <div className={styles.experienceRowLeft}>
                     <Image
                       src={experience.logo || '/images/default-company.png'}
                       alt={`${experience.company} Logo`}
@@ -38,14 +40,14 @@ export default function Experience({
               <div
                 className={showLogos ? 'col-sm-9 col-md-9 col-xl-10' : 'col-12'}
               >
-                <div className='experience-row--right'>
+                <div className={styles.experienceRowRight}>
                   <h6>{experience.position}</h6>
                   <label>
                     {experience.company} | {experience.location} |{' '}
                     {formatDateRange(experience.startDate, experience.endDate)}
                   </label>
-                  <div className='experience-row--right__type'>Full Time</div>
-                  <div className='experience-row--right__content'>
+                  <div className={styles.experienceRowRightType}>Full Time</div>
+                  <div className={styles.experienceRowRightContent}>
                     <p>{experience.description}</p>
                   </div>
                 </div>

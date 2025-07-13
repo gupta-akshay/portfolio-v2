@@ -12,6 +12,8 @@ import {
   StaggerAnimation,
 } from '@/app/components';
 
+import styles from '../styles/sections/aboutSection.module.scss';
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live/about'),
   title: 'About | Akshay Gupta',
@@ -64,7 +66,7 @@ const EducationAndSkills = () => (
       <div className='row'>
         <div className='col-lg-4 m-15px-tb'>
           <ScrollAnimation animation='slideUp' duration={0.8} delay={0.2}>
-            <ul className='education-box'>
+            <ul className={styles.educationBox}>
               <li>
                 <span>2013-2017</span>
                 <h6>Bachelor of Engineering in Computer Science</h6>
@@ -80,7 +82,7 @@ const EducationAndSkills = () => (
         </div>
         <div className='col-lg-7 ml-auto m-15px-tb'>
           <ScrollAnimation animation='slideUp' duration={0.8} delay={0.4}>
-            <div className='skills-box'>
+            <div className={styles.skillsBox}>
               <h3>What I Can Do</h3>
               <p>
                 I love building websites and apps from start to finish! Over the
@@ -174,7 +176,7 @@ export default function About() {
                   duration={1.0}
                   delay={0.3}
                 >
-                  <div className='about-img'>
+                  <div className={styles.aboutImg}>
                     <Image
                       src='/images/about-me.png'
                       alt='about-image'
@@ -187,9 +189,9 @@ export default function About() {
                 </ScrollAnimation>
               </div>
               <div className='col-lg-6 m-15px-tb'>
-                <div className='about-info'>
+                <div className={styles.aboutInfo}>
                   <ScrollAnimation animation='fadeIn' duration={0.8}>
-                    <div className='title'>
+                    <div className='title' style={{ marginBottom: '50px' }}>
                       <h3>Let me introduce myself!</h3>
                     </div>
                   </ScrollAnimation>
@@ -198,7 +200,7 @@ export default function About() {
                     duration={0.8}
                     delay={0.2}
                   >
-                    <div className='about-text'>
+                    <div className={styles.aboutText}>
                       <h4>Hi there! 👋</h4>
                       <p>
                         I&apos;m a web developer at PeopleGrove, where I&apos;ve
@@ -220,7 +222,7 @@ export default function About() {
                     </div>
                   </ScrollAnimation>
                   <ScrollAnimation animation='scale' duration={0.8} delay={0.4}>
-                    <div className='btn-bar'>
+                    <div className={styles.btnBar}>
                       <MagneticHover intensity={0.4} glowEffect={true}>
                         <RippleEffect>
                           <AboutContentInteractive>
