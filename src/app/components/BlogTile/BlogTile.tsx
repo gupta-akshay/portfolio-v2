@@ -249,7 +249,11 @@ const BlogTile = memo(
             </div>
           </div>
           <div className={styles.blogInfo}>
-            <div className={styles.meta} aria-label='Post metadata' ref={metaRef}>
+            <div
+              className={styles.meta}
+              aria-label='Post metadata'
+              ref={metaRef}
+            >
               <time dateTime={blog.publishedAt}>{formattedDate}</time>
               <span aria-hidden='true'>|</span>
               <span className={styles.readingTime}>{readingTime.text}</span>
