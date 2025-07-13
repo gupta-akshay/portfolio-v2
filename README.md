@@ -47,6 +47,16 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 - **Context-based State Management** for theme and cursor states
 - **Performance Optimized** with React 19 features and best practices
 
+## 🎮 Easter Eggs
+
+Hidden interactive features for curious visitors:
+
+- **Konami Code** (`↑↑↓↓←→←→BA`) - Activates Matrix Rain effect
+- **Disco Mode** - Click logo rapidly (5x) for party lights
+- **Developer Console** - Type "dev" on blog pages for terminal effect
+- **Hints System** - Periodic hints with activation instructions
+- Desktop-only (disabled on mobile for performance)
+
 ## 🚀 Quick Start
 
 Create `.env.local`:

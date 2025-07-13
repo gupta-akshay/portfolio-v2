@@ -249,3 +249,118 @@ textarea,
     }
   }
 }
+
+// Disco Mode Global Styles
+.disco-mode-active {
+  animation: rainbowText 2s linear infinite !important;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    animation: rainbowText 3s linear infinite !important;
+    text-shadow: 0 0 10px currentColor !important;
+  }
+
+  .btn,
+  .px-btn,
+  button {
+    animation: rainbowBackground 2s linear infinite !important;
+    box-shadow: 0 0 20px currentColor !important;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    animation: rainbowText 1s linear infinite !important;
+  }
+
+  .floating-shape,
+  .hb-img,
+  .hl-logo {
+    animation: discoShake 0.5s ease-in-out infinite alternate !important;
+  }
+}
+
+// Rainbow text animation for disco mode
+@keyframes rainbowText {
+  0% {
+    color: #ff0000;
+  }
+  14% {
+    color: #ff7f00;
+  }
+  28% {
+    color: #ffff00;
+  }
+  42% {
+    color: #00ff00;
+  }
+  57% {
+    color: #0000ff;
+  }
+  71% {
+    color: #4b0082;
+  }
+  85% {
+    color: #9400d3;
+  }
+  100% {
+    color: #ff0000;
+  }
+}
+
+// Rainbow background animation for disco mode
+@keyframes rainbowBackground {
+  0% {
+    background-color: rgba(255, 0, 0, 0.3);
+  }
+  14% {
+    background-color: rgba(255, 127, 0, 0.3);
+  }
+  28% {
+    background-color: rgba(255, 255, 0, 0.3);
+  }
+  42% {
+    background-color: rgba(0, 255, 0, 0.3);
+  }
+  57% {
+    background-color: rgba(0, 0, 255, 0.3);
+  }
+  71% {
+    background-color: rgba(75, 0, 130, 0.3);
+  }
+  85% {
+    background-color: rgba(148, 0, 211, 0.3);
+  }
+  100% {
+    background-color: rgba(255, 0, 0, 0.3);
+  }
+}
+
+// Disco shake animation
+@keyframes discoShake {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-2px) rotate(-1deg);
+  }
+  50% {
+    transform: translateX(2px) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-1px) rotate(-0.5deg);
+  }
+  100% {
+    transform: translateX(1px) rotate(0.5deg);
+  }
+}
+
+// Respect reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  .disco-mode-active * {
+    animation: none !important;
+  }
+}

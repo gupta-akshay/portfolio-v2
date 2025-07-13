@@ -1,0 +1,139 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+
+.container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 999;
+  pointer-events: none;
+
+  @include down-md {
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+.hint {
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateX(100px);
+  animation: slideInHint 0.5s ease-out forwards;
+
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}
+
+.hintContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba($px-bg-1, 0.95);
+  border: 1px solid rgba($px-theme, 0.3);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  color: rgba($px-white, 0.9);
+  max-width: 320px;
+  min-width: 200px;
+
+  .theme-light & {
+    background: rgba($px-white, 0.95);
+    border: 1px solid rgba($px-theme, 0.4);
+    color: rgba($px-dark, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  @include down-md {
+    font-size: 11px;
+    padding: 8px 12px;
+    max-width: 280px;
+    min-width: 180px;
+  }
+
+  @include down-sm {
+    max-width: 240px;
+    min-width: 160px;
+  }
+}
+
+.hintIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+
+  @include down-md {
+    font-size: 12px;
+  }
+}
+
+.hintText {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  hyphens: auto;
+  flex: 1;
+}
+
+@keyframes slideInHint {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Add a subtle pulse animation for the icon
+.hintIcon {
+  animation: pulseIcon 2s ease-in-out infinite;
+}
+
+@keyframes pulseIcon {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// Add a subtle glow effect
+.hintContent {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      rgba($px-theme, 0.1),
+      transparent
+    );
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
