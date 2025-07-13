@@ -111,6 +111,22 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [konamiSequence, easterEggState.particleTrailActive]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Cleanup all Easter egg states on unmount
+  useEffect(() => {
+    return () => {
+      // Reset all Easter egg states to prevent memory leaks
+      setEasterEggState({
+        konamiCodeActivated: false,
+        matrixRainActive: false,
+        discoModeActive: false,
+        partyModeActive: false,
+        typewriterModeActive: false,
+        devConsoleActive: false,
+        particleTrailActive: false,
+      });
+    };
+  }, []);
+
   const toggleMatrixRain = useCallback(() => {
     setEasterEggState((prev) => ({
       ...prev,

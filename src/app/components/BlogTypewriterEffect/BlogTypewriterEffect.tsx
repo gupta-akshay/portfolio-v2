@@ -188,6 +188,8 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
       if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
       }
+      // Reset body overflow
+      document.body.style.overflow = 'unset';
     };
   }, []);
 

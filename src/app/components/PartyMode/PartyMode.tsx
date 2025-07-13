@@ -36,6 +36,14 @@ const PartyMode: React.FC<PartyModeProps> = ({ className = '' }) => {
     }
   }, [isActive, togglePartyMode]);
 
+  // Cleanup on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      // Ensure body class is removed if component unmounts while active
+      document.body.classList.remove('party-mode-active');
+    };
+  }, []);
+
   if (!isActive) return null;
 
   return (

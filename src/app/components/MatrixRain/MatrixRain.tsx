@@ -141,6 +141,17 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ className = '' }) => {
     }
   }, [matrixState, toggleMatrixRain]);
 
+  // Cleanup on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      // Cancel any pending animation frames
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = undefined;
+      }
+    };
+  }, []);
+
   if (matrixState === 'inactive') return null;
 
   return (
