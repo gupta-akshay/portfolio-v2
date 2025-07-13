@@ -13,7 +13,6 @@ interface EasterEggState {
   konamiCodeActivated: boolean;
   matrixRainActive: boolean;
   discoModeActive: boolean;
-  partyModeActive: boolean;
   typewriterModeActive: boolean;
   devConsoleActive: boolean;
   particleTrailActive: boolean;
@@ -24,7 +23,6 @@ interface EasterEggContextType {
   activateKonamiCode: () => void;
   toggleMatrixRain: () => void;
   toggleDiscoMode: () => void;
-  togglePartyMode: () => void;
   toggleTypewriterMode: () => void;
   toggleDevConsole: () => void;
   toggleParticleTrail: () => void;
@@ -53,7 +51,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
     konamiCodeActivated: false,
     matrixRainActive: false,
     discoModeActive: false,
-    partyModeActive: false,
     typewriterModeActive: false,
     devConsoleActive: false,
     particleTrailActive: false,
@@ -119,7 +116,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
         konamiCodeActivated: false,
         matrixRainActive: false,
         discoModeActive: false,
-        partyModeActive: false,
         typewriterModeActive: false,
         devConsoleActive: false,
         particleTrailActive: false,
@@ -153,13 +149,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
-  const togglePartyMode = () => {
-    setEasterEggState((prev) => ({
-      ...prev,
-      partyModeActive: !prev.partyModeActive,
-    }));
-  };
-
   const toggleTypewriterMode = () => {
     setEasterEggState((prev) => ({
       ...prev,
@@ -186,7 +175,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
       konamiCodeActivated: false,
       matrixRainActive: false,
       discoModeActive: false,
-      partyModeActive: false,
       typewriterModeActive: false,
       devConsoleActive: false,
       particleTrailActive: false,
@@ -200,7 +188,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
         activateKonamiCode,
         toggleMatrixRain,
         toggleDiscoMode,
-        togglePartyMode,
         toggleTypewriterMode,
         toggleDevConsole,
         toggleParticleTrail,

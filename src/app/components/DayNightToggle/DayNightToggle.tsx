@@ -8,7 +8,6 @@ import { handleKeyDown } from '@/app/utils';
 import { useTheme } from '@/app/context/ThemeContext';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useCursor } from '@/app/context/CursorContext';
-import { useEasterEgg } from '@/app/context/EasterEggContext';
 import { DayNightToggleProps } from '@/app/types/components';
 
 const DayNightToggle = ({
@@ -19,39 +18,12 @@ const DayNightToggle = ({
   const { isLightMode, toggleTheme } = useTheme();
   const { addCursorInteraction } = useCursorInteractions();
   const { setCursorText, cursorVariant } = useCursor();
-  const { togglePartyMode } = useEasterEgg();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isHovering, setIsHovering] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Use props if provided, otherwise use context
   const lightMode = isLight !== undefined ? isLight : isLightMode;
-  const originalToggleHandler = onToggle || toggleTheme;
-
-  const toggleHandler = () => {
-    originalToggleHandler();
-
-    // Track rapid clicks for party mode
-    const newClickCount = clickCount + 1;
-    setClickCount(newClickCount);
-
-    // Clear existing timeout
-    if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current);
-    }
-
-    // Check if 5 rapid clicks within 2 seconds
-    if (newClickCount >= 5) {
-      togglePartyMode();
-      setClickCount(0);
-    } else {
-      // Reset click count after 2 seconds
-      clickTimeoutRef.current = setTimeout(() => {
-        setClickCount(0);
-      }, 2000);
-    }
-  };
+  const toggleHandler = onToggle || toggleTheme;
 
   const toggleText = lightMode ? 'Go dark' : 'Go light';
 
@@ -89,15 +61,6 @@ const DayNightToggle = ({
     return () => {
       element.removeEventListener('mouseenter', handleMouseEnter);
       element.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (clickTimeoutRef.current) {
-        clearTimeout(clickTimeoutRef.current);
-      }
     };
   }, []);
 
