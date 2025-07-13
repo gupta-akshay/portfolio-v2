@@ -85,7 +85,7 @@ async function BlogPosts() {
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <StaggerAnimation staggerDelay={0.1}>
+      <StaggerAnimation staggerDelay={0.1} useIntersectionObserver={true}>
         <div className='row'>
           {posts.map((post) => (
             <BlogTile key={post._id} blog={post} />
@@ -103,7 +103,7 @@ export default function Blog() {
         id='blog'
         data-nav-tooltip='Blog'
         className='pp-section pp-scrollable section'
-        style={{ position: 'relative', minHeight: '100vh' }}
+        style={{ position: 'relative', minHeight: '100vh', overflowX: 'hidden' }}
       >
         <InteractiveBackground
           variant='grid'

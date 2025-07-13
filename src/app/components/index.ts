@@ -17,6 +17,7 @@ export {
 export {
   default as ScrollAnimation,
   StaggerAnimation,
+  TextAnimation,
 } from './ScrollAnimation';
 export { default as TypingAnimation } from './TypingAnimation';
 export { default as EmojiReactions } from './EmojiReactions';

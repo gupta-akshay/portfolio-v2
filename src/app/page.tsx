@@ -5,6 +5,7 @@ import Layout from '@/app/components/Layout';
 import {
   ScrollAnimation,
   StaggerAnimation,
+  TextAnimation,
   MagneticHover,
   RippleEffect,
   FloatingShapes,
@@ -180,6 +181,8 @@ export default function Home() {
                     animation='slideLeft'
                     duration={1.0}
                     delay={0.3}
+                    parallax={true}
+                    parallaxSpeed='slow'
                   >
                     <div className={styles.hbImg}>
                       <Image

@@ -9,6 +9,7 @@ import { formatDate, calculateReadingTime } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useCursor } from '@/app/context/CursorContext';
+import { ScrollAnimation } from '@/app/components';
 
 import styles from './BlogTile.module.scss';
 
@@ -235,53 +236,59 @@ const BlogTile = memo(
 
     return (
       <div className='col-md-6 m-15px-tb'>
-        <article className={styles.blogGrid}>
-          <div className={styles.blogImg}>
-            <div ref={imageRef}>
-              <Link
-                href={`/blog/${blog.slug.current}`}
-                prefetch={false}
-                aria-label={`Read more about ${blog.title}`}
-                onClick={handleClick}
-              >
-                <BlogImage value={mainImage} isTileImage alt={blog.title} />
-              </Link>
-            </div>
-          </div>
-          <div className={styles.blogInfo}>
-            <div
-              className={styles.meta}
-              aria-label='Post metadata'
-              ref={metaRef}
-            >
-              <time dateTime={blog.publishedAt}>{formattedDate}</time>
-              <span aria-hidden='true'>|</span>
-              <span className={styles.readingTime}>{readingTime.text}</span>
-              <span aria-hidden='true'>|</span>
-              {blog.categories.slice(0, visibleCategories).map((category) => (
-                <span key={category.slug.current} className={styles.hashtag}>
-                  #{category.title}
-                </span>
-              ))}
-              {blog.categories.length > visibleCategories && (
-                <span className={styles.hashtagMore}>
-                  +{blog.categories.length - visibleCategories}
-                </span>
-              )}
-            </div>
-            <h2 className={styles.blogTitle}>
-              <div ref={titleRef}>
+        <ScrollAnimation
+          animation='slideUp'
+          duration={0.8}
+          scrollReveal={true}
+        >
+          <article className={styles.blogGrid}>
+            <div className={styles.blogImg}>
+              <div ref={imageRef}>
                 <Link
                   href={`/blog/${blog.slug.current}`}
                   prefetch={false}
+                  aria-label={`Read more about ${blog.title}`}
                   onClick={handleClick}
                 >
-                  {blog.title}
+                  <BlogImage value={mainImage} isTileImage alt={blog.title} />
                 </Link>
               </div>
-            </h2>
-          </div>
-        </article>
+            </div>
+            <div className={styles.blogInfo}>
+              <div
+                className={styles.meta}
+                aria-label='Post metadata'
+                ref={metaRef}
+              >
+                <time dateTime={blog.publishedAt}>{formattedDate}</time>
+                <span aria-hidden='true'>|</span>
+                <span className={styles.readingTime}>{readingTime.text}</span>
+                <span aria-hidden='true'>|</span>
+                {blog.categories.slice(0, visibleCategories).map((category) => (
+                  <span key={category.slug.current} className={styles.hashtag}>
+                    #{category.title}
+                  </span>
+                ))}
+                {blog.categories.length > visibleCategories && (
+                  <span className={styles.hashtagMore}>
+                    +{blog.categories.length - visibleCategories}
+                  </span>
+                )}
+              </div>
+              <h2 className={styles.blogTitle}>
+                <div ref={titleRef}>
+                  <Link
+                    href={`/blog/${blog.slug.current}`}
+                    prefetch={false}
+                    onClick={handleClick}
+                  >
+                    {blog.title}
+                  </Link>
+                </div>
+              </h2>
+            </div>
+          </article>
+        </ScrollAnimation>
       </div>
     );
   },

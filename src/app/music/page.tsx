@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
-import { InteractiveBackground, ScrollAnimation } from '@/app/components';
+import { InteractiveBackground, ScrollAnimation, TextAnimation, StaggerAnimation } from '@/app/components';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live/music'),
@@ -83,12 +83,12 @@ export default function Music() {
           className='music-background'
         />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <ScrollAnimation animation='fadeIn' duration={0.8}>
+          <TextAnimation duration={1.0} delay={0.1}>
             <div className='title'>
               <h3>My Music.</h3>
             </div>
-          </ScrollAnimation>
-          <ScrollAnimation animation='slideUp' duration={0.8} delay={0.2}>
+          </TextAnimation>
+          <StaggerAnimation staggerDelay={0.1} scrollReveal={true}>
             <div className='music-description mb-4'>
               <p>
                 Hey there! 🎧 Welcome to my music collection! I love
@@ -99,7 +99,7 @@ export default function Music() {
               </p>
               <p>Hit play, turn up the volume, and enjoy the beats! 🚀</p>
             </div>
-          </ScrollAnimation>
+          </StaggerAnimation>
           <Suspense fallback={<LoadingIndicator />}>
             <MusicTracks />
           </Suspense>
