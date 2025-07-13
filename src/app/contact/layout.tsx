@@ -12,12 +12,15 @@ export const metadata: Metadata = {
       'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
     url: 'https://akshaygupta.live/contact',
     siteName: 'Akshay Gupta',
+    locale: 'en_US',
     images: [
       {
         url: 'https://akshaygupta.live/contact/opengraph-image.png',
         width: 1200,
         height: 630,
-        alt: 'Contact Akshay Gupta',
+        alt: 'Contact Akshay Gupta - Get in touch for collaboration opportunities',
+        type: 'image/png',
+        secureUrl: 'https://akshaygupta.live/contact/opengraph-image.png',
       },
     ],
   },

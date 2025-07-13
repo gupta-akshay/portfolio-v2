@@ -41,7 +41,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   const imageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(630).url()
-    : 'https://akshaygupta.live/images/about-me.png';
+    : `https://akshaygupta.live/blog/${post.slug.current}/opengraph-image.png`;
 
   const readingTime = calculateReadingTime(post.body);
 
@@ -194,16 +194,20 @@ export async function generateMetadata({
         description: `The blog post you're looking for does not exist`,
         metadataBase: new URL('https://akshaygupta.live'),
         openGraph: {
+          type: 'article',
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
-          type: 'article',
           url: `https://akshaygupta.live/blog/${slug}`,
+          siteName: 'Akshay Gupta',
+          locale: 'en_US',
           images: [
             {
               url: 'https://akshaygupta.live/images/about-me.png',
               width: 1200,
               height: 630,
               alt: 'Blog Post Not Found',
+              type: 'image/png',
+              secureUrl: 'https://akshaygupta.live/images/about-me.png',
             },
           ],
         },
@@ -220,8 +224,11 @@ export async function generateMetadata({
       };
     }
 
-    const imageUrl = urlFor(post.mainImage).width(1200).height(630).url();
+    const imageUrl = post.mainImage
+      ? urlFor(post.mainImage).width(1200).height(630).url()
+      : `https://akshaygupta.live/blog/${slug}/opengraph-image.png`;
 
+    const imageType = post.mainImage ? 'image/jpeg' : 'image/png';
     const description = post.excerpt || post.title;
 
     return {
@@ -229,11 +236,12 @@ export async function generateMetadata({
       description: description,
       metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
+        type: 'article',
         title: post.title,
         description: description,
-        type: 'article',
         url: `https://akshaygupta.live/blog/${slug}`,
         siteName: 'Akshay Gupta',
+        locale: 'en_US',
         publishedTime: post.publishedAt,
         modifiedTime: post.publishedAt,
         authors: [post.author.name],
@@ -243,6 +251,8 @@ export async function generateMetadata({
             width: 1200,
             height: 630,
             alt: post.title,
+            type: imageType,
+            secureUrl: imageUrl,
           },
         ],
       },
@@ -262,17 +272,22 @@ export async function generateMetadata({
     return {
       title: 'Error | Akshay Gupta',
       description: 'An error occurred while loading this blog post',
+      metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
+        type: 'article',
         title: 'Error',
         description: 'An error occurred while loading this blog post',
-        type: 'article',
         url: 'https://akshaygupta.live/blog',
+        siteName: 'Akshay Gupta',
+        locale: 'en_US',
         images: [
           {
             url: 'https://akshaygupta.live/images/about-me.png',
             width: 1200,
             height: 630,
             alt: 'Error Loading Blog Post',
+            type: 'image/png',
+            secureUrl: 'https://akshaygupta.live/images/about-me.png',
           },
         ],
       },

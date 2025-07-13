@@ -20,13 +20,16 @@ export const metadata: Metadata = {
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
     url: 'https://akshaygupta.live/music',
-    siteName: 'Akshay Gupta Music',
+    siteName: 'Akshay Gupta',
+    locale: 'en_US',
     images: [
       {
         url: 'https://akshaygupta.live/music/opengraph-image.png',
         width: 1200,
         height: 630,
-        alt: 'Akshay Gupta Music',
+        alt: 'Akshay Gupta Music - Listen to my latest remixes and productions',
+        type: 'image/png',
+        secureUrl: 'https://akshaygupta.live/music/opengraph-image.png',
       },
     ],
   },
