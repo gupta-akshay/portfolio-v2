@@ -35,4 +35,4 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://akshaygupta.live',
   },
-}; 
+};
