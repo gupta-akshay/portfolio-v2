@@ -13,6 +13,10 @@
 @use './sections/emoji-reactions' as *;
 @use './sections/social-share' as *;
 @use './sections/table-of-contents' as *;
+@use './sections/page-transitions' as *;
+@use './sections/scroll-animations' as *;
+@use './sections/enhanced-hover' as *;
+@use './sections/interactive-background' as *;
 
 // Reset & Base Styles
 * {

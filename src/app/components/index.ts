@@ -9,6 +9,15 @@ export type { AudioPlayerProps, Track } from './AudioPlayer';
 export { default as BackBtn } from './BackBtn';
 export { default as DayNightToggle } from './DayNightToggle';
 export { default as LoadingIndicator } from './LoadingIndicator';
+export { default as MagneticHover, RippleEffect } from './MagneticHover';
+export {
+  default as InteractiveBackground,
+  FloatingShapes,
+} from './InteractiveBackground';
+export {
+  default as ScrollAnimation,
+  StaggerAnimation,
+} from './ScrollAnimation';
 export { default as TypingAnimation } from './TypingAnimation';
 export { default as EmojiReactions } from './EmojiReactions';
 export { default as ReadingProgressBar } from './ReadingProgressBar';
