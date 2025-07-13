@@ -10,6 +10,8 @@ import { useLoading } from '@/app/context/LoadingContext';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useCursor } from '@/app/context/CursorContext';
 
+import styles from './BlogTile.module.scss';
+
 // Global cache for text measurements to avoid recalculation across all BlogTile instances
 const textMeasurementCache = new Map<string, number>();
 
@@ -233,8 +235,8 @@ const BlogTile = memo(
 
     return (
       <div className='col-md-6 m-15px-tb'>
-        <article className='blog-grid'>
-          <div className='blog-img'>
+        <article className={styles.blogGrid}>
+          <div className={styles.blogImg}>
             <div ref={imageRef}>
               <Link
                 href={`/blog/${blog.slug.current}`}
@@ -246,24 +248,24 @@ const BlogTile = memo(
               </Link>
             </div>
           </div>
-          <div className='blog-info'>
-            <div className='meta' aria-label='Post metadata' ref={metaRef}>
+          <div className={styles.blogInfo}>
+            <div className={styles.meta} aria-label='Post metadata' ref={metaRef}>
               <time dateTime={blog.publishedAt}>{formattedDate}</time>
               <span aria-hidden='true'>|</span>
-              <span className='reading-time'>{readingTime.text}</span>
+              <span className={styles.readingTime}>{readingTime.text}</span>
               <span aria-hidden='true'>|</span>
               {blog.categories.slice(0, visibleCategories).map((category) => (
-                <span key={category.slug.current} className='hashtag'>
+                <span key={category.slug.current} className={styles.hashtag}>
                   #{category.title}
                 </span>
               ))}
               {blog.categories.length > visibleCategories && (
-                <span className='hashtag-more'>
+                <span className={styles.hashtagMore}>
                   +{blog.categories.length - visibleCategories}
                 </span>
               )}
             </div>
-            <h2 className='blog-title'>
+            <h2 className={styles.blogTitle}>
               <div ref={titleRef}>
                 <Link
                   href={`/blog/${blog.slug.current}`}
