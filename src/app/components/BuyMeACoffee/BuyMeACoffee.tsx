@@ -9,7 +9,10 @@ const BuyMeACoffee = () => {
   useEffect(() => {
     // Check if the script has loaded and create button if needed
     const checkForButton = () => {
-      if (containerRef.current && !containerRef.current.querySelector('.bmc-btn')) {
+      if (
+        containerRef.current &&
+        !containerRef.current.querySelector('.bmc-btn')
+      ) {
         // If no button exists, create one manually
         const button = document.createElement('a');
         button.href = 'https://www.buymeacoffee.com/akshay.gupta';
@@ -32,22 +35,22 @@ const BuyMeACoffee = () => {
           transition: all 0.3s ease;
           box-shadow: 0 4px 12px rgba(47, 191, 113, 0.3);
         `;
-        
+
         button.innerHTML = `
           <span style="font-size: 20px;">☕</span>
           <span style="font-size: 20px;">Buy me a coffee</span>
         `;
-        
+
         button.addEventListener('mouseenter', () => {
           button.style.transform = 'translateY(-2px) scale(1.02)';
           button.style.boxShadow = '0 8px 20px rgba(47, 191, 113, 0.4)';
         });
-        
+
         button.addEventListener('mouseleave', () => {
           button.style.transform = 'translateY(0) scale(1)';
           button.style.boxShadow = '0 4px 12px rgba(47, 191, 113, 0.3)';
         });
-        
+
         containerRef.current.appendChild(button);
       }
     };
@@ -62,22 +65,25 @@ const BuyMeACoffee = () => {
   return (
     <>
       <Script
-        type="text/javascript"
-        src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
-        data-name="bmc-button"
-        data-slug="akshay.gupta"
-        data-color="#2fbf71"
-        data-emoji=""
-        data-font="Cookie"
-        data-text="Buy me a coffee"
-        data-outline-color="#000000"
-        data-font-color="#000000"
-        data-coffee-color="#FFDD00"
-        strategy="afterInteractive"
+        type='text/javascript'
+        src='https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js'
+        data-name='bmc-button'
+        data-slug='akshay.gupta'
+        data-color='#2fbf71'
+        data-emoji=''
+        data-font='Cookie'
+        data-text='Buy me a coffee'
+        data-outline-color='#000000'
+        data-font-color='#000000'
+        data-coffee-color='#FFDD00'
+        strategy='afterInteractive'
         onLoad={() => {
           // Script loaded, check for button again
           setTimeout(() => {
-            if (containerRef.current && !containerRef.current.querySelector('.bmc-btn')) {
+            if (
+              containerRef.current &&
+              !containerRef.current.querySelector('.bmc-btn')
+            ) {
               // Trigger the check again
               const event = new Event('load');
               window.dispatchEvent(event);
@@ -85,7 +91,7 @@ const BuyMeACoffee = () => {
           }, 500);
         }}
       />
-      <div ref={containerRef} id="bmc-button-container" />
+      <div ref={containerRef} id='bmc-button-container' />
     </>
   );
 };
