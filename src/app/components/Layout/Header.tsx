@@ -227,7 +227,7 @@ const Header = () => {
     const newCount = logoClickCount + 1;
     setLogoClickCount(newCount);
 
-    if (newCount === 10) {
+    if (newCount === 5) {
       toggleDiscoMode();
       setLogoClickCount(0); // Reset counter
     }
