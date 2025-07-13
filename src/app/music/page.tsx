@@ -10,7 +10,7 @@ import {
 } from '@/app/components';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live/music'),
+  metadataBase: new URL('https://akshaygupta.live'),
   title: 'My Music | Akshay Gupta',
   description:
     'Listen to my latest remixes and music productions. Enjoy the beats!',
@@ -20,13 +20,15 @@ export const metadata: Metadata = {
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
     url: 'https://akshaygupta.live/music',
-    siteName: 'Akshay Gupta Music',
+    siteName: 'Akshay Gupta',
+    locale: 'en_US',
     images: [
       {
-        url: 'https://akshaygupta.live/music/opengraph-image.png',
+        url: '/music/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Akshay Gupta Music',
+        alt: 'Akshay Gupta Music - Listen to my latest remixes and productions',
+        type: 'image/png',
       },
     ],
   },
@@ -36,7 +38,7 @@ export const metadata: Metadata = {
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
     creator: '@ashay_music',
-    images: ['https://akshaygupta.live/music/opengraph-image.png'],
+    images: ['/music/opengraph-image'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/music',

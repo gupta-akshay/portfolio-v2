@@ -11,7 +11,7 @@ import {
 } from '@/app/components';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live/blog'),
+  metadataBase: new URL('https://akshaygupta.live'),
   title: 'Blog | Akshay Gupta',
   description:
     'Read my latest thoughts and insights about web development, technology, and software engineering.',
@@ -19,15 +19,17 @@ export const metadata: Metadata = {
     type: 'website',
     title: 'Blog | Akshay Gupta',
     description:
-      'Read my latest thoughts and insights about web development and technology.',
+      'Read my latest thoughts and insights about web development, technology, and software engineering.',
     url: 'https://akshaygupta.live/blog',
     siteName: 'Akshay Gupta',
+    locale: 'en_US',
     images: [
       {
-        url: 'https://akshaygupta.live/blog/opengraph-image.png',
+        url: '/blog/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Akshay Gupta Blog',
+        alt: 'Akshay Gupta Blog - Web Development, Technology, and Software Engineering',
+        type: 'image/png',
       },
     ],
   },
@@ -35,8 +37,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Blog | Akshay Gupta',
     description:
-      'Read my latest thoughts and insights about web development and technology.',
-    images: ['https://akshaygupta.live/blog/opengraph-image.png'],
+      'Read my latest thoughts and insights about web development, technology, and software engineering.',
+    images: ['/blog/opengraph-image'],
     creator: '@ashay_music',
   },
   alternates: {

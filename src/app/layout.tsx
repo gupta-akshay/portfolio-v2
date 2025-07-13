@@ -47,13 +47,31 @@ export const metadata: Metadata = {
     'react',
     'next.js',
   ],
+  openGraph: {
+    type: 'website',
+    siteName: 'Akshay Gupta',
+    title: 'Akshay Gupta | Full-Stack Web Developer',
+    description:
+      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    url: 'https://akshaygupta.live',
+    locale: 'en_US',
+    images: [
+      {
+        url: '/images/about-me.png',
+        width: 1200,
+        height: 630,
+        alt: 'Akshay Gupta - Full-Stack Web Developer',
+        type: 'image/png',
+      },
+    ],
+  },
   twitter: {
     card: 'summary_large_image',
     creator: '@ashay_music',
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    images: ['https://akshaygupta.live/images/about-me.png'],
+    images: ['/images/about-me.png'],
   },
   verification: {
     google: 'rcbqH3Qckh-CLqTHJHg3ze_tDDYoEMWKxrS4qWy1Bb0',

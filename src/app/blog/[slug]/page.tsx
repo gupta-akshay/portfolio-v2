@@ -30,6 +30,19 @@ interface SingleBlogPageProps {
 
 export const revalidate = 3600;
 
+// Helper function to get MIME type from image asset
+const getImageMimeType = (mainImage: any): string => {
+  if (!mainImage?.asset) return 'image/png';
+
+  // If we have the mimeType from the asset, use it
+  if (mainImage.asset.mimeType) {
+    return mainImage.asset.mimeType;
+  }
+
+  // Fallback to PNG for dynamically generated OpenGraph images
+  return 'image/png';
+};
+
 const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   const slug = (await params).slug;
 
@@ -41,7 +54,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   const imageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(630).url()
-    : 'https://akshaygupta.live/images/about-me.png';
+    : `https://akshaygupta.live/blog/${post.slug.current}/opengraph-image.png`;
 
   const readingTime = calculateReadingTime(post.body);
 
@@ -194,16 +207,19 @@ export async function generateMetadata({
         description: `The blog post you're looking for does not exist`,
         metadataBase: new URL('https://akshaygupta.live'),
         openGraph: {
+          type: 'article',
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
-          type: 'article',
           url: `https://akshaygupta.live/blog/${slug}`,
+          siteName: 'Akshay Gupta',
+          locale: 'en_US',
           images: [
             {
-              url: 'https://akshaygupta.live/images/about-me.png',
+              url: '/images/about-me.png',
               width: 1200,
               height: 630,
               alt: 'Blog Post Not Found',
+              type: 'image/png',
             },
           ],
         },
@@ -211,7 +227,7 @@ export async function generateMetadata({
           card: 'summary_large_image',
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
-          images: ['https://akshaygupta.live/images/about-me.png'],
+          images: ['/images/about-me.png'],
           creator: '@ashay_music',
         },
         alternates: {
@@ -220,8 +236,11 @@ export async function generateMetadata({
       };
     }
 
-    const imageUrl = urlFor(post.mainImage).width(1200).height(630).url();
+    const imageUrl = post.mainImage
+      ? urlFor(post.mainImage).width(1200).height(630).url()
+      : `https://akshaygupta.live/blog/${slug}/opengraph-image.png`;
 
+    const imageType = getImageMimeType(post.mainImage);
     const description = post.excerpt || post.title;
 
     return {
@@ -229,11 +248,12 @@ export async function generateMetadata({
       description: description,
       metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
+        type: 'article',
         title: post.title,
         description: description,
-        type: 'article',
         url: `https://akshaygupta.live/blog/${slug}`,
         siteName: 'Akshay Gupta',
+        locale: 'en_US',
         publishedTime: post.publishedAt,
         modifiedTime: post.publishedAt,
         authors: [post.author.name],
@@ -243,6 +263,7 @@ export async function generateMetadata({
             width: 1200,
             height: 630,
             alt: post.title,
+            type: imageType,
           },
         ],
       },
@@ -262,17 +283,21 @@ export async function generateMetadata({
     return {
       title: 'Error | Akshay Gupta',
       description: 'An error occurred while loading this blog post',
+      metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
+        type: 'article',
         title: 'Error',
         description: 'An error occurred while loading this blog post',
-        type: 'article',
         url: 'https://akshaygupta.live/blog',
+        siteName: 'Akshay Gupta',
+        locale: 'en_US',
         images: [
           {
-            url: 'https://akshaygupta.live/images/about-me.png',
+            url: '/images/about-me.png',
             width: 1200,
             height: 630,
             alt: 'Error Loading Blog Post',
+            type: 'image/png',
           },
         ],
       },
@@ -281,7 +306,7 @@ export async function generateMetadata({
         title: 'Error',
         description: 'An error occurred while loading this blog post',
         creator: '@ashay_music',
-        images: ['https://akshaygupta.live/images/about-me.png'],
+        images: ['/images/about-me.png'],
       },
       alternates: {
         canonical: 'https://akshaygupta.live/blog',

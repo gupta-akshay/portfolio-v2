@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live/contact'),
+  metadataBase: new URL('https://akshaygupta.live'),
   title: 'Contact | Akshay Gupta',
   description:
     'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
@@ -12,12 +12,14 @@ export const metadata: Metadata = {
       'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
     url: 'https://akshaygupta.live/contact',
     siteName: 'Akshay Gupta',
+    locale: 'en_US',
     images: [
       {
-        url: 'https://akshaygupta.live/contact/opengraph-image.png',
+        url: '/contact/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Contact Akshay Gupta',
+        alt: 'Contact Akshay Gupta - Get in touch for collaboration opportunities',
+        type: 'image/png',
       },
     ],
   },
@@ -27,7 +29,7 @@ export const metadata: Metadata = {
     description:
       'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
     creator: '@ashay_music',
-    images: ['https://akshaygupta.live/contact/opengraph-image.png'],
+    images: ['/contact/opengraph-image'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/contact',
