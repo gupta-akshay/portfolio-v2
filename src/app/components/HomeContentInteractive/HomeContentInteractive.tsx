@@ -16,7 +16,6 @@ export default function HomeContentInteractive({
   const { addCursorInteraction } = useCursorInteractions();
   const elementRef = useRef<HTMLAnchorElement>(null);
 
-  // Add cursor interactions
   useEffect(() => {
     if (elementRef.current) {
       const interactions = {

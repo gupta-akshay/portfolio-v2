@@ -14,7 +14,9 @@ export default function MapSection() {
   return (
     <div className='col-12'>
       <div className={styles.googleMap}>
-        <div className={`${styles.embedResponsive} ${styles.embedResponsive21by9}`}>
+        <div
+          className={`${styles.embedResponsive} ${styles.embedResponsive21by9}`}
+        >
           {mapLoaded ? (
             <iframe
               loading='lazy'

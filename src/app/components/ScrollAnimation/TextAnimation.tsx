@@ -52,4 +52,4 @@ const TextAnimation = ({
   );
 };
 
-export default TextAnimation; 
+export default TextAnimation;

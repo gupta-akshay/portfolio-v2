@@ -16,7 +16,6 @@ export default function ContactFormInteractive() {
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
 
-  // Add cursor interactions for form elements
   useEffect(() => {
     const cleanupFunctions: (() => void)[] = [];
 

@@ -3,7 +3,11 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
-import { InteractiveBackground, ScrollAnimation, TextAnimation, StaggerAnimation } from '@/app/components';
+import {
+  InteractiveBackground,
+  TextAnimation,
+  StaggerAnimation,
+} from '@/app/components';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live/music'),
@@ -70,7 +74,11 @@ export default function Music() {
         tabIndex={0}
         role='region'
         aria-label='Music Section'
-        style={{ position: 'relative', minHeight: '100vh' }}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          overflowX: 'hidden',
+        }}
       >
         <InteractiveBackground
           variant='grid'

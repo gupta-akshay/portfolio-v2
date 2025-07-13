@@ -14,12 +14,7 @@ export default function Skills({
     <StaggerAnimation staggerDelay={0.05} useIntersectionObserver={true}>
       <div className={styles.skills}>
         {skillsData.map((skill) => (
-          <ScrollAnimation
-            key={skill.id}
-            animation='scale'
-            duration={0.4}
-            className={styles.skillsPillWrapper || ''}
-          >
+          <ScrollAnimation key={skill.id} animation='scale' duration={0.4}>
             <span
               className={styles.skillsPill}
               data-category={showCategories ? skill.category : undefined}

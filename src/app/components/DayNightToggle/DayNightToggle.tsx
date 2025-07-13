@@ -32,7 +32,6 @@ const DayNightToggle = ({ isLight, onToggle }: DayNightToggleProps) => {
     }
   }, [lightMode, isHovering, cursorVariant, setCursorText, toggleText]);
 
-  // Add cursor interactions
   useEffect(() => {
     if (buttonRef.current) {
       return addCursorInteraction(buttonRef.current, {

@@ -160,7 +160,6 @@ const BlogTile = memo(
       [blog.categories, formattedDate, readingTime.text]
     );
 
-    // Add cursor interactions
     useEffect(() => {
       const cleanupFunctions: (() => void)[] = [];
 
@@ -236,11 +235,7 @@ const BlogTile = memo(
 
     return (
       <div className='col-md-6 m-15px-tb'>
-        <ScrollAnimation
-          animation='slideUp'
-          duration={0.8}
-          scrollReveal={true}
-        >
+        <ScrollAnimation animation='slideUp' duration={0.8} scrollReveal={true}>
           <article className={styles.blogGrid}>
             <div className={styles.blogImg}>
               <div ref={imageRef}>

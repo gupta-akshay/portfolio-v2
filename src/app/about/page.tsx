@@ -10,7 +10,6 @@ import {
   RippleEffect,
   ScrollAnimation,
   StaggerAnimation,
-  TextAnimation,
 } from '@/app/components';
 
 import styles from '../styles/sections/aboutSection.module.scss';
@@ -156,7 +155,11 @@ export default function About() {
         id='about'
         data-nav-tooltip='About'
         className='pp-section pp-scrollable section about-section'
-        style={{ position: 'relative', minHeight: '100vh', overflowX: 'hidden' }}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          overflowX: 'hidden',
+        }}
       >
         <InteractiveBackground
           variant='grid'
@@ -191,7 +194,11 @@ export default function About() {
               </div>
               <div className='col-lg-6 m-15px-tb'>
                 <div className={styles.aboutInfo}>
-                  <ScrollAnimation animation='fadeIn' duration={0.8} scrollReveal={true}>
+                  <ScrollAnimation
+                    animation='fadeIn'
+                    duration={0.8}
+                    scrollReveal={true}
+                  >
                     <div className='title' style={{ marginBottom: '50px' }}>
                       <h3>Let me introduce myself!</h3>
                     </div>

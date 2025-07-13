@@ -88,7 +88,11 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
       <div
         id={post.slug.current}
         className={styles.singleBlog}
-        style={{ position: 'relative', minHeight: '100vh', overflowX: 'hidden' }}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          overflowX: 'hidden',
+        }}
       >
         <InteractiveBackground
           variant='grid'
@@ -101,7 +105,12 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           className='blog-post-background'
         />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <ScrollAnimation animation='scale' duration={0.8} parallax={true} parallaxSpeed='slow'>
+          <ScrollAnimation
+            animation='scale'
+            duration={0.8}
+            parallax={true}
+            parallaxSpeed='slow'
+          >
             <div className={styles.blogFeatureImg}>
               <BlogImage value={post.mainImage} isCoverImage />
             </div>
@@ -109,7 +118,10 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           <div className='row justify-content-center'>
             <div className='col-lg-8'>
               <article className={styles.article}>
-                <StaggerAnimation staggerDelay={0.2} useIntersectionObserver={true}>
+                <StaggerAnimation
+                  staggerDelay={0.2}
+                  useIntersectionObserver={true}
+                >
                   <ScrollAnimation
                     animation='slideUp'
                     duration={0.8}

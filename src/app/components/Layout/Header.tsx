@@ -50,7 +50,6 @@ const Header = () => {
   const soundcloudRef = useRef<HTMLAnchorElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
 
-  // Add cursor interactions
   useEffect(() => {
     const cleanupFunctions: (() => void)[] = [];
 

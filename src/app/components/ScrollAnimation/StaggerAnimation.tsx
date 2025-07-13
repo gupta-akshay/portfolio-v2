@@ -1,6 +1,14 @@
 'use client';
 
-import { ReactNode, Children, cloneElement, isValidElement, useEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  Children,
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { motion } from 'motion/react';
 import ScrollAnimation from './ScrollAnimation';
 
@@ -84,7 +92,9 @@ const StaggerAnimation = ({
     parallax && 'parallax-scroll',
     scrollReveal && 'scroll-reveal',
     magnetic && 'magnetic-scroll',
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   // Add data attributes
   const dataAttributes = {

@@ -30,7 +30,12 @@ export default function Experience({
               <div className='row'>
                 {showLogos && (
                   <div className='col-sm-3 col-md-3 col-xl-2'>
-                    <ScrollAnimation animation='slideLeft' duration={0.6} parallax={true} parallaxSpeed='slow'>
+                    <ScrollAnimation
+                      animation='slideLeft'
+                      duration={0.6}
+                      parallax={true}
+                      parallaxSpeed='slow'
+                    >
                       <div className={styles.experienceRowLeft}>
                         <Image
                           src={experience.logo || '/images/default-company.png'}
@@ -44,16 +49,23 @@ export default function Experience({
                   </div>
                 )}
                 <div
-                  className={showLogos ? 'col-sm-9 col-md-9 col-xl-10' : 'col-12'}
+                  className={
+                    showLogos ? 'col-sm-9 col-md-9 col-xl-10' : 'col-12'
+                  }
                 >
                   <ScrollAnimation animation='slideRight' duration={0.6}>
                     <div className={styles.experienceRowRight}>
                       <h6>{experience.position}</h6>
                       <label>
                         {experience.company} | {experience.location} |{' '}
-                        {formatDateRange(experience.startDate, experience.endDate)}
+                        {formatDateRange(
+                          experience.startDate,
+                          experience.endDate
+                        )}
                       </label>
-                      <div className={styles.experienceRowRightType}>Full Time</div>
+                      <div className={styles.experienceRowRightType}>
+                        Full Time
+                      </div>
                       <div className={styles.experienceRowRightContent}>
                         <p>{experience.description}</p>
                       </div>

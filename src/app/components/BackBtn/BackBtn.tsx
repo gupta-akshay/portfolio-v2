@@ -20,7 +20,6 @@ const BackBtn = () => {
   const { setCursorVariant, setCursorText } = useCursor();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Add cursor interactions
   useEffect(() => {
     if (buttonRef.current) {
       return addCursorInteraction(buttonRef.current, {

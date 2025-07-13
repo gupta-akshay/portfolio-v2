@@ -126,7 +126,15 @@ const ScrollAnimation = ({
     return () => {
       observer.disconnect();
     };
-  }, [controls, threshold, triggerOnce, hasAnimated, onAnimationStart, scrollReveal, isRevealed]);
+  }, [
+    controls,
+    threshold,
+    triggerOnce,
+    hasAnimated,
+    onAnimationStart,
+    scrollReveal,
+    isRevealed,
+  ]);
 
   const variants =
     customVariants ||
@@ -143,10 +151,14 @@ const ScrollAnimation = ({
     scrollReveal && isRevealed && 'revealed',
     magnetic && 'magnetic-scroll',
     textAnimation && 'text-animation',
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   // Add data attributes for parallax speed
-  const dataAttributes = parallax ? { 'data-parallax-speed': parallaxSpeed } : {};
+  const dataAttributes = parallax
+    ? { 'data-parallax-speed': parallaxSpeed }
+    : {};
 
   return (
     <motion.div
@@ -162,7 +174,9 @@ const ScrollAnimation = ({
       }}
       {...dataAttributes}
       {...(onAnimationComplete && { onAnimationComplete })}
-      {...(textAnimation && { style: { '--line-index': textAnimationDelay } as any })}
+      {...(textAnimation && {
+        style: { '--line-index': textAnimationDelay } as any,
+      })}
     >
       {children}
     </motion.div>

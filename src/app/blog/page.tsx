@@ -103,7 +103,11 @@ export default function Blog() {
         id='blog'
         data-nav-tooltip='Blog'
         className='pp-section pp-scrollable section'
-        style={{ position: 'relative', minHeight: '100vh', overflowX: 'hidden' }}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          overflowX: 'hidden',
+        }}
       >
         <InteractiveBackground
           variant='grid'
