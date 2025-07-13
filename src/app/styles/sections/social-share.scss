@@ -1,5 +1,6 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .social-share-container {
   position: fixed;
@@ -23,10 +24,19 @@
   transition: all 0.3s ease-in-out;
   align-items: center;
 
+  // Add glassmorphism effects
+  @include glassmorphism-3d(12px, 0.08);
+  @include floating-3d(3px, 0.1);
+  @include responsive-3d-effects;
+
   .theme-light & {
     background: rgba($px-white, 0.95);
     border: 1px solid rgba($px-black, 0.1);
     box-shadow: 0 4px 20px rgba($px-black, 0.1);
+  }
+
+  &::before {
+    border-radius: 50px;
   }
 }
 
@@ -88,15 +98,45 @@
   color: $px-theme;
   font-size: 16px;
   font-weight: 600;
+  backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      rgba($px-theme, 0.05),
+      rgba($px-theme, 0.02)
+    );
+    border-radius: inherit;
+    z-index: -1;
+  }
 
   &:hover {
     background: rgba($px-theme, 0.2);
+    box-shadow: 0 2px 8px rgba($px-theme, 0.3);
+    transform: translateY(-1px);
   }
 
   &.copied {
     background: rgba(46, 191, 113, 0.2);
     border-color: rgba(46, 191, 113, 0.5);
     color: #2fbf71;
+    box-shadow: 0 2px 8px rgba(46, 191, 113, 0.3);
+
+    &:before {
+      background: linear-gradient(
+        45deg,
+        rgba(46, 191, 113, 0.05),
+        rgba(46, 191, 113, 0.02)
+      );
+    }
   }
 
   .copy-icon {
