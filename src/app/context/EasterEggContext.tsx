@@ -7,6 +7,7 @@ import {
   useState,
   ReactNode,
   useCallback,
+  useRef,
 } from 'react';
 
 interface EasterEggState {
@@ -53,52 +54,7 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
     devConsoleActive: false,
   });
 
-  const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
-
-  // Konami code detector
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Handle Konami code sequence
-      const newSequence = [...konamiSequence, event.code];
-
-      if (newSequence.length > KONAMI_CODE.length) {
-        newSequence.shift();
-      }
-
-      setKonamiSequence(newSequence);
-
-      // Check if Konami code is complete
-      if (newSequence.length === KONAMI_CODE.length) {
-        const isKonamiCode = newSequence.every(
-          (key, index) => key === KONAMI_CODE[index]
-        );
-        if (isKonamiCode) {
-          activateKonamiCode();
-          setKonamiSequence([]);
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [konamiSequence]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Cleanup all Easter egg states on unmount
-  useEffect(() => {
-    return () => {
-      // Reset all Easter egg states to prevent memory leaks
-      setEasterEggState({
-        konamiCodeActivated: false,
-        matrixRainActive: false,
-        discoModeActive: false,
-        typewriterModeActive: false,
-        devConsoleActive: false,
-      });
-    };
-  }, []);
+  const konamiSequenceRef = useRef<string[]>([]);
 
   const toggleMatrixRain = useCallback(() => {
     setEasterEggState((prev) => ({
@@ -118,6 +74,37 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
       toggleMatrixRain();
     }, 500);
   }, [toggleMatrixRain]);
+
+  // Konami code detector
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Handle Konami code sequence
+      const newSequence = [...konamiSequenceRef.current, event.code];
+
+      if (newSequence.length > KONAMI_CODE.length) {
+        newSequence.shift();
+      }
+
+      konamiSequenceRef.current = newSequence;
+
+      // Check if Konami code is complete
+      if (newSequence.length === KONAMI_CODE.length) {
+        const isKonamiCode = newSequence.every(
+          (key, index) => key === KONAMI_CODE[index]
+        );
+        if (isKonamiCode) {
+          activateKonamiCode();
+          konamiSequenceRef.current = [];
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activateKonamiCode]);
 
   const toggleDiscoMode = () => {
     setEasterEggState((prev) => ({
