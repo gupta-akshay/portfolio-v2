@@ -5,7 +5,6 @@ import Layout from '@/app/components/Layout';
 import {
   ScrollAnimation,
   StaggerAnimation,
-  TextAnimation,
   MagneticHover,
   RippleEffect,
   FloatingShapes,
