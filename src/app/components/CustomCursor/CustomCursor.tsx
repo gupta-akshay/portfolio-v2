@@ -20,6 +20,8 @@ const CustomCursor = () => {
         return 64;
       case 'hover':
         return 80;
+      case 'subtle':
+        return 48;
       case 'click':
         return 24;
       case 'default':
@@ -98,6 +100,13 @@ const CustomCursor = () => {
       width: 80,
       height: 80,
     },
+    subtle: {
+      scale: 1.3,
+      backgroundColor: 'var(--cursor-hover-color)',
+      mixBlendMode: 'difference' as const,
+      width: 48,
+      height: 48,
+    },
     click: {
       scale: 0.8,
       backgroundColor: 'var(--cursor-click-color)',
@@ -151,7 +160,7 @@ const CustomCursor = () => {
       {/* Cursor text */}
       {cursorText && isVisible && (
         <motion.div
-          className='cursor-text'
+          className={`cursor-text ${cursorVariant === 'subtle' ? 'cursor-text-subtle' : ''}`}
           style={{
             left: cursorX,
             top: cursorY,
