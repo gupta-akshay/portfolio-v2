@@ -13,6 +13,9 @@ export type Category = {
 export type ImageAsset = {
   _ref: string;
   _type: 'reference';
+  _id?: string;
+  url?: string;
+  mimeType?: string;
 };
 
 export type Image = {

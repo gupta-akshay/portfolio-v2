@@ -30,6 +30,19 @@ interface SingleBlogPageProps {
 
 export const revalidate = 3600;
 
+// Helper function to get MIME type from image asset
+const getImageMimeType = (mainImage: any): string => {
+  if (!mainImage?.asset) return 'image/png';
+
+  // If we have the mimeType from the asset, use it
+  if (mainImage.asset.mimeType) {
+    return mainImage.asset.mimeType;
+  }
+
+  // Fallback to PNG for dynamically generated OpenGraph images
+  return 'image/png';
+};
+
 const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   const slug = (await params).slug;
 
@@ -228,7 +241,7 @@ export async function generateMetadata({
       ? urlFor(post.mainImage).width(1200).height(630).url()
       : `https://akshaygupta.live/blog/${slug}/opengraph-image.png`;
 
-    const imageType = post.mainImage ? 'image/jpeg' : 'image/png';
+    const imageType = getImageMimeType(post.mainImage);
     const description = post.excerpt || post.title;
 
     return {
