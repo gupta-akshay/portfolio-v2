@@ -12,6 +12,7 @@ import MatrixRain from './components/MatrixRain';
 import DiscoMode from './components/DiscoMode';
 import DiscoModeGlobalStyles from './components/DiscoModeGlobalStyles/DiscoModeGlobalStyles';
 import BlogTypewriterEffect from './components/BlogTypewriterEffect';
+import EasterEggHints from './components/EasterEggHints';
 import Metrics from './metrics';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -82,6 +83,7 @@ export default function RootLayout({
               <DiscoMode />
               <DiscoModeGlobalStyles />
               <BlogTypewriterEffect />
+              <EasterEggHints />
             </EasterEggProvider>
           </CursorProvider>
         </ThemeProvider>

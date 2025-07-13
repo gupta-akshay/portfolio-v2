@@ -15,7 +15,6 @@ interface EasterEggState {
   discoModeActive: boolean;
   typewriterModeActive: boolean;
   devConsoleActive: boolean;
-  particleTrailActive: boolean;
 }
 
 interface EasterEggContextType {
@@ -25,7 +24,6 @@ interface EasterEggContextType {
   toggleDiscoMode: () => void;
   toggleTypewriterMode: () => void;
   toggleDevConsole: () => void;
-  toggleParticleTrail: () => void;
   resetAllEasterEggs: () => void;
 }
 
@@ -53,7 +51,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
     discoModeActive: false,
     typewriterModeActive: false,
     devConsoleActive: false,
-    particleTrailActive: false,
   });
 
   const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
@@ -61,12 +58,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
   // Konami code detector
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Handle spacebar for particle trail
-      if (event.code === 'Space') {
-        toggleParticleTrail();
-        return;
-      }
-
       // Handle Konami code sequence
       const newSequence = [...konamiSequence, event.code];
 
@@ -88,22 +79,12 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.code === 'Space') {
-        if (easterEggState.particleTrailActive) {
-          toggleParticleTrail();
-        }
-      }
-    };
-
     document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
     };
-  }, [konamiSequence, easterEggState.particleTrailActive]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [konamiSequence]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Cleanup all Easter egg states on unmount
   useEffect(() => {
@@ -115,7 +96,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
         discoModeActive: false,
         typewriterModeActive: false,
         devConsoleActive: false,
-        particleTrailActive: false,
       });
     };
   }, []);
@@ -160,13 +140,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
-  const toggleParticleTrail = () => {
-    setEasterEggState((prev) => ({
-      ...prev,
-      particleTrailActive: !prev.particleTrailActive,
-    }));
-  };
-
   const resetAllEasterEggs = () => {
     setEasterEggState({
       konamiCodeActivated: false,
@@ -174,7 +147,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
       discoModeActive: false,
       typewriterModeActive: false,
       devConsoleActive: false,
-      particleTrailActive: false,
     });
   };
 
@@ -187,7 +159,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
         toggleDiscoMode,
         toggleTypewriterMode,
         toggleDevConsole,
-        toggleParticleTrail,
         resetAllEasterEggs,
       }}
     >
