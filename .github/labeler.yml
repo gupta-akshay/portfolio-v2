@@ -1,0 +1,117 @@
+# Labeler configuration for portfolio-v2
+# Based on https://github.com/actions/labeler
+
+# Frontend (Next.js, React, TypeScript)
+frontend:
+  - '**/*.tsx'
+  - '**/*.ts'
+  - '**/*.jsx'
+  - '**/*.js'
+  - '**/*.css'
+  - '**/*.scss'
+  - '**/*.sass'
+  - '**/src/app/**'
+  - '**/src/components/**'
+  - '**/src/hooks/**'
+  - '**/src/context/**'
+  - '**/src/types/**'
+  - '**/src/utils/**'
+  - '**/src/styles/**'
+  - '**/next.config.*'
+  - '**/tsconfig.json'
+  - '**/next-env.d.ts'
+
+# Styling and UI
+styling:
+  - '**/*.css'
+  - '**/*.scss'
+  - '**/*.sass'
+  - '**/src/styles/**'
+  - '**/tailwind.config.*'
+  - '**/postcss.config.*'
+  - '**/styled-components/**'
+
+# Backend and API
+backend:
+  - '**/src/api/**'
+  - '**/src/app/api/**'
+  - '**/db/**'
+  - '**/migrations/**'
+  - '**/drizzle.config.*'
+  - '**/*.sql'
+
+# Database
+database:
+  - '**/db/**'
+  - '**/migrations/**'
+  - '**/drizzle.config.*'
+  - '**/*.sql'
+
+# CMS (Sanity)
+cms:
+  - '**/src/sanity/**'
+  - '**/src/app/studio/**'
+  - '**/sanity.config.*'
+  - '**/sanity.cli.*'
+
+# Configuration
+configuration:
+  - '**/.env*'
+  - '**/*.config.*'
+  - '**/*.json'
+  - '**/*.yml'
+  - '**/*.yaml'
+  - '**/.gitignore'
+  - '**/.eslintrc*'
+  - '**/.prettierrc*'
+  - '**/package.json'
+  - '**/pnpm-lock.yaml'
+
+# Documentation
+documentation:
+  - '**/*.md'
+  - '**/README*'
+  - '**/TROUBLESHOOTING.md'
+  - '**/EMOJI_REACTIONS.md'
+  - '**/MIGRATION.md'
+
+# Assets and media
+assets:
+  - '**/public/**'
+  - '**/public/assets/**'
+  - '**/public/images/**'
+  - '**/*.png'
+  - '**/*.jpg'
+  - '**/*.jpeg'
+  - '**/*.gif'
+  - '**/*.svg'
+  - '**/*.ico'
+  - '**/*.webp'
+  - '**/*.mp4'
+  - '**/*.mp3'
+  - '**/*.pdf'
+
+# Dependencies
+dependencies:
+  - '**/package.json'
+  - '**/pnpm-lock.yaml'
+
+# Testing
+testing:
+  - '**/*.test.*'
+  - '**/*.spec.*'
+  - '**/__tests__/**'
+  - '**/tests/**'
+
+# CI/CD
+ci-cd:
+  - '.github/**'
+  - '**/.github/**'
+  - '**/.vercel/**'
+  - '**/.netlify/**'
+
+# Performance and analytics
+performance:
+  - '**/src/app/metrics/**'
+  - '**/src/app/sitemap.ts'
+  - '**/src/app/robots.ts'
