@@ -9,7 +9,7 @@ import { formatDate, calculateReadingTime } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useCursor } from '@/app/context/CursorContext';
-import { ScrollAnimation } from '@/app/components';
+import ScrollAnimation from '@/app/components/ScrollAnimation';
 
 import styles from './BlogTile.module.scss';
 
