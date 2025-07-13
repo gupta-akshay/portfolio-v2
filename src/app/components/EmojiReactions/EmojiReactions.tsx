@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getOrCreateFingerprint } from '@/app/utils/fingerprint';
 
+import styles from './EmojiReactions.module.scss';
+
 interface Reaction {
   emoji: string;
   count: number;
@@ -108,8 +110,8 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
   if (!isVisible || !isFetched) return null;
 
   return (
-    <div className='emoji-reactions-container'>
-      <div className='emoji-reactions-bar'>
+    <div className={styles.emojiReactionsContainer}>
+      <div className={styles.emojiReactionsBar}>
         {EMOJI_OPTIONS.map((emoji) => {
           const count = getReactionCount(emoji);
           const isUserReaction = userReactions.includes(emoji);
@@ -119,11 +121,11 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
               key={emoji}
               onClick={() => handleReaction(emoji)}
               disabled={isLoading}
-              className={`emoji-reaction-btn ${isUserReaction ? 'user-reacted' : ''}`}
+              className={`${styles.emojiReactionBtn} ${isUserReaction ? styles.userReacted : ''}`}
               title={`React with ${emoji}`}
             >
-              <span className='emoji'>{emoji}</span>
-              {count > 0 && <span className='count'>{count}</span>}
+              <span className={styles.emoji}>{emoji}</span>
+              {count > 0 && <span className={styles.count}>{count}</span>}
             </button>
           );
         })}
