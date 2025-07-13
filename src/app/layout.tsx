@@ -57,12 +57,11 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: 'https://akshaygupta.live/images/about-me.png',
+        url: '/images/about-me.png',
         width: 1200,
         height: 630,
         alt: 'Akshay Gupta - Full-Stack Web Developer',
         type: 'image/png',
-        secureUrl: 'https://akshaygupta.live/images/about-me.png',
       },
     ],
   },
@@ -72,7 +71,7 @@ export const metadata: Metadata = {
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    images: ['https://akshaygupta.live/images/about-me.png'],
+    images: ['/images/about-me.png'],
   },
   verification: {
     google: 'rcbqH3Qckh-CLqTHJHg3ze_tDDYoEMWKxrS4qWy1Bb0',

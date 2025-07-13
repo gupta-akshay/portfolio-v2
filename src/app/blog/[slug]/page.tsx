@@ -215,12 +215,11 @@ export async function generateMetadata({
           locale: 'en_US',
           images: [
             {
-              url: 'https://akshaygupta.live/images/about-me.png',
+              url: '/images/about-me.png',
               width: 1200,
               height: 630,
               alt: 'Blog Post Not Found',
               type: 'image/png',
-              secureUrl: 'https://akshaygupta.live/images/about-me.png',
             },
           ],
         },
@@ -228,7 +227,7 @@ export async function generateMetadata({
           card: 'summary_large_image',
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
-          images: ['https://akshaygupta.live/images/about-me.png'],
+          images: ['/images/about-me.png'],
           creator: '@ashay_music',
         },
         alternates: {
@@ -265,7 +264,6 @@ export async function generateMetadata({
             height: 630,
             alt: post.title,
             type: imageType,
-            secureUrl: imageUrl,
           },
         ],
       },
@@ -295,12 +293,11 @@ export async function generateMetadata({
         locale: 'en_US',
         images: [
           {
-            url: 'https://akshaygupta.live/images/about-me.png',
+            url: '/images/about-me.png',
             width: 1200,
             height: 630,
             alt: 'Error Loading Blog Post',
             type: 'image/png',
-            secureUrl: 'https://akshaygupta.live/images/about-me.png',
           },
         ],
       },
@@ -309,7 +306,7 @@ export async function generateMetadata({
         title: 'Error',
         description: 'An error occurred while loading this blog post',
         creator: '@ashay_music',
-        images: ['https://akshaygupta.live/images/about-me.png'],
+        images: ['/images/about-me.png'],
       },
       alternates: {
         canonical: 'https://akshaygupta.live/blog',

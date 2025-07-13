@@ -11,7 +11,7 @@ import {
 } from '@/app/components';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live/blog'),
+  metadataBase: new URL('https://akshaygupta.live'),
   title: 'Blog | Akshay Gupta',
   description:
     'Read my latest thoughts and insights about web development, technology, and software engineering.',
@@ -25,12 +25,11 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: 'https://akshaygupta.live/blog/opengraph-image.png',
+        url: '/blog/opengraph-image',
         width: 1200,
         height: 630,
         alt: 'Akshay Gupta Blog - Web Development, Technology, and Software Engineering',
         type: 'image/png',
-        secureUrl: 'https://akshaygupta.live/blog/opengraph-image.png',
       },
     ],
   },
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
     title: 'Blog | Akshay Gupta',
     description:
       'Read my latest thoughts and insights about web development, technology, and software engineering.',
-    images: ['https://akshaygupta.live/blog/opengraph-image.png'],
+    images: ['/blog/opengraph-image'],
     creator: '@ashay_music',
   },
   alternates: {

@@ -15,7 +15,7 @@ import {
 import styles from '../styles/sections/aboutSection.module.scss';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live/about'),
+  metadataBase: new URL('https://akshaygupta.live'),
   title: 'About | Akshay Gupta',
   description:
     'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
@@ -29,12 +29,11 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: 'https://akshaygupta.live/about/opengraph-image.png',
+        url: '/about/opengraph-image',
         width: 1200,
         height: 630,
         alt: 'About Akshay Gupta - My Journey, Skills & Experience',
         type: 'image/png',
-        secureUrl: 'https://akshaygupta.live/about/opengraph-image.png',
       },
     ],
   },
@@ -44,7 +43,7 @@ export const metadata: Metadata = {
     description:
       'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
     creator: '@ashay_music',
-    images: ['https://akshaygupta.live/about/opengraph-image.png'],
+    images: ['/about/opengraph-image'],
   },
   alternates: {
     canonical: 'https://akshaygupta.live/about',
