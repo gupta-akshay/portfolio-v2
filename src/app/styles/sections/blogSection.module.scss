@@ -1,0 +1,191 @@
+@use 'sass:color';
+@use '../variables' as *;
+@use '../mixin' as *;
+@use '../3d-effects' as *;
+
+// Theme overrides
+:global(body.theme-light) {
+  .singleBlog {
+    background: $px-white;
+  }
+
+  .articleTitle h2 {
+    color: $px-dark;
+  }
+
+  .media {
+    border-bottom: 1px dashed rgba($px-dark, 0.1);
+  }
+
+  .mediaBody span {
+    color: $px-body-light;
+  }
+
+  .articleContent {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: $px-dark;
+    }
+
+    p,
+    li {
+      color: $px-body-light;
+    }
+  }
+}
+
+.singleBlog {
+  padding-top: 70px;
+  padding-bottom: 100px;
+  background: $px-bg-1;
+  min-height: 100%;
+
+  @include down-md {
+    padding-top: 100px;
+    padding-bottom: 40px;
+  }
+
+  .blogFeatureImg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .blogImage {
+      max-height: 663px;
+      max-width: 1110px;
+      object-fit: cover;
+      background-position: center;
+      width: 100%;
+
+      @include down-md {
+        max-height: 246px;
+      }
+    }
+  }
+}
+
+.article {
+  margin: 15px 0 30px;
+}
+
+.articleTitle {
+  padding-top: 15px;
+
+  .hashtags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .hashtag {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: $px-theme;
+      border-bottom: 1px solid $px-theme;
+    }
+
+    .hashtagMore {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: $px-theme;
+      border-bottom: 1px solid $px-theme;
+      opacity: 0.8;
+      font-style: italic;
+    }
+  }
+
+  h2 {
+    color: $px-white;
+    font-weight: 600;
+
+    @include text-3d-shadow(2px, 1px);
+    @include responsive-3d-effects;
+
+    @include down-md {
+      font-size: 28px;
+    }
+  }
+
+  .media {
+    padding-top: 15px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed rgba($px-white, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      overflow: hidden;
+      object-fit: cover;
+      background-position: center;
+    }
+
+    .mediaBody {
+      padding-left: 8px;
+
+      label {
+        font-weight: 600;
+        color: $px-theme;
+        margin: 0;
+      }
+
+      span {
+        display: block;
+        font-size: 12px;
+        color: $px-body;
+      }
+    }
+  }
+}
+
+.articleContent {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: $px-white;
+    font-weight: 500;
+    margin: 30px 0 15px;
+  }
+
+  p,
+  li {
+    color: $px-body;
+  }
+
+  blockquote {
+    max-width: 600px;
+    padding: 15px 0 30px;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: $px-theme;
+
+    p {
+      font-size: 20px;
+      font-weight: 500;
+      color: $px-theme;
+      margin: 0;
+    }
+  }
+
+  a {
+    color: $px-theme;
+
+    @include px-hover {
+      color: color.adjust($px-theme, $lightness: -8%);
+      text-decoration: none;
+    }
+  }
+}

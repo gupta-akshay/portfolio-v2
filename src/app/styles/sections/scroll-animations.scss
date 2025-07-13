@@ -1,0 +1,295 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+
+// Base scroll animation styles
+.scroll-animation {
+  position: relative;
+  will-change: transform, opacity;
+
+  // Prevent layout shifts
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+// Stagger animation container
+.stagger-container {
+  position: relative;
+
+  .stagger-wrapper {
+    display: inherit;
+    flex-direction: inherit;
+    grid-template-columns: inherit;
+    grid-template-rows: inherit;
+    gap: inherit;
+    align-items: inherit;
+    justify-content: inherit;
+  }
+
+  .stagger-item {
+    position: relative;
+    will-change: transform, opacity;
+
+    // Prevent flash of unstyled content
+    &[data-animation-state='hidden'] {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+}
+
+// Parallax scroll effects
+.parallax-scroll {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    background: inherit;
+    transform: translateZ(-1px) scale(1.1);
+    will-change: transform;
+    z-index: -1;
+  }
+
+  &[data-parallax-speed='slow'] {
+    &::before {
+      transform: translateZ(-1px) scale(1.05);
+    }
+  }
+
+  &[data-parallax-speed='fast'] {
+    &::before {
+      transform: translateZ(-2px) scale(1.2);
+    }
+  }
+}
+
+// Scroll reveal effects
+.scroll-reveal {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($px-bg-1, 0.1),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: reveal-sweep 0.8s ease-out;
+    pointer-events: none;
+    z-index: 1;
+
+    .theme-light & {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba($px-white, 0.1),
+        transparent
+      );
+    }
+  }
+
+  &.revealed {
+    &::after {
+      animation: none;
+      transform: translateX(100%);
+    }
+  }
+}
+
+@keyframes reveal-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Magnetic scroll effects
+.magnetic-scroll {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: linear-gradient(45deg, rgba($px-theme, 0.1), transparent);
+      border-radius: inherit;
+      z-index: -1;
+      animation: magnetic-glow 2s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes magnetic-glow {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+// Intersection observer states
+.intersection-observer {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &[data-in-view='false'] {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  &[data-in-view='true'] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  // Stagger delays for multiple elements
+  &[data-stagger-index='0'] {
+    transition-delay: 0ms;
+  }
+  &[data-stagger-index='1'] {
+    transition-delay: 100ms;
+  }
+  &[data-stagger-index='2'] {
+    transition-delay: 200ms;
+  }
+  &[data-stagger-index='3'] {
+    transition-delay: 300ms;
+  }
+  &[data-stagger-index='4'] {
+    transition-delay: 400ms;
+  }
+  &[data-stagger-index='5'] {
+    transition-delay: 500ms;
+  }
+  &[data-stagger-index='6'] {
+    transition-delay: 600ms;
+  }
+  &[data-stagger-index='7'] {
+    transition-delay: 700ms;
+  }
+  &[data-stagger-index='8'] {
+    transition-delay: 800ms;
+  }
+  &[data-stagger-index='9'] {
+    transition-delay: 900ms;
+  }
+}
+
+// Text animations
+.text-animation {
+  overflow: hidden;
+
+  .text-line {
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: $px-bg-1;
+      transform: translateX(-100%);
+      animation: text-reveal 0.8s ease-out forwards;
+
+      .theme-light & {
+        background: $px-white;
+      }
+    }
+  }
+
+  &.animate-text {
+    .text-line {
+      &::after {
+        animation-delay: calc(var(--line-index, 0) * 0.1s);
+      }
+    }
+  }
+}
+
+@keyframes text-reveal {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Accessibility and performance
+@media (prefers-reduced-motion: reduce) {
+  .scroll-animation,
+  .stagger-container,
+  .parallax-scroll,
+  .scroll-reveal,
+  .magnetic-scroll,
+  .intersection-observer,
+  .text-animation {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+
+    &::before,
+    &::after {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+}
+
+// Mobile optimizations
+@media (max-width: $px-media-md) {
+  .parallax-scroll {
+    &::before {
+      transform: none; // Disable parallax on mobile
+    }
+  }
+
+  .magnetic-scroll {
+    &:hover {
+      transform: none; // Disable magnetic effects on mobile
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+}

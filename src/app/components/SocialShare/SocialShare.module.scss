@@ -1,0 +1,246 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
+
+// Theme-light overrides
+:global(body.theme-light) {
+  .socialShareBar {
+    background: rgba($px-white, 0.95);
+    border: 1px solid rgba($px-black, 0.1);
+    box-shadow: 0 4px 20px rgba($px-black, 0.1);
+  }
+
+  .socialShareTitle {
+    color: rgba($px-body-light, 0.7);
+  }
+
+  .socialShareBtn:hover {
+    box-shadow: 0 4px 12px rgba($px-black, 0.15);
+  }
+}
+
+.socialShareContainer {
+  position: fixed;
+  top: 50%;
+  left: 320px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.socialShareBar {
+  display: flex;
+  flex-direction: column;
+  background: rgba($px-bg-1, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  padding: 16px 8px;
+  box-shadow: 0 4px 20px rgba($px-black, 0.15);
+  border: 1px solid rgba($px-white, 0.1);
+  gap: 8px;
+  transition: all 0.3s ease-in-out;
+  align-items: center;
+
+  @include glassmorphism-3d(12px, 0.08);
+  @include floating-3d(3px, 0.1);
+  @include responsive-3d-effects;
+
+  &::before {
+    border-radius: 50px;
+  }
+}
+
+.socialShareTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba($px-body, 0.7);
+  margin-bottom: 4px;
+  text-align: center;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.socialShareBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  position: relative;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba($px-black, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  > div {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+.copyLinkBtn {
+  background: rgba($px-theme, 0.1);
+  border: 1px solid rgba($px-theme, 0.3);
+  color: $px-theme;
+  font-size: 16px;
+  font-weight: 600;
+  backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      rgba($px-theme, 0.05),
+      rgba($px-theme, 0.02)
+    );
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  &:hover {
+    background: rgba($px-theme, 0.2);
+    box-shadow: 0 2px 8px rgba($px-theme, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &.copied {
+    background: rgba(46, 191, 113, 0.2);
+    border-color: rgba(46, 191, 113, 0.5);
+    color: #2fbf71;
+    box-shadow: 0 2px 8px rgba(46, 191, 113, 0.3);
+
+    &::before {
+      background: linear-gradient(
+        45deg,
+        rgba(46, 191, 113, 0.05),
+        rgba(46, 191, 113, 0.02)
+      );
+    }
+  }
+}
+
+.copyIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+// Keyframe animations
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInBottom {
+  from {
+    transform: translateX(-50%) translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+// Media Queries
+@media (max-width: $px-media-lg) {
+  .socialShareContainer {
+    top: auto;
+    left: 65%;
+    bottom: 120px;
+    transform: translateX(-50%);
+    animation: slideInBottom 0.3s ease-out;
+  }
+
+  .socialShareBar {
+    flex-direction: row;
+    padding: 8px 16px;
+    gap: 4px;
+  }
+
+  .socialShareTitle {
+    writing-mode: horizontal-tb;
+    margin-bottom: 0;
+    margin-right: 8px;
+  }
+
+  .socialShareBtn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: $px-media-sm) {
+  .socialShareContainer {
+    bottom: 80px;
+  }
+
+  .socialShareBar {
+    padding: 6px 12px;
+    gap: 2px;
+  }
+
+  .socialShareBtn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .socialShareTitle {
+    font-size: 11px;
+    margin-right: 6px;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .socialShareContainer {
+    animation: none;
+  }
+
+  .socialShareBtn {
+    transition: none;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+// High Contrast
+@media (prefers-contrast: high) {
+  .socialShareBar {
+    border: 2px solid $px-theme;
+  }
+
+  .copyLinkBtn {
+    border: 2px solid $px-theme;
+    background: $px-theme;
+    color: $px-white;
+  }
+}

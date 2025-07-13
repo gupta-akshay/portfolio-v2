@@ -1,9 +1,11 @@
 import React, { memo } from 'react';
 import { LoadingIndicatorProps } from '@/app/types/components';
 
+import styles from './LoadingIndicator.module.scss';
+
 // Memoize the component to prevent unnecessary re-renders
 const LoadingIndicator: React.FC<LoadingIndicatorProps> = memo(
-  ({ size = 'lg', color, text, className = 'global-loading-container' }) => {
+  ({ size = 'lg', color, text, className = styles.globalLoadingContainer }) => {
     // Pre-define sizes to avoid recalculation
     const dimensions = {
       sm: { width: '30px', height: '30px' },
@@ -18,11 +20,11 @@ const LoadingIndicator: React.FC<LoadingIndicatorProps> = memo(
 
     return (
       <div className={className}>
-        <div className='global-loading-spinner' style={spinnerStyle}>
-          <div className='spinner-circle'></div>
-          <div className='spinner-circle-inner'></div>
+        <div className={styles.globalLoadingSpinner} style={spinnerStyle}>
+          <div className={styles.spinnerCircle}></div>
+          <div className={styles.spinnerCircleInner}></div>
         </div>
-        {text && <p className='loading-text'>{text}</p>}
+        {text && <p className={styles.loadingText}>{text}</p>}
       </div>
     );
   }

@@ -5,9 +5,19 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import BlogImage from '@/app/components/BlogImage';
 import EmojiReactions from '@/app/components/EmojiReactions';
+import SocialShare from '@/app/components/SocialShare';
+import ReadingProgressBar from '@/app/components/ReadingProgressBar';
+import TableOfContents from '@/app/components/TableOfContents';
 import { getPostBySlug } from '@/sanity/lib/client';
-import { formatDate } from '@/app/utils';
+import { formatDate, calculateReadingTime } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
+import {
+  InteractiveBackground,
+  ScrollAnimation,
+  StaggerAnimation,
+} from '@/app/components';
+
+import styles from '../../styles/sections/blogSection.module.scss';
 
 const SingleBlog = dynamic(() => import('@/app/components/SingleBlog'), {
   loading: () => <div className='loading-blog-content'>Loading content...</div>,
@@ -20,6 +30,19 @@ interface SingleBlogPageProps {
 
 export const revalidate = 3600;
 
+// Helper function to get MIME type from image asset
+const getImageMimeType = (mainImage: any): string => {
+  if (!mainImage?.asset) return 'image/png';
+
+  // If we have the mimeType from the asset, use it
+  if (mainImage.asset.mimeType) {
+    return mainImage.asset.mimeType;
+  }
+
+  // Fallback to PNG for dynamically generated OpenGraph images
+  return 'image/png';
+};
+
 const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   const slug = (await params).slug;
 
@@ -31,7 +54,9 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   const imageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(630).url()
-    : 'https://akshaygupta.live/images/about-me.png';
+    : `https://akshaygupta.live/blog/${post.slug.current}/opengraph-image.png`;
+
+  const readingTime = calculateReadingTime(post.body);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -62,48 +87,103 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   return (
     <Layout isBlog>
+      <ReadingProgressBar />
+      <TableOfContents content={post.body} />
+      <SocialShare
+        url={`https://akshaygupta.live/blog/${slug}`}
+        title={post.title}
+        description={post.excerpt || post.title}
+      />
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div id={post.slug.current} className='single-blog'>
-        <div className='container'>
-          <div className='blog-feature-img'>
-            <BlogImage value={post.mainImage} isCoverImage />
-          </div>
+      <div
+        id={post.slug.current}
+        className={styles.singleBlog}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          overflowX: 'hidden',
+        }}
+      >
+        <InteractiveBackground
+          variant='grid'
+          count={8}
+          color='#2fbf71'
+          size={40}
+          speed={0.8}
+          intensity={0.9}
+          interactive={true}
+          className='blog-post-background'
+        />
+        <div className='container' style={{ position: 'relative', zIndex: 10 }}>
+          <ScrollAnimation
+            animation='scale'
+            duration={0.8}
+            parallax={true}
+            parallaxSpeed='slow'
+          >
+            <div className={styles.blogFeatureImg}>
+              <BlogImage value={post.mainImage} isCoverImage />
+            </div>
+          </ScrollAnimation>
           <div className='row justify-content-center'>
             <div className='col-lg-8'>
-              <article className='article'>
-                <div className='article-title'>
-                  <div className='hashtags'>
-                    {post.categories.map((category) => (
-                      <span key={category.slug.current} className='hashtag'>
-                        #{category.title}
-                      </span>
-                    ))}
-                  </div>
-                  <h2>{post.title}</h2>
-                  <div className='media'>
-                    <div className='avatar'>
-                      <BlogImage value={post.author.image} isAuthor />
-                    </div>
-                    <div className='media-body'>
-                      <label>{post.author.name}</label>
-                      <span>{formatDate(post.publishedAt)}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className='article-content'>
-                  <Suspense
-                    fallback={
-                      <div className='loading-blog-content'>
-                        Loading content...
-                      </div>
-                    }
+              <article className={styles.article}>
+                <StaggerAnimation
+                  staggerDelay={0.2}
+                  useIntersectionObserver={true}
+                >
+                  <ScrollAnimation
+                    animation='slideUp'
+                    duration={0.8}
+                    delay={0.2}
+                    scrollReveal={true}
                   >
-                    <SingleBlog post={post} />
-                  </Suspense>
-                </div>
+                    <div className={styles.articleTitle}>
+                      <div className={styles.hashtags}>
+                        {post.categories.map((category) => (
+                          <span
+                            key={category.slug.current}
+                            className={styles.hashtag}
+                          >
+                            #{category.title}
+                          </span>
+                        ))}
+                      </div>
+                      <h2>{post.title}</h2>
+                      <div className={styles.media}>
+                        <div className={styles.avatar}>
+                          <BlogImage value={post.author.image} isAuthor />
+                        </div>
+                        <div className={styles.mediaBody}>
+                          <label>{post.author.name}</label>
+                          <span>
+                            {formatDate(post.publishedAt)} • {readingTime.text}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </ScrollAnimation>
+                  <ScrollAnimation
+                    animation='slideUp'
+                    duration={0.8}
+                    delay={0.4}
+                  >
+                    <div className={styles.articleContent}>
+                      <Suspense
+                        fallback={
+                          <div className='loading-blog-content'>
+                            Loading content...
+                          </div>
+                        }
+                      >
+                        <SingleBlog post={post} />
+                      </Suspense>
+                    </div>
+                  </ScrollAnimation>
+                </StaggerAnimation>
               </article>
             </div>
           </div>
@@ -127,16 +207,19 @@ export async function generateMetadata({
         description: `The blog post you're looking for does not exist`,
         metadataBase: new URL('https://akshaygupta.live'),
         openGraph: {
+          type: 'article',
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
-          type: 'article',
           url: `https://akshaygupta.live/blog/${slug}`,
+          siteName: 'Akshay Gupta',
+          locale: 'en_US',
           images: [
             {
-              url: 'https://akshaygupta.live/images/about-me.png',
+              url: '/images/about-me.png',
               width: 1200,
               height: 630,
               alt: 'Blog Post Not Found',
+              type: 'image/png',
             },
           ],
         },
@@ -144,7 +227,7 @@ export async function generateMetadata({
           card: 'summary_large_image',
           title: 'Post Not Found',
           description: `The blog post you're looking for does not exist`,
-          images: ['https://akshaygupta.live/images/about-me.png'],
+          images: ['/images/about-me.png'],
           creator: '@ashay_music',
         },
         alternates: {
@@ -153,8 +236,11 @@ export async function generateMetadata({
       };
     }
 
-    const imageUrl = urlFor(post.mainImage).width(1200).height(630).url();
+    const imageUrl = post.mainImage
+      ? urlFor(post.mainImage).width(1200).height(630).url()
+      : `https://akshaygupta.live/blog/${slug}/opengraph-image.png`;
 
+    const imageType = getImageMimeType(post.mainImage);
     const description = post.excerpt || post.title;
 
     return {
@@ -162,11 +248,12 @@ export async function generateMetadata({
       description: description,
       metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
+        type: 'article',
         title: post.title,
         description: description,
-        type: 'article',
         url: `https://akshaygupta.live/blog/${slug}`,
         siteName: 'Akshay Gupta',
+        locale: 'en_US',
         publishedTime: post.publishedAt,
         modifiedTime: post.publishedAt,
         authors: [post.author.name],
@@ -176,6 +263,7 @@ export async function generateMetadata({
             width: 1200,
             height: 630,
             alt: post.title,
+            type: imageType,
           },
         ],
       },
@@ -195,17 +283,21 @@ export async function generateMetadata({
     return {
       title: 'Error | Akshay Gupta',
       description: 'An error occurred while loading this blog post',
+      metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
+        type: 'article',
         title: 'Error',
         description: 'An error occurred while loading this blog post',
-        type: 'article',
         url: 'https://akshaygupta.live/blog',
+        siteName: 'Akshay Gupta',
+        locale: 'en_US',
         images: [
           {
-            url: 'https://akshaygupta.live/images/about-me.png',
+            url: '/images/about-me.png',
             width: 1200,
             height: 630,
             alt: 'Error Loading Blog Post',
+            type: 'image/png',
           },
         ],
       },
@@ -214,7 +306,7 @@ export async function generateMetadata({
         title: 'Error',
         description: 'An error occurred while loading this blog post',
         creator: '@ashay_music',
-        images: ['https://akshaygupta.live/images/about-me.png'],
+        images: ['/images/about-me.png'],
       },
       alternates: {
         canonical: 'https://akshaygupta.live/blog',

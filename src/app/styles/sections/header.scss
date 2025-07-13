@@ -1,12 +1,67 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
-.main-right {
+.main-right {  
   @include up-lg {
     left: 250px;
     position: absolute;
     height: 100%;
     width: calc(100% - 250px);
+  }
+}
+
+// Sidebar overlay for mobile
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1200;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+
+  @include up-lg {
+    display: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes logoClickHint {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  75% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes rainbowBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
@@ -17,7 +72,7 @@
   top: 0;
   background: $px-bg-3;
   transition: background-color 0.2s ease-in-out;
-  
+
   .theme-light & {
     background: $px-gray;
   }
@@ -62,6 +117,18 @@
       }
     }
   }
+
+  .hl-logo {
+    cursor: pointer;
+    position: relative;
+
+    &:hover .img {
+      animation: logoClickHint 0.6s ease-in-out;
+      transform: scale(1.02);
+      transition: all 0.3s ease;
+    }
+  }
+
   .nav-menu {
     padding-top: 45px;
     padding-bottom: 45px;
@@ -84,6 +151,12 @@
         letter-spacing: 3px;
         text-transform: uppercase;
         line-height: 18px;
+        border-radius: 8px;
+
+        // Add 3D button press effect
+        @include floating-3d(2px, 0.05);
+        @include responsive-3d-effects;
+
         .theme-light & {
           color: rgba($px-dark, 0.7);
           font-weight: 400;
@@ -122,18 +195,26 @@
   }
   .social-icons {
     position: absolute;
-    bottom: 0;
+    bottom: 80px;
     left: 0;
     right: 0;
     padding: 20px 0;
-    background: linear-gradient(180deg, transparent 0%, rgba($px-bg-3, 0.8) 100%);
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba($px-bg-3, 0.8) 100%
+    );
     border-top: 1px solid rgba($px-theme, 0.1);
-    
+
     .theme-light & {
-      background: linear-gradient(180deg, transparent 0%, rgba($px-white, 0.95) 100%);
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba($px-white, 0.95) 100%
+      );
       border-top: 1px solid rgba($px-theme, 0.15);
     }
-    
+
     a {
       color: rgba($px-white, 0.7);
       font-size: 18px;
@@ -147,63 +228,67 @@
       height: 36px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
-      
+
+      // Add 3D icon rotation effect
+      @include icon-3d-rotate(180deg);
+      @include floating-3d(4px, 0.08);
+      @include responsive-3d-effects;
+
       .theme-light & {
         color: rgba($px-dark, 0.6);
       }
-      
+
       &:hover {
-        transform: translateY(-2px) scale(1.1);
         box-shadow: 0 4px 12px rgba($px-theme, 0.3);
-        
+
         .theme-light & {
           box-shadow: 0 4px 12px rgba($px-theme, 0.2);
         }
       }
-      
+
       // Brand-specific hover colors
-      &[aria-label="Github"]:hover {
+      &[aria-label='Github']:hover {
         color: #fff;
         background: linear-gradient(135deg, #333, #24292e);
         box-shadow: 0 4px 12px rgba(36, 41, 46, 0.4);
       }
-      
-      &[aria-label="Linkedin"]:hover {
+
+      &[aria-label='Linkedin']:hover {
         color: #fff;
         background: linear-gradient(135deg, #0077b5, #005885);
         box-shadow: 0 4px 12px rgba(0, 119, 181, 0.4);
       }
-      
-      &[aria-label="Medium"]:hover {
+
+      &[aria-label='Medium']:hover {
         color: #fff;
         background: linear-gradient(135deg, #12100e, #000);
         box-shadow: 0 4px 12px rgba(18, 16, 14, 0.4);
       }
-      
-      &[aria-label="Dev.to"]:hover {
+
+      &[aria-label='Dev.to']:hover {
         color: #fff;
         background: linear-gradient(135deg, #0a0a0a, #000);
         box-shadow: 0 4px 12px rgba(10, 10, 10, 0.4);
       }
-      
-      &[aria-label="Instagram"]:hover {
+
+      &[aria-label='Instagram']:hover {
         color: #fff;
         background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
         box-shadow: 0 4px 12px rgba(131, 58, 180, 0.4);
       }
-      
-      &[aria-label="Facebook"]:hover {
+
+      &[aria-label='Facebook']:hover {
         color: #fff;
         background: linear-gradient(135deg, #1877f2, #165ed0);
         box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
       }
-      
-      &[aria-label="Soundcloud"]:hover {
+
+      &[aria-label='Soundcloud']:hover {
         color: #fff;
         background: linear-gradient(135deg, #ff5500, #ff3300);
         box-shadow: 0 4px 12px rgba(255, 85, 0, 0.4);
       }
-      
+
       // Add a subtle pulse animation on hover
       &:hover::before {
         content: '';
@@ -220,7 +305,67 @@
       }
     }
   }
-  
+
+  .buy-me-coffee-section {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 0;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba($px-bg-3, 0.9) 100%
+    );
+    border-top: 1px solid rgba($px-theme, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+
+    .theme-light & {
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba($px-white, 0.98) 100%
+      );
+      border-top: 1px solid rgba($px-theme, 0.15);
+    }
+
+    #bmc-button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+      @include floating-3d(4px, 0.08);
+      @include responsive-3d-effects;
+
+      &:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 20px rgba($px-theme, 0.3);
+
+        .theme-light & {
+          box-shadow: 0 8px 20px rgba($px-theme, 0.2);
+        }
+      }
+
+      // Style the Buy me a coffee button
+      .bmc-btn {
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        font-family: 'Cookie', cursive !important;
+        width: 100% !important;
+        justify-content: center !important;
+        
+        &:hover {
+          transform: translateY(-1px) scale(1.02) !important;
+        }
+      }
+    }
+  }
+
   @keyframes pulse {
     0% {
       transform: translate(-50%, -50%) scale(0.8);
@@ -250,7 +395,7 @@
   z-index: 11;
   background: $px-bg-1;
   transition: background-color 0.2s ease-in-out;
-  
+
   .theme-light & {
     background: $px-white;
   }
@@ -330,19 +475,38 @@
         height: 310px;
       }
     }
-    
+
     // Improved mobile social icons
     .social-icons {
       padding: 15px 0;
-      
+      bottom: 90px;
+
       a {
         font-size: 16px;
         width: 32px;
         height: 32px;
         margin: 0 6px;
-        
+
         &:hover {
           transform: translateY(-1px) scale(1.05);
+        }
+      }
+    }
+
+    .buy-me-coffee-section {
+      padding: 15px 0;
+
+      #bmc-button-container {
+        max-width: 180px;
+        
+        .bmc-btn {
+          font-size: 14px !important;
+          padding: 8px 16px !important;
+          width: 100% !important;
+        }
+
+        &:hover {
+          transform: translateY(-1px) scale(1.02);
         }
       }
     }

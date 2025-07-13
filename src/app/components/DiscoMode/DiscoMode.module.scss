@@ -1,0 +1,194 @@
+@keyframes discoBackground {
+  0% {
+    background:
+      radial-gradient(
+        circle at 20% 20%,
+        rgba(255, 0, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(0, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 60%,
+        rgba(255, 255, 0, 0.1) 0%,
+        transparent 50%
+      );
+  }
+  33% {
+    background:
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(0, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 20% 80%,
+        rgba(255, 255, 0, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 60% 40%,
+        rgba(255, 0, 255, 0.1) 0%,
+        transparent 50%
+      );
+  }
+  66% {
+    background:
+      radial-gradient(
+        circle at 40% 80%,
+        rgba(255, 255, 0, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(255, 0, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 20% 60%,
+        rgba(0, 255, 255, 0.1) 0%,
+        transparent 50%
+      );
+  }
+  100% {
+    background:
+      radial-gradient(
+        circle at 20% 20%,
+        rgba(255, 0, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(0, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 60%,
+        rgba(255, 255, 0, 0.1) 0%,
+        transparent 50%
+      );
+  }
+}
+
+@keyframes discoBallSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes discoLightPulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 0, 255, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(0, 255, 255, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 60%,
+      rgba(255, 255, 0, 0.1) 0%,
+      transparent 50%
+    );
+  animation: discoBackground 3s linear infinite;
+}
+
+.discoBall {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background:
+    radial-gradient(circle at 30% 30%, #fff, #ddd, #999),
+    linear-gradient(
+      45deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.7) 50%,
+      transparent 60%
+    );
+  border-radius: 50%;
+  animation: discoBallSpin 2s linear infinite;
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.5),
+    inset 0 0 20px rgba(0, 0, 0, 0.2);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.1) 2px,
+      rgba(255, 255, 255, 0.1) 4px
+    );
+    border-radius: 50%;
+  }
+}
+
+.discoLight {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff0080;
+  animation: discoLightPulse 1s ease-in-out infinite;
+  box-shadow: 0 0 20px currentColor;
+
+  &:nth-child(2n) {
+    background: #00ff80;
+  }
+
+  &:nth-child(3n) {
+    background: #8000ff;
+  }
+
+  &:nth-child(4n) {
+    background: #ff8000;
+  }
+
+  &:nth-child(5n) {
+    background: #0080ff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .discoBall,
+  .discoLight {
+    animation: none !important;
+  }
+}

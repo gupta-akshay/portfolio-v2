@@ -37,7 +37,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
       <div
         style={{
           fontSize: 48,
-          background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
+          background: 'linear-gradient(135deg, #000000, #1a1a1a, #2a2a2a)',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -45,23 +45,41 @@ export default async function Image({ params }: { params: { slug: string } }) {
           alignItems: 'flex-start',
           justifyContent: 'flex-end',
           color: 'white',
-          padding: '40px 80px',
+          padding: '60px 80px',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
         }}
       >
         <div
           style={{
-            fontSize: 60,
+            fontSize: 56,
             fontWeight: 'bold',
-            marginBottom: 20,
-            maxWidth: '80%',
+            marginBottom: 30,
+            maxWidth: '85%',
+            lineHeight: 1.1,
+            color: '#ffffff',
           }}
         >
           {post.title}
         </div>
-        <div style={{ fontSize: 32, color: '#cccccc', marginBottom: 40 }}>
+        <div
+          style={{
+            fontSize: 28,
+            color: '#e0e0e0',
+            marginBottom: 20,
+            fontWeight: 500,
+          }}
+        >
           By {post.author.name}
         </div>
-        <div style={{ fontSize: 24, color: '#999999' }}>akshaygupta.live</div>
+        <div
+          style={{
+            fontSize: 24,
+            color: '#2fbf71',
+            fontWeight: 500,
+          }}
+        >
+          akshaygupta.live
+        </div>
       </div>
     ),
     {

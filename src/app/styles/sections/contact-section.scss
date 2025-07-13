@@ -1,9 +1,17 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .contact-info {
   background: $px-dark;
   padding: 30px;
+  border-radius: 8px;
+  
+  // Add 3D effects
+  @include floating-3d(3px, 0.1);
+  @include stacking-cards(1, 4px);
+  @include responsive-3d-effects;
+  
   .theme-light & {
     background: $px-gray;
   }
@@ -58,6 +66,13 @@
 .contact-form {
   background: $px-dark;
   padding: 30px;
+  border-radius: 8px;
+  
+  // Add 3D effects
+  @include floating-3d(3px, 0.1);
+  @include stacking-cards(1, 4px);
+  @include responsive-3d-effects;
+  
   .theme-light & {
     background: $px-gray;
   }
@@ -92,6 +107,11 @@
     border: 1px solid rgba($px-white, 0.3);
     border-radius: 2px;
     box-shadow: none;
+    
+    // Add subtle 3D effects
+    @include floating-3d(1px, 0.03);
+    @include responsive-3d-effects;
+    
     .theme-light & {
       color: $px-dark;
       border: 1px solid rgba($px-dark, 0.3);
@@ -107,28 +127,6 @@
   textarea.form-control {
     height: auto;
     resize: none;
-  }
-}
-
-.google-map {
-  margin-top: 50px;
-  .theme-light & {
-    border: 5px solid $px-white;
-  }
-  @include down-sm {
-    margin-top: 15px;
-  }
-  .embed-responsive-21by9 {
-    filter: grayscale(1);
-    -webkit-filter: grayscale(1);
-    &:before {
-      content: block;
-      content: '';
-      padding-top: 30%;
-      @include down-sm {
-        padding-top: 55%;
-      }
-    }
   }
 }
 

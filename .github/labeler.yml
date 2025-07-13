@@ -1,0 +1,164 @@
+# Labeler configuration for portfolio-v2
+# Based on https://github.com/actions/labeler
+
+# Add 'root' label to any root file changes
+root:
+  - changed-files:
+      - any-glob-to-any-file: "*"
+
+# Add 'AnyChange' label to any changes within the entire repository
+AnyChange:
+  - changed-files:
+      - any-glob-to-any-file: "**"
+
+# Add 'frontend' label to any changes to frontend files
+frontend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.tsx"
+          - "**/*.ts"
+          - "**/*.jsx"
+          - "**/*.js"
+          - "**/*.css"
+          - "**/*.scss"
+          - "**/*.sass"
+          - "src/app/**"
+          - "src/components/**"
+          - "src/hooks/**"
+          - "src/context/**"
+          - "src/types/**"
+          - "src/utils/**"
+          - "src/styles/**"
+          - "next.config.*"
+          - "tsconfig.json"
+          - "next-env.d.ts"
+
+# Add 'styling' label to any changes to styling files
+styling:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.css"
+          - "**/*.scss"
+          - "**/*.sass"
+          - "src/styles/**"
+          - "tailwind.config.*"
+          - "postcss.config.*"
+          - "styled-components/**"
+
+# Add 'backend' label to any changes to backend and API files
+backend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/api/**"
+          - "src/app/api/**"
+          - "db/**"
+          - "migrations/**"
+          - "drizzle.config.*"
+          - "**/*.sql"
+
+# Add 'database' label to any changes to database files
+database:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "db/**"
+          - "migrations/**"
+          - "drizzle.config.*"
+          - "**/*.sql"
+
+# Add 'cms' label to any changes to Sanity CMS files
+cms:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/sanity/**"
+          - "src/app/studio/**"
+          - "sanity.config.*"
+          - "sanity.cli.*"
+
+# Add 'configuration' label to any changes to configuration files
+configuration:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".env*"
+          - "*.config.*"
+          - "*.json"
+          - "*.yml"
+          - "*.yaml"
+          - ".gitignore"
+          - ".eslintrc*"
+          - ".prettierrc*"
+          - "package.json"
+          - "pnpm-lock.yaml"
+
+# Add 'documentation' label to any changes to documentation files
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "README*"
+          - "TROUBLESHOOTING.md"
+          - "EMOJI_REACTIONS.md"
+          - "MIGRATION.md"
+
+# Add 'assets' label to any changes to assets and media files
+assets:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "public/**"
+          - "public/assets/**"
+          - "public/images/**"
+          - "**/*.png"
+          - "**/*.jpg"
+          - "**/*.jpeg"
+          - "**/*.gif"
+          - "**/*.svg"
+          - "**/*.ico"
+          - "**/*.webp"
+          - "**/*.mp4"
+          - "**/*.mp3"
+          - "**/*.pdf"
+
+# Add 'dependencies' label to any changes to dependency files
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "package.json"
+          - "pnpm-lock.yaml"
+
+# Add 'testing' label to any changes to test files
+testing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.test.*"
+          - "**/*.spec.*"
+          - "__tests__/**"
+          - "tests/**"
+
+# Add 'ci-cd' label to any changes to CI/CD files
+ci-cd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+          - ".vercel/**"
+          - ".netlify/**"
+
+# Add 'performance' label to any changes to performance and analytics files
+performance:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/app/metrics/**"
+          - "src/app/sitemap.ts"
+          - "src/app/robots.ts"
+
+# Add 'source' label to any changes to src files EXCEPT for the studio sub-folder
+source:
+  - changed-files:
+      - any-glob-to-any-file: "src/**/*"
+      - all-globs-to-all-files: "!src/app/studio/*"
+
+# Add 'feature' label to any PR where the head branch name starts with `feature` or has a `feature` section in the name
+feature:
+  - head-branch: ["^feature", "feature"]
+
+# Add 'release' label to any PR that is opened against the `main` branch
+release:
+  - base-branch: "main"

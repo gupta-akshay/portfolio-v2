@@ -1,0 +1,194 @@
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9998;
+  pointer-events: all;
+}
+
+.terminal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 500px;
+  max-width: 95vw;
+  max-height: 90vh;
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+  box-shadow: 0 0 50px rgba(0, 255, 0, 0.2);
+  z-index: 9999;
+  pointer-events: none;
+  font-family: monospace;
+  overflow: hidden;
+}
+
+.terminalHeader {
+  background: #2d2d2d;
+  border-bottom: 1px solid #333;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.windowButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.windowButton {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  &.red {
+    background-color: #ff5f56;
+  }
+
+  &.yellow {
+    background-color: #ffbd2e;
+  }
+
+  &.green {
+    background-color: #27ca3f;
+  }
+}
+
+.terminalTitle {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.terminalBody {
+  padding: 16px;
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  color: #00ff00;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.terminalPrompt {
+  margin-bottom: 16px;
+
+  .promptSymbol {
+    color: #00ff00;
+  }
+
+  .promptCommand {
+    color: #fff;
+    margin-left: 8px;
+  }
+}
+
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #00ff00 #1a1a1a;
+
+  // Custom scrollbar for webkit browsers
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #00ff00;
+    border-radius: 4px;
+
+    &:hover {
+      background: #00cc00;
+    }
+  }
+}
+
+.messageRow {
+  margin-bottom: 8px;
+
+  .messagePrompt {
+    color: #666;
+  }
+
+  .messageText {
+    color: #fff;
+    margin-left: 8px;
+  }
+}
+
+.currentMessage {
+  margin-bottom: 8px;
+
+  .messagePrompt {
+    color: #666;
+  }
+
+  .messageText {
+    color: #fff;
+    margin-left: 8px;
+  }
+
+  .cursor {
+    animation: blink 1s infinite;
+    margin-left: 2px;
+    color: #00ff00;
+  }
+}
+
+.terminalFooter {
+  border-top: 1px solid #333;
+  padding-top: 8px;
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footerProgress {
+  .complete {
+    color: #00ff00;
+  }
+
+  .progressBar {
+    margin-left: 8px;
+  }
+}
+
+// Media queries
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .terminal {
+    width: 95vw !important;
+    height: 80vh !important;
+    font-size: 12px !important;
+  }
+}

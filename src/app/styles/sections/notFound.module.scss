@@ -1,0 +1,54 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+
+// Light theme overrides
+:global(body.theme-light) {
+  .notFound::after {
+    background: $px-gray;
+  }
+
+  .notFoundContent {
+    h2 {
+      color: $px-dark;
+    }
+
+    p {
+      color: $px-dark;
+    }
+  }
+}
+
+.notFound {
+  min-height: 100vh;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -20vh;
+    top: -20vh;
+    width: 100vh;
+    height: 100vh;
+    border-radius: 50%;
+    background: $px-dark;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .notFoundContent {
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+
+    h2 {
+      color: $px-white;
+    }
+
+    p {
+      color: $px-body;
+    }
+  }
+}

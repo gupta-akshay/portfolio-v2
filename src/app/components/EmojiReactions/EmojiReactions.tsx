@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { toast } from 'react-hot-toast';
 import { getOrCreateFingerprint } from '@/app/utils/fingerprint';
+
+import styles from './EmojiReactions.module.scss';
 
 interface Reaction {
   emoji: string;
@@ -26,9 +27,20 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
     try {
       const { signal } = new AbortController();
       const fingerprint = getOrCreateFingerprint();
+
+      // Add timestamp to prevent any caching
+      const timestamp = Date.now();
       const response = await fetch(
-        `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}`,
-        { signal, cache: 'no-store' }
+        `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}&t=${timestamp}`,
+        {
+          signal,
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+            Expires: '0',
+          },
+        }
       );
       if (response.ok) {
         const data = await response.json();
@@ -71,17 +83,14 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
           } else {
             setUserReactions((prev) => prev.filter((r) => r !== emoji));
           }
-        } else {
-          toast.error('Failed to add reaction');
         }
       } catch (error) {
         console.error('Error adding reaction:', error);
-        toast.error('Failed to add reaction');
       } finally {
         setIsLoading(false);
       }
     },
-    [blogSlug]
+    [blogSlug, isLoading]
   );
 
   // Load reactions on component mount
@@ -101,8 +110,8 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
   if (!isVisible || !isFetched) return null;
 
   return (
-    <div className='emoji-reactions-container'>
-      <div className='emoji-reactions-bar'>
+    <div className={styles.emojiReactionsContainer}>
+      <div className={styles.emojiReactionsBar}>
         {EMOJI_OPTIONS.map((emoji) => {
           const count = getReactionCount(emoji);
           const isUserReaction = userReactions.includes(emoji);
@@ -112,11 +121,11 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
               key={emoji}
               onClick={() => handleReaction(emoji)}
               disabled={isLoading}
-              className={`emoji-reaction-btn ${isUserReaction ? 'user-reacted' : ''}`}
+              className={`${styles.emojiReactionBtn} ${isUserReaction ? styles.userReacted : ''}`}
               title={`React with ${emoji}`}
             >
-              <span className='emoji'>{emoji}</span>
-              {count > 0 && <span className='count'>{count}</span>}
+              <span className={styles.emoji}>{emoji}</span>
+              {count > 0 && <span className={styles.count}>{count}</span>}
             </button>
           );
         })}

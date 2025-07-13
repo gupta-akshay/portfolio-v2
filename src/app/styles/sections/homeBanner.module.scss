@@ -1,0 +1,148 @@
+@use '../variables' as *;
+@use '../mixin' as *;
+@use '../3d-effects' as *;
+
+// Light theme overrides
+:global(body.theme-light) {
+  .homeBanner::after {
+    background: $px-gray;
+  }
+
+  .typeBox {
+    h6 {
+      color: $px-dark;
+    }
+
+    h1 {
+      color: $px-dark;
+    }
+
+    .lead {
+      color: $px-dark;
+    }
+
+    .desc {
+      color: $px-dark;
+    }
+  }
+}
+
+.homeBanner {
+  overflow: hidden;
+  position: relative;
+
+  @include perspective-container;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -20vh;
+    top: -20vh;
+    width: 100vh;
+    height: 100vh;
+    border-radius: 50%;
+    background: $px-dark;
+    z-index: 0;
+    transition: background-color 0.2s ease-in-out;
+    transform: translateZ(-2px) scale(1.02);
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .fullScreen {
+    min-height: 100vh;
+
+    @include up-sm {
+      padding-top: 100px;
+      padding-bottom: 100px;
+    }
+  }
+
+  .hbImg {
+    img {
+      border-radius: 50%;
+
+      @include down-sm {
+        height: 400px;
+        width: 400px;
+      }
+
+      @include up-md {
+        max-width: 120%;
+      }
+    }
+  }
+
+  .typeBox {
+    padding-top: 40px;
+    padding-bottom: 40px;
+
+    h6 {
+      color: $px-white;
+      font-size: 25px;
+      font-weight: 500;
+      margin: 0 0 20px;
+
+      @include down-sm {
+        font-size: 18px;
+        margin: 0 0 10px;
+      }
+    }
+
+    h1 {
+      font-size: 65px;
+      font-weight: 700;
+      line-height: 1;
+      margin: 0 0 20px;
+      color: $px-white;
+
+      @include text-3d-shadow(3px, 2px);
+      @include responsive-3d-effects;
+
+      @include down-lg {
+        font-size: 70px;
+      }
+
+      @include down-sm {
+        font-size: 45px;
+        margin-bottom: 15px;
+      }
+    }
+
+    .lead {
+      color: $px-white;
+      font-weight: 500;
+      font-size: 18px;
+      margin-bottom: 25px;
+
+      @include down-sm {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+    }
+
+    .desc {
+      max-width: 450px;
+      font-size: 18px;
+      color: $px-body;
+
+      @include down-sm {
+        font-size: 16px;
+      }
+    }
+
+    .btnBar {
+      padding-top: 15px;
+    }
+
+    h6,
+    h1,
+    .lead,
+    .desc {
+      transition: color 0.2s ease-in-out;
+    }
+  }
+}

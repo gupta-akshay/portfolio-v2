@@ -1,45 +1,23 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+'use client';
+
 import Image from 'next/image';
 import TypingAnimation from '@/app/components/TypingAnimation';
 import Layout from '@/app/components/Layout';
+import {
+  ScrollAnimation,
+  StaggerAnimation,
+  MagneticHover,
+  RippleEffect,
+  FloatingShapes,
+} from '@/app/components';
+import HomeContentInteractive from '@/app/components/HomeContentInteractive';
+import { useIsMobile } from '@/app/hooks/useIsMobile';
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
-  title: 'Akshay Gupta | Full-Stack Web Developer',
-  description:
-    'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
-  openGraph: {
-    title: 'Akshay Gupta | Full-Stack Web Developer',
-    description:
-      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    url: 'https://akshaygupta.live',
-    siteName: 'Akshay Gupta',
-    images: [
-      {
-        url: 'https://akshaygupta.live/images/home-banner.webp',
-        width: 600,
-        height: 600,
-        alt: 'Akshay Gupta - Senior Staff Engineer at PeopleGrove',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Akshay Gupta | Full-Stack Web Developer',
-    description:
-      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    creator: '@ashay_music',
-    images: ['https://akshaygupta.live/images/home-banner.webp'],
-  },
-  alternates: {
-    canonical: 'https://akshaygupta.live',
-  },
-};
+import styles from './styles/sections/homeBanner.module.scss';
 
 export default function Home() {
+  const isMobile = useIsMobile();
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -85,57 +63,156 @@ export default function Home() {
         data-nav-tooltip='Home'
         className='pp-section pp-scrollable'
       >
-        <div className='home-banner' id='main-content'>
-          <div className='container'>
-            <div className='row full-screen align-items-center'>
-              <div className='col-lg-6'>
-                <div className='type-box'>
-                  <h6>Hello, I am</h6>
-                  <h1 className='font-alt glitch' data-text='Akshay Gupta'>
-                    Akshay Gupta
-                  </h1>
-                  <p className='lead'>
-                    I am <TypingAnimation />
-                  </p>
-                  <p className='desc'>
-                    Hey there! 👋 I&apos;m currently a Senior Staff Engineer at{' '}
-                    <Link href='https://www.peoplegrove.com' target='_blank'>
-                      PeopleGrove
-                    </Link>
-                    . I love building websites and apps that are both
-                    user-friendly and powerful under the hood. Think of me as
-                    someone who enjoys creating digital solutions that make
-                    people&apos;s lives easier! I&apos;m passionate about
-                    working with teams to bring creative ideas to life and
-                    always excited to learn and try new things in the tech
-                    world. Whether it&apos;s making beautiful websites or
-                    solving complex technical challenges, I&apos;m your guy!
-                  </p>
-                  <div className='btn-bar'>
-                    <a
-                      className='px-btn px-btn-theme'
-                      href='/assets/akshay-cv.pdf'
-                      download
-                    >
-                      Download CV
-                    </a>
+        {isMobile ? (
+          // Mobile-friendly version without complex animations
+          <div
+            className={styles.homeBanner}
+            id='main-content'
+            style={{ position: 'relative', zIndex: 2 }}
+          >
+            <div className={`container ${styles.container}`}>
+              <div className={`row ${styles.fullScreen} align-items-center`}>
+                <div className='col-12'>
+                  <div className={styles.typeBox}>
+                    <h6>Hello, I am</h6>
+                    <h1 className='font-alt glitch' data-text='Akshay Gupta'>
+                      Akshay Gupta
+                    </h1>
+                    <p className={styles.lead}>
+                      I am <TypingAnimation />
+                    </p>
+                    <p className={styles.desc}>
+                      Hey there! 👋 I&apos;m currently a Senior Staff Engineer
+                      at{' '}
+                      <HomeContentInteractive type='peopleGroveLink'>
+                        PeopleGrove
+                      </HomeContentInteractive>
+                      . I love building websites and apps that are both
+                      user-friendly and powerful under the hood. Think of me as
+                      someone who enjoys creating digital solutions that make
+                      people&apos;s lives easier! I&apos;m passionate about
+                      working with teams to bring creative ideas to life and
+                      always excited to learn and try new things in the tech
+                      world. Whether it&apos;s making beautiful websites or
+                      solving complex technical challenges, I&apos;m your guy!
+                    </p>
+                    <div className={styles.btnBar}>
+                      <HomeContentInteractive type='downloadButton'>
+                        Download CV
+                      </HomeContentInteractive>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className='col-lg-6 d-none d-sm-block'>
-                <div className='hb-img'>
-                  <Image
-                    src='/images/home-banner.webp'
-                    alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'
-                    width={600}
-                    height={600}
-                    loading='lazy'
-                  />
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          // Desktop version with full animations
+          <FloatingShapes
+            count={6}
+            size={60}
+            color='#2fbf71'
+            speed={25}
+            shapes={['circle', 'triangle', 'diamond']}
+          >
+            <div
+              className={styles.homeBanner}
+              id='main-content'
+              style={{ position: 'relative', zIndex: 2 }}
+            >
+              <div className={`container ${styles.container}`}>
+                <div className={`row ${styles.fullScreen} align-items-center`}>
+                  <div className='col-lg-6'>
+                    <StaggerAnimation staggerDelay={0.2}>
+                      <div className={styles.typeBox}>
+                        <ScrollAnimation animation='fadeIn' duration={0.8}>
+                          <h6>Hello, I am</h6>
+                        </ScrollAnimation>
+                        <ScrollAnimation
+                          animation='slideUp'
+                          duration={1.0}
+                          delay={0.2}
+                        >
+                          <h1
+                            className='font-alt glitch'
+                            data-text='Akshay Gupta'
+                          >
+                            Akshay Gupta
+                          </h1>
+                        </ScrollAnimation>
+                        <ScrollAnimation
+                          animation='slideUp'
+                          duration={0.8}
+                          delay={0.4}
+                        >
+                          <p className={styles.lead}>
+                            I am <TypingAnimation />
+                          </p>
+                        </ScrollAnimation>
+                        <ScrollAnimation
+                          animation='slideUp'
+                          duration={0.8}
+                          delay={0.6}
+                        >
+                          <p className={styles.desc}>
+                            Hey there! 👋 I&apos;m currently a Senior Staff
+                            Engineer at{' '}
+                            <HomeContentInteractive type='peopleGroveLink'>
+                              PeopleGrove
+                            </HomeContentInteractive>
+                            . I love building websites and apps that are both
+                            user-friendly and powerful under the hood. Think of
+                            me as someone who enjoys creating digital solutions
+                            that make people&apos;s lives easier! I&apos;m
+                            passionate about working with teams to bring
+                            creative ideas to life and always excited to learn
+                            and try new things in the tech world. Whether
+                            it&apos;s making beautiful websites or solving
+                            complex technical challenges, I&apos;m your guy!
+                          </p>
+                        </ScrollAnimation>
+                        <ScrollAnimation
+                          animation='scale'
+                          duration={0.8}
+                          delay={0.8}
+                        >
+                          <div className={styles.btnBar}>
+                            <MagneticHover intensity={0.4} glowEffect={true}>
+                              <RippleEffect>
+                                <HomeContentInteractive type='downloadButton'>
+                                  Download CV
+                                </HomeContentInteractive>
+                              </RippleEffect>
+                            </MagneticHover>
+                          </div>
+                        </ScrollAnimation>
+                      </div>
+                    </StaggerAnimation>
+                  </div>
+                  <div className='col-lg-6 d-none d-sm-block'>
+                    <ScrollAnimation
+                      animation='slideLeft'
+                      duration={1.0}
+                      delay={0.3}
+                      parallax={true}
+                      parallaxSpeed='slow'
+                    >
+                      <div className={styles.hbImg}>
+                        <Image
+                          src='/images/home-banner.webp'
+                          alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'
+                          width={600}
+                          height={600}
+                          loading='lazy'
+                        />
+                      </div>
+                    </ScrollAnimation>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FloatingShapes>
+        )}
       </section>
     </Layout>
   );

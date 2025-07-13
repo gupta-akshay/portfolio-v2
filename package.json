@@ -35,10 +35,12 @@
     "devicon": "^2.16.0",
     "dotenv": "^17.0.1",
     "drizzle-orm": "^0.44.2",
+    "motion": "^12.23.3",
     "next": "15.3.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.5.2",
+    "react-share": "^5.2.2",
     "react-syntax-highlighter": "^15.6.1",
     "request-ip": "^3.3.0",
     "resend": "4.6.0",
@@ -46,7 +48,7 @@
     "sanity": "^3.97.1",
     "styled-components": "^6.1.19",
     "typed.js": "^2.1.0",
-    "zod": "^3.25.74"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@types/react": "npm:types-react@19.0.0-rc.1",
@@ -67,7 +69,8 @@
     "overrides": {
       "@types/react": "npm:types-react@19.0.0-rc.1",
       "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-      "prismjs": ">=1.30.0"
+      "prismjs": ">=1.30.0",
+      "esbuild": ">=0.25.0"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

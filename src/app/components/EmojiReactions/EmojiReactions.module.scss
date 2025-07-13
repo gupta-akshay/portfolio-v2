@@ -1,0 +1,244 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
+
+// Theme override for light mode
+:global(body.theme-light) {
+  .emojiReactionsBar {
+    background: rgba($px-white, 0.95);
+    border: 1px solid rgba($px-black, 0.1);
+    box-shadow: 0 4px 20px rgba($px-black, 0.1);
+  }
+
+  .emojiReactionBtn {
+    color: $px-body-light;
+
+    &:hover {
+      background: rgba($px-black, 0.05);
+      backdrop-filter: blur(3px);
+      box-shadow: 0 2px 6px rgba($px-black, 0.1);
+
+      &::before {
+        background: linear-gradient(
+          45deg,
+          rgba($px-black, 0.05),
+          rgba($px-black, 0.02)
+        );
+      }
+    }
+
+    &.userReacted {
+      background: rgba($px-theme, 0.1);
+      border: 1px solid rgba($px-theme, 0.3);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 2px 8px rgba($px-theme, 0.2);
+
+      &::before {
+        background: linear-gradient(
+          45deg,
+          rgba($px-theme, 0.05),
+          rgba($px-theme, 0.02)
+        );
+      }
+    }
+  }
+
+  .count {
+    color: rgba($px-body-light, 0.7);
+
+    .userReacted & {
+      color: $px-theme;
+    }
+  }
+}
+
+.emojiReactionsContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  border-radius: 50px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.emojiReactionsBar {
+  display: flex;
+  background: rgba($px-bg-1, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  padding: 8px 16px;
+  box-shadow: 0 4px 20px rgba($px-black, 0.15);
+  border: 1px solid rgba($px-white, 0.1);
+  gap: 4px;
+  transition: all 0.3s ease-in-out;
+
+  @include floating-3d(4px, 0.1);
+  @include glassmorphism-3d(15px, 0.08);
+  @include responsive-3d-effects;
+
+  &::before {
+    border-radius: 50px;
+  }
+}
+
+.emojiReactionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  position: relative;
+  color: $px-body;
+
+  @include floating-3d(1px, 0.05);
+  @include responsive-3d-effects;
+
+  &:hover {
+    background: rgba($px-white, 0.05);
+    backdrop-filter: blur(3px);
+    box-shadow: 0 2px 6px rgba($px-white, 0.1);
+    transform: translateY(-1px);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        45deg,
+        rgba($px-white, 0.05),
+        rgba($px-white, 0.02)
+      );
+      border-radius: inherit;
+      z-index: -1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95) translateY(1px);
+  }
+
+  &.userReacted {
+    background: rgba($px-theme, 0.1);
+    border: 1px solid rgba($px-theme, 0.3);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 8px rgba($px-theme, 0.2);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        45deg,
+        rgba($px-theme, 0.05),
+        rgba($px-theme, 0.02)
+      );
+      border-radius: inherit;
+      z-index: -1;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.count {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba($px-body, 0.7);
+  margin-top: 2px;
+  min-width: 16px;
+  text-align: center;
+  transition: color 0.2s ease-in-out;
+
+  .userReacted & {
+    color: $px-theme;
+    font-weight: 700;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Responsive
+@media (max-width: $px-media-sm) {
+  .emojiReactionsContainer {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .emojiReactionsBar {
+    padding: 6px 12px;
+    gap: 2px;
+  }
+
+  .emojiReactionBtn {
+    padding: 6px 2px;
+    min-width: 36px;
+  }
+
+  .emoji {
+    font-size: 18px;
+  }
+
+  .count {
+    font-size: 9px;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .emojiReactionsContainer {
+    animation: none;
+  }
+
+  .emojiReactionBtn {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+// High Contrast
+@media (prefers-contrast: high) {
+  .emojiReactionsBar {
+    border: 2px solid $px-theme;
+  }
+
+  .emojiReactionBtn.userReacted {
+    border: 2px solid $px-theme;
+    background: $px-theme;
+    color: $px-white;
+  }
+}

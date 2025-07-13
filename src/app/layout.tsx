@@ -2,9 +2,18 @@ import { Metadata } from 'next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
 import { config } from '@fortawesome/fontawesome-svg-core';
-import { rubik } from './fonts';
+import { rubik, cookie } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { CursorProvider } from './context/CursorContext';
+import { EasterEggProvider } from './context/EasterEggContext';
+import CustomCursor from './components/CustomCursor';
+import MatrixRain from './components/MatrixRain';
+import DiscoMode from './components/DiscoMode';
+import DiscoModeGlobalStyles from './components/DiscoModeGlobalStyles/DiscoModeGlobalStyles';
+import BlogTypewriterEffect from './components/BlogTypewriterEffect';
+import EasterEggHints from './components/EasterEggHints';
+import EasterEggWrapper from './components/EasterEggWrapper';
 import Metrics from './metrics';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -38,13 +47,31 @@ export const metadata: Metadata = {
     'react',
     'next.js',
   ],
+  openGraph: {
+    type: 'website',
+    siteName: 'Akshay Gupta',
+    title: 'Akshay Gupta | Full-Stack Web Developer',
+    description:
+      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    url: 'https://akshaygupta.live',
+    locale: 'en_US',
+    images: [
+      {
+        url: '/images/about-me.png',
+        width: 1200,
+        height: 630,
+        alt: 'Akshay Gupta - Full-Stack Web Developer',
+        type: 'image/png',
+      },
+    ],
+  },
   twitter: {
     card: 'summary_large_image',
     creator: '@ashay_music',
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    images: ['https://akshaygupta.live/images/about-me.png'],
+    images: ['/images/about-me.png'],
   },
   verification: {
     google: 'rcbqH3Qckh-CLqTHJHg3ze_tDDYoEMWKxrS4qWy1Bb0',
@@ -62,12 +89,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className={`${rubik.variable}`}>
+      <body className={`${rubik.variable} ${cookie.variable}`}>
         <a href='#main-content' className='skip-link'>
           Skip to main content
         </a>
         <ThemeProvider>
-          <LoadingProvider>{children}</LoadingProvider>
+          <CursorProvider>
+            <EasterEggProvider>
+              <LoadingProvider>{children}</LoadingProvider>
+              <CustomCursor />
+              <EasterEggWrapper>
+                <MatrixRain />
+                <DiscoMode />
+                <DiscoModeGlobalStyles />
+                <BlogTypewriterEffect />
+                <EasterEggHints />
+              </EasterEggWrapper>
+            </EasterEggProvider>
+          </CursorProvider>
         </ThemeProvider>
         <Metrics />
         <SpeedInsights />

@@ -1,0 +1,233 @@
+@use 'sass:math';
+@use 'sass:color';
+@use './variables' as *;
+
+// --------------------------------------------------
+// 3D Effects SASS mixins
+// Low-impact CSS-only 3D effects for visual appeal
+// --------------------------------------------------
+
+// Card 3D Tilt Effect
+@mixin card-3d-tilt($intensity: 5deg, $scale: 1.02, $shadow-intensity: 0.15) {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: perspective(1000px) rotateY($intensity)
+      rotateX(calc(#{$intensity} * 0.5)) scale($scale);
+    box-shadow:
+      0 12px 24px rgba(0, 0, 0, $shadow-intensity),
+      0 6px 12px rgba(0, 0, 0, calc(#{$shadow-intensity} * 0.5));
+
+    .theme-light & {
+      box-shadow:
+        0 12px 24px rgba(0, 0, 0, calc(#{$shadow-intensity} * 0.6)),
+        0 6px 12px rgba(0, 0, 0, calc(#{$shadow-intensity} * 0.3));
+    }
+  }
+}
+
+// Button 3D Press Effect
+@mixin button-3d-press($depth: 2px, $hover-lift: 4px) {
+  position: relative;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    transform: translateZ(-#{$depth});
+    filter: brightness(0.8);
+    z-index: -1;
+  }
+
+  &:hover {
+    transform: translateY(-#{$hover-lift}) translateZ(0);
+    box-shadow:
+      0 #{$hover-lift * 2} #{$hover-lift * 4} rgba(0, 0, 0, 0.1),
+      0 #{$hover-lift} #{$hover-lift * 2} rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    transform: translateY(-#{math.div($depth, 2)}) translateZ(0);
+    box-shadow:
+      0 #{$depth} #{$depth * 2} rgba(0, 0, 0, 0.15),
+      0 #{math.div($depth, 2)} #{$depth} rgba(0, 0, 0, 0.075);
+  }
+}
+
+// Floating Element with Depth
+@mixin floating-3d($hover-lift: 3px, $base-shadow: 0.1) {
+  position: relative;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, $base-shadow),
+    0 2px 4px rgba(0, 0, 0, calc(#{$base-shadow} * 0.5));
+
+  &:hover {
+    transform: translateY(-#{$hover-lift}) translateZ(0);
+    box-shadow:
+      0 #{$hover-lift * 3} #{$hover-lift * 6}
+        rgba(0, 0, 0, calc(#{$base-shadow} * 1.5)),
+      0 #{$hover-lift} #{$hover-lift * 2}
+        rgba(0, 0, 0, calc(#{$base-shadow} * 0.75));
+  }
+}
+
+// Subtle Parallax Background
+@mixin parallax-background($speed: 0.5) {
+  position: relative;
+  transform-style: preserve-3d;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    transform: translateZ(-1px) scale(1.1);
+    filter: blur(0.5px);
+    opacity: 0.8;
+    z-index: -1;
+  }
+}
+
+// Icon 3D Rotation
+@mixin icon-3d-rotate($rotation: 360deg) {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: rotateY($rotation) scale(1.1);
+  }
+}
+
+// Subtle Card Depth
+@mixin card-depth($depth: 4px, $hover-depth: 8px) {
+  position: relative;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  box-shadow:
+    0 #{$depth} #{$depth * 2} rgba(0, 0, 0, 0.1),
+    0 #{math.div($depth, 2)} #{$depth} rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    transform: translateZ(#{math.div($hover-depth, 2)});
+    box-shadow:
+      0 #{$hover-depth} #{$hover-depth * 2} rgba(0, 0, 0, 0.15),
+      0 #{math.div($hover-depth, 2)} #{$hover-depth} rgba(0, 0, 0, 0.075);
+  }
+}
+
+// Perspective Container
+@mixin perspective-container($perspective: 1000px) {
+  perspective: $perspective;
+  transform-style: preserve-3d;
+}
+
+// 3D Text Shadow
+@mixin text-3d-shadow($depth: 2px, $blur: 0px) {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.1),
+    0 2px 0 rgba(0, 0, 0, 0.1),
+    0 3px #{$blur} rgba(0, 0, 0, 0.3),
+    0 #{$depth} #{$blur * 2} rgba(0, 0, 0, 0.2);
+}
+
+// Stacking Card Effect
+@mixin stacking-cards($count: 3, $offset: 4px) {
+  position: relative;
+  transform-style: preserve-3d;
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    top: $offset;
+    left: $offset;
+    right: -#{$offset};
+    bottom: -#{$offset};
+    background: inherit;
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.3;
+    transform: translateZ(-#{$offset});
+  }
+
+  &:after {
+    top: $offset * 2;
+    left: $offset * 2;
+    right: -#{$offset * 2};
+    bottom: -#{$offset * 2};
+    opacity: 0.15;
+    transform: translateZ(-#{$offset * 2});
+  }
+}
+
+// Responsive 3D Effects (disable on mobile if needed)
+@mixin responsive-3d-effects {
+  @media (prefers-reduced-motion: reduce) {
+    transform: none !important;
+    transition: none !important;
+
+    &:hover {
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    // Reduce 3D effects on mobile for performance
+    &:hover {
+      transform: scale(1.02) !important;
+    }
+  }
+}
+
+// Glassmorphism 3D Effect
+@mixin glassmorphism-3d($blur: 10px, $opacity: 0.1) {
+  position: relative;
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform-style: preserve-3d;
+
+  .theme-light & {
+    background: rgba(0, 0, 0, $opacity);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.05)
+    );
+    transform: translateZ(-1px);
+    z-index: -1;
+  }
+}

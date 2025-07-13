@@ -4,13 +4,12 @@
 @use './mixin' as *;
 @use './base' as *;
 @use './sections/header' as *;
-@use './sections/home-banner' as *;
-@use './sections/about-section' as *;
 @use './sections/contact-section' as *;
-@use './sections/blog-section' as *;
-@use './sections/not-found' as *;
 @use './sections/music-player' as *;
-@use './sections/emoji-reactions' as *;
+@use './sections/page-transitions' as *;
+@use './sections/scroll-animations' as *;
+@use './sections/enhanced-hover' as *;
+@use './sections/interactive-background' as *;
 
 // Reset & Base Styles
 * {
@@ -27,7 +26,7 @@
 
   // Webkit (Chrome, Safari, Edge)
   &::-webkit-scrollbar {
-    width: 8px;  // Vertical scrollbar width
+    width: 8px; // Vertical scrollbar width
     height: 8px; // Horizontal scrollbar height
   }
 
@@ -69,7 +68,7 @@ body {
   font-weight: 400;
   background: $px-bg-1;
   transition: background-color 0.3s ease-in-out;
-  
+
   &.theme-light {
     background: $px-white;
     color: $px-body-light;
@@ -81,7 +80,7 @@ a {
   color: $px-theme;
   text-decoration: underline;
   transition: color 0.2s ease-in-out;
-  
+
   @include px-hover {
     color: color.adjust($px-theme, $lightness: -8%);
   }
@@ -94,74 +93,19 @@ a {
 }
 
 // Ensure interactive elements have visible focus states
-a, button, input, textarea, [role="button"], [tabindex="0"] {
+a,
+button,
+input,
+textarea,
+[role='button'],
+[tabindex='0'] {
   &:focus-visible {
     outline: 3px solid $px-theme !important;
     outline-offset: 2px !important;
   }
 }
 
-// Global loading spinner
-.global-loading-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: $px-bg-1;
-  z-index: 9999;
-  
-  .theme-light & {
-    background-color: $px-white;
-  }
-}
-
-.global-loading-spinner {
-  position: relative;
-  width: 60px;
-  height: 60px;
-}
-
-.spinner-circle {
-  position: absolute;
-  border: 3px solid transparent;
-  border-top-color: $px-theme;
-  border-radius: 50%;
-  width: 100%;
-  height: 100%;
-  animation: spin 1s linear infinite;
-}
-
-.spinner-circle-inner {
-  position: absolute;
-  border: 3px solid transparent;
-  border-top-color: rgba($px-theme, 0.6);
-  border-radius: 50%;
-  width: 70%;
-  height: 70%;
-  top: 15%;
-  left: 15%;
-  animation: spin 1.5s linear infinite reverse;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 // Component wrappers
-.back-btn-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
 .internal-link-wrapper {
   position: relative;
   display: inline-flex;
@@ -184,18 +128,6 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
   }
 }
 
-// Accessibility: Visually hidden text for screen readers
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
-
 // Accessibility: Respect user's motion preferences
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -210,18 +142,18 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
 .code-block-wrapper {
   position: relative;
   margin: 1.5rem 0;
-  
+
   .keyboard-accessible-code {
     &:focus {
       outline: 3px solid $px-theme !important;
       outline-offset: 2px !important;
     }
-    
-    &[tabindex="0"] {
+
+    &[tabindex='0'] {
       cursor: text;
-      
+
       &::before {
-        content: "Keyboard accessible: use arrow keys to scroll";
+        content: 'Keyboard accessible: use arrow keys to scroll';
         display: block;
         position: absolute;
         top: -1.5rem;
@@ -231,10 +163,125 @@ a, button, input, textarea, [role="button"], [tabindex="0"] {
         opacity: 0;
         transition: opacity 0.2s ease;
       }
-      
+
       &:focus::before {
         opacity: 1;
       }
     }
+  }
+}
+
+// Disco Mode Global Styles
+.disco-mode-active {
+  animation: rainbowText 2s linear infinite !important;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    animation: rainbowText 3s linear infinite !important;
+    text-shadow: 0 0 10px currentColor !important;
+  }
+
+  .btn,
+  .px-btn,
+  button {
+    animation: rainbowBackground 2s linear infinite !important;
+    box-shadow: 0 0 20px currentColor !important;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    animation: rainbowText 1s linear infinite !important;
+  }
+
+  .floating-shape,
+  .hb-img,
+  .hl-logo {
+    animation: discoShake 0.5s ease-in-out infinite alternate !important;
+  }
+}
+
+// Rainbow text animation for disco mode
+@keyframes rainbowText {
+  0% {
+    color: #ff0000;
+  }
+  14% {
+    color: #ff7f00;
+  }
+  28% {
+    color: #ffff00;
+  }
+  42% {
+    color: #00ff00;
+  }
+  57% {
+    color: #0000ff;
+  }
+  71% {
+    color: #4b0082;
+  }
+  85% {
+    color: #9400d3;
+  }
+  100% {
+    color: #ff0000;
+  }
+}
+
+// Rainbow background animation for disco mode
+@keyframes rainbowBackground {
+  0% {
+    background-color: rgba(255, 0, 0, 0.3);
+  }
+  14% {
+    background-color: rgba(255, 127, 0, 0.3);
+  }
+  28% {
+    background-color: rgba(255, 255, 0, 0.3);
+  }
+  42% {
+    background-color: rgba(0, 255, 0, 0.3);
+  }
+  57% {
+    background-color: rgba(0, 0, 255, 0.3);
+  }
+  71% {
+    background-color: rgba(75, 0, 130, 0.3);
+  }
+  85% {
+    background-color: rgba(148, 0, 211, 0.3);
+  }
+  100% {
+    background-color: rgba(255, 0, 0, 0.3);
+  }
+}
+
+// Disco shake animation
+@keyframes discoShake {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-2px) rotate(-1deg);
+  }
+  50% {
+    transform: translateX(2px) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-1px) rotate(-0.5deg);
+  }
+  100% {
+    transform: translateX(1px) rotate(0.5deg);
+  }
+}
+
+// Respect reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  .disco-mode-active * {
+    animation: none !important;
   }
 }

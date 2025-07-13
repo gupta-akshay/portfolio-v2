@@ -49,13 +49,12 @@ export interface LoadingIndicatorProps {
 export interface DayNightToggleProps {
   isLight?: boolean;
   onToggle?: () => void;
-  className?: string;
 }
 
-// BackButton component types
-export interface BackButtonProps {
-  onClick?: () => void;
-  text?: string;
+// SocialShare component types
+export interface SocialShareProps {
+  url: string;
+  title: string;
+  description?: string;
   className?: string;
-  showIcon?: boolean;
 }

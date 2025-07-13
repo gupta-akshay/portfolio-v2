@@ -15,7 +15,15 @@ const postData = `{
     image,
     bio
   },
-  mainImage,
+  mainImage{
+    ...,
+    asset->{
+      _id,
+      _type,
+      url,
+      mimeType
+    }
+  },
   publishedAt,
   body,
   "excerpt": pt::text(body[0..1])
