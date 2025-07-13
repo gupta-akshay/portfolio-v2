@@ -28,14 +28,54 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ className = '' }) => {
   // Handle key press events
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      event.preventDefault();
+      // Don't interfere with important accessibility and system keys
+      const importantKeys = [
+        'Tab',
+        'Escape',
+        'F1',
+        'F2',
+        'F3',
+        'F4',
+        'F5',
+        'F6',
+        'F7',
+        'F8',
+        'F9',
+        'F10',
+        'F11',
+        'F12',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'Home',
+        'End',
+        'PageUp',
+        'PageDown',
+      ];
 
       if (matrixState === 'waiting') {
+        // Don't interfere with modifier keys or system shortcuts
+        const hasModifier = event.ctrlKey || event.altKey || event.metaKey;
+        const isImportantKey = importantKeys.includes(event.key);
+
+        // Allow important keys and system shortcuts to work normally
+        if (isImportantKey || hasModifier) {
+          return;
+        }
+
+        // Only prevent default for keys we're actually using to control the matrix
+        event.preventDefault();
+
         // Start the matrix effect
         setMatrixState('active');
       } else if (matrixState === 'active') {
-        // Dismiss the effect
-        toggleMatrixRain();
+        // Only respond to Escape key to dismiss the effect
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          toggleMatrixRain();
+        }
+        // Let all other keys work normally when matrix is active
       }
     };
 
@@ -176,9 +216,7 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ className = '' }) => {
           </>
         )}
         {matrixState === 'active' && (
-          <div className={styles.exitText}>
-            Press any key to exit the Matrix...
-          </div>
+          <div className={styles.exitText}>Press ESC to exit the Matrix...</div>
         )}
       </div>
     </div>
