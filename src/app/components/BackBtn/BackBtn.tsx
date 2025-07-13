@@ -48,7 +48,7 @@ const BackBtn = () => {
   };
 
   return (
-    <div className='back-btn-wrapper'>
+    <div style={{ position: 'relative', display: 'inline-block' }}>
       <button
         ref={buttonRef}
         type='button'
