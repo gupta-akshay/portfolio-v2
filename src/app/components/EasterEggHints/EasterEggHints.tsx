@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import styles from './EasterEggHints.module.scss';
 
@@ -14,6 +14,7 @@ interface HintConfig {
 const EasterEggHints: React.FC = () => {
   const pathname = usePathname();
   const [visibleHints, setVisibleHints] = useState<string[]>([]);
+  const timeoutIdsRef = useRef<NodeJS.Timeout[]>([]);
 
   const hints: HintConfig[] = useMemo(
     () => [
@@ -40,6 +41,10 @@ const EasterEggHints: React.FC = () => {
   );
 
   useEffect(() => {
+    // Clear any existing timeouts
+    timeoutIdsRef.current.forEach(clearTimeout);
+    timeoutIdsRef.current = [];
+
     const activeHints = hints.filter((hint) => hint.condition());
 
     if (activeHints.length === 0) {
@@ -53,24 +58,33 @@ const EasterEggHints: React.FC = () => {
 
         if (!hint) return;
 
-        setTimeout(() => {
+        const timeoutId1 = setTimeout(() => {
           setVisibleHints((prev) => [...prev, hint.id]);
 
           // Hide hint after 5 seconds
-          setTimeout(() => {
+          const timeoutId2 = setTimeout(() => {
             setVisibleHints((prev) => prev.filter((id) => id !== hint.id));
 
             // Show next hint after 2 seconds
-            setTimeout(() => {
+            const timeoutId3 = setTimeout(() => {
               showHint((index + 1) % activeHints.length);
             }, 2000);
+            timeoutIdsRef.current.push(timeoutId3);
           }, 5000);
+          timeoutIdsRef.current.push(timeoutId2);
         }, hint.delay);
+        timeoutIdsRef.current.push(timeoutId1);
       }
     };
 
     // Start the cycle
     showHint(0);
+
+    // Cleanup function to cancel all timeouts
+    return () => {
+      timeoutIdsRef.current.forEach(clearTimeout);
+      timeoutIdsRef.current = [];
+    };
   }, [pathname, hints]);
 
   const getHintText = (hintId: string) => {
