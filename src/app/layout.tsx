@@ -6,7 +6,13 @@ import { rubik } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { CursorProvider } from './context/CursorContext';
+import { EasterEggProvider } from './context/EasterEggContext';
 import CustomCursor from './components/CustomCursor';
+import MatrixRain from './components/MatrixRain';
+import DiscoMode from './components/DiscoMode';
+import DiscoModeGlobalStyles from './components/DiscoModeGlobalStyles/DiscoModeGlobalStyles';
+import BlogTypewriterEffect from './components/BlogTypewriterEffect';
+import PartyMode from './components/PartyMode';
 import Metrics from './metrics';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -70,8 +76,15 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <CursorProvider>
-            <LoadingProvider>{children}</LoadingProvider>
-            <CustomCursor />
+            <EasterEggProvider>
+              <LoadingProvider>{children}</LoadingProvider>
+              <CustomCursor />
+              <MatrixRain />
+              <DiscoMode />
+              <DiscoModeGlobalStyles />
+              <BlogTypewriterEffect />
+              <PartyMode />
+            </EasterEggProvider>
           </CursorProvider>
         </ThemeProvider>
         <Metrics />

@@ -23,12 +23,15 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
+import { useEasterEgg } from '@/app/context/EasterEggContext';
 
 const Header = () => {
   const [sideBarToggle, setSideBarToggle] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [logoClickCount, setLogoClickCount] = useState(0);
   const pathname = usePathname();
   const { addCursorInteraction } = useCursorInteractions();
+  const { toggleDiscoMode } = useEasterEgg();
 
   // Navigation refs
   const homeRef = useRef<HTMLAnchorElement>(null);
@@ -220,6 +223,16 @@ const Header = () => {
     setSideBarToggle(false);
   };
 
+  const handleLogoClick = () => {
+    const newCount = logoClickCount + 1;
+    setLogoClickCount(newCount);
+
+    if (newCount === 10) {
+      toggleDiscoMode();
+      setLogoClickCount(0); // Reset counter
+    }
+  };
+
   return (
     <Fragment>
       {/* Mobile Header */}
@@ -261,7 +274,11 @@ const Header = () => {
       >
         <div className='scroll-bar'>
           <div className='hl-top'>
-            <div className='hl-logo'>
+            <div
+              className='hl-logo'
+              onClick={handleLogoClick}
+              style={{ cursor: 'pointer' }}
+            >
               <div className='img'>
                 <Image
                   src='/images/header.webp'
