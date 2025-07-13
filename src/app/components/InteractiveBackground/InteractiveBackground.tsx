@@ -215,7 +215,7 @@ const InteractiveBackground = ({
         if (colorStr.startsWith('rgba(') || colorStr.startsWith('rgb(')) {
           const match = colorStr.match(/rgba?\(([^)]+)\)/);
           if (match && match[1]) {
-            const parts = match[1].split(',').map(p => p.trim());
+            const parts = match[1].split(',').map((p) => p.trim());
             if (parts.length >= 3 && parts[0] && parts[1] && parts[2]) {
               const r = parseInt(parts[0]);
               const g = parseInt(parts[1]);
