@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion, useMotionValue } from 'motion/react';
 import { useCursor } from '@/app/context/CursorContext';
-import useIsMobile from '@/app/hooks/useIsMobile';
+import { useIsMobile } from '@/app/hooks/useIsMobile';
 
 import './CustomCursor.scss';
 

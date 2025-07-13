@@ -2,50 +2,28 @@
 
 import { useState, useEffect } from 'react';
 
-const useIsMobile = (breakpoint: number = 768): boolean => {
+export const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
-      // Check screen width using the provided breakpoint
-      const screenWidth = window.innerWidth <= breakpoint;
+      const userAgent =
+        navigator.userAgent || navigator.vendor || (window as any).opera;
+      const mobileRegex =
+        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
+      const isMobileDevice = mobileRegex.test(userAgent);
+      const isSmallScreen = window.innerWidth < 768;
 
-      // Also check user agent for mobile devices
-      const userAgent = navigator.userAgent.toLowerCase();
-      const mobileKeywords = [
-        'android',
-        'webos',
-        'iphone',
-        'ipad',
-        'ipod',
-        'blackberry',
-        'windows phone',
-        'mobile',
-      ];
-      const userAgentMobile = mobileKeywords.some((keyword) =>
-        userAgent.includes(keyword)
-      );
-
-      // Consider it mobile if either condition is true
-      setIsMobile(screenWidth || userAgentMobile);
+      setIsMobile(isMobileDevice || isSmallScreen);
     };
 
-    // Check on mount
     checkIsMobile();
-
-    // Add resize listener to handle orientation changes and window resizing
     window.addEventListener('resize', checkIsMobile);
-
-    // Handle orientation change specifically for mobile devices
-    window.addEventListener('orientationchange', checkIsMobile);
 
     return () => {
       window.removeEventListener('resize', checkIsMobile);
-      window.removeEventListener('orientationchange', checkIsMobile);
     };
-  }, [breakpoint]);
+  }, []);
 
   return isMobile;
 };
-
-export default useIsMobile;

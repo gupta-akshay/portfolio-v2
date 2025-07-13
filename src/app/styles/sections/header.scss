@@ -2,7 +2,7 @@
 @use '../mixin' as *;
 @use '../3d-effects' as *;
 
-.main-right {
+.main-right {  
   @include up-lg {
     left: 250px;
     position: absolute;

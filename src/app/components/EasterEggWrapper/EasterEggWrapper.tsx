@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import useIsMobile from '@/app/hooks/useIsMobile';
+import { useIsMobile } from '@/app/hooks/useIsMobile';
 
 interface EasterEggWrapperProps {
   children: ReactNode;

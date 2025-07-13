@@ -26,7 +26,7 @@ import {
   FullScreenPlayer,
   QueuePanel,
 } from './components';
-import useIsMobile from '@/app/hooks/useIsMobile';
+import { useIsMobile } from '@/app/hooks/useIsMobile';
 
 const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -42,7 +42,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Memoize derived values
   const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
-  const isMobile = useIsMobile(991);
+  const isMobile = useIsMobile();
 
   // Custom hooks - all called unconditionally
   const {
