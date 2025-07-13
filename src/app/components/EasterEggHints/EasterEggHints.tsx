@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 import styles from './EasterEggHints.module.scss';
 
@@ -15,26 +15,29 @@ const EasterEggHints: React.FC = () => {
   const pathname = usePathname();
   const [visibleHints, setVisibleHints] = useState<string[]>([]);
 
-  const hints: HintConfig[] = [
-    {
-      id: 'konami',
-      text: 'Try the classic cheat code... ↑↑↓↓←→←→BA',
-      condition: () => true, // Always show
-      delay: 3000,
-    },
-    {
-      id: 'disco',
-      text: 'Click my image rapidly for a surprise 🕺',
-      condition: () => true, // Always show
-      delay: 8000,
-    },
-    {
-      id: 'dev',
-      text: 'Developers, type "dev" for a special message 💻',
-      condition: () => pathname.startsWith('/blog'),
-      delay: 5000,
-    },
-  ];
+  const hints: HintConfig[] = useMemo(
+    () => [
+      {
+        id: 'konami',
+        text: 'Try the classic cheat code... ↑↑↓↓←→←→BA',
+        condition: () => true, // Always show
+        delay: 3000,
+      },
+      {
+        id: 'disco',
+        text: 'Click my image rapidly for a surprise 🕺',
+        condition: () => true, // Always show
+        delay: 8000,
+      },
+      {
+        id: 'dev',
+        text: 'Developers, type "dev" for a special message 💻',
+        condition: () => pathname.startsWith('/blog'),
+        delay: 5000,
+      },
+    ],
+    [pathname]
+  );
 
   useEffect(() => {
     const activeHints = hints.filter((hint) => hint.condition());
@@ -68,7 +71,7 @@ const EasterEggHints: React.FC = () => {
 
     // Start the cycle
     showHint(0);
-  }, [pathname]);
+  }, [pathname, hints]);
 
   const getHintText = (hintId: string) => {
     const hint = hints.find((h) => h.id === hintId);

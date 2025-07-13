@@ -3,11 +3,14 @@
 import { useEffect, useState } from 'react';
 import { motion, useMotionValue } from 'motion/react';
 import { useCursor } from '@/app/context/CursorContext';
+import useIsMobile from '@/app/hooks/useIsMobile';
+
 import './CustomCursor.scss';
 
 const CustomCursor = () => {
   const { cursorVariant, cursorText } = useCursor();
   const [isVisible, setIsVisible] = useState(false);
+  const isMobile = useIsMobile();
 
   // Motion values for smooth cursor movement (no spring)
   const cursorX = useMotionValue(-100);
@@ -121,18 +124,6 @@ const CustomCursor = () => {
   };
 
   // Don't render on mobile devices
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const checkIsMobile = () => {
-      const mobile = window.innerWidth <= 768 || 'ontouchstart' in window;
-      setIsMobile(mobile);
-    };
-
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
-
   if (isMobile) {
     return null;
   }
