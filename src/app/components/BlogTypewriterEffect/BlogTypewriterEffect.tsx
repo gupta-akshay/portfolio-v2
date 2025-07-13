@@ -179,14 +179,18 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
   // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
+      // Clear all timeouts and intervals
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
       if (autoCloseTimeoutRef.current) {
         clearTimeout(autoCloseTimeoutRef.current);
+        autoCloseTimeoutRef.current = null;
       }
       if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
+        countdownIntervalRef.current = null;
       }
       // Reset body overflow
       document.body.style.overflow = 'unset';

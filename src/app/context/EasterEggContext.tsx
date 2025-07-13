@@ -57,14 +57,12 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [konamiSequence, setKonamiSequence] = useState<string[]>([]);
-  const [spacebarPressed, setSpacebarPressed] = useState(false);
 
   // Konami code detector
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Handle spacebar for particle trail
       if (event.code === 'Space') {
-        setSpacebarPressed(true);
         toggleParticleTrail();
         return;
       }
@@ -92,7 +90,6 @@ export const EasterEggProvider = ({ children }: { children: ReactNode }) => {
 
     const handleKeyUp = (event: KeyboardEvent) => {
       if (event.code === 'Space') {
-        setSpacebarPressed(false);
         if (easterEggState.particleTrailActive) {
           toggleParticleTrail();
         }

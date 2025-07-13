@@ -139,6 +139,7 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ className = '' }) => {
         }
       };
     }
+    return; // Return undefined when not active
   }, [matrixState, toggleMatrixRain]);
 
   // Cleanup on unmount to prevent memory leaks
