@@ -1,5 +1,6 @@
 @use '../variables' as *;
 @use '../mixin' as *;
+@use '../3d-effects' as *;
 
 .table-of-contents {
   position: fixed;
@@ -8,9 +9,9 @@
   transform: translateY(-50%);
   width: 250px;
   max-height: 60vh;
-  background: $px-bg-1;
+  background: rgba($px-bg-1, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   z-index: 100;
@@ -19,10 +20,41 @@
   transition: all 0.3s ease;
   overflow-y: auto;
 
+  // Add full glassmorphism effects manually (preserving position: fixed)
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform-style: preserve-3d;
+
+  // Add glassmorphism gradient overlay
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.05)
+    );
+    border-radius: 12px;
+    z-index: -1;
+    pointer-events: none;
+  }
+
   .theme-light & {
-    background: $px-white;
-    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba($px-white, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    &::before {
+      background: linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.08),
+        rgba(0, 0, 0, 0.04)
+      );
+    }
   }
 
   &.visible {
@@ -67,9 +99,12 @@
           text-decoration: none;
           font-size: 0.875rem;
           line-height: 1.4;
-          transition: color 0.2s ease;
+          transition: all 0.2s ease;
           border-left: 2px solid transparent;
           padding-left: 0.5rem;
+          border-radius: 4px;
+          margin: 1px 0;
+          position: relative;
 
           .theme-light & {
             color: $px-body-light;
@@ -77,12 +112,51 @@
 
           &:hover {
             color: $px-theme;
+            background: rgba($px-theme, 0.05);
+            backdrop-filter: blur(3px);
+            transform: translateX(2px);
+            box-shadow: 0 1px 4px rgba($px-theme, 0.1);
+
+            &::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(
+                90deg,
+                rgba($px-theme, 0.02),
+                rgba($px-theme, 0.01)
+              );
+              border-radius: inherit;
+              z-index: -1;
+            }
           }
 
           &.active {
             color: $px-theme;
             border-left-color: $px-theme;
             font-weight: 500;
+            background: rgba($px-theme, 0.08);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 6px rgba($px-theme, 0.15);
+
+            &::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(
+                90deg,
+                rgba($px-theme, 0.05),
+                rgba($px-theme, 0.02)
+              );
+              border-radius: inherit;
+              z-index: -1;
+            }
           }
         }
 

@@ -11,7 +11,11 @@ import TableOfContents from '@/app/components/TableOfContents';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
-import { InteractiveBackground } from '@/app/components';
+import {
+  InteractiveBackground,
+  ScrollAnimation,
+  StaggerAnimation,
+} from '@/app/components';
 
 const SingleBlog = dynamic(() => import('@/app/components/SingleBlog'), {
   loading: () => <div className='loading-blog-content'>Loading content...</div>,
@@ -95,44 +99,60 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           className='blog-post-background'
         />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <div className='blog-feature-img'>
-            <BlogImage value={post.mainImage} isCoverImage />
-          </div>
+          <ScrollAnimation animation='scale' duration={0.8}>
+            <div className='blog-feature-img'>
+              <BlogImage value={post.mainImage} isCoverImage />
+            </div>
+          </ScrollAnimation>
           <div className='row justify-content-center'>
             <div className='col-lg-8'>
               <article className='article'>
-                <div className='article-title'>
-                  <div className='hashtags'>
-                    {post.categories.map((category) => (
-                      <span key={category.slug.current} className='hashtag'>
-                        #{category.title}
-                      </span>
-                    ))}
-                  </div>
-                  <h2>{post.title}</h2>
-                  <div className='media'>
-                    <div className='avatar'>
-                      <BlogImage value={post.author.image} isAuthor />
-                    </div>
-                    <div className='media-body'>
-                      <label>{post.author.name}</label>
-                      <span>
-                        {formatDate(post.publishedAt)} • {readingTime.text}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className='article-content'>
-                  <Suspense
-                    fallback={
-                      <div className='loading-blog-content'>
-                        Loading content...
-                      </div>
-                    }
+                <StaggerAnimation staggerDelay={0.2}>
+                  <ScrollAnimation
+                    animation='slideUp'
+                    duration={0.8}
+                    delay={0.2}
                   >
-                    <SingleBlog post={post} />
-                  </Suspense>
-                </div>
+                    <div className='article-title'>
+                      <div className='hashtags'>
+                        {post.categories.map((category) => (
+                          <span key={category.slug.current} className='hashtag'>
+                            #{category.title}
+                          </span>
+                        ))}
+                      </div>
+                      <h2>{post.title}</h2>
+                      <div className='media'>
+                        <div className='avatar'>
+                          <BlogImage value={post.author.image} isAuthor />
+                        </div>
+                        <div className='media-body'>
+                          <label>{post.author.name}</label>
+                          <span>
+                            {formatDate(post.publishedAt)} • {readingTime.text}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </ScrollAnimation>
+                  <ScrollAnimation
+                    animation='slideUp'
+                    duration={0.8}
+                    delay={0.4}
+                  >
+                    <div className='article-content'>
+                      <Suspense
+                        fallback={
+                          <div className='loading-blog-content'>
+                            Loading content...
+                          </div>
+                        }
+                      >
+                        <SingleBlog post={post} />
+                      </Suspense>
+                    </div>
+                  </ScrollAnimation>
+                </StaggerAnimation>
               </article>
             </div>
           </div>

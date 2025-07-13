@@ -28,7 +28,11 @@ export default function AboutContentInteractive({
   }, [addCursorInteraction]);
 
   return (
-    <Link className='px-btn px-btn-theme' href='/contact' ref={workTogetherRef}>
+    <Link
+      className='px-btn px-btn-regular'
+      href='/contact'
+      ref={workTogetherRef}
+    >
       {children}
     </Link>
   );

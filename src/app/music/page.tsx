@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
-import { InteractiveBackground } from '@/app/components';
+import { InteractiveBackground, ScrollAnimation } from '@/app/components';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live/music'),
@@ -83,18 +83,23 @@ export default function Music() {
           className='music-background'
         />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <div className='title'>
-            <h3>My Music.</h3>
-          </div>
-          <div className='music-description mb-4'>
-            <p>
-              Hey there! 🎧 Welcome to my music collection! I love experimenting
-              with different genres and crafting unique sounds that blend styles
-              in unexpected ways. Whether it&apos;s a fresh remix or an original
-              production, every track is a piece of my creative journey.
-            </p>
-            <p>Hit play, turn up the volume, and enjoy the beats! 🚀</p>
-          </div>
+          <ScrollAnimation animation='fadeIn' duration={0.8}>
+            <div className='title'>
+              <h3>My Music.</h3>
+            </div>
+          </ScrollAnimation>
+          <ScrollAnimation animation='slideUp' duration={0.8} delay={0.2}>
+            <div className='music-description mb-4'>
+              <p>
+                Hey there! 🎧 Welcome to my music collection! I love
+                experimenting with different genres and crafting unique sounds
+                that blend styles in unexpected ways. Whether it&apos;s a fresh
+                remix or an original production, every track is a piece of my
+                creative journey.
+              </p>
+              <p>Hit play, turn up the volume, and enjoy the beats! 🚀</p>
+            </div>
+          </ScrollAnimation>
           <Suspense fallback={<LoadingIndicator />}>
             <MusicTracks />
           </Suspense>

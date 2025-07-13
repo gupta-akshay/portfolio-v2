@@ -54,8 +54,8 @@ const Header = () => {
     // Navigation links
     if (homeRef.current) {
       const cleanup = addCursorInteraction(homeRef.current, {
-        onHover: 'hover',
-        onText: 'Go to Home',
+        onHover: 'subtle',
+        onText: 'Home',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -63,8 +63,8 @@ const Header = () => {
 
     if (aboutRef.current) {
       const cleanup = addCursorInteraction(aboutRef.current, {
-        onHover: 'hover',
-        onText: 'Learn about me',
+        onHover: 'subtle',
+        onText: 'About',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -72,8 +72,8 @@ const Header = () => {
 
     if (blogRef.current) {
       const cleanup = addCursorInteraction(blogRef.current, {
-        onHover: 'hover',
-        onText: 'Read my blog posts',
+        onHover: 'subtle',
+        onText: 'Blog',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -81,8 +81,8 @@ const Header = () => {
 
     if (musicRef.current) {
       const cleanup = addCursorInteraction(musicRef.current, {
-        onHover: 'hover',
-        onText: 'Listen to my music',
+        onHover: 'subtle',
+        onText: 'Music',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -90,8 +90,8 @@ const Header = () => {
 
     if (contactRef.current) {
       const cleanup = addCursorInteraction(contactRef.current, {
-        onHover: 'hover',
-        onText: 'Get in touch',
+        onHover: 'subtle',
+        onText: 'Contact',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -100,8 +100,8 @@ const Header = () => {
     // Social media links
     if (githubRef.current) {
       const cleanup = addCursorInteraction(githubRef.current, {
-        onHover: 'hover',
-        onText: 'View GitHub profile',
+        onHover: 'subtle',
+        onText: 'GitHub',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -109,8 +109,8 @@ const Header = () => {
 
     if (linkedinRef.current) {
       const cleanup = addCursorInteraction(linkedinRef.current, {
-        onHover: 'hover',
-        onText: 'Connect on LinkedIn',
+        onHover: 'subtle',
+        onText: 'LinkedIn',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -118,8 +118,8 @@ const Header = () => {
 
     if (mediumRef.current) {
       const cleanup = addCursorInteraction(mediumRef.current, {
-        onHover: 'hover',
-        onText: 'Read on Medium',
+        onHover: 'subtle',
+        onText: 'Medium',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -127,8 +127,8 @@ const Header = () => {
 
     if (devRef.current) {
       const cleanup = addCursorInteraction(devRef.current, {
-        onHover: 'hover',
-        onText: 'Check out Dev.to',
+        onHover: 'subtle',
+        onText: 'Dev.to',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -136,8 +136,8 @@ const Header = () => {
 
     if (instagramRef.current) {
       const cleanup = addCursorInteraction(instagramRef.current, {
-        onHover: 'hover',
-        onText: 'Follow on Instagram',
+        onHover: 'subtle',
+        onText: 'Instagram',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -145,8 +145,8 @@ const Header = () => {
 
     if (facebookRef.current) {
       const cleanup = addCursorInteraction(facebookRef.current, {
-        onHover: 'hover',
-        onText: 'Like on Facebook',
+        onHover: 'subtle',
+        onText: 'Facebook',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -154,8 +154,8 @@ const Header = () => {
 
     if (soundcloudRef.current) {
       const cleanup = addCursorInteraction(soundcloudRef.current, {
-        onHover: 'hover',
-        onText: 'Listen on SoundCloud',
+        onHover: 'subtle',
+        onText: 'SoundCloud',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -163,8 +163,8 @@ const Header = () => {
 
     if (logoRef.current) {
       const cleanup = addCursorInteraction(logoRef.current, {
-        onHover: 'hover',
-        onText: 'Go to home',
+        onHover: 'subtle',
+        onText: 'Home',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
