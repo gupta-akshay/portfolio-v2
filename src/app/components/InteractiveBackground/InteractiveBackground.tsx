@@ -202,41 +202,62 @@ const InteractiveBackground = ({
   const drawConnections = useCallback(
     (ctx: CanvasRenderingContext2D, shapes: Shape[]) => {
       // Convert color to rgba for connection lines
-      const hexToRgba = (hex: string, alpha: number) => {
+      const colorToRgba = (colorStr: string, alpha: number) => {
         // Validate alpha
         const validAlpha = Math.max(0, Math.min(1, alpha));
 
         // Handle different color formats
-        if (!hex || typeof hex !== 'string') {
+        if (!colorStr || typeof colorStr !== 'string') {
           return `rgba(47, 191, 113, ${validAlpha})`; // fallback to theme color
         }
 
-        // Remove # if present
-        let cleanHex = hex.replace('#', '');
-
-        // Handle 3-digit hex codes (e.g., #f0a -> #ff00aa)
-        if (cleanHex.length === 3) {
-          cleanHex = cleanHex
-            .split('')
-            .map((char) => char + char)
-            .join('');
+        // Handle rgba/rgb format
+        if (colorStr.startsWith('rgba(') || colorStr.startsWith('rgb(')) {
+          const match = colorStr.match(/rgba?\(([^)]+)\)/);
+          if (match && match[1]) {
+            const parts = match[1].split(',').map((p) => p.trim());
+            if (parts.length >= 3 && parts[0] && parts[1] && parts[2]) {
+              const r = parseInt(parts[0]);
+              const g = parseInt(parts[1]);
+              const b = parseInt(parts[2]);
+              if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+                return `rgba(${r}, ${g}, ${b}, ${validAlpha})`;
+              }
+            }
+          }
         }
 
-        // Validate 6-digit hex format
-        if (cleanHex.length !== 6 || !/^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
-          return `rgba(47, 191, 113, ${validAlpha})`; // fallback to theme color
+        // Handle hex format
+        if (colorStr.startsWith('#')) {
+          let cleanHex = colorStr.replace('#', '');
+
+          // Handle 3-digit hex codes (e.g., #f0a -> #ff00aa)
+          if (cleanHex.length === 3) {
+            cleanHex = cleanHex
+              .split('')
+              .map((char) => char + char)
+              .join('');
+          }
+
+          // Validate 6-digit hex format
+          if (cleanHex.length === 6 && /^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+            const r = parseInt(cleanHex.slice(0, 2), 16);
+            const g = parseInt(cleanHex.slice(2, 4), 16);
+            const b = parseInt(cleanHex.slice(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${validAlpha})`;
+          }
         }
 
-        const r = parseInt(cleanHex.slice(0, 2), 16);
-        const g = parseInt(cleanHex.slice(2, 4), 16);
-        const b = parseInt(cleanHex.slice(4, 6), 16);
-
-        return `rgba(${r}, ${g}, ${b}, ${validAlpha})`;
+        // Fallback to theme color
+        return `rgba(47, 191, 113, ${validAlpha})`;
       };
 
-      const connectionColor = hexToRgba(color, 0.3);
+      const connectionColor = colorToRgba(color, 0.3);
       ctx.strokeStyle = connectionColor;
       ctx.lineWidth = 2;
+
+      // Save the current context state
+      ctx.save();
 
       shapes.forEach((shape, i) => {
         shapes.slice(i + 1).forEach((otherShape) => {
@@ -253,6 +274,9 @@ const InteractiveBackground = ({
           }
         });
       });
+
+      // Restore the context state to prevent affecting subsequent operations
+      ctx.restore();
     },
     [color]
   );

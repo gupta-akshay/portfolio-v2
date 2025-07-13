@@ -34,11 +34,12 @@ const RippleEffect = ({
 
   // Clean up timeouts on unmount
   useEffect(() => {
+    const timeouts = timeoutIds.current;
     return () => {
-      timeoutIds.current.forEach((timeoutId) => {
+      timeouts.forEach((timeoutId) => {
         clearTimeout(timeoutId);
       });
-      timeoutIds.current.clear();
+      timeouts.clear();
     };
   }, []);
 
@@ -64,10 +65,12 @@ const RippleEffect = ({
     // Remove ripple after animation
     const timeoutId = setTimeout(() => {
       setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
-      timeoutIds.current.delete(timeoutId);
+      const timeouts = timeoutIds.current;
+      timeouts.delete(timeoutId);
     }, duration * 1000);
 
-    timeoutIds.current.add(timeoutId);
+    const timeouts = timeoutIds.current;
+    timeouts.add(timeoutId);
   };
 
   return (

@@ -59,6 +59,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     scrollbar-width: thin;
     scrollbar-color: $px-theme transparent;
+    overflow-x: hidden;
 
     .theme-light & {
       background-color: $px-white;
