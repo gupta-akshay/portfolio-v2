@@ -11,6 +11,8 @@ import {
 } from '@/app/components';
 import HomeContentInteractive from '@/app/components/HomeContentInteractive';
 
+import styles from './styles/sections/homeBanner.module.scss';
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live'),
   title: 'Akshay Gupta | Full-Stack Web Developer',
@@ -100,15 +102,15 @@ export default function Home() {
           shapes={['circle', 'triangle', 'diamond']}
         >
           <div
-            className='home-banner'
+            className={styles.homeBanner}
             id='main-content'
             style={{ position: 'relative', zIndex: 2 }}
           >
-            <div className='container'>
-              <div className='row full-screen align-items-center'>
+            <div className={`container ${styles.container}`}>
+              <div className={`row ${styles.fullScreen} align-items-center`}>
                 <div className='col-lg-6'>
                   <StaggerAnimation staggerDelay={0.2}>
-                    <div className='type-box'>
+                    <div className={styles.typeBox}>
                       <ScrollAnimation animation='fadeIn' duration={0.8}>
                         <h6>Hello, I am</h6>
                       </ScrollAnimation>
@@ -129,7 +131,7 @@ export default function Home() {
                         duration={0.8}
                         delay={0.4}
                       >
-                        <p className='lead'>
+                        <p className={styles.lead}>
                           I am <TypingAnimation />
                         </p>
                       </ScrollAnimation>
@@ -138,7 +140,7 @@ export default function Home() {
                         duration={0.8}
                         delay={0.6}
                       >
-                        <p className='desc'>
+                        <p className={styles.desc}>
                           Hey there! 👋 I&apos;m currently a Senior Staff
                           Engineer at{' '}
                           <HomeContentInteractive type='peopleGroveLink'>
@@ -160,7 +162,7 @@ export default function Home() {
                         duration={0.8}
                         delay={0.8}
                       >
-                        <div className='btn-bar'>
+                        <div className={styles.btnBar}>
                           <MagneticHover intensity={0.4} glowEffect={true}>
                             <RippleEffect>
                               <HomeContentInteractive type='downloadButton'>
@@ -179,7 +181,7 @@ export default function Home() {
                     duration={1.0}
                     delay={0.3}
                   >
-                    <div className='hb-img'>
+                    <div className={styles.hbImg}>
                       <Image
                         src='/images/home-banner.webp'
                         alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'

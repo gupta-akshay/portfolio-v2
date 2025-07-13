@@ -2,14 +2,38 @@
 @use '../mixin' as *;
 @use '../3d-effects' as *;
 
-.home-banner {
+// Light theme overrides
+:global(body.theme-light) {
+  .homeBanner::after {
+    background: $px-gray;
+  }
+
+  .typeBox {
+    h6 {
+      color: $px-dark;
+    }
+
+    h1 {
+      color: $px-dark;
+    }
+
+    .lead {
+      color: $px-dark;
+    }
+
+    .desc {
+      color: $px-dark;
+    }
+  }
+}
+
+.homeBanner {
   overflow: hidden;
   position: relative;
-  
-  // Add subtle parallax background effect
+
   @include perspective-container;
-  
-  &:after {
+
+  &::after {
     content: '';
     position: absolute;
     right: -20vh;
@@ -21,99 +45,103 @@
     z-index: 0;
     transition: background-color 0.2s ease-in-out;
     transform: translateZ(-2px) scale(1.02);
-    .theme-light & {
-      background: $px-gray;
-    }
   }
+
   .container {
     position: relative;
     z-index: 1;
   }
-  .full-screen {
+
+  .fullScreen {
     min-height: 100vh;
+
     @include up-sm {
       padding-top: 100px;
       padding-bottom: 100px;
     }
   }
-  .hb-img {
+
+  .hbImg {
     img {
       border-radius: 50%;
+
       @include down-sm {
         height: 400px;
         width: 400px;
       }
+
       @include up-md {
         max-width: 120%;
       }
     }
   }
-  .type-box {
+
+  .typeBox {
     padding-top: 40px;
     padding-bottom: 40px;
+
     h6 {
       color: $px-white;
       font-size: 25px;
       font-weight: 500;
       margin: 0 0 20px;
-      .theme-light & {
-        color: $px-dark;
-      }
+
       @include down-sm {
         font-size: 18px;
         margin: 0 0 10px;
       }
     }
+
     h1 {
       font-size: 65px;
       font-weight: 700;
       line-height: 1;
       margin: 0 0 20px;
       color: $px-white;
-      
-      // Add 3D text shadow effect
+
       @include text-3d-shadow(3px, 2px);
       @include responsive-3d-effects;
-      
-      .theme-light & {
-        color: $px-dark;
-      }
+
       @include down-lg {
         font-size: 70px;
       }
+
       @include down-sm {
         font-size: 45px;
         margin-bottom: 15px;
       }
     }
+
     .lead {
       color: $px-white;
       font-weight: 500;
       font-size: 18px;
       margin-bottom: 25px;
-      .theme-light & {
-        color: $px-dark;
-      }
+
       @include down-sm {
         font-size: 16px;
         margin-bottom: 15px;
       }
     }
+
     .desc {
       max-width: 450px;
       font-size: 18px;
       color: $px-body;
-      .theme-light & {
-        color: $px-dark;
-      }
+
       @include down-sm {
         font-size: 16px;
       }
     }
-    .btn-bar {
+
+    .btnBar {
       padding-top: 15px;
     }
-    h6, h1, .lead, .desc {
+
+    h6,
+    h1,
+    .lead,
+    .desc {
       transition: color 0.2s ease-in-out;
     }
   }
