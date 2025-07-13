@@ -26,6 +26,7 @@ export { default as SocialShare } from './SocialShare';
 export { default as TableOfContents } from './TableOfContents';
 export { default as CustomCursor } from './CustomCursor';
 export { default as CursorInteractive } from './CursorInteractive';
+export { default as BuyMeACoffee } from './BuyMeACoffee';
 
 // Content Components
 export { default as BlogImage } from './BlogImage';

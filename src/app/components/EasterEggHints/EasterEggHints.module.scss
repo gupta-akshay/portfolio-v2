@@ -4,20 +4,25 @@
 .container {
   position: fixed;
   bottom: 20px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 999;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   @include down-md {
     bottom: 10px;
-    right: 10px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
 .hint {
   margin-bottom: 10px;
   opacity: 0;
-  transform: translateX(100px);
+  transform: translateY(20px);
   animation: slideInHint 0.5s ease-out forwards;
 
   &:not(:last-child) {
@@ -81,11 +86,11 @@
 @keyframes slideInHint {
   from {
     opacity: 0;
-    transform: translateX(100px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 

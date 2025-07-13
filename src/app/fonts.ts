@@ -1,4 +1,4 @@
-import { Rubik } from 'next/font/google';
+import { Rubik, Cookie } from 'next/font/google';
 
 export const rubik = Rubik({
   subsets: ['latin'],
@@ -8,4 +8,14 @@ export const rubik = Rubik({
   display: 'swap',
   preload: true,
   fallback: ['system-ui', 'sans-serif'],
+});
+
+export const cookie = Cookie({
+  subsets: ['latin'],
+  weight: ['400'],
+  style: ['normal'],
+  variable: '--font-cookie',
+  display: 'swap',
+  preload: true,
+  fallback: ['cursive'],
 });
