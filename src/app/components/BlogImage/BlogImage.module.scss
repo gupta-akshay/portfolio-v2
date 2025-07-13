@@ -1,17 +1,17 @@
-.image-container {
+.imageContainer {
   width: 100%;
   max-width: 100%;
   margin: 1.5rem 0;
   display: flex;
   justify-content: center;
+
+  &.authorImage {
+    margin: 0;
+    width: auto;
+  }
 }
 
-.image-container.author-image {
-  margin: 0;
-  width: auto;
-}
-
-.blog-image {
+.blogImage {
   max-width: 100%;
   height: auto;
 }

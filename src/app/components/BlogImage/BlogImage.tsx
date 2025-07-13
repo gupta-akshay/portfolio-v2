@@ -3,7 +3,7 @@ import Image from 'next/image';
 // @ts-ignore
 import { getImageDimensions } from '@sanity/asset-utils';
 import { urlFor } from '@/sanity/lib/image';
-import './BlogImage.css';
+import styles from './BlogImage.module.scss';
 
 const BlogImage = ({
   value,
@@ -36,7 +36,7 @@ const BlogImage = ({
 
   return (
     <div
-      className={`${isTileImage || isCoverImage ? '' : 'image-container'} ${isAuthor ? 'author-image' : ''}`}
+      className={`${isTileImage || isCoverImage ? '' : styles.imageContainer} ${isAuthor ? styles.authorImage : ''}`}
     >
       <Image
         src={url}
@@ -45,7 +45,7 @@ const BlogImage = ({
         alt={value.alt || 'blog image'}
         loading='lazy'
         style={styleObj}
-        className='blog-image'
+        className={styles.blogImage}
         sizes={
           isAuthor
             ? '45px'
