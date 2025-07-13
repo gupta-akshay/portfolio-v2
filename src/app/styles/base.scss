@@ -282,6 +282,21 @@
       }
     }
   }
+
+  &.px-btn-regular {
+    background: $px-theme;
+    color: #000000;
+    font-weight: 500;
+    &:not(:disabled):hover {
+      background: $px-white;
+      color: $px-theme;
+      .theme-light & {
+        background: $px-dark;
+        color: $px-theme;
+      }
+    }
+  }
+
   &:disabled {
     background: #ccc;
     color: #666;

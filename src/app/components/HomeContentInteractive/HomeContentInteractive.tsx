@@ -42,7 +42,7 @@ export default function HomeContentInteractive({
     return (
       <a
         ref={elementRef}
-        className='px-btn px-btn-theme'
+        className='px-btn px-btn-regular'
         href='/assets/akshay-cv.pdf'
         download
       >
