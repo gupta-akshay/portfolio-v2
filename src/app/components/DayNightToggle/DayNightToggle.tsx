@@ -10,11 +10,9 @@ import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useCursor } from '@/app/context/CursorContext';
 import { DayNightToggleProps } from '@/app/types/components';
 
-const DayNightToggle = ({
-  className = 'color_switch',
-  isLight,
-  onToggle,
-}: DayNightToggleProps) => {
+import styles from './DayNightToggle.module.scss';
+
+const DayNightToggle = ({ isLight, onToggle }: DayNightToggleProps) => {
   const { isLightMode, toggleTheme } = useTheme();
   const { addCursorInteraction } = useCursorInteractions();
   const { setCursorText, cursorVariant } = useCursor();
@@ -67,7 +65,7 @@ const DayNightToggle = ({
   return (
     <button
       ref={buttonRef}
-      className={`${className}`.trim()}
+      className={styles.colorSwitch}
       onClick={toggleHandler}
       onKeyDown={(e) => handleKeyDown(e, toggleHandler)}
       aria-label={`Switch to ${lightMode ? 'dark' : 'light'} mode`}
@@ -79,7 +77,7 @@ const DayNightToggle = ({
         icon={(lightMode ? faMoon : faSun) as IconProp}
         aria-hidden='true'
       />
-      <span className='visually-hidden'>
+      <span className={styles.visuallyHidden}>
         {lightMode ? 'Switch to dark mode' : 'Switch to light mode'}
       </span>
     </button>

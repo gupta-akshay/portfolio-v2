@@ -49,7 +49,6 @@ export interface LoadingIndicatorProps {
 export interface DayNightToggleProps {
   isLight?: boolean;
   onToggle?: () => void;
-  className?: string;
 }
 
 // SocialShare component types

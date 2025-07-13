@@ -168,11 +168,6 @@ textarea,
 }
 
 // Component wrappers
-.back-btn-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
 .internal-link-wrapper {
   position: relative;
   display: inline-flex;
@@ -193,18 +188,6 @@ textarea,
   &:focus {
     top: 0;
   }
-}
-
-// Accessibility: Visually hidden text for screen readers
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
 }
 
 // Accessibility: Respect user's motion preferences
