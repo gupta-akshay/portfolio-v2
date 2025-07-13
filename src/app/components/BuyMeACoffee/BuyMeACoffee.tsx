@@ -2,17 +2,19 @@
 
 import { useEffect, useRef } from 'react';
 import Script from 'next/script';
+import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 const BuyMeACoffee = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { addCursorInteraction } = useCursorInteractions();
 
   useEffect(() => {
+    // Store ref value to avoid stale closure issues
+    const container = containerRef.current;
+
     // Check if the script has loaded and create button if needed
     const checkForButton = () => {
-      if (
-        containerRef.current &&
-        !containerRef.current.querySelector('.bmc-btn')
-      ) {
+      if (container && !container.querySelector('.bmc-btn')) {
         // If no button exists, create one manually
         const button = document.createElement('a');
         button.href = 'https://www.buymeacoffee.com/akshay.gupta';
@@ -51,7 +53,19 @@ const BuyMeACoffee = () => {
           button.style.boxShadow = '0 4px 12px rgba(47, 191, 113, 0.3)';
         });
 
-        containerRef.current.appendChild(button);
+        container.appendChild(button);
+
+        // Add cursor interaction to the button
+        const cleanup = addCursorInteraction(button, {
+          onHover: 'subtle',
+          onText: 'Buy me a coffee',
+          onClick: 'click',
+        });
+
+        // Store cleanup function for later removal if needed
+        if (cleanup) {
+          button.dataset.cursorCleanup = 'true';
+        }
       }
     };
 
@@ -59,8 +73,18 @@ const BuyMeACoffee = () => {
     checkForButton();
     const timer = setTimeout(checkForButton, 1000);
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      // Clean up cursor interactions if button exists
+      if (container) {
+        const button = container.querySelector('.bmc-btn') as HTMLElement;
+        if (button && button.dataset.cursorCleanup) {
+          // The cleanup function is handled by the cursor system
+          delete button.dataset.cursorCleanup;
+        }
+      }
+    };
+  }, [addCursorInteraction]);
 
   return (
     <>
