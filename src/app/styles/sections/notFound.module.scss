@@ -1,9 +1,27 @@
 @use '../variables' as *;
 @use '../mixin' as *;
 
-.not-found {
+// Light theme overrides
+:global(body.theme-light) {
+  .notFound::after {
+    background: $px-gray;
+  }
+
+  .notFoundContent {
+    h2 {
+      color: $px-dark;
+    }
+
+    p {
+      color: $px-dark;
+    }
+  }
+}
+
+.notFound {
   min-height: 100vh;
-  &:after {
+
+  &::after {
     content: '';
     position: absolute;
     right: -20vh;
@@ -13,27 +31,24 @@
     border-radius: 50%;
     background: $px-dark;
     z-index: 0;
-    .theme-light & {
-      background: $px-gray;
-    }
   }
+
   .container {
     position: relative;
     z-index: 1;
   }
-  .not-found-content {
+
+  .notFoundContent {
     min-height: 100vh;
+    position: relative;
+    z-index: 1;
+
     h2 {
       color: $px-white;
-      .theme-light & {
-        color: $px-dark;
-      }
     }
+
     p {
       color: $px-body;
-      .theme-light & {
-        color: $px-dark;
-      }
     }
   }
 }
