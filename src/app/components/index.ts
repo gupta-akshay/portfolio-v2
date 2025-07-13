@@ -25,7 +25,6 @@ export { default as SocialShare } from './SocialShare';
 export { default as TableOfContents } from './TableOfContents';
 export { default as CustomCursor } from './CustomCursor';
 export { default as CursorInteractive } from './CursorInteractive';
-// export { default as ParticlesBackground } from './ParticlesBackground'; // TODO: Fix ParticlesBackground component
 
 // Content Components
 export { default as BlogImage } from './BlogImage';

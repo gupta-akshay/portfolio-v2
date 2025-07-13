@@ -1,0 +1,52 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
+
+// Light theme overrides
+:global(body.theme-light) {
+  .skillsPill {
+    color: $px-dark;
+    background: $px-gray;
+
+    &:hover {
+      color: $px-dark;
+      background: $px-theme;
+    }
+  }
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.skillsPill {
+  padding: 12px 20px;
+  border-radius: 5px;
+  box-shadow:
+    $px-theme-rgb-1 0px 1px 2px 0px,
+    $px-theme-rgb-2 0px 2px 6px 2px;
+  background: $px-dark;
+  color: $px-white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  @include transition(ease all 0.4s);
+
+  @include stacking-cards(2, 3px);
+  @include responsive-3d-effects;
+
+  &:hover {
+    background: $px-theme;
+    box-shadow:
+      rgba($px-white, 0.3) 0px 1px 2px 0px,
+      rgba($px-white, 0.15) 0px 2px 6px 2px;
+    color: $px-white;
+  }
+}
+
+.skillsPillIcon {
+  font-size: 24px;
+}
