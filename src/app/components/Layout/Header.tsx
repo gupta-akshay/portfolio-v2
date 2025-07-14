@@ -34,13 +34,6 @@ const Header = () => {
   const { addCursorInteraction } = useCursorInteractions();
   const { toggleDiscoMode } = useEasterEgg();
 
-  // Navigation refs
-  const homeRef = useRef<HTMLAnchorElement>(null);
-  const aboutRef = useRef<HTMLAnchorElement>(null);
-  const blogRef = useRef<HTMLAnchorElement>(null);
-  const musicRef = useRef<HTMLAnchorElement>(null);
-  const contactRef = useRef<HTMLAnchorElement>(null);
-
   // Social media refs
   const githubRef = useRef<HTMLAnchorElement>(null);
   const linkedinRef = useRef<HTMLAnchorElement>(null);
@@ -49,56 +42,9 @@ const Header = () => {
   const instagramRef = useRef<HTMLAnchorElement>(null);
   const facebookRef = useRef<HTMLAnchorElement>(null);
   const soundcloudRef = useRef<HTMLAnchorElement>(null);
-  const logoRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const cleanupFunctions: (() => void)[] = [];
-
-    // Navigation links
-    if (homeRef.current) {
-      const cleanup = addCursorInteraction(homeRef.current, {
-        onHover: 'subtle',
-        onText: 'Home',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (aboutRef.current) {
-      const cleanup = addCursorInteraction(aboutRef.current, {
-        onHover: 'subtle',
-        onText: 'About',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (blogRef.current) {
-      const cleanup = addCursorInteraction(blogRef.current, {
-        onHover: 'subtle',
-        onText: 'Blog',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (musicRef.current) {
-      const cleanup = addCursorInteraction(musicRef.current, {
-        onHover: 'subtle',
-        onText: 'Music',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (contactRef.current) {
-      const cleanup = addCursorInteraction(contactRef.current, {
-        onHover: 'subtle',
-        onText: 'Contact',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
 
     // Social media links
     if (githubRef.current) {
@@ -159,15 +105,6 @@ const Header = () => {
       const cleanup = addCursorInteraction(soundcloudRef.current, {
         onHover: 'subtle',
         onText: 'SoundCloud',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (logoRef.current) {
-      const cleanup = addCursorInteraction(logoRef.current, {
-        onHover: 'subtle',
-        onText: 'Home',
         onClick: 'click',
       });
       if (cleanup) cleanupFunctions.push(cleanup);
@@ -239,7 +176,7 @@ const Header = () => {
       <div className='mob-header' role='banner'>
         <div className='d-flex'>
           <div className='navbar-brand'>
-            <Link href='/' ref={logoRef}>
+            <Link href='/'>
               <span className='logo-text'>Akshay</span>
             </Link>
           </div>
@@ -266,9 +203,7 @@ const Header = () => {
       )}
 
       <header
-        className={`header-left ${
-          sideBarToggle ? 'menu-open menu-open-desk' : ''
-        }`}
+        className={`header-left ${sideBarToggle ? 'menu-open menu-open-desk' : ''}`}
         role='navigation'
         aria-label='Main navigation'
       >
@@ -298,7 +233,6 @@ const Header = () => {
                 className='nav-link'
                 href='/'
                 onClick={() => setSideBarToggle(false)}
-                ref={homeRef}
               >
                 <FontAwesomeIcon
                   icon={faHouse as IconProp}
@@ -313,7 +247,6 @@ const Header = () => {
                 className='nav-link'
                 href='/about'
                 onClick={() => setSideBarToggle(false)}
-                ref={aboutRef}
               >
                 <FontAwesomeIcon
                   icon={faIdBadge as IconProp}
@@ -328,7 +261,6 @@ const Header = () => {
                 className='nav-link'
                 href='/blog'
                 onClick={() => setSideBarToggle(false)}
-                ref={blogRef}
               >
                 <FontAwesomeIcon
                   icon={faBlog as IconProp}
@@ -343,7 +275,6 @@ const Header = () => {
                 className='nav-link'
                 href='/music'
                 onClick={() => setSideBarToggle(false)}
-                ref={musicRef}
               >
                 <FontAwesomeIcon
                   icon={faMusic as IconProp}
@@ -358,7 +289,6 @@ const Header = () => {
                 className='nav-link'
                 href='/contact'
                 onClick={() => setSideBarToggle(false)}
-                ref={contactRef}
               >
                 <FontAwesomeIcon
                   icon={faMapLocation as IconProp}
