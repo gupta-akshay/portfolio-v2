@@ -98,8 +98,8 @@
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(47, 191, 113, 0.15);
-    border-color: rgba(47, 191, 113, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    border-color: rgba(47, 191, 113, 0.2);
   }
 
   @include down-md {
@@ -151,11 +151,10 @@
   flex: 1;
 
   h4 {
-    color: #2fbf71;
+    color: #fff;
     font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    text-shadow: 0 0 10px rgba(47, 191, 113, 0.3);
 
     @include down-sm {
       font-size: 1.5rem;
@@ -209,10 +208,10 @@
   white-space: nowrap;
 
   &:hover {
-    background: rgba(47, 191, 113, 0.2);
-    border-color: rgba(47, 191, 113, 0.5);
+    background: rgba(47, 191, 113, 0.15);
+    border-color: rgba(47, 191, 113, 0.3);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(47, 191, 113, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:focus {
@@ -279,8 +278,8 @@
   }
 
   &:hover {
-    background: rgba(47, 191, 113, 0.05);
-    border-color: rgba(47, 191, 113, 0.3);
+    background: rgba(47, 191, 113, 0.03);
+    border-color: rgba(47, 191, 113, 0.2);
     transform: translateX(4px);
   }
 
@@ -311,7 +310,6 @@
     font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    text-shadow: 0 0 8px rgba(47, 191, 113, 0.3);
 
     @include down-sm {
       font-size: 1.1rem;
