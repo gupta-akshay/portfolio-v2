@@ -23,6 +23,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
+import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 import { useEasterEgg } from '@/app/context/EasterEggContext';
 import BuyMeACoffee from '../BuyMeACoffee';
 
@@ -33,6 +34,15 @@ const Header = () => {
   const pathname = usePathname();
   const { addCursorInteraction } = useCursorInteractions();
   const { toggleDiscoMode } = useEasterEgg();
+
+  // Hover prefetch for main navigation pages
+  const {
+    handleMouseEnter: handleBlogMouseEnter,
+    handleMouseLeave: handleBlogMouseLeave,
+  } = useHoverPrefetch('/blog', {
+    delay: 100,
+    enabled: true,
+  });
 
   // Social media refs
   const githubRef = useRef<HTMLAnchorElement>(null);
@@ -261,6 +271,8 @@ const Header = () => {
                 className='nav-link'
                 href='/blog'
                 onClick={() => setSideBarToggle(false)}
+                onMouseEnter={handleBlogMouseEnter}
+                onMouseLeave={handleBlogMouseLeave}
               >
                 <FontAwesomeIcon
                   icon={faBlog as IconProp}

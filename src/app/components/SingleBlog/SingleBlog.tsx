@@ -13,6 +13,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Blog } from '@/sanity/types/blog';
 import { useLoading } from '@/app/context/LoadingContext';
+import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 
 const CodeComponent = ({ value }: any) => {
   return (
@@ -42,8 +43,17 @@ const InternalLink = ({
   const router = useRouter();
   const { startLoading } = useLoading();
 
+  // Create href safely, defaulting to empty string if slug doesn't exist
+  const href = value?.slug ? `/${value.slug.current}` : '';
+
+  // Hover prefetch for internal blog links - always call hook, but disable if no valid href
+  const { handleMouseEnter, handleMouseLeave } = useHoverPrefetch(href, {
+    delay: 200, // 200ms delay for internal links
+    enabled: href.startsWith('/blog/'), // Only prefetch blog links
+  });
+
+  // Early return after hooks
   if (!value?.slug) return null;
-  const href = `/${value.slug.current}`;
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // Only add loading state for blog links
@@ -60,7 +70,13 @@ const InternalLink = ({
 
   return (
     <span className='internal-link-wrapper'>
-      <Link href={href} onClick={handleClick} prefetch={false}>
+      <Link
+        href={href}
+        onClick={handleClick}
+        prefetch={false}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         {children}
       </Link>
     </span>
