@@ -3,29 +3,361 @@
 @use '../../styles/3d-effects' as *;
 
 :global(body.theme-light) {
-  .experienceBox {
+  .experienceContainer {
     background: $px-gray;
   }
 
-  .experienceRow + .experienceRow {
-    border-top: 1px solid rgba($px-dark, 0.05);
+  .companyCard {
+    background: $px-white;
+    border: 1px solid rgba($px-dark, 0.1);
   }
 
-  .experienceRowLeft {
-    @include up-sm {
-      border-right: 1px solid rgba($px-dark, 0.05);
+  .companyInfo {
+    h4 {
+      color: $px-dark;
+    }
+
+    .companyLocation {
+      color: $px-body-light;
+    }
+
+    .companyDuration {
+      background: rgba(47, 191, 113, 0.1);
+      color: #2fbf71;
+      border: 1px solid rgba(47, 191, 113, 0.3);
     }
   }
 
-  .experienceRowRight {
+  .roleCard {
+    border-left: 3px solid $px-theme;
+    background: rgba($px-dark, 0.02);
+    border: 1px solid rgba($px-dark, 0.1);
+  }
+
+  .roleInfo {
+    h5 {
+      color: $px-dark;
+    }
+
+    .roleDuration {
+      color: $px-body-light;
+    }
+  }
+
+  .roleDescription {
     color: $px-body-light;
 
-    h6 {
-      color: $px-dark;
+    p {
+      color: $px-body-light;
+    }
+  }
+
+  .roleType {
+    background: #2fbf71;
+    color: #000;
+  }
+
+  .roleCount {
+    background: rgba($px-dark, 0.1);
+    color: $px-body-light;
+    border: 1px solid rgba($px-dark, 0.2);
+  }
+
+  .expandButton {
+    background: rgba(47, 191, 113, 0.1);
+    border: 1px solid rgba(47, 191, 113, 0.3);
+    color: #2fbf71;
+
+    &:hover {
+      background: rgba(47, 191, 113, 0.2);
+      border-color: rgba(47, 191, 113, 0.5);
+    }
+
+    &.expanded {
+      background: rgba(47, 191, 113, 0.2);
+      border-color: rgba(47, 191, 113, 0.5);
     }
   }
 }
 
+.experienceContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.companyCard {
+  background: rgba(47, 191, 113, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(47, 191, 113, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(47, 191, 113, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(47, 191, 113, 0.15);
+    border-color: rgba(47, 191, 113, 0.3);
+  }
+
+  @include down-md {
+    padding: 1.5rem;
+  }
+}
+
+.companyHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(47, 191, 113, 0.2);
+
+  @include down-sm {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
+.companyLogo {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(47, 191, 113, 0.2);
+
+  img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  @include down-sm {
+    width: 60px;
+    height: 60px;
+    padding: 0.75rem;
+  }
+}
+
+.companyInfo {
+  flex: 1;
+
+  h4 {
+    color: #2fbf71;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(47, 191, 113, 0.3);
+
+    @include down-sm {
+      font-size: 1.5rem;
+    }
+  }
+
+  .companyLocation {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .companyDuration {
+    display: inline-block;
+    background: rgba(47, 191, 113, 0.2);
+    color: #2fbf71;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(47, 191, 113, 0.3);
+    margin-right: 0.75rem;
+  }
+
+  .roleCount {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+.expandButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(47, 191, 113, 0.1);
+  border: 1px solid rgba(47, 191, 113, 0.3);
+  color: #2fbf71;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(47, 191, 113, 0.2);
+    border-color: rgba(47, 191, 113, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(47, 191, 113, 0.2);
+  }
+
+  &:focus {
+    outline: 2px solid rgba(47, 191, 113, 0.5);
+    outline-offset: 2px;
+  }
+
+  &.expanded {
+    background: rgba(47, 191, 113, 0.2);
+    border-color: rgba(47, 191, 113, 0.5);
+  }
+
+  @include down-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+.expandIcon {
+  font-size: 1.2rem;
+  font-weight: bold;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.expandButton.expanded .expandIcon {
+  transform: rotate(180deg);
+}
+
+.expandText {
+  @include down-sm {
+    display: none;
+  }
+}
+
+.rolesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.roleCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(47, 191, 113, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(
+      180deg,
+      #2fbf71 0%,
+      rgba(47, 191, 113, 0.5) 100%
+    );
+    border-radius: 2px;
+  }
+
+  &:hover {
+    background: rgba(47, 191, 113, 0.05);
+    border-color: rgba(47, 191, 113, 0.3);
+    transform: translateX(4px);
+  }
+
+  @include down-sm {
+    padding: 1rem;
+  }
+}
+
+.roleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+
+  @include down-sm {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+.roleInfo {
+  flex: 1;
+
+  h5 {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 8px rgba(47, 191, 113, 0.3);
+
+    @include down-sm {
+      font-size: 1.1rem;
+    }
+  }
+
+  .roleDuration {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+.roleType {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #2fbf71;
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.roleDescription {
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+.additionalRole {
+  opacity: 0.9;
+  transform: translateX(8px);
+
+  &:hover {
+    opacity: 1;
+    transform: translateX(12px);
+  }
+}
+
+// Legacy styles for backward compatibility
 .experienceBox {
   display: inline-block;
   vertical-align: top;
@@ -34,7 +366,6 @@
   background: $px-dark;
   border-radius: 8px;
 
-  // Add stacking cards effect
   @include stacking-cards(2, 5px);
   @include floating-3d(2px, 0.08);
   @include responsive-3d-effects;
