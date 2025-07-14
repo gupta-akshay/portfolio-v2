@@ -34,6 +34,7 @@ export { default as BlogTile } from './BlogTile';
 export { default as SingleBlog } from './SingleBlog';
 export { default as Experience } from './Experience';
 export { default as Skills } from './Skills';
+export { default as GitHubCalendar } from './GitHubCalendar';
 
 // Re-export types that are actively used
 export type {
