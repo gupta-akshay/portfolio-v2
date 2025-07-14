@@ -11,11 +11,6 @@ import TableOfContents from '@/app/components/TableOfContents';
 import { getPostBySlug } from '@/sanity/lib/client';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { urlFor } from '@/sanity/lib/image';
-import {
-  InteractiveBackground,
-  ScrollAnimation,
-  StaggerAnimation,
-} from '@/app/components';
 
 import styles from '../../styles/sections/blogSection.module.scss';
 
@@ -107,83 +102,48 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           overflowX: 'hidden',
         }}
       >
-        <InteractiveBackground
-          variant='grid'
-          count={8}
-          color='#2fbf71'
-          size={40}
-          speed={0.8}
-          intensity={0.9}
-          interactive={true}
-          className='blog-post-background'
-        />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <ScrollAnimation
-            animation='scale'
-            duration={0.8}
-            parallax={true}
-            parallaxSpeed='slow'
-          >
-            <div className={styles.blogFeatureImg}>
-              <BlogImage value={post.mainImage} isCoverImage />
-            </div>
-          </ScrollAnimation>
+          <div className={styles.blogFeatureImg}>
+            <BlogImage value={post.mainImage} isCoverImage />
+          </div>
           <div className='row justify-content-center'>
             <div className='col-lg-8'>
               <article className={styles.article}>
-                <StaggerAnimation
-                  staggerDelay={0.2}
-                  useIntersectionObserver={true}
-                >
-                  <ScrollAnimation
-                    animation='slideUp'
-                    duration={0.8}
-                    delay={0.2}
-                    scrollReveal={true}
-                  >
-                    <div className={styles.articleTitle}>
-                      <div className={styles.hashtags}>
-                        {post.categories.map((category) => (
-                          <span
-                            key={category.slug.current}
-                            className={styles.hashtag}
-                          >
-                            #{category.title}
-                          </span>
-                        ))}
-                      </div>
-                      <h2>{post.title}</h2>
-                      <div className={styles.media}>
-                        <div className={styles.avatar}>
-                          <BlogImage value={post.author.image} isAuthor />
-                        </div>
-                        <div className={styles.mediaBody}>
-                          <label>{post.author.name}</label>
-                          <span>
-                            {formatDate(post.publishedAt)} • {readingTime.text}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </ScrollAnimation>
-                  <ScrollAnimation
-                    animation='slideUp'
-                    duration={0.8}
-                    delay={0.4}
-                  >
-                    <div className={styles.articleContent}>
-                      <Suspense
-                        fallback={
-                          <div className='loading-blog-content'>
-                            Loading content...
-                          </div>
-                        }
+                <div className={styles.articleTitle}>
+                  <div className={styles.hashtags}>
+                    {post.categories.map((category) => (
+                      <span
+                        key={category.slug.current}
+                        className={styles.hashtag}
                       >
-                        <SingleBlog post={post} />
-                      </Suspense>
+                        #{category.title}
+                      </span>
+                    ))}
+                  </div>
+                  <h2>{post.title}</h2>
+                  <div className={styles.media}>
+                    <div className={styles.avatar}>
+                      <BlogImage value={post.author.image} isAuthor />
                     </div>
-                  </ScrollAnimation>
-                </StaggerAnimation>
+                    <div className={styles.mediaBody}>
+                      <label>{post.author.name}</label>
+                      <span>
+                        {formatDate(post.publishedAt)} • {readingTime.text}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.articleContent}>
+                  <Suspense
+                    fallback={
+                      <div className='loading-blog-content'>
+                        Loading content...
+                      </div>
+                    }
+                  >
+                    <SingleBlog post={post} />
+                  </Suspense>
+                </div>
               </article>
             </div>
           </div>
