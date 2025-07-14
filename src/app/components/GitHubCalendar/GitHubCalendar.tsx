@@ -31,7 +31,6 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hasData, setHasData] = useState(false);
 
   useEffect(() => {
     const checkGitHubData = async () => {
@@ -56,8 +55,6 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
         if (!data.contributions || data.contributions.length === 0) {
           throw new Error('No contribution data found for this user');
         }
-
-        setHasData(true);
       } catch (err) {
         console.error('GitHub Calendar Error:', err);
         setError(
@@ -105,7 +102,6 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
                 if (!data.contributions || data.contributions.length === 0) {
                   throw new Error('No contribution data found for this user');
                 }
-                setHasData(true);
                 setError(null);
               } catch (err) {
                 setError(
