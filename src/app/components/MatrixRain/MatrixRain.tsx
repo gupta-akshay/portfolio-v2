@@ -112,10 +112,13 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ className = '' }) => {
       const fontSize = 14;
       const columns = Math.floor(canvas.width / fontSize);
       const drops: number[] = [];
+      const dropSpeeds: number[] = [];
 
-      // Initialize drops
+      // Initialize drops with random speeds
       for (let i = 0; i < columns; i++) {
         drops[i] = Math.random() * canvas.height;
+        // Random speed multiplier between 0.3 and 1.5
+        dropSpeeds[i] = 0.3 + Math.random() * 1.2;
       }
 
       const draw = () => {
@@ -147,18 +150,27 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ className = '' }) => {
           ) {
             drops[i] = 0;
           }
-          drops[i] = (drops[i] ?? 0) + 1;
+          // Apply random speed to each drop
+          drops[i] = (drops[i] ?? 0) + (dropSpeeds[i] ?? 1) * 0.7;
         }
       };
 
-      const animate = () => {
+      // Frame rate control for slower animation
+      let lastTime = 0;
+      const targetFPS = 45; // Increased from 30fps to 45fps
+      const frameInterval = 1000 / targetFPS;
+
+      const animate = (currentTime: number) => {
         if (matrixState === 'active') {
-          draw();
+          if (currentTime - lastTime >= frameInterval) {
+            draw();
+            lastTime = currentTime;
+          }
           animationRef.current = requestAnimationFrame(animate);
         }
       };
 
-      animate();
+      animate(performance.now());
 
       // Handle window resize
       const handleResize = () => resizeCanvas();
