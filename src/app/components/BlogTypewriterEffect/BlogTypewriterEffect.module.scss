@@ -18,7 +18,6 @@
   background-color: rgba(0, 0, 0, 0.8);
   z-index: 9998;
   pointer-events: all;
-  scroll-behavior: auto;
 }
 
 .terminal {
@@ -38,7 +37,6 @@
   pointer-events: none;
   font-family: monospace;
   overflow: hidden;
-  scroll-behavior: auto;
 }
 
 .terminalHeader {
@@ -130,6 +128,7 @@
 
 .messageRow {
   margin-bottom: 8px;
+  min-height: 20px;
 
   .messagePrompt {
     color: #666;
@@ -138,25 +137,8 @@
   .messageText {
     color: #fff;
     margin-left: 8px;
-  }
-}
-
-.currentMessage {
-  margin-bottom: 8px;
-
-  .messagePrompt {
-    color: #666;
-  }
-
-  .messageText {
-    color: #fff;
-    margin-left: 8px;
-  }
-
-  .cursor {
-    animation: blink 1s infinite;
-    margin-left: 2px;
-    color: #00ff00;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 }
 
