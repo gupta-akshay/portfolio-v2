@@ -9,6 +9,7 @@ import { formatDate, calculateReadingTime } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
 import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useCursor } from '@/app/context/CursorContext';
+import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 import ScrollAnimation from '@/app/components/ScrollAnimation';
 
 import styles from './BlogTile.module.scss';
@@ -77,6 +78,13 @@ const BlogTile = memo(
     const [visibleCategories, setVisibleCategories] = useState(
       blog.categories.length
     );
+
+    // Hover prefetch for the blog post
+    const blogHref = `/blog/${blog.slug.current}`;
+    const { handleMouseEnter, handleMouseLeave } = useHoverPrefetch(blogHref, {
+      delay: 150, // 150ms delay before prefetching
+      enabled: true,
+    });
 
     // Memoize expensive calculations
     const readingTime = useMemo(
@@ -244,6 +252,8 @@ const BlogTile = memo(
                   prefetch={false}
                   aria-label={`Read more about ${blog.title}`}
                   onClick={handleClick}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
                 >
                   <BlogImage value={mainImage} isTileImage alt={blog.title} />
                 </Link>
@@ -276,6 +286,8 @@ const BlogTile = memo(
                     href={`/blog/${blog.slug.current}`}
                     prefetch={false}
                     onClick={handleClick}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   >
                     {blog.title}
                   </Link>

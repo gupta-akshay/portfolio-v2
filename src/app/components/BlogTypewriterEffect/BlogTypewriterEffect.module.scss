@@ -18,6 +18,7 @@
   background-color: rgba(0, 0, 0, 0.8);
   z-index: 9998;
   pointer-events: all;
+  scroll-behavior: auto;
 }
 
 .terminal {
@@ -37,6 +38,7 @@
   pointer-events: none;
   font-family: monospace;
   overflow: hidden;
+  scroll-behavior: auto;
 }
 
 .terminalHeader {

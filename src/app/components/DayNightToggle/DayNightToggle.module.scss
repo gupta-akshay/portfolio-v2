@@ -23,6 +23,7 @@
   color: $px-dark;
   border: 1px solid transparent;
   transition: all 0.3s ease;
+  scroll-behavior: auto;
 
   // Add 3D floating effects
   @include floating-3d(3px, 0.15);
@@ -34,15 +35,15 @@
     transform: scale(1.1);
   }
 
+  @include down-lg {
+    top: 5px;
+    right: 13px;
+  }
+
   @include down-md {
     width: 40px;
     height: 40px;
     line-height: 40px;
-  }
-
-  @include down-lg {
-    top: 71px;
-    right: 13px;
   }
 }
 
