@@ -31,15 +31,47 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasData, setHasData] = useState(false);
 
   useEffect(() => {
-    // Simulate loading time for better UX
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
+    const checkGitHubData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-    return () => clearTimeout(timer);
-  }, []);
+        // Test if we can fetch GitHub data for the user
+        const response = await fetch(
+          `https://github-contributions-api.jogruber.de/v4/${username}`
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `GitHub API returned ${response.status}: ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+
+        // Check if we have valid contribution data
+        if (!data.contributions || data.contributions.length === 0) {
+          throw new Error('No contribution data found for this user');
+        }
+
+        setHasData(true);
+      } catch (err) {
+        console.error('GitHub Calendar Error:', err);
+        setError(
+          err instanceof Error ? err.message : 'Failed to load GitHub activity'
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (username) {
+      checkGitHubData();
+    }
+  }, [username]);
 
   if (isLoading) {
     return (
@@ -53,7 +85,44 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
   if (error) {
     return (
       <div className={styles.errorContainer}>
-        <p>Unable to load GitHub activity. Please try again later.</p>
+        <p>Unable to load GitHub activity: {error}</p>
+        <button
+          onClick={() => {
+            setIsLoading(true);
+            setError(null);
+            // Trigger a re-fetch by updating the effect
+            const checkGitHubData = async () => {
+              try {
+                const response = await fetch(
+                  `https://github-contributions-api.jogruber.de/v4/${username}`
+                );
+                if (!response.ok) {
+                  throw new Error(
+                    `GitHub API returned ${response.status}: ${response.statusText}`
+                  );
+                }
+                const data = await response.json();
+                if (!data.contributions || data.contributions.length === 0) {
+                  throw new Error('No contribution data found for this user');
+                }
+                setHasData(true);
+                setError(null);
+              } catch (err) {
+                setError(
+                  err instanceof Error
+                    ? err.message
+                    : 'Failed to load GitHub activity'
+                );
+              } finally {
+                setIsLoading(false);
+              }
+            };
+            checkGitHubData();
+          }}
+          className={styles.retryButton}
+        >
+          Try Again
+        </button>
       </div>
     );
   }
