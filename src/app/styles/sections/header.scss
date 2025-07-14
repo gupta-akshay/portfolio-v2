@@ -22,6 +22,7 @@
   z-index: 1200;
   opacity: 0;
   animation: fadeIn 0.3s ease-in-out forwards;
+  scroll-behavior: auto;
 
   @include up-lg {
     display: none;
@@ -72,6 +73,7 @@
   top: 0;
   background: $px-bg-3;
   transition: background-color 0.2s ease-in-out;
+  scroll-behavior: auto;
 
   .theme-light & {
     background: $px-gray;
@@ -395,6 +397,7 @@
   z-index: 11;
   background: $px-bg-1;
   transition: background-color 0.2s ease-in-out;
+  scroll-behavior: auto;
 
   .theme-light & {
     background: $px-white;

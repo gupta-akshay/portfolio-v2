@@ -1,33 +1,24 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import Typed from 'typed.js';
+
 import styles from './BlogTypewriterEffect.module.scss';
 
 interface BlogTypewriterEffectProps {
   className?: string;
 }
 
-interface TerminalMessage {
-  text: string;
-  isComplete: boolean;
-  isCurrentMessage: boolean;
-}
-
 const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
   className = '',
 }) => {
   const [isActive, setIsActive] = useState(false);
-  const [currentText, setCurrentText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const [terminalMessages, setTerminalMessages] = useState<TerminalMessage[]>(
-    []
-  );
   const keySequenceRef = useRef<string>('');
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const autoCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typedRef = useRef<Typed | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const el = useRef<HTMLSpanElement>(null);
 
   const developerMessages = useMemo(
     () => [
@@ -47,11 +38,8 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
 
     if (keySequenceRef.current.includes(sequence)) {
       setIsActive(true);
-      setCurrentIndex(0);
-      setCurrentText('');
       setIsComplete(false);
       setCountdown(0);
-      setTerminalMessages([]);
       keySequenceRef.current = '';
 
       // Clear any existing countdown interval
@@ -93,100 +81,61 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
     };
   }, [handleKeySequence]);
 
+  // Initialize typed.js when component becomes active
   useEffect(() => {
-    if (isActive && !isComplete) {
-      if (currentIndex < developerMessages.length) {
-        const message = developerMessages[currentIndex];
-        if (!message) return;
+    if (isActive && el.current && !typedRef.current) {
+      // Create a single string with all messages separated by newlines
+      const fullMessage = developerMessages.join('\n');
 
-        let charIndex = 0;
-        setCurrentText('');
+      typedRef.current = new Typed(el.current, {
+        strings: [fullMessage],
+        typeSpeed: 80,
+        backSpeed: 0,
+        backDelay: 0,
+        smartBackspace: false,
+        loop: false,
+        showCursor: true,
+        cursorChar: '|',
+        onComplete: () => {
+          setIsComplete(true);
 
-        const typeWriter = () => {
-          if (charIndex < message.length) {
-            setCurrentText(message.substring(0, charIndex + 1));
-            charIndex++;
-            timeoutRef.current = setTimeout(typeWriter, 80);
-          } else {
-            // Wait a moment before moving to next message to avoid flicker
-            timeoutRef.current = setTimeout(() => {
-              // Mark current message as complete and add to terminal messages
-              setTerminalMessages((prev) => [
-                ...prev,
-                { text: message, isComplete: true, isCurrentMessage: false },
-              ]);
+          // Start countdown from 3 seconds
+          setCountdown(3);
 
-              // Clear current text immediately after adding to messages
-              setCurrentText('');
-
-              // Move to next message after a short delay
-              timeoutRef.current = setTimeout(() => {
-                if (currentIndex + 1 < developerMessages.length) {
-                  setCurrentIndex(currentIndex + 1);
-                } else {
-                  // All messages completed
-                  setIsComplete(true);
-
-                  // Add completion message
-                  setTerminalMessages((prev) => [
-                    ...prev,
-                    {
-                      text: 'Process completed successfully! ✓',
-                      isComplete: true,
-                      isCurrentMessage: false,
-                    },
-                  ]);
-
-                  // Start countdown from 3 seconds
-                  setCountdown(3);
-
-                  // Update countdown every second
-                  countdownIntervalRef.current = setInterval(() => {
-                    setCountdown((prev) => {
-                      if (prev <= 1) {
-                        // Clear interval and close the component
-                        if (countdownIntervalRef.current) {
-                          clearInterval(countdownIntervalRef.current);
-                        }
-                        setIsActive(false);
-                        setCurrentIndex(0);
-                        setCurrentText('');
-                        setIsComplete(false);
-                        setTerminalMessages([]);
-                        setCountdown(0);
-                        return 0;
-                      }
-                      return prev - 1;
-                    });
-                  }, 1000);
+          // Update countdown every second
+          countdownIntervalRef.current = setInterval(() => {
+            setCountdown((prev) => {
+              if (prev <= 1) {
+                // Clear interval and close the component
+                if (countdownIntervalRef.current) {
+                  clearInterval(countdownIntervalRef.current);
                 }
-              }, 500);
-            }, 300);
-          }
-        };
-
-        typeWriter();
-      }
+                setIsActive(false);
+                setIsComplete(false);
+                setCountdown(0);
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        },
+      });
     }
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (typedRef.current) {
+        typedRef.current.destroy();
+        typedRef.current = null;
       }
     };
-  }, [isActive, currentIndex, developerMessages, isComplete]);
+  }, [isActive, developerMessages]);
 
-  // Cleanup timeouts on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      // Clear all timeouts and intervals
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      if (autoCloseTimeoutRef.current) {
-        clearTimeout(autoCloseTimeoutRef.current);
-        autoCloseTimeoutRef.current = null;
+      if (typedRef.current) {
+        typedRef.current.destroy();
+        typedRef.current = null;
       }
       if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
@@ -226,24 +175,11 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
 
           {/* Messages Container */}
           <div className={styles.messagesContainer}>
-            {/* Completed Messages */}
-            {terminalMessages.map((msg, index) => (
-              <div key={index} className={styles.messageRow}>
-                <span className={styles.messagePrompt}>{'>'}</span>
-                <span className={styles.messageText}>{msg.text}</span>
-              </div>
-            ))}
-
-            {/* Current Message (only if not complete and has text) */}
-            {!isComplete && currentText && (
-              <div className={styles.currentMessage}>
-                <span className={styles.messagePrompt}>{'>'}</span>
-                <span className={styles.messageText}>
-                  {currentText}
-                  <span className={styles.cursor}>|</span>
-                </span>
-              </div>
-            )}
+            {/* Typed.js will handle the typing animation */}
+            <div className={styles.messageRow}>
+              <span className={styles.messagePrompt}>{'>'}</span>
+              <span className={styles.messageText} ref={el}></span>
+            </div>
           </div>
 
           {/* Terminal Footer */}
@@ -258,15 +194,7 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
             <div className={styles.footerProgress}>
               {isComplete ? (
                 <span className={styles.complete}>✓ Complete</span>
-              ) : (
-                <>
-                  {currentIndex + 1}/{developerMessages.length}
-                  <span className={styles.progressBar}>
-                    {'█'.repeat(currentIndex + 1)}
-                    {'░'.repeat(developerMessages.length - currentIndex - 1)}
-                  </span>
-                </>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

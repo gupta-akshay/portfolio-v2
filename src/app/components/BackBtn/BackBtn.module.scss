@@ -23,6 +23,7 @@
   color: $px-dark;
   border: 1px solid transparent;
   transition: all 0.3s ease;
+  scroll-behavior: auto;
 
   // Add 3D floating effects
   @include floating-3d(3px, 0.15);

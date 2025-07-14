@@ -47,6 +47,7 @@
   z-index: 99999;
   mix-blend-mode: difference;
   will-change: transform;
+  scroll-behavior: auto;
 
   // Add a subtle border to ensure visibility
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -83,6 +84,7 @@
   transform: translate(-50%, -150%);
   white-space: nowrap;
   will-change: transform;
+  scroll-behavior: auto;
 
   .theme-light & {
     background: rgba(255, 255, 255, 0.9);
@@ -128,6 +130,7 @@
   z-index: 99999;
   transform: translate(-50%, -50%);
   will-change: transform;
+  scroll-behavior: auto;
 
   @media (max-width: 768px) {
     display: none;
