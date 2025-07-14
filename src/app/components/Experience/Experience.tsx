@@ -45,18 +45,38 @@ export default function Experience({
           logo: experience.logo || '/images/default-company.png',
           location: experience.location,
           experiences: [experience],
-          totalDuration: formatDateRange(
-            experienceData
-              .filter((exp) => exp.company === experience.company)
-              .sort(
+          totalDuration: (() => {
+            const companyExperiences = experienceData.filter(
+              (exp) => exp.company === experience.company
+            );
+            const earliestStart =
+              companyExperiences.sort(
                 (a, b) =>
                   new Date(a.startDate).getTime() -
                   new Date(b.startDate).getTime()
-              )[0]?.startDate || experience.startDate,
-            experienceData
-              .filter((exp) => exp.company === experience.company)
-              .find((exp) => !exp.endDate)?.endDate
-          ),
+              )[0]?.startDate || experience.startDate;
+
+            // Check if any experience is ongoing (no end date)
+            const hasOngoingExperience = companyExperiences.some(
+              (exp) => !exp.endDate
+            );
+
+            if (hasOngoingExperience) {
+              // If any role is ongoing, show "Present" as end date
+              return formatDateRange(earliestStart, undefined);
+            } else {
+              // If all roles are completed, find the latest end date
+              const latestEndDate = companyExperiences
+                .filter((exp) => exp.endDate) // Only completed experiences
+                .sort(
+                  (a, b) =>
+                    new Date(b.endDate!).getTime() -
+                    new Date(a.endDate!).getTime()
+                )[0]?.endDate;
+
+              return formatDateRange(earliestStart, latestEndDate);
+            }
+          })(),
         });
       }
 
