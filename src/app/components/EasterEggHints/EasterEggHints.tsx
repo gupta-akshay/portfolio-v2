@@ -97,7 +97,7 @@ const EasterEggHints: React.FC = () => {
   if (visibleHints.length === 0) return null;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.easterEggHints}>
       {visibleHints.map((hintId) => (
         <div key={hintId} className={styles.hint}>
           <div className={styles.hintContent}>

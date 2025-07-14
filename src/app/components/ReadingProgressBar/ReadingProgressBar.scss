@@ -11,6 +11,7 @@
   z-index: 1000;
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  scroll-behavior: auto;
 
   .reading-progress-fill {
     height: 100%;

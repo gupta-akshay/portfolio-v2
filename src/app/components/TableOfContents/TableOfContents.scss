@@ -19,6 +19,7 @@
   visibility: hidden;
   transition: all 0.3s ease;
   overflow-y: auto;
+  scroll-behavior: auto;
 
   // Add full glassmorphism effects manually (preserving position: fixed)
   backdrop-filter: blur(15px);

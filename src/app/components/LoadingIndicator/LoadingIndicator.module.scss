@@ -17,6 +17,7 @@
   align-items: center;
   background-color: $px-bg-1;
   z-index: 9999;
+  scroll-behavior: auto;
 }
 
 .globalLoadingSpinner {
