@@ -1,3 +1,60 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
+
+:global(body.theme-light) {
+  .calendarContainer {
+    background: $px-white;
+  }
+
+  .headerInfo {
+    h4 {
+      color: $px-dark;
+    }
+
+    p {
+      color: $px-body-light;
+    }
+  }
+
+  .githubLink {
+    background: rgba(47, 191, 113, 0.1);
+    color: #2fbf71;
+    border: 1px solid rgba(47, 191, 113, 0.3);
+
+    &:hover {
+      background: rgba(47, 191, 113, 0.2);
+      border-color: rgba(47, 191, 113, 0.5);
+    }
+  }
+
+  .loadingContainer {
+    background: $px-gray;
+    border: 1px solid rgba($px-dark, 0.1);
+
+    p {
+      color: $px-body-light;
+    }
+  }
+
+  .errorContainer {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+  }
+
+  .retryButton {
+    background: rgba(47, 191, 113, 0.1);
+    border: 1px solid rgba(47, 191, 113, 0.3);
+    color: #2fbf71;
+
+    &:hover {
+      background: rgba(47, 191, 113, 0.2);
+      border-color: rgba(47, 191, 113, 0.5);
+    }
+  }
+}
+
 .calendarContainer {
   background: rgba(47, 191, 113, 0.05);
   backdrop-filter: blur(10px);
@@ -10,27 +67,43 @@
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(47, 191, 113, 0.15);
-    border-color: rgba(47, 191, 113, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    border-color: rgba(47, 191, 113, 0.2);
+  }
+
+  @include down-md {
+    padding: 1.5rem;
   }
 }
 
 .calendarHeader {
-  text-align: center;
   margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(47, 191, 113, 0.2);
+}
 
-  h3 {
+.headerInfo {
+  text-align: center;
+
+  h4 {
     font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #2fbf71;
-    text-shadow: 0 0 10px rgba(47, 191, 113, 0.3);
+    color: #fff;
+
+    @include down-sm {
+      font-size: 1.5rem;
+    }
   }
 
   p {
     color: rgba(255, 255, 255, 0.8);
     font-size: 1rem;
-    margin: 0;
+    margin-bottom: 1.5rem;
+
+    @include down-sm {
+      font-size: 0.9rem;
+    }
   }
 }
 
@@ -49,6 +122,10 @@
       border-radius: 8px;
       background: rgba(47, 191, 113, 0.02);
       padding: 1rem;
+
+      @include down-sm {
+        padding: 0.5rem;
+      }
     }
 
     // Style the contribution squares
@@ -56,8 +133,8 @@
       transition: all 0.2s ease;
 
       &:hover {
-        stroke: rgba(47, 191, 113, 0.5);
-        stroke-width: 2;
+        stroke: rgba(47, 191, 113, 0.3);
+        stroke-width: 1;
       }
     }
 
@@ -93,10 +170,6 @@
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(47, 191, 113, 0.2);
-
-  p {
-    margin: 0;
-  }
 }
 
 .githubLink {
@@ -113,12 +186,17 @@
   border: 1px solid rgba(47, 191, 113, 0.3);
 
   &:hover {
-    background: rgba(47, 191, 113, 0.2);
-    border-color: rgba(47, 191, 113, 0.5);
+    background: rgba(47, 191, 113, 0.15);
+    border-color: rgba(47, 191, 113, 0.3);
     transform: translateY(-1px);
     text-decoration: none;
     color: #2fbf71;
-    box-shadow: 0 4px 12px rgba(47, 191, 113, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus {
+    outline: 2px solid rgba(47, 191, 113, 0.5);
+    outline-offset: 2px;
   }
 
   &::after {
@@ -128,6 +206,11 @@
 
   &:hover::after {
     transform: translateX(4px);
+  }
+
+  @include down-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -145,6 +228,10 @@
     margin-top: 1rem;
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.9rem;
+  }
+
+  @include down-sm {
+    padding: 2rem;
   }
 }
 
@@ -174,6 +261,10 @@
     margin: 0;
     font-size: 0.9rem;
   }
+
+  @include down-sm {
+    padding: 1.5rem;
+  }
 }
 
 .retryButton {
@@ -188,14 +279,24 @@
   transition: all 0.3s ease;
 
   &:hover {
-    background: rgba(47, 191, 113, 0.2);
-    border-color: rgba(47, 191, 113, 0.5);
+    background: rgba(47, 191, 113, 0.15);
+    border-color: rgba(47, 191, 113, 0.3);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(47, 191, 113, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:focus {
+    outline: 2px solid rgba(47, 191, 113, 0.5);
+    outline-offset: 2px;
   }
 
   &:active {
     transform: translateY(0);
+  }
+
+  @include down-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 }
 
