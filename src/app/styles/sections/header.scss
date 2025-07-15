@@ -197,7 +197,7 @@
   }
   .social-icons {
     position: absolute;
-    bottom: 80px;
+    bottom: 100px;
     left: 0;
     right: 0;
     padding: 20px 0;
@@ -207,6 +207,7 @@
       rgba($px-bg-3, 0.8) 100%
     );
     border-top: 1px solid rgba($px-theme, 0.1);
+    border-bottom: 1px solid rgba($px-theme, 0.1);
 
     .theme-light & {
       background: linear-gradient(
@@ -215,6 +216,7 @@
         rgba($px-white, 0.95) 100%
       );
       border-top: 1px solid rgba($px-theme, 0.15);
+      border-bottom: 1px solid rgba($px-theme, 0.15);
     }
 
     a {
@@ -319,11 +321,9 @@
       transparent 0%,
       rgba($px-bg-3, 0.9) 100%
     );
-    border-top: 1px solid rgba($px-theme, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
 
     .theme-light & {
       background: linear-gradient(
@@ -331,7 +331,6 @@
         transparent 0%,
         rgba($px-white, 0.98) 100%
       );
-      border-top: 1px solid rgba($px-theme, 0.15);
     }
 
     #bmc-button-container {
