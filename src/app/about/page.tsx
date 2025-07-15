@@ -10,6 +10,7 @@ import {
   RippleEffect,
   ScrollAnimation,
   StaggerAnimation,
+  GitHubCalendar,
 } from '@/app/components';
 
 import styles from '../styles/sections/aboutSection.module.scss';
@@ -251,6 +252,8 @@ export default function About() {
           <ScrollAnimation animation='fadeIn' duration={0.8}>
             <Experience />
           </ScrollAnimation>
+          <div className='separator' />
+          <GitHubCalendar username='gupta-akshay' />
         </div>
       </section>
     </Layout>
