@@ -8,7 +8,6 @@ import Layout from '@/app/components/Layout';
 import ContactFormInteractive from '@/app/components/ContactFormInteractive';
 import MapSection from '@/app/components/MapSection';
 import {
-  InteractiveBackground,
   ScrollAnimation,
   StaggerAnimation,
   TextAnimation,
@@ -24,13 +23,6 @@ export default function Contact() {
         className='pp-section pp-scrollable section dark-bg'
         style={{ position: 'relative', minHeight: '100vh' }}
       >
-        <InteractiveBackground
-          variant='grid'
-          intensity={0.9}
-          color='#2fbf71'
-          interactive={true}
-          className='contact-background'
-        />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <TextAnimation duration={1.0} delay={0.2}>
             <div className='title'>

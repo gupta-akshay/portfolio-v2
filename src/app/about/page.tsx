@@ -5,7 +5,6 @@ import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 import AboutContentInteractive from '@/app/components/AboutContentInteractive';
 import {
-  InteractiveBackground,
   MagneticHover,
   RippleEffect,
   ScrollAnimation,
@@ -164,16 +163,6 @@ export default function About() {
           overflowX: 'hidden',
         }}
       >
-        <InteractiveBackground
-          variant='grid'
-          count={15}
-          color='#2fbf71'
-          size={40}
-          speed={0.5}
-          intensity={0.4}
-          interactive={true}
-          className='about-background'
-        />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <StaggerAnimation staggerDelay={0.3}>
             <div className='row align-items-center justify-content-center'>

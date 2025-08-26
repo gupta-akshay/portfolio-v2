@@ -3,11 +3,7 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
-import {
-  InteractiveBackground,
-  TextAnimation,
-  StaggerAnimation,
-} from '@/app/components';
+import { TextAnimation, StaggerAnimation } from '@/app/components';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live'),
@@ -82,16 +78,6 @@ export default function Music() {
           overflowX: 'hidden',
         }}
       >
-        <InteractiveBackground
-          variant='grid'
-          count={20}
-          color='#2fbf71'
-          size={40}
-          speed={0.6}
-          intensity={0.5}
-          interactive={true}
-          className='music-background'
-        />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <TextAnimation duration={1.0} delay={0.1}>
             <div className='title'>
