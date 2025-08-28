@@ -4,11 +4,7 @@ import Layout from '@/app/components/Layout';
 import { getPosts } from '@/sanity/lib/client';
 import BlogTile from '@/app/components/BlogTile';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
-import {
-  InteractiveBackground,
-  ScrollAnimation,
-  StaggerAnimation,
-} from '@/app/components';
+import { ScrollAnimation, StaggerAnimation } from '@/app/components';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live'),
@@ -111,16 +107,6 @@ export default function Blog() {
           overflowX: 'hidden',
         }}
       >
-        <InteractiveBackground
-          variant='grid'
-          count={12}
-          color='#2fbf71'
-          size={40}
-          speed={0.8}
-          intensity={0.9}
-          interactive={true}
-          className='blog-background'
-        />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <ScrollAnimation animation='fadeIn' duration={0.8}>
             <div className='title'>

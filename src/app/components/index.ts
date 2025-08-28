@@ -11,10 +11,6 @@ export { default as DayNightToggle } from './DayNightToggle';
 export { default as LoadingIndicator } from './LoadingIndicator';
 export { default as MagneticHover, RippleEffect } from './MagneticHover';
 export {
-  default as InteractiveBackground,
-  FloatingShapes,
-} from './InteractiveBackground';
-export {
   default as ScrollAnimation,
   StaggerAnimation,
   TextAnimation,
