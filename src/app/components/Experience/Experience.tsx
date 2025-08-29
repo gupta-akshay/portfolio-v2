@@ -115,7 +115,7 @@ export default function Experience({
         <h3>Experience</h3>
       </div>
       <div className={styles.experienceContainer}>
-        {groupedExperiences.map((companyGroup, companyIndex) => {
+        {groupedExperiences.map((companyGroup) => {
           const hasMultipleRoles = companyGroup.experiences.length > 1;
           const isExpanded = expandedCompanies.has(companyGroup.company);
           const visibleExperiences = getVisibleExperiences(companyGroup);
