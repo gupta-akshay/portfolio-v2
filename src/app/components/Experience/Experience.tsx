@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { getExperienceData } from '@/app/utils/data/experience';
 import { ExperienceProps } from '@/app/types/components';
 import { formatDateRange } from '@/app/utils/helpers/format';
-import { ScrollAnimation, StaggerAnimation } from '@/app/components';
 
 import styles from './Experience.module.scss';
 
@@ -112,108 +111,89 @@ export default function Experience({
 
   return (
     <>
-      <ScrollAnimation animation='fadeIn' duration={0.8} scrollReveal={true}>
-        <div className='title'>
-          <h3>Experience</h3>
-        </div>
-      </ScrollAnimation>
-      <StaggerAnimation staggerDelay={0.3} useIntersectionObserver={true}>
-        <div className={styles.experienceContainer}>
-          {groupedExperiences.map((companyGroup, companyIndex) => {
-            const hasMultipleRoles = companyGroup.experiences.length > 1;
-            const isExpanded = expandedCompanies.has(companyGroup.company);
-            const visibleExperiences = getVisibleExperiences(companyGroup);
+      <div className='title'>
+        <h3>Experience</h3>
+      </div>
+      <div className={styles.experienceContainer}>
+        {groupedExperiences.map((companyGroup) => {
+          const hasMultipleRoles = companyGroup.experiences.length > 1;
+          const isExpanded = expandedCompanies.has(companyGroup.company);
+          const visibleExperiences = getVisibleExperiences(companyGroup);
 
-            return (
-              <div className={styles.companyCard} key={companyGroup.company}>
-                <ScrollAnimation
-                  animation='slideUp'
-                  duration={0.8}
-                  delay={companyIndex * 0.1}
-                >
-                  <div className={styles.companyHeader}>
-                    {showLogos && (
-                      <div className={styles.companyLogo}>
-                        <Image
-                          src={companyGroup.logo}
-                          alt={`${companyGroup.company} Logo`}
-                          loading='lazy'
-                          width={80}
-                          height={80}
-                        />
-                      </div>
-                    )}
-                    <div className={styles.companyInfo}>
-                      <h4>{companyGroup.company}</h4>
-                      <p className={styles.companyLocation}>
-                        {companyGroup.location}
-                      </p>
-                      <span className={styles.companyDuration}>
-                        {companyGroup.totalDuration}
-                      </span>
-                      {hasMultipleRoles && (
-                        <div className={styles.roleCount}>
-                          {companyGroup.experiences.length} role
-                          {companyGroup.experiences.length > 1 ? 's' : ''}
-                        </div>
-                      )}
-                    </div>
-                    {hasMultipleRoles && (
-                      <button
-                        className={`${styles.expandButton} ${isExpanded ? styles.expanded : ''}`}
-                        onClick={() =>
-                          toggleCompanyExpansion(companyGroup.company)
-                        }
-                        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${companyGroup.company} roles`}
-                      >
-                        <span className={styles.expandIcon}>
-                          {isExpanded ? '−' : '+'}
-                        </span>
-                        <span className={styles.expandText}>
-                          {isExpanded
-                            ? 'Show Less'
-                            : `Show ${companyGroup.experiences.length - 1} More`}
-                        </span>
-                      </button>
-                    )}
+          return (
+            <div className={styles.companyCard} key={companyGroup.company}>
+              <div className={styles.companyHeader}>
+                {showLogos && (
+                  <div className={styles.companyLogo}>
+                    <Image
+                      src={companyGroup.logo}
+                      alt={`${companyGroup.company} Logo`}
+                      loading='lazy'
+                      width={80}
+                      height={80}
+                    />
                   </div>
-                </ScrollAnimation>
-
-                <div className={styles.rolesContainer}>
-                  {visibleExperiences.map((experience, roleIndex) => (
-                    <ScrollAnimation
-                      animation='slideRight'
-                      duration={0.6}
-                      delay={companyIndex * 0.1 + roleIndex * 0.1}
-                      key={experience.id}
-                    >
-                      <div
-                        className={`${styles.roleCard} ${roleIndex > 0 ? styles.additionalRole : ''}`}
-                      >
-                        <div className={styles.roleHeader}>
-                          <div className={styles.roleInfo}>
-                            <h5>{experience.position}</h5>
-                            <span className={styles.roleDuration}>
-                              {formatDateRange(
-                                experience.startDate,
-                                experience.endDate
-                              )}
-                            </span>
-                          </div>
-                          <div className={styles.roleType}>Full Time</div>
-                        </div>
-                        <div className={styles.roleDescription}>
-                          <p>{experience.description}</p>
-                        </div>
-                      </div>
-                    </ScrollAnimation>
-                  ))}
+                )}
+                <div className={styles.companyInfo}>
+                  <h4>{companyGroup.company}</h4>
+                  <p className={styles.companyLocation}>
+                    {companyGroup.location}
+                  </p>
+                  <span className={styles.companyDuration}>
+                    {companyGroup.totalDuration}
+                  </span>
+                  {hasMultipleRoles && (
+                    <div className={styles.roleCount}>
+                      {companyGroup.experiences.length} role
+                      {companyGroup.experiences.length > 1 ? 's' : ''}
+                    </div>
+                  )}
                 </div>
+                {hasMultipleRoles && (
+                  <button
+                    className={`${styles.expandButton} ${isExpanded ? styles.expanded : ''}`}
+                    onClick={() => toggleCompanyExpansion(companyGroup.company)}
+                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${companyGroup.company} roles`}
+                  >
+                    <span className={styles.expandIcon}>
+                      {isExpanded ? '−' : '+'}
+                    </span>
+                    <span className={styles.expandText}>
+                      {isExpanded
+                        ? 'Show Less'
+                        : `Show ${companyGroup.experiences.length - 1} More`}
+                    </span>
+                  </button>
+                )}
               </div>
-            );
-          })}
-        </div>
-      </StaggerAnimation>
+              <div className={styles.rolesContainer}>
+                {visibleExperiences.map((experience, roleIndex) => (
+                  <div
+                    className={`${styles.roleCard} ${roleIndex > 0 ? styles.additionalRole : ''}`}
+                    key={experience._id}
+                  >
+                    <div className={styles.roleHeader}>
+                      <div className={styles.roleInfo}>
+                        <h5>{experience.position}</h5>
+                        <span className={styles.roleDuration}>
+                          {formatDateRange(
+                            experience.startDate,
+                            experience.endDate
+                          )}
+                        </span>
+                      </div>
+                      <div className={styles.roleType}>Full Time</div>
+                    </div>
+                    <div className={styles.roleDescription}>
+                      <p>{experience.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </>
   );
 }
