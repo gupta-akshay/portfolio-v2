@@ -23,14 +23,6 @@ export interface ContactAPIResponse extends APIResponse {
   };
 }
 
-// Rate limiting types
-export interface RateLimitResult {
-  success: boolean;
-  limit: number;
-  remaining: number;
-  reset: number;
-}
-
 // Revalidation API types
 export interface RevalidationRequest {
   _type: string;

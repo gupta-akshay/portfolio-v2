@@ -9,7 +9,6 @@ export * from './aws';
 
 // Re-export API utilities
 export * from './apiUtils/replaceMergeFields';
-export * from './apiUtils/rateLimit';
 
 // Backward compatibility exports (deprecated - use specific imports)
 export { formatDate } from './helpers/format';

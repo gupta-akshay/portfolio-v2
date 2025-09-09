@@ -540,7 +540,6 @@ pnpm dev -- -p 3001
      - `NETLIFYL_DATABASE_URL` (Neon database connection)
      - `RESEND_API_KEY` (Email service)
      - `NEXT_PUBLIC_SANITY_PROJECT_ID` (CMS)
-     - `UPSTASH_REDIS_REST_URL` (Rate limiting)
      - All AWS variables for audio player
 
 2. **Verify Variable Names:**
