@@ -12,7 +12,6 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 - **Drizzle ORM** & **Neon Database**
 - **Sanity CMS** for blog content
 - **AWS S3 + CloudFront** for music streaming
-- **Upstash Redis** for rate limiting
 - **Resend** for email delivery
 
 ## ✨ Features
@@ -88,9 +87,6 @@ NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY=your_cloudfront_private_key
 NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
 NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
 
-# Rate limiting (Optional - falls back to in-memory if not set)
-KV_REST_API_URL=your_upstash_redis_url
-KV_REST_API_TOKEN=your_upstash_redis_token
 
 # Base URL (Optional - defaults to localhost:3000)
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
@@ -100,7 +96,7 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 1. **Database**: Create a Neon PostgreSQL database
 2. **Storage**: Set up AWS S3 + CloudFront for music files
-3. **Services**: Configure Resend, Upstash Redis (optional)
+3. **Services**: Configure Resend
 4. **Run migrations**: `pnpm db:migrate`
 5. **Start development**:
 

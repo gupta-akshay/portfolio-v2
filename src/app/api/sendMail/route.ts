@@ -6,7 +6,6 @@ import { ContactFormData, ContactAPIResponse } from '@/app/types/api';
 import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
 import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
-import { rateLimit } from '@/app/utils/apiUtils/rateLimit';
 
 // Define a schema for input validation
 const contactSchema = z.object({
@@ -27,25 +26,6 @@ export async function POST(
   req: NextRequest
 ): Promise<NextResponse<ContactAPIResponse>> {
   try {
-    // Apply rate limiting (5 requests per 15 minutes)
-    const rateLimitResult = await rateLimit(req, 5, 15 * 60 * 1000);
-
-    if (!rateLimitResult.success) {
-      const retryAfter = Math.ceil((rateLimitResult.reset - Date.now()) / 1000);
-      const response: ContactAPIResponse = {
-        success: false,
-        message: 'Too many requests. Please try again later.',
-        statusCode: 429,
-      };
-
-      return NextResponse.json(response, {
-        status: 429,
-        headers: {
-          'Retry-After': retryAfter.toString(),
-        },
-      });
-    }
-
     const body = await req.json();
 
     // Validate input using Zod
