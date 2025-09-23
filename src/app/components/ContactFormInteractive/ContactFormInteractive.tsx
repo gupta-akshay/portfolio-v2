@@ -1,74 +1,11 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import toast from 'react-hot-toast';
-import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 export default function ContactFormInteractive() {
   const [isSending, setIsSending] = useState(false);
-  const { addCursorInteraction } = useCursorInteractions();
-
-  // Form field refs
-  const nameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const subjectRef = useRef<HTMLInputElement>(null);
-  const messageRef = useRef<HTMLTextAreaElement>(null);
-  const submitRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const cleanupFunctions: (() => void)[] = [];
-
-    if (nameRef.current) {
-      const cleanup = addCursorInteraction(nameRef.current, {
-        onHover: 'text',
-        onText: 'Enter your full name',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (emailRef.current) {
-      const cleanup = addCursorInteraction(emailRef.current, {
-        onHover: 'text',
-        onText: 'Enter your email address',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (subjectRef.current) {
-      const cleanup = addCursorInteraction(subjectRef.current, {
-        onHover: 'text',
-        onText: 'What is this about?',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (messageRef.current) {
-      const cleanup = addCursorInteraction(messageRef.current, {
-        onHover: 'text',
-        onText: 'Tell me more details',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (submitRef.current) {
-      const cleanup = addCursorInteraction(submitRef.current, {
-        onHover: 'hover',
-        onText: 'Send your message',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    // Return cleanup function that calls all individual cleanup functions
-    return () => {
-      cleanupFunctions.forEach((cleanup) => cleanup());
-    };
-  }, [addCursorInteraction]);
 
   const form = useForm({
     defaultValues: {
@@ -159,7 +96,6 @@ export default function ContactFormInteractive() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                       disabled={isSending}
-                      ref={nameRef}
                     />
                     {field.state.meta.errors.length > 0 && (
                       <span className='warning-text text-danger'>
@@ -196,7 +132,6 @@ export default function ContactFormInteractive() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                       disabled={isSending}
-                      ref={emailRef}
                     />
                     {field.state.meta.errors.length > 0 && (
                       <span className='warning-text text-danger'>
@@ -228,7 +163,6 @@ export default function ContactFormInteractive() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                       disabled={isSending}
-                      ref={subjectRef}
                     />
                     {field.state.meta.errors.length > 0 && (
                       <span className='warning-text text-danger'>
@@ -260,7 +194,6 @@ export default function ContactFormInteractive() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                       disabled={isSending}
-                      ref={messageRef}
                     />
                     {field.state.meta.errors.length > 0 && (
                       <span className='warning-text text-danger'>
@@ -280,7 +213,6 @@ export default function ContactFormInteractive() {
                     className='px-btn px-btn-theme'
                     type='submit'
                     disabled={!state.canSubmit || isSending}
-                    ref={submitRef}
                   >
                     {isSending ? 'Sending...' : 'Submit'}
                   </button>

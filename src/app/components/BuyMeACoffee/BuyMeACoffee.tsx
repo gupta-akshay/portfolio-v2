@@ -2,11 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 import Script from 'next/script';
-import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 
 const BuyMeACoffee = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { addCursorInteraction } = useCursorInteractions();
 
   useEffect(() => {
     // Store ref value to avoid stale closure issues
@@ -54,18 +52,6 @@ const BuyMeACoffee = () => {
         });
 
         container.appendChild(button);
-
-        // Add cursor interaction to the button
-        const cleanup = addCursorInteraction(button, {
-          onHover: 'subtle',
-          onText: 'Buy me a coffee',
-          onClick: 'click',
-        });
-
-        // Store cleanup function for later removal if needed
-        if (cleanup) {
-          button.dataset.cursorCleanup = 'true';
-        }
       }
     };
 
@@ -75,16 +61,8 @@ const BuyMeACoffee = () => {
 
     return () => {
       clearTimeout(timer);
-      // Clean up cursor interactions if button exists
-      if (container) {
-        const button = container.querySelector('.bmc-btn') as HTMLElement;
-        if (button && button.dataset.cursorCleanup) {
-          // The cleanup function is handled by the cursor system
-          delete button.dataset.cursorCleanup;
-        }
-      }
     };
-  }, [addCursorInteraction]);
+  }, []);
 
   return (
     <>

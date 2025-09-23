@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import TypingAnimation from '@/app/components/TypingAnimation';
 import Layout from '@/app/components/Layout';
-import { MagneticHover, RippleEffect } from '@/app/components';
 import HomeContentInteractive from '@/app/components/HomeContentInteractive';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 
@@ -133,13 +132,9 @@ export default function Home() {
                       solving complex technical challenges, I&apos;m your guy!
                     </p>
                     <div className={styles.btnBar}>
-                      <MagneticHover intensity={0.4} glowEffect={true}>
-                        <RippleEffect>
-                          <HomeContentInteractive type='downloadButton'>
-                            Download CV
-                          </HomeContentInteractive>
-                        </RippleEffect>
-                      </MagneticHover>
+                      <HomeContentInteractive type='downloadButton'>
+                        Download CV
+                      </HomeContentInteractive>
                     </div>
                   </div>
                 </div>

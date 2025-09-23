@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
-import AboutContentInteractive from '@/app/components/AboutContentInteractive';
-import { MagneticHover, RippleEffect, GitHubCalendar } from '@/app/components';
+import { GitHubCalendar } from '@/app/components';
 
 import styles from '../styles/sections/aboutSection.module.scss';
 
@@ -189,13 +189,9 @@ export default function About() {
                   </p>
                 </div>
                 <div className={styles.btnBar}>
-                  <MagneticHover intensity={0.4} glowEffect={true}>
-                    <RippleEffect>
-                      <AboutContentInteractive>
-                        <span>Let&apos;s Work Together!</span>
-                      </AboutContentInteractive>
-                    </RippleEffect>
-                  </MagneticHover>
+                  <Link className='px-btn px-btn-regular' href='/contact'>
+                    <span>Let&apos;s Work Together!</span>
+                  </Link>
                 </div>
               </div>
             </div>

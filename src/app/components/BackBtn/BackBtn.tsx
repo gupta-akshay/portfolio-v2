@@ -1,14 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { useRouter, usePathname } from 'next/navigation';
 import { handleKeyDown } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
-import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
-import { useCursor } from '@/app/context/CursorContext';
 
 import styles from './BackBtn.module.scss';
 
@@ -16,28 +13,11 @@ const BackBtn = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { startLoading } = useLoading();
-  const { addCursorInteraction } = useCursorInteractions();
-  const { setCursorVariant, setCursorText } = useCursor();
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (buttonRef.current) {
-      return addCursorInteraction(buttonRef.current, {
-        onHover: 'hover',
-        onText: 'Go back',
-        onClick: 'click',
-      });
-    }
-    return undefined;
-  }, [addCursorInteraction]);
 
   const handleBack = () => {
     if (pathname.startsWith('/blog/')) {
       startLoading();
     }
-
-    setCursorVariant('default');
-    setCursorText('');
 
     if (window.history.length > 1) {
       router.back();
@@ -49,7 +29,6 @@ const BackBtn = () => {
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <button
-        ref={buttonRef}
         type='button'
         className={styles.backBtn}
         onClick={handleBack}
