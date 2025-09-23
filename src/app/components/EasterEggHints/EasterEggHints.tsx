@@ -16,6 +16,9 @@ const EasterEggHints: React.FC = () => {
   const [visibleHints, setVisibleHints] = useState<string[]>([]);
   const timeoutIdsRef = useRef<NodeJS.Timeout[]>([]);
 
+  // Do not render hints on the Studio route
+  if (pathname.startsWith('/studio')) return null;
+
   const hints: HintConfig[] = useMemo(
     () => [
       {
