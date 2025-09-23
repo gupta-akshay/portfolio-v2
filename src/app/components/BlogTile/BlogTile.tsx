@@ -7,8 +7,6 @@ import BlogImage from '@/app/components/BlogImage';
 import { Blog } from '@/sanity/types/blog';
 import { formatDate, calculateReadingTime } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
-import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
-import { useCursor } from '@/app/context/CursorContext';
 import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 
 import styles from './BlogTile.module.scss';
@@ -69,8 +67,6 @@ const BlogTile = memo(
     const { mainImage } = blog;
     const router = useRouter();
     const { startLoading } = useLoading();
-    const { addCursorInteraction } = useCursorInteractions();
-    const { setCursorVariant, setCursorText } = useCursor();
     const metaRef = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLDivElement>(null);
     const titleRef = useRef<HTMLDivElement>(null);
@@ -167,32 +163,6 @@ const BlogTile = memo(
       [blog.categories, formattedDate, readingTime.text]
     );
 
-    useEffect(() => {
-      const cleanupFunctions: (() => void)[] = [];
-
-      if (imageRef.current) {
-        const cleanup = addCursorInteraction(imageRef.current, {
-          onHover: 'hover',
-          onText: 'Read this article',
-          onClick: 'click',
-        });
-        if (cleanup) cleanupFunctions.push(cleanup);
-      }
-
-      if (titleRef.current) {
-        const cleanup = addCursorInteraction(titleRef.current, {
-          onHover: 'hover',
-          onText: 'Read this article',
-          onClick: 'click',
-        });
-        if (cleanup) cleanupFunctions.push(cleanup);
-      }
-
-      return () => {
-        cleanupFunctions.forEach((cleanup) => cleanup());
-      };
-    }, [addCursorInteraction]);
-
     // Use ResizeObserver for better performance + initial calculation
     useEffect(() => {
       if (!metaRef.current) return;
@@ -233,9 +203,6 @@ const BlogTile = memo(
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       startLoading();
-
-      setCursorVariant('default');
-      setCursorText('');
 
       router.push(`/blog/${blog.slug.current}`);
     };

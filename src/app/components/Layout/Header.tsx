@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Fragment, useEffect, useState, useRef } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBlog,
@@ -22,7 +22,6 @@ import {
   faDev,
 } from '@fortawesome/free-brands-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { useCursorInteractions } from '@/app/hooks/useCursorInteractions';
 import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 import { useEasterEgg } from '@/app/context/EasterEggContext';
 import BuyMeACoffee from '../BuyMeACoffee';
@@ -32,7 +31,6 @@ const Header = () => {
   const [activeSection, setActiveSection] = useState('');
   const [logoClickCount, setLogoClickCount] = useState(0);
   const pathname = usePathname();
-  const { addCursorInteraction } = useCursorInteractions();
   const { toggleDiscoMode } = useEasterEgg();
 
   // Hover prefetch for main navigation pages
@@ -43,88 +41,6 @@ const Header = () => {
     delay: 100,
     enabled: true,
   });
-
-  // Social media refs
-  const githubRef = useRef<HTMLAnchorElement>(null);
-  const linkedinRef = useRef<HTMLAnchorElement>(null);
-  const mediumRef = useRef<HTMLAnchorElement>(null);
-  const devRef = useRef<HTMLAnchorElement>(null);
-  const instagramRef = useRef<HTMLAnchorElement>(null);
-  const facebookRef = useRef<HTMLAnchorElement>(null);
-  const soundcloudRef = useRef<HTMLAnchorElement>(null);
-
-  useEffect(() => {
-    const cleanupFunctions: (() => void)[] = [];
-
-    // Social media links
-    if (githubRef.current) {
-      const cleanup = addCursorInteraction(githubRef.current, {
-        onHover: 'subtle',
-        onText: 'GitHub',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (linkedinRef.current) {
-      const cleanup = addCursorInteraction(linkedinRef.current, {
-        onHover: 'subtle',
-        onText: 'LinkedIn',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (mediumRef.current) {
-      const cleanup = addCursorInteraction(mediumRef.current, {
-        onHover: 'subtle',
-        onText: 'Medium',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (devRef.current) {
-      const cleanup = addCursorInteraction(devRef.current, {
-        onHover: 'subtle',
-        onText: 'Dev.to',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (instagramRef.current) {
-      const cleanup = addCursorInteraction(instagramRef.current, {
-        onHover: 'subtle',
-        onText: 'Instagram',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (facebookRef.current) {
-      const cleanup = addCursorInteraction(facebookRef.current, {
-        onHover: 'subtle',
-        onText: 'Facebook',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    if (soundcloudRef.current) {
-      const cleanup = addCursorInteraction(soundcloudRef.current, {
-        onHover: 'subtle',
-        onText: 'SoundCloud',
-        onClick: 'click',
-      });
-      if (cleanup) cleanupFunctions.push(cleanup);
-    }
-
-    // Return cleanup function that calls all individual cleanup functions
-    return () => {
-      cleanupFunctions.forEach((cleanup) => cleanup());
-    };
-  }, [addCursorInteraction]);
 
   useEffect(() => {
     switch (true) {
@@ -321,7 +237,6 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Github'
-            ref={githubRef}
           >
             <FontAwesomeIcon icon={faGithub as IconProp} />
           </Link>
@@ -330,7 +245,6 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Linkedin'
-            ref={linkedinRef}
           >
             <FontAwesomeIcon icon={faLinkedin as IconProp} />
           </Link>
@@ -339,7 +253,6 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Medium'
-            ref={mediumRef}
           >
             <FontAwesomeIcon icon={faMedium as IconProp} />
           </Link>
@@ -348,7 +261,6 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Dev.to'
-            ref={devRef}
           >
             <FontAwesomeIcon icon={faDev as IconProp} />
           </Link>
@@ -357,7 +269,6 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Instagram'
-            ref={instagramRef}
           >
             <FontAwesomeIcon icon={faInstagram as IconProp} />
           </Link>
@@ -366,7 +277,6 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Facebook'
-            ref={facebookRef}
           >
             <FontAwesomeIcon icon={faFacebook as IconProp} />
           </Link>
@@ -375,7 +285,6 @@ const Header = () => {
             target='_blank'
             rel='noopener noreferrer'
             aria-label='Soundcloud'
-            ref={soundcloudRef}
           >
             <FontAwesomeIcon icon={faSoundcloud as IconProp} />
           </Link>
