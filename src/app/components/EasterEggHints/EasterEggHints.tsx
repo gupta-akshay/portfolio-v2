@@ -15,32 +15,44 @@ const EasterEggHints: React.FC = () => {
   const pathname = usePathname();
   const [visibleHints, setVisibleHints] = useState<string[]>([]);
   const timeoutIdsRef = useRef<NodeJS.Timeout[]>([]);
+  const isStudio = pathname.startsWith('/studio');
 
   const hints: HintConfig[] = useMemo(
-    () => [
-      {
-        id: 'konami',
-        text: 'Try the classic cheat code... ↑↑↓↓←→←→BA',
-        condition: () => true, // Always show
-        delay: 3000,
-      },
-      {
-        id: 'disco',
-        text: 'Click my image rapidly for a surprise 🕺',
-        condition: () => true, // Always show
-        delay: 8000,
-      },
-      {
-        id: 'dev',
-        text: 'Developers, type "dev" for a special message 💻',
-        condition: () => pathname.startsWith('/blog'),
-        delay: 5000,
-      },
-    ],
-    [pathname]
+    () =>
+      isStudio
+        ? []
+        : [
+            {
+              id: 'konami',
+              text: 'Try the classic cheat code... ↑↑↓↓←→←→BA',
+              condition: () => true, // Always show
+              delay: 3000,
+            },
+            {
+              id: 'disco',
+              text: 'Click my image rapidly for a surprise 🕺',
+              condition: () => true, // Always show
+              delay: 8000,
+            },
+            {
+              id: 'dev',
+              text: 'Developers, type "dev" for a special message 💻',
+              condition: () => pathname.startsWith('/blog'),
+              delay: 5000,
+            },
+          ],
+    [pathname, isStudio]
   );
 
   useEffect(() => {
+    if (isStudio) {
+      // Ensure no hints are shown and clear any pending timers
+      timeoutIdsRef.current.forEach(clearTimeout);
+      timeoutIdsRef.current = [];
+      setVisibleHints([]);
+      return;
+    }
+
     // Clear any existing timeouts
     timeoutIdsRef.current.forEach(clearTimeout);
     timeoutIdsRef.current = [];
@@ -87,14 +99,14 @@ const EasterEggHints: React.FC = () => {
       timeoutIdsRef.current.forEach(clearTimeout);
       timeoutIdsRef.current = [];
     };
-  }, [pathname, hints]);
+  }, [pathname, hints, isStudio]);
 
   const getHintText = (hintId: string) => {
     const hint = hints.find((h) => h.id === hintId);
     return hint?.text || '';
   };
 
-  if (visibleHints.length === 0) return null;
+  if (isStudio || visibleHints.length === 0) return null;
 
   return (
     <div className={styles.easterEggHints}>
