@@ -19,9 +19,15 @@ const MatrixRain: React.FC<MatrixRainProps> = ({ className = '' }) => {
   // Handle Konami code activation
   useEffect(() => {
     if (easterEggState.matrixRainActive && matrixState === 'inactive') {
-      setMatrixState('waiting');
+      const activateMatrix = () => {
+        setMatrixState('waiting');
+      };
+      activateMatrix();
     } else if (!easterEggState.matrixRainActive) {
-      setMatrixState('inactive');
+      const deactivateMatrix = () => {
+        setMatrixState('inactive');
+      };
+      deactivateMatrix();
     }
   }, [easterEggState.matrixRainActive, matrixState]);
 

@@ -167,7 +167,7 @@ export const useVisualizer = (
       const radius = Math.min(width, height) / 2;
 
       // Use cached gradient or create new one
-      let gradientKey = isLightMode ? 'miniLight' : 'miniDark';
+      const gradientKey = isLightMode ? 'miniLight' : 'miniDark';
       let gradient = gradientCacheRef.current[gradientKey];
       if (!gradient) {
         gradient = ctx.createRadialGradient(

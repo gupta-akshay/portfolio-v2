@@ -49,7 +49,10 @@ const EasterEggHints: React.FC = () => {
       // Ensure no hints are shown and clear any pending timers
       timeoutIdsRef.current.forEach(clearTimeout);
       timeoutIdsRef.current = [];
-      setVisibleHints([]);
+      const clearHints = () => {
+        setVisibleHints([]);
+      };
+      clearHints();
       return;
     }
 
@@ -60,7 +63,10 @@ const EasterEggHints: React.FC = () => {
     const activeHints = hints.filter((hint) => hint.condition());
 
     if (activeHints.length === 0) {
-      setVisibleHints([]);
+      const clearHints = () => {
+        setVisibleHints([]);
+      };
+      clearHints();
       return;
     }
 

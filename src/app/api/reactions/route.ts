@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     const fingerprint = clientFingerprint || serverFingerprint || 'unknown';
 
     // Find or create anonymous user
-    let user = await db
+    const user = await db
       .select()
       .from(anonymousUsers)
       .where(eq(anonymousUsers.fingerprint, fingerprint))

@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import BlogImage from '@/app/components/BlogImage';
-// @ts-ignore
 import {
   PortableText,
   PortableTextMarkComponentProps,
@@ -18,7 +17,6 @@ import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 const CodeComponent = ({ value }: any) => {
   return (
     <div className='code-block-wrapper'>
-      {/* @ts-ignore */}
       <SyntaxHighlighter
         language={value.language}
         style={dracula}
