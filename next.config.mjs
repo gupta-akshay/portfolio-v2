@@ -21,7 +21,6 @@ const nextConfig = {
       'react-hot-toast',
       'react-syntax-highlighter',
       'resend',
-      'sanitize-html',
       'sanity',
       'next-sanity',
       'typed.js',
