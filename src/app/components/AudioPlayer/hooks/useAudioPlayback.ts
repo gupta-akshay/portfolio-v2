@@ -120,7 +120,10 @@ export const useAudioPlayback = (
   // Reset player state when track changes
   useEffect(() => {
     if (audioRef.current && currentTrackIndex !== null) {
-      setCurrentTime(0);
+      const resetTime = () => {
+        setCurrentTime(0);
+      };
+      resetTime();
     }
   }, [currentTrackIndex, audioRef]);
 

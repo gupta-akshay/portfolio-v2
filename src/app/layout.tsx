@@ -12,11 +12,11 @@ import DiscoModeGlobalStyles from './components/DiscoModeGlobalStyles/DiscoModeG
 import BlogTypewriterEffect from './components/BlogTypewriterEffect';
 import EasterEggHints from './components/EasterEggHints';
 import EasterEggWrapper from './components/EasterEggWrapper';
+import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import 'devicon/devicon.min.css';
 import './styles/globals.scss';
 
 config.autoAddCss = false;
@@ -94,6 +94,7 @@ export default function RootLayout({
         <ThemeProvider>
           <EasterEggProvider>
             <LoadingProvider>{children}</LoadingProvider>
+            <DeviconCSSLoader />
             <EasterEggWrapper>
               <MatrixRain />
               <DiscoMode />

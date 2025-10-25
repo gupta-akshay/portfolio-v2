@@ -36,11 +36,11 @@ export async function POST(
     }
 
     // Revalidate the specified tag
-    revalidateTag(body._type);
+    revalidateTag(body._type, 'max');
 
     // If there are additional tags, revalidate them too
     if (body.tags) {
-      body.tags.forEach((tag) => revalidateTag(tag));
+      body.tags.forEach((tag) => revalidateTag(tag, 'max'));
     }
 
     const successResponse: RevalidationResponse = {

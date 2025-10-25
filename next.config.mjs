@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-import crypto from 'crypto';
 import bundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig = {
@@ -22,12 +21,15 @@ const nextConfig = {
       'react-hot-toast',
       'react-syntax-highlighter',
       'resend',
-      'sanitize-html',
       'sanity',
       'next-sanity',
       'typed.js',
       'zod',
     ],
+  },
+
+  // Turbopack configuration
+  turbopack: {
   },
 
   sassOptions: {
@@ -65,10 +67,10 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://cdnjs.buymeacoffee.com https://*.buymeacoffee.com",
-              "style-src 'self' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://cdnjs.buymeacoffee.com https://*.buymeacoffee.com https://va.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
               "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live https://cdn.buymeacoffee.com https://*.buymeacoffee.com",
-              "font-src 'self'",
+              "font-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
@@ -113,67 +115,6 @@ const nextConfig = {
     ];
   },
 
-  webpack: (config, { isServer }) => {
-    // Optimize chunks
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      minSize: 30000, // Increased minSize for better chunk splitting
-      maxSize: 250000, // Prevents oversized chunks
-      minChunks: 1,
-      maxAsyncRequests: 30,
-      maxInitialRequests: 30,
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        framework: {
-          name: 'framework',
-          chunks: 'all',
-          test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-subscription)[\\/]/,
-          priority: 40,
-        },
-        lib: {
-          test(module) {
-            return (
-              module.size() > 160000 &&
-              /node_modules[/\\]/.test(module.identifier())
-            );
-          },
-          name(module) {
-            const hash = crypto.createHash('sha1');
-            hash.update(module.identifier());
-            return hash.digest('hex').substring(0, 8);
-          },
-          priority: 30,
-          minChunks: 1,
-          reuseExistingChunk: true,
-        },
-        commons: {
-          name: 'commons',
-          minChunks: 2,
-          priority: 20,
-        },
-        shared: {
-          name(module, chunks) {
-            return (
-              crypto
-                .createHash('sha1')
-                .update(chunks.reduce((acc, chunk) => acc + chunk.name, ''))
-                .digest('hex') + '-shared'
-            );
-          },
-          priority: 10,
-          minChunks: 2,
-          reuseExistingChunk: true,
-        },
-      },
-    };
-
-    if (!isServer) {
-      config.resolve.fallback = { fs: false }; // Avoid fs dependency issue
-    }
-
-    return config;
-  },
 };
 
 const withBundleAnalyzer = bundleAnalyzer({

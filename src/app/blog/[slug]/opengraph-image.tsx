@@ -8,7 +8,31 @@ export const size = {
 };
 
 export default async function Image({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug);
+  const slug = (await params).slug;
+  
+  if (!slug) {
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            fontSize: 48,
+            background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+          }}
+        >
+          Invalid Blog Post
+        </div>
+      ),
+      { ...size }
+    );
+  }
+
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return new ImageResponse(
@@ -93,7 +117,20 @@ export async function generateImageMetadata({
 }: {
   params: { slug: string };
 }) {
-  const post = await getPostBySlug(params.slug);
+  const slug = (await params).slug;
+  
+  if (!slug) {
+    return [
+      {
+        contentType: 'image/png',
+        size: { width: 1200, height: 630 },
+        id: 'og-image',
+        alt: 'Blog Post',
+      },
+    ];
+  }
+
+  const post = await getPostBySlug(slug);
   return [
     {
       contentType: 'image/png',

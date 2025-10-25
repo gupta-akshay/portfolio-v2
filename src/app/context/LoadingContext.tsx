@@ -1,6 +1,6 @@
 'use client';
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -42,7 +42,10 @@ export function LoadingProvider({
   // Stop loading when pathname changes (navigation completes)
   useEffect(() => {
     if (loadingState.isLoading) {
-      setLoadingState((prev) => ({ ...prev, isLoading: false }));
+      const stopLoading = () => {
+        setLoadingState((prev) => ({ ...prev, isLoading: false }));
+      };
+      stopLoading();
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;

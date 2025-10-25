@@ -20,7 +20,6 @@ export interface ExtendedHTMLCanvasElement extends HTMLCanvasElement {
 }
 
 // Declare global AudioContext for TypeScript
-// eslint-disable-next-line
 declare global {
   interface Window {
     AudioContext: typeof AudioContext;

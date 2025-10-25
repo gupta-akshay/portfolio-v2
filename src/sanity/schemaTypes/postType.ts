@@ -5,7 +5,6 @@ export const postType = defineType({
   name: 'post',
   title: 'Post',
   type: 'document',
-  // @ts-ignore
   icon: DocumentTextIcon,
   fields: [
     defineField({
