@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { getExperienceData } from '@/app/utils/data/experience';
 import { ExperienceProps } from '@/app/types/components';
@@ -170,7 +170,7 @@ export default function Experience({
                 {visibleExperiences.map((experience, roleIndex) => (
                   <div
                     className={`${styles.roleCard} ${roleIndex > 0 ? styles.additionalRole : ''}`}
-                    key={experience._id}
+                    key={experience.id || `${experience.company}-${experience.position}-${roleIndex}`}
                   >
                     <div className={styles.roleHeader}>
                       <div className={styles.roleInfo}>
