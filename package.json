@@ -51,10 +51,11 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react": "19.2.2",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/request-ip": "^0.0.41",
     "@types/sanitize-html": "^2.16.0",
+    "babel-plugin-react-compiler": "^1.0.0",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9.38.0",
     "eslint-config-next": "16.0.0",

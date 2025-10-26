@@ -2,8 +2,8 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig = {
+  reactCompiler: true,
   experimental: {
-    // optimizeCss: true, // Removed because it was using critters package, which is not maintained anymore.
     optimizeServerReact: true,
     serverMinification: true,
     optimizePackageImports: [

@@ -4,9 +4,8 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 
 ## 🛠️ Tech Stack
 
-- **Next.js 15** & **React 19**
+- **Next.js 16** & **React 19**
 - **TypeScript** & **Sass**
-- **Motion** (framer-motion) for animations
 - **TanStack Form** & **Zod** validation
 - **Web Audio API** for music player
 - **Drizzle ORM** & **Neon Database**
@@ -86,7 +85,6 @@ NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY=your_cloudfront_private_key
 # Analytics (Optional)
 NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
 NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
-
 
 # Base URL (Optional - defaults to localhost:3000)
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
