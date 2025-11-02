@@ -69,7 +69,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://cdnjs.buymeacoffee.com https://*.buymeacoffee.com https://va.vercel-scripts.com https://vercel.live",
               "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
-              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live https://cdn.buymeacoffee.com https://*.buymeacoffee.com",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live https://cdn.buymeacoffee.com https://*.buymeacoffee.com https://www.googletagmanager.com",
               "font-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
               "object-src 'none'",
               "base-uri 'self'",
