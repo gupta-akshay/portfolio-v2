@@ -263,12 +263,14 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
     <div
       className={`table-of-contents ${isVisible ? 'visible' : ''} ${className}`}
     >
-      <div className='toc-header'>
-        <h4>Table of Contents</h4>
+      <div className='toc-content-wrapper'>
+        <div className='toc-header'>
+          <h4>Table of Contents</h4>
+        </div>
+        <nav className='toc-nav'>
+          <TOCList items={nestedHeadings} activeId={activeId} />
+        </nav>
       </div>
-      <nav className='toc-nav'>
-        <TOCList items={nestedHeadings} activeId={activeId} />
-      </nav>
     </div>
   );
 };

@@ -9,10 +9,8 @@
   transform: translateY(-50%);
   width: 250px;
   max-height: 60vh;
-  background: rgba($px-bg-1, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   z-index: 100;
   opacity: 0;
@@ -26,36 +24,50 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   transform-style: preserve-3d;
 
-  // Add glassmorphism gradient overlay
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.1),
-      rgba(255, 255, 255, 0.05)
-    );
+  // Inner wrapper that covers entire scrollable content
+  .toc-content-wrapper {
+    background: rgba($px-bg-1, 0.9);
     border-radius: 12px;
-    z-index: -1;
-    pointer-events: none;
+    padding: 1rem;
+    min-height: 100%;
+    position: relative;
+
+    // Glassmorphism gradient overlay
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.05)
+      );
+      border-radius: 12px;
+      z-index: -1;
+      pointer-events: none;
+    }
   }
 
   .theme-light & {
-    background: rgba($px-white, 0.9);
+    .toc-content-wrapper {
+      background: rgba($px-white, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+      &::before {
+        background: linear-gradient(
+          45deg,
+          rgba(0, 0, 0, 0.08),
+          rgba(0, 0, 0, 0.04)
+        );
+      }
+    }
+
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
-    &::before {
-      background: linear-gradient(
-        45deg,
-        rgba(0, 0, 0, 0.08),
-        rgba(0, 0, 0, 0.04)
-      );
-    }
   }
 
   &.visible {
