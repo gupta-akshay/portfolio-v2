@@ -75,7 +75,7 @@ const nextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
-              "frame-src 'self' https://www.google.com https://app.netlify.com",
+              "frame-src 'self' https://www.google.com https://app.netlify.com https://vercel.live",
               "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com https://*.s3.amazonaws.com https://*.s3.ap-south-1.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://www.google-analytics.com https://www.googletagmanager.com https://github-contributions-api.jogruber.de",
               "media-src 'self' blob: https://*.s3.amazonaws.com https://*.s3.ap-south-1.amazonaws.com https://*.cloudfront.net",
               'block-all-mixed-content',
