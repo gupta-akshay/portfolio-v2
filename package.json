@@ -51,6 +51,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/node": "24.10.0",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/request-ip": "^0.0.41",
