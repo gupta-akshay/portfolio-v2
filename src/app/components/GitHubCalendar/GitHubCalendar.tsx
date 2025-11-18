@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import GitHubCalendar from 'react-github-calendar';
+import { GitHubCalendar } from 'react-github-calendar';
 import styles from './GitHubCalendar.module.scss';
 
 interface GitHubCalendarProps {
@@ -142,8 +142,8 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
             fontSize={12}
             blockSize={12}
             blockMargin={4}
-            hideColorLegend={false}
-            hideMonthLabels={false}
+            showColorLegend={true}
+            showMonthLabels={true}
             showWeekdayLabels={true}
             transformData={(data) => {
               // You can transform the data here if needed
