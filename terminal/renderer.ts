@@ -187,15 +187,15 @@ export const renderLinks = (resume: ResumeData, width = defaultWidth) => {
 
 export const renderHelp = (width = defaultWidth) => {
   const commands: Array<[string, string]> = [
-    ['help', 'Show available commands'],
-    ['summary', 'View TL;DR profile'],
-    ['skills', 'List technology stacks'],
-    ['experience', 'Career history'],
-    ['education', 'Academic background'],
-    ['links', 'Handy URLs'],
-    ['resume', 'Render entire resume'],
-    ['clear', 'Clear screen'],
-    ['exit', 'Close the session'],
+    ['help | ?', 'Cheat sheet / command palette'],
+    ['summary | tldr', 'Exec summary aka commit message'],
+    ['skills | stack', 'Stacks, toys, and favorite toolchains'],
+    ['experience | xp', 'Ship log with receipts'],
+    ['education | edu', 'Street cred & classrooms'],
+    ['links | urls', 'Bookmarks worth opening'],
+    ['resume | ship | deploy', 'Print the whole README of me'],
+    ['clear | cls', 'Wipe the buffer'],
+    ['exit | quit | bye', 'Drop the SSH tunnel'],
   ];
 
   const body = commands

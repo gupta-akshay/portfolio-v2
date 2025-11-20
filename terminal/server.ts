@@ -22,18 +22,47 @@ type SizedServerChannel = ServerChannel & { columns?: number };
 
 type CommandHandler = (shell: ResumeShell) => void;
 
+const helpCommand: CommandHandler = (shell) =>
+  shell.print(renderHelp(shell.width));
+const summaryCommand: CommandHandler = (shell) =>
+  shell.print(renderSummary(resumeData, shell.width));
+const skillsCommand: CommandHandler = (shell) =>
+  shell.print(renderSkills(resumeData, shell.width));
+const experienceCommand: CommandHandler = (shell) =>
+  shell.print(renderExperience(resumeData, shell.width));
+const educationCommand: CommandHandler = (shell) =>
+  shell.print(renderEducation(resumeData, shell.width));
+const linksCommand: CommandHandler = (shell) =>
+  shell.print(renderLinks(resumeData, shell.width));
+const resumeCommand: CommandHandler = (shell) =>
+  shell.print(renderFullResume(resumeData, shell.width));
+const clearCommand: CommandHandler = (shell) => shell.clear();
+const exitCommand: CommandHandler = (shell) => shell.close();
+
 const commander: Record<string, CommandHandler> = {
-  help: (shell) => shell.print(renderHelp(shell.width)),
-  summary: (shell) => shell.print(renderSummary(resumeData, shell.width)),
-  skills: (shell) => shell.print(renderSkills(resumeData, shell.width)),
-  experience: (shell) =>
-    shell.print(renderExperience(resumeData, shell.width)),
-  education: (shell) => shell.print(renderEducation(resumeData, shell.width)),
-  links: (shell) => shell.print(renderLinks(resumeData, shell.width)),
-  resume: (shell) => shell.print(renderFullResume(resumeData, shell.width)),
-  clear: (shell) => shell.clear(),
-  exit: (shell) => shell.close(),
-  quit: (shell) => shell.close(),
+  help: helpCommand,
+  '?': helpCommand,
+  summary: summaryCommand,
+  tldr: summaryCommand,
+  skills: skillsCommand,
+  stack: skillsCommand,
+  experience: experienceCommand,
+  xp: experienceCommand,
+  shiplog: experienceCommand,
+  education: educationCommand,
+  edu: educationCommand,
+  links: linksCommand,
+  urls: linksCommand,
+  resume: resumeCommand,
+  ship: resumeCommand,
+  deploy: resumeCommand,
+  clear: clearCommand,
+  cls: clearCommand,
+  reset: clearCommand,
+  exit: exitCommand,
+  quit: exitCommand,
+  q: exitCommand,
+  bye: exitCommand,
 };
 
 class ResumeShell {
