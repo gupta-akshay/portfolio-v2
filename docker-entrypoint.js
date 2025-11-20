@@ -36,7 +36,7 @@ async function ensureHostKey() {
   }
 
   console.warn(
-    `Host key missing at ${resolved}. Generating a new Ed25519 key (persisted on the mounted volume).`,
+    `Host key missing. Generating a new Ed25519 key (persisted on the mounted volume).`,
   )
 
   await execFile('ssh-keygen', [
