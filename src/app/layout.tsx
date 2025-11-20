@@ -14,6 +14,8 @@ import EasterEggHints from './components/EasterEggHints';
 import EasterEggWrapper from './components/EasterEggWrapper';
 import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
+import TerminalCTA from './components/TerminalCTA';
+import { TerminalCTAProvider } from './components/TerminalCTA/TerminalCTAContext';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -92,17 +94,22 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ThemeProvider>
-          <EasterEggProvider>
-            <LoadingProvider>{children}</LoadingProvider>
-            <DeviconCSSLoader />
-            <EasterEggWrapper>
-              <MatrixRain />
-              <DiscoMode />
-              <DiscoModeGlobalStyles />
-              <BlogTypewriterEffect />
-              <EasterEggHints />
-            </EasterEggWrapper>
-          </EasterEggProvider>
+          <TerminalCTAProvider>
+            <EasterEggProvider>
+              <LoadingProvider>
+                {children}
+                <TerminalCTA />
+              </LoadingProvider>
+              <DeviconCSSLoader />
+              <EasterEggWrapper>
+                <MatrixRain />
+                <DiscoMode />
+                <DiscoModeGlobalStyles />
+                <BlogTypewriterEffect />
+                <EasterEggHints />
+              </EasterEggWrapper>
+            </EasterEggProvider>
+          </TerminalCTAProvider>
         </ThemeProvider>
         <Metrics />
         <SpeedInsights />

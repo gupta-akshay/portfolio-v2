@@ -24,7 +24,6 @@ import {
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 import { useEasterEgg } from '@/app/context/EasterEggContext';
-import BuyMeACoffee from '../BuyMeACoffee';
 
 const Header = () => {
   const [sideBarToggle, setSideBarToggle] = useState(false);
@@ -288,9 +287,6 @@ const Header = () => {
           >
             <FontAwesomeIcon icon={faSoundcloud as IconProp} />
           </Link>
-        </div>
-        <div className='nav justify-content-center buy-me-coffee-section'>
-          <BuyMeACoffee />
         </div>
       </header>
     </Fragment>
