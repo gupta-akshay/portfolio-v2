@@ -1,3 +1,5 @@
+import './colorEnv';
+
 import boxen from 'boxen';
 import type { Options as BoxenOptions } from 'boxen';
 import chalk from './chalk';
