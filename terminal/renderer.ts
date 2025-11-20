@@ -4,13 +4,56 @@ import boxen from 'boxen';
 import type { Options as BoxenOptions } from 'boxen';
 import chalk from './chalk';
 import figlet from 'figlet';
-import gradient from 'gradient-string';
+import tinygradient from 'tinygradient';
 import wrapAnsi from 'wrap-ansi';
 
 import type { ResumeData, ResumeExperience } from './resumeData';
 
 const defaultWidth = 90;
-const accent = gradient([
+
+type GradientPrinter = {
+  multiline: (value: string) => string;
+};
+
+type TinyColor = {
+  toHexString: () => string;
+};
+
+const isWhitespace = (value: string) => /\s/.test(value);
+
+const paintLine = (line: string, palette: TinyColor[]) =>
+  line
+    .split('')
+    .map((char, index) => {
+      if (isWhitespace(char)) {
+        return char;
+      }
+      const color =
+        palette[Math.min(index, palette.length - 1)]?.toHexString() ?? '#ffffff';
+      return chalk.hex(color)(char);
+    })
+    .join('');
+
+const createGradient = (colors: string[]): GradientPrinter => {
+  const gradient = tinygradient(colors);
+  const minimumSteps = Math.max(gradient.stops.length, 2);
+
+  return {
+    multiline(value: string) {
+      if (!value.length) return value;
+      const lines = value.split('\n');
+      const longestLine = lines.reduce(
+        (max, line) => Math.max(max, line.length),
+        0,
+      );
+      const steps = Math.max(longestLine, minimumSteps);
+      const palette = gradient.rgb(steps) as unknown as TinyColor[];
+      return lines.map((line) => paintLine(line, palette)).join('\n');
+    },
+  };
+};
+
+const accent = createGradient([
   '#00f5ff',
   '#00c9ff',
   '#92fe9d',

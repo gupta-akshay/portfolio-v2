@@ -55,6 +55,7 @@
     "sanity": "^4.17.0",
     "ssh2": "^1.17.0",
     "styled-components": "^6.1.19",
+    "tinygradient": "^2.0.1",
     "typed.js": "^2.1.0",
     "wrap-ansi": "^9.0.2",
     "zod": "^4.1.12"

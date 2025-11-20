@@ -115,7 +115,7 @@ export const resumeData: ResumeData = {
     {
       title: 'Senior Staff Engineer',
       company: 'PeopleGrove',
-      period: 'Mar 2019 – Present',
+      period: 'Mar 2019 - Present',
       location: 'Remote, India',
       highlights: [
         'Built a RAG support copilot that auto-triages noisy tickets so humans stay focused on gnarly bugs.',
@@ -132,7 +132,7 @@ export const resumeData: ResumeData = {
     {
       title: 'Assistant System Engineer',
       company: 'Tata Consultancy Services',
-      period: 'Sep 2017 – Mar 2019',
+      period: 'Sep 2017 - Mar 2019',
       location: 'Hyderabad, India',
       highlights: [
         'Delivered 10+ React enablement sprints so the org stopped copy/pasting jQuery into new apps.',
@@ -145,7 +145,7 @@ export const resumeData: ResumeData = {
     {
       degree: 'Bachelor of Engineering, Computer Science',
       school: 'Rajiv Gandhi Proudyogiki Vishwavidyalaya',
-      period: '2013 – 2017',
+      period: '2013 - 2017',
       location: 'Indore, India',
     },
   ],

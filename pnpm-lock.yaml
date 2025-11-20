@@ -140,6 +140,9 @@ importers:
       styled-components:
         specifier: ^6.1.19
         version: 6.1.19(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      tinygradient:
+        specifier: ^2.0.1
+        version: 2.0.1
       typed.js:
         specifier: ^2.1.0
         version: 2.1.0
@@ -6545,6 +6548,9 @@ packages:
 
   tinygradient@1.1.5:
     resolution: {integrity: sha512-8nIfc2vgQ4TeLnk2lFj4tRLvvJwEfQuabdsmvDdQPT0xlk9TaNtpGd6nNRxXoK6vQhN6RSzj+Cnp5tTQmpxmbw==}
+
+  tinygradient@2.0.1:
+    resolution: {integrity: sha512-V7K7sZvniKq4wLvDMGyvaAoZbeoVjCa19dMtMFmtrinK/yHiRig3sV9BefrRtw1N5l5QM2mzFBWCg2NGxaVZyw==}
 
   tldts-core@6.1.86:
     resolution: {integrity: sha512-Je6p7pkk+KMzMv2XXKmAE3McmolOQFdxkKw0R8EYNr7sELW46JqnNeTX8ybPiQgvg1ymCoF8LXs5fzFaZvJPTA==}
@@ -14873,6 +14879,10 @@ snapshots:
   tinygradient@1.1.5:
     dependencies:
       '@types/tinycolor2': 1.4.6
+      tinycolor2: 1.6.0
+
+  tinygradient@2.0.1:
+    dependencies:
       tinycolor2: 1.6.0
 
   tldts-core@6.1.86: {}
