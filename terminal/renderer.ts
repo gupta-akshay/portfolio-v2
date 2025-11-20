@@ -1,6 +1,8 @@
+import './colorEnv';
+
 import boxen from 'boxen';
 import type { Options as BoxenOptions } from 'boxen';
-import chalk from 'chalk';
+import chalk from './chalk';
 import figlet from 'figlet';
 import gradient from 'gradient-string';
 import wrapAnsi from 'wrap-ansi';
