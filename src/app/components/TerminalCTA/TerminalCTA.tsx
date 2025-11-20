@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 import { useTerminalCTAContext } from './TerminalCTAContext';
@@ -10,7 +11,9 @@ import styles from './TerminalCTA.module.scss';
 const TerminalCTA = () => {
   const { shouldRender } = useTerminalCTAContext();
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   const isMobile = useIsMobile();
+  const isStudioRoute = pathname?.startsWith('/studio');
   const isModalVisible = isOpen && !isMobile;
 
   useEffect(() => {
@@ -24,7 +27,7 @@ const TerminalCTA = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [isModalVisible]);
 
-  if (isMobile || !shouldRender) {
+  if (isMobile || !shouldRender || isStudioRoute) {
     return null;
   }
 
