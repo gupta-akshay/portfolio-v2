@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { generateKeyPairSync } from 'node:crypto';
 
-import chalk from 'chalk';
+import chalk from './chalk';
 import { Server, ServerChannel } from 'ssh2';
 
 import { resumeData } from './resumeData';
