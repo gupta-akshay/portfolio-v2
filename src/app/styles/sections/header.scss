@@ -197,7 +197,7 @@
   }
   .social-icons {
     position: absolute;
-    bottom: 100px;
+    bottom: 0px;
     left: 0;
     right: 0;
     padding: 20px 0;
@@ -306,63 +306,6 @@
         transform: translate(-50%, -50%) scale(0.8);
         opacity: 0;
         animation: pulse 1.5s infinite;
-      }
-    }
-  }
-
-  .buy-me-coffee-section {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 20px 0;
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba($px-bg-3, 0.9) 100%
-    );
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .theme-light & {
-      background: linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba($px-white, 0.98) 100%
-      );
-    }
-
-    #bmc-button-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      max-width: 200px;
-      margin: 0 auto;
-      @include floating-3d(4px, 0.08);
-      @include responsive-3d-effects;
-
-      &:hover {
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 20px rgba($px-theme, 0.3);
-
-        .theme-light & {
-          box-shadow: 0 8px 20px rgba($px-theme, 0.2);
-        }
-      }
-
-      // Style the Buy me a coffee button
-      .bmc-btn {
-        border-radius: 8px !important;
-        transition: all 0.3s ease !important;
-        font-family: 'Cookie', cursive !important;
-        width: 100% !important;
-        justify-content: center !important;
-        
-        &:hover {
-          transform: translateY(-1px) scale(1.02) !important;
-        }
       }
     }
   }
@@ -481,7 +424,7 @@
     // Improved mobile social icons
     .social-icons {
       padding: 15px 0;
-      bottom: 90px;
+      bottom: 0px;
 
       a {
         font-size: 16px;
@@ -495,23 +438,6 @@
       }
     }
 
-    .buy-me-coffee-section {
-      padding: 15px 0;
-
-      #bmc-button-container {
-        max-width: 180px;
-        
-        .bmc-btn {
-          font-size: 14px !important;
-          padding: 8px 16px !important;
-          width: 100% !important;
-        }
-
-        &:hover {
-          transform: translateY(-1px) scale(1.02);
-        }
-      }
-    }
   }
 }
 

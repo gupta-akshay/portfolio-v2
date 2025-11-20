@@ -14,7 +14,6 @@ export { default as EmojiReactions } from './EmojiReactions';
 export { default as ReadingProgressBar } from './ReadingProgressBar';
 export { default as SocialShare } from './SocialShare';
 export { default as TableOfContents } from './TableOfContents';
-export { default as BuyMeACoffee } from './BuyMeACoffee';
 
 // Content Components
 export { default as BlogImage } from './BlogImage';
