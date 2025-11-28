@@ -10,14 +10,17 @@ const parseLevel = (value?: string): ChalkLevel | undefined => {
   return clamped;
 };
 
-export const configuredChalkLevel: ChalkLevel =
+const resolveChalkLevel = (): ChalkLevel =>
   parseLevel(process.env.TERMINAL_CHALK_LEVEL) ??
   parseLevel(process.env.FORCE_COLOR) ??
   DEFAULT_LEVEL;
 
-const currentForceColor = parseLevel(process.env.FORCE_COLOR);
-if (currentForceColor !== configuredChalkLevel) {
-  process.env.FORCE_COLOR = String(configuredChalkLevel);
-}
+const syncForceColorEnv = (level: ChalkLevel) => {
+  const currentForceColor = parseLevel(process.env.FORCE_COLOR);
+  if (currentForceColor !== level) {
+    process.env.FORCE_COLOR = String(level);
+  }
+};
 
-
+export const configuredChalkLevel: ChalkLevel = resolveChalkLevel();
+syncForceColorEnv(configuredChalkLevel);

@@ -9,7 +9,9 @@ import wrapAnsi from 'wrap-ansi';
 
 import type { ResumeData, ResumeExperience } from './resumeData';
 
-const defaultWidth = 90;
+const DEFAULT_WIDTH = 90;
+const BOX_WIDTH_MIN = 40;
+const BOX_WIDTH_MAX = 140;
 
 type GradientPrinter = {
   multiline: (value: string) => string;
@@ -19,7 +21,22 @@ type TinyColor = {
   toHexString: () => string;
 };
 
+const HELP_COMMANDS: Array<[string, string]> = [
+  ['help | ?', 'Cheat sheet / command palette'],
+  ['summary | tldr', 'Exec summary aka commit message'],
+  ['skills | stack', 'Stacks, toys, and favorite toolchains'],
+  ['experience | xp', 'Ship log with receipts'],
+  ['education | edu', 'Street cred & classrooms'],
+  ['links | urls', 'Bookmarks worth opening'],
+  ['resume | ship | deploy', 'Print the whole README of me'],
+  ['clear | cls', 'Wipe the buffer'],
+  ['exit | quit | bye', 'Drop the SSH tunnel'],
+];
+
 const isWhitespace = (value: string) => /\s/.test(value);
+
+const clampWidth = (value: number) =>
+  Math.min(Math.max(BOX_WIDTH_MIN, value), BOX_WIDTH_MAX);
 
 const paintLine = (line: string, palette: TinyColor[]) =>
   line
@@ -70,7 +87,7 @@ const bulletColor = chalk.hex('#64ffda');
 const divider = (width: number) =>
   chalk.dim('─'.repeat(Math.max(20, Math.min(width, 120))));
 
-const wrap = (value: string, width: number, indent = 0) => {
+const wrapText = (value: string, width: number, indent = 0) => {
   const space = ' '.repeat(indent);
   return wrapAnsi(value, Math.max(20, width - indent), {
     trim: true,
@@ -94,13 +111,20 @@ const renderBox = (content: string, width: number, title?: string) => {
     borderColor: '#44475a',
     borderStyle: 'round',
     titleAlignment: 'left',
-    width: Math.min(Math.max(40, width), 140),
+    width: clampWidth(width),
   };
 
   const options: BoxenOptions = title ? { ...baseOptions, title } : baseOptions;
 
   return boxen(content, options);
 };
+
+const renderSectionBox = (
+  heading: string,
+  body: string,
+  width: number,
+  title: string,
+) => renderBox(`${headingColor(heading)}\n${body}`, width, title);
 
 const renderHighlights = (
   highlights: string[],
@@ -110,7 +134,7 @@ const renderHighlights = (
   highlights
     .map(
       (highlight) =>
-        `${' '.repeat(indent)}${bulletColor('•')} ${wrap(
+        `${' '.repeat(indent)}${bulletColor('•')} ${wrapText(
           highlight,
           width,
           indent + 2,
@@ -118,30 +142,8 @@ const renderHighlights = (
     )
     .join('\n');
 
-export const renderBanner = (resume: ResumeData, width = defaultWidth) => {
-  const ascii = figlet.textSync(resume.basics.name, { font: 'Small' });
-  const gradientText = accent.multiline(ascii);
-  const title = center(subHeadingColor(resume.basics.title), width);
-  return `${gradientText}\n${title}\n${divider(width)}\n`;
-};
-
-export const renderSummary = (resume: ResumeData, width = defaultWidth) => {
-  const summary = resume.basics.summary
-    .map((paragraph) => wrap(textColor(paragraph), width - 4))
-    .join('\n\n');
-
-  return renderBox(
-    `${headingColor('Summary')}\n${summary}`,
-    width,
-    'Overview',
-  );
-};
-
-export const renderContacts = (
-  resume: ResumeData,
-  width = defaultWidth,
-) => {
-  const entries = [
+const formatContactEntries = (resume: ResumeData) =>
+  [
     [`Email`, resume.basics.email],
     [`Phone`, resume.basics.phone],
     [`Location`, resume.basics.location],
@@ -152,23 +154,16 @@ export const renderContacts = (
     .map(([label, value]) => `${subHeadingColor(label)}  ${textColor(value)}`)
     .join('\n');
 
-  return renderBox(`${headingColor('Contact')}\n${entries}`, width, 'Contact');
-};
-
-export const renderSkills = (resume: ResumeData, width = defaultWidth) => {
-  const content = resume.skills
-    .map(
-      ({ label, items }) =>
-        `${subHeadingColor(label)}\n${wrap(
-          textColor(items.join(', ')),
-          width - 6,
-          4,
-        )}`,
-    )
-    .join('\n\n');
-
-  return renderBox(`${headingColor('Skills')}\n${content}`, width, 'Skills');
-};
+const formatSkillGroup = (
+  label: string,
+  items: string[],
+  width: number,
+) =>
+  `${subHeadingColor(label)}\n${wrapText(
+    textColor(items.join(', ')),
+    width - 6,
+    4,
+  )}`;
 
 const renderExperienceEntry = (
   experience: ResumeExperience,
@@ -185,34 +180,71 @@ const renderExperienceEntry = (
   return `${header}\n${meta}\n\n${highlights}`;
 };
 
+const renderEducationEntry = (width: number) => (education: {
+  degree: string;
+  school: string;
+  period: string;
+  location: string;
+}) =>
+  `${subHeadingColor(education.degree)}\n${textColor(
+    education.school,
+  )}\n${chalk.dim(`${education.period} • ${education.location}`)}`;
+
+export const renderBanner = (resume: ResumeData, width = DEFAULT_WIDTH) => {
+  const ascii = figlet.textSync(resume.basics.name, { font: 'Small' });
+  const gradientText = accent.multiline(ascii);
+  const title = center(subHeadingColor(resume.basics.title), width);
+  return `${gradientText}\n${title}\n${divider(width)}\n`;
+};
+
+export const renderSummary = (resume: ResumeData, width = DEFAULT_WIDTH) => {
+  const summary = resume.basics.summary
+    .map((paragraph) => wrapText(textColor(paragraph), width - 4))
+    .join('\n\n');
+
+  return renderSectionBox('Summary', summary, width, 'Overview');
+};
+
+export const renderContacts = (
+  resume: ResumeData,
+  width = DEFAULT_WIDTH,
+) => {
+  const entries = formatContactEntries(resume);
+  return renderSectionBox('Contact', entries, width, 'Contact');
+};
+
+export const renderSkills = (resume: ResumeData, width = DEFAULT_WIDTH) => {
+  const content = resume.skills
+    .map(({ label, items }) => formatSkillGroup(label, items, width))
+    .join('\n\n');
+
+  return renderSectionBox('Skills', content, width, 'Skills');
+};
+
 export const renderExperience = (
   resume: ResumeData,
-  width = defaultWidth,
+  width = DEFAULT_WIDTH,
 ) => {
   const content = resume.experience
     .map((exp) => renderExperienceEntry(exp, width - 6))
     .join(`\n${divider(width - 6)}\n`);
 
-  return renderBox(`${headingColor('Experience')}\n${content}`, width, 'XP');
+  return renderSectionBox('Experience', content, width, 'XP');
 };
 
 export const renderEducation = (
   resume: ResumeData,
-  width = defaultWidth,
+  width = DEFAULT_WIDTH,
 ) => {
+  const entry = renderEducationEntry(width - 6);
   const content = resume.education
-    .map(
-      (education) =>
-        `${subHeadingColor(education.degree)}\n${textColor(
-          education.school,
-        )}\n${chalk.dim(`${education.period} • ${education.location}`)}`,
-    )
+    .map((education) => entry(education))
     .join(`\n${divider(width - 6)}\n`);
 
-  return renderBox(`${headingColor('Education')}\n${content}`, width, 'Edu');
+  return renderSectionBox('Education', content, width, 'Edu');
 };
 
-export const renderLinks = (resume: ResumeData, width = defaultWidth) => {
+export const renderLinks = (resume: ResumeData, width = DEFAULT_WIDTH) => {
   const content = [
     `${subHeadingColor('PDF')} ${chalk.gray('→')} ${textColor(
       resume.basics.resumeUrl,
@@ -225,35 +257,21 @@ export const renderLinks = (resume: ResumeData, width = defaultWidth) => {
     )}`,
   ].join('\n');
 
-  return renderBox(`${headingColor('Links')}\n${content}`, width, 'Links');
+  return renderSectionBox('Links', content, width, 'Links');
 };
 
-export const renderHelp = (width = defaultWidth) => {
-  const commands: Array<[string, string]> = [
-    ['help | ?', 'Cheat sheet / command palette'],
-    ['summary | tldr', 'Exec summary aka commit message'],
-    ['skills | stack', 'Stacks, toys, and favorite toolchains'],
-    ['experience | xp', 'Ship log with receipts'],
-    ['education | edu', 'Street cred & classrooms'],
-    ['links | urls', 'Bookmarks worth opening'],
-    ['resume | ship | deploy', 'Print the whole README of me'],
-    ['clear | cls', 'Wipe the buffer'],
-    ['exit | quit | bye', 'Drop the SSH tunnel'],
-  ];
+export const renderHelp = (width = DEFAULT_WIDTH) => {
+  const body = HELP_COMMANDS.map(
+    ([command, description]) =>
+      `${bulletColor(command.padEnd(12))} ${textColor(description)}`,
+  ).join('\n');
 
-  const body = commands
-    .map(
-      ([command, description]) =>
-        `${bulletColor(command.padEnd(12))} ${textColor(description)}`,
-    )
-    .join('\n');
-
-  return renderBox(`${headingColor('Commands')}\n${body}`, width, 'Help');
+  return renderSectionBox('Commands', body, width, 'Help');
 };
 
 export const renderFullResume = (
   resume: ResumeData,
-  width = defaultWidth,
+  width = DEFAULT_WIDTH,
 ) =>
   [
     renderBanner(resume, width),
@@ -265,7 +283,7 @@ export const renderFullResume = (
     renderLinks(resume, width),
   ].join('\n');
 
-export const renderWelcome = (resume: ResumeData, width = defaultWidth) =>
+export const renderWelcome = (resume: ResumeData, width = DEFAULT_WIDTH) =>
   [
     renderBanner(resume, width),
     renderSummary(resume, width),
