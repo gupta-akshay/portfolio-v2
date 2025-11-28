@@ -180,7 +180,7 @@ const renderExperienceEntry = (
   return `${header}\n${meta}\n\n${highlights}`;
 };
 
-const renderEducationEntry = (width: number) => (education: {
+const renderEducationEntry = () => (education: {
   degree: string;
   school: string;
   period: string;
