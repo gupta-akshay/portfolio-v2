@@ -236,7 +236,7 @@ export const renderEducation = (
   resume: ResumeData,
   width = DEFAULT_WIDTH,
 ) => {
-  const entry = renderEducationEntry(width - 6);
+  const entry = renderEducationEntry();
   const content = resume.education
     .map((education) => entry(education))
     .join(`\n${divider(width - 6)}\n`);
