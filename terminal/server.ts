@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import http from 'node:http';
 import { generateKeyPairSync } from 'node:crypto';
 
 import chalk from './chalk';
@@ -198,4 +199,73 @@ server.listen(listenPort, listenHost, () => {
   );
   console.log(chalk.dim(`Example: ssh -p ${listenPort} localhost`));
 });
+
+const httpPort = Number(process.env.TERMINAL_HTTP_PORT ?? 8080);
+const httpHost = process.env.TERMINAL_HTTP_HOST ?? '0.0.0.0';
+const browserMessage = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Akshay Gupta — Terminal Resume</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: #050607;
+        color: #f0f4f8;
+      }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        padding: 2rem;
+      }
+      main {
+        max-width: 480px;
+        text-align: center;
+        line-height: 1.6;
+      }
+      code {
+        display: inline-block;
+        padding: 0.35rem 0.65rem;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 0.95rem;
+      }
+      a {
+        color: #7dd3fc;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Connect via SSH</h1>
+      <p>
+        This subdomain hosts Akshay's interactive terminal resume. Fire up your
+        terminal and run:
+      </p>
+      <p><code>ssh ssh.akshaygupta.live</code></p>
+      <p>Prefer a traditional site? Visit <a href="https://akshaygupta.live">akshaygupta.live</a>.</p>
+    </main>
+  </body>
+</html>`;
+
+http
+  .createServer((req, res) => {
+    res.writeHead(200, {
+      'content-type': 'text/html; charset=utf-8',
+      'cache-control': 'no-store',
+    });
+    res.end(browserMessage);
+  })
+  .listen(httpPort, httpHost, () => {
+    console.log(
+      chalk.green(
+        `Browser helper page ready on http://${httpHost}:${httpPort}.`,
+      ),
+    );
+  });
 

@@ -39,6 +39,6 @@ RUN chmod +x /app/docker-entrypoint.js
 # Entrypoint prepares host keys before launching pnpm terminal:ssh
 ENTRYPOINT [ "/app/docker-entrypoint.js" ]
 
-# The SSH server listens on port 22 inside the container
-EXPOSE 22
+# The SSH server listens on port 22 and HTTP helper on 8080
+EXPOSE 22 8080
 CMD [ "pnpm", "terminal:ssh" ]

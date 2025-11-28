@@ -12,6 +12,8 @@ primary_region = 'bom'
 [env]
   TERMINAL_SSH_PORT = "22"
   TERMINAL_SSH_HOST_KEY = "/app/keys/terminal_host_ed25519"
+  TERMINAL_HTTP_PORT = "8080"
+  TERMINAL_HTTP_HOST = "0.0.0.0"
 
 [[mounts]]
   source = "keys_volume"
@@ -29,3 +31,12 @@ primary_region = 'bom'
   [[services.ports]]
     port = 22
     handlers = []
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]

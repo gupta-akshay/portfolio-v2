@@ -108,6 +108,8 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 You can now expose a terminal-native version of the resume via SSH (similar to `terminal.shop`).
 
+When browsers hit `ssh.akshaygupta.live`, a lightweight HTTP helper (served from `terminal/server.ts`) returns guidance to run `ssh ssh.akshaygupta.live` plus a link back to `https://akshaygupta.live`. Point your reverse proxy’s HTTP traffic to `TERMINAL_HTTP_PORT` so visitors always see friendly instructions.
+
 ### Local preview
 
 ```bash
@@ -129,8 +131,10 @@ ssh -p 2222 localhost
 | Variable | Description | Default |
 | --- | --- | --- |
 | `TERMINAL_SSH_HOST_KEY` | Absolute/relative path to an Ed25519 host key | *Ephemeral key generated at runtime* |
-| `TERMINAL_SSH_PORT` | Port to listen on | `2222` |
-| `TERMINAL_SSH_HOST` | Interface to bind | `0.0.0.0` |
+| `TERMINAL_SSH_PORT` | SSH port to listen on | `2222` |
+| `TERMINAL_SSH_HOST` | SSH interface to bind | `0.0.0.0` |
+| `TERMINAL_HTTP_PORT` | HTTP helper port for browsers | `8080` |
+| `TERMINAL_HTTP_HOST` | HTTP helper interface to bind | `0.0.0.0` |
 
 ### Deploying to `ssh.akshaygupta.live`
 
@@ -155,7 +159,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 ```
 
-5. Add an `A` record for `ssh.akshaygupta.live` (or the root domain if you want `ssh akshaygupta.live`) pointing to the VM.
+5. Add an `A` record for `ssh.akshaygupta.live` (or the root domain if you want `ssh akshaygupta.live`) pointing to the VM. Route HTTP (ports 80/443) through your proxy to the helper server so browsers hitting the subdomain see instructions to use SSH or visit the main site.
 6. (Optional) If your primary SSH access already uses port 22, expose this service on another port (e.g., 2222) and instruct users to run `ssh -p 2222 ssh.akshaygupta.live`.
 
 The terminal UI reads structured data from `terminal/resumeData.ts`, which mirrors `public/assets/akshay-cv.pdf`. Update this file whenever the PDF changes to keep both sources consistent.
