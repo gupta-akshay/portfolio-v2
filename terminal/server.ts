@@ -199,7 +199,9 @@ const loadHostKey = () => {
       'TERMINAL_SSH_HOST_KEY not set. Using ephemeral host key for this session.',
     ),
   );
-  return privateKey.export({ type: 'pkcs8', format: 'pem' }) as Buffer;
+  return Buffer.from(
+    privateKey.export({ type: 'pkcs8', format: 'pem' }) as string,
+  );
 };
 
 const createSshServer = () =>
