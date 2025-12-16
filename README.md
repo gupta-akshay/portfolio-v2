@@ -4,7 +4,7 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 
 ## 🛠️ Tech Stack
 
-- **Next.js 16** & **React 19**
+- **Next.js 16** & **React 19** with React Compiler
 - **TypeScript** & **Sass**
 - **TanStack Form** & **Zod** validation
 - **Web Audio API** for music player
@@ -12,6 +12,9 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 - **Sanity CMS** for blog content
 - **AWS S3 + CloudFront** for music streaming
 - **Resend** for email delivery
+- **Sentry** for error tracking & performance monitoring
+- **Vercel Analytics** & **Speed Insights**
+- **Google Analytics** & **Microsoft Clarity**
 
 ## ✨ Features
 
@@ -28,6 +31,8 @@ Live at [akshaygupta.live](https://akshaygupta.live)
   - Estimated Reading Time calculation
   - Smart Category Overflow with "+n" indicators
   - Emoji Reactions system
+  - Social Share buttons
+  - On-demand Revalidation via Sanity webhooks
 - 📧 **Contact Form** with validation and rate limiting
 - 🎵 **Music Player** with Web Audio API:
   - Real-time waveform visualization
@@ -35,15 +40,57 @@ Live at [akshaygupta.live](https://akshaygupta.live)
   - Queue management with drag & drop
   - Touch gestures and keyboard controls
   - Mobile-optimized interface
+- 📊 **GitHub Contribution Calendar** on about page
+- 🗺️ **Interactive Map** section
+- 🔗 **Dynamic OpenGraph Images** per page
 
 ## 🏗️ Architecture
 
 - **Server-Side Rendering (SSR)** with Next.js App Router
 - **Client-Server Component Separation** for optimal performance
+- **React Compiler** for automatic optimizations
 - **Metadata Support** for SEO while maintaining interactivity
 - **Custom Hooks** for cursor interactions and state management
 - **Context-based State Management** for theme and cursor states
 - **Performance Optimized** with React 19 features and best practices
+- **Bundle Analysis** with `@next/bundle-analyzer`
+
+## 📈 Observability & Monitoring
+
+- **Sentry** - Error tracking, performance monitoring, and session replay
+  - Server, client, and edge runtime instrumentation
+  - Custom error boundaries with `global-error.tsx`
+  - Source map uploads for debugging
+  - Ad-blocker circumvention via `/monitoring` tunnel route
+- **Vercel Analytics** - Core web vitals and page views
+- **Vercel Speed Insights** - Real user performance metrics
+- **Google Analytics** - Traffic and user behavior tracking
+- **Microsoft Clarity** - Session recordings and heatmaps
+
+## 🔒 Security
+
+Comprehensive security headers configured in `next.config.mjs`:
+
+- **Content Security Policy (CSP)** - Strict script/style/resource policies
+- **HSTS** - HTTP Strict Transport Security with preload
+- **X-Frame-Options** - Clickjacking protection
+- **X-Content-Type-Options** - MIME type sniffing prevention
+- **Referrer-Policy** - Strict origin referrer control
+- **Permissions-Policy** - Camera, microphone, geolocation disabled
+
+## 🔍 SEO & PWA
+
+- **Dynamic Sitemap** - Auto-generated from blog posts (`/sitemap.xml`)
+- **Robots.txt** - Search engine crawling rules (`/robots.txt`)
+- **Web App Manifest** - PWA support with standalone display
+- **Dynamic OpenGraph Images** - Generated per page for rich social previews
+- **Structured Metadata** - Title templates, keywords, Twitter cards
+
+## 🚀 CI/CD & Deployment
+
+- **GitHub Actions** - Automated deployment to Fly.io on push to `main`
+- **Docker** - Containerized SSH terminal server
+- **Fly.io** - Terminal resume hosting with persistent volumes
 
 ## 🎮 Easter Eggs
 
@@ -86,6 +133,9 @@ NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY=your_cloudfront_private_key
 NEXT_PUBLIC_GOOGLE_ANALYTICS=your_ga_measurement_id
 NEXT_PUBLIC_CLARITY_APP_CODE=your_clarity_app_code
 
+# Sentry (Optional - for error tracking)
+SENTRY_AUTH_TOKEN=your_sentry_auth_token
+
 # Base URL (Optional - defaults to localhost:3000)
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
@@ -94,15 +144,30 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 1. **Database**: Create a Neon PostgreSQL database
 2. **Storage**: Set up AWS S3 + CloudFront for music files
-3. **Services**: Configure Resend
-4. **Run migrations**: `pnpm db:migrate`
-5. **Start development**:
+3. **Services**: Configure Resend for emails
+4. **CMS**: Set up Sanity project and configure webhook for revalidation
+5. **Run migrations**: `pnpm db:migrate`
+6. **Start development**:
 
 ```bash
 pnpm dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000)
+
+### Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start development server with Turbopack |
+| `pnpm build` | Build for production |
+| `pnpm start` | Start production server |
+| `pnpm lint` | Run ESLint |
+| `pnpm db:generate` | Generate Drizzle migrations |
+| `pnpm db:migrate` | Run database migrations |
+| `pnpm db:studio` | Open Drizzle Studio GUI |
+| `pnpm terminal:ssh` | Start SSH terminal server |
+| `ANALYZE=true pnpm build` | Build with bundle analyzer |
 
 ## 🖥️ Terminal Resume over SSH
 
