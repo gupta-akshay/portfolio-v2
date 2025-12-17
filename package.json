@@ -92,6 +92,7 @@
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
+      "@sentry/cli",
       "@vercel/speed-insights",
       "cpu-features",
       "esbuild",
