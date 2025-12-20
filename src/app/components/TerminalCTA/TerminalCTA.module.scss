@@ -1,0 +1,183 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixin' as *;
+@use '../../styles/3d-effects' as *;
+@use 'sass:color';
+
+$terminal-accent: color.scale($px-theme, $lightness: 20%);
+
+.fabContainer {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 1201;
+  pointer-events: none;
+
+  @include down-md {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+.ctaButton {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 24px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  color: $px-white;
+  background: rgba($px-dark, 0.85);
+  border: 1px solid rgba($px-white, 0.12);
+  box-shadow: 0 18px 45px rgba($px-black, 0.45);
+  text-align: left;
+  @include floating-3d(3px, 0.12);
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 24px 50px rgba($terminal-accent, 0.3);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($terminal-accent, 0.6);
+    outline-offset: 4px;
+  }
+}
+
+.buttonLabel {
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba($px-white, 0.7);
+}
+
+.buttonHint {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 16px;
+  color: $px-white;
+}
+
+.command {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: rgba($px-white, 0.05);
+  border: 1px solid rgba($px-white, 0.1);
+  color: $px-white;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  letter-spacing: 0.05em;
+  overflow-x: auto;
+}
+
+.promptSymbol {
+  color: $terminal-accent;
+  font-size: 14px;
+}
+
+.commandText {
+  color: $px-white;
+  font-size: 14px;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1200;
+  pointer-events: none;
+}
+
+.modalWrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1201;
+  pointer-events: none;
+}
+
+.modal {
+  width: min(520px, 100%);
+  background: $px-bg-2;
+  border-radius: 28px;
+  padding: 36px;
+  border: 1px solid rgba($px-white, 0.1);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: rgba($px-white, 0.7);
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+
+  &:hover,
+  &:focus-visible {
+    color: $px-white;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($px-white, 0.3);
+    outline-offset: 3px;
+  }
+}
+
+.modalKicker {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: rgba($px-white, 0.65);
+  margin-bottom: 10px;
+}
+
+.modalTitle {
+  font-size: clamp(24px, 3vw, 32px);
+  color: $px-white;
+  margin-bottom: 14px;
+}
+
+.modalDescription {
+  color: $px-body;
+  margin-bottom: 20px;
+}
+
+.modalMeta {
+  margin-top: 16px;
+  color: rgba($px-white, 0.8);
+  font-size: 15px;
+}
+
+.commandInline {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  background: rgba($px-white, 0.08);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba($px-white, 0.12);
+}
+
+@include down-sm {
+  .ctaButton {
+    padding: 12px 18px;
+    border-radius: 14px;
+  }
+
+  .modal {
+    padding: 28px 22px 32px;
+  }
+}
+
+

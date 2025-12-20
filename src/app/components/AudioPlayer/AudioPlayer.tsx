@@ -237,7 +237,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             playAttemptInProgressRef.current = true;
             await audioRef.current.pause();
           } catch (e) {
-            // Ignore pause errors
+            console.error('Error pausing audio:', e);
           }
         }
 
@@ -397,7 +397,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   useEffect(() => {
     if (!audioRef.current || currentTrackIndex === null || !isPlayable) return;
 
-    let animationFrameIds = {
+    const animationFrameIds = {
       main: null as number | null,
       mini: null as number | null,
     };

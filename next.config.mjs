@@ -1,10 +1,10 @@
+import { withSentryConfig } from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
-import crypto from 'crypto';
 import bundleAnalyzer from '@next/bundle-analyzer';
 
 const nextConfig = {
+  reactCompiler: true,
   experimental: {
-    // optimizeCss: true, // Removed because it was using critters package, which is not maintained anymore.
     optimizeServerReact: true,
     serverMinification: true,
     optimizePackageImports: [
@@ -22,13 +22,15 @@ const nextConfig = {
       'react-hot-toast',
       'react-syntax-highlighter',
       'resend',
-      'sanitize-html',
       'sanity',
       'next-sanity',
       'typed.js',
       'zod',
     ],
   },
+
+  // Turbopack configuration
+  turbopack: {},
 
   sassOptions: {
     quietDeps: true,
@@ -65,16 +67,16 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://cdnjs.buymeacoffee.com https://*.buymeacoffee.com",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live https://cdn.buymeacoffee.com https://*.buymeacoffee.com",
-              "font-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://cdnjs.buymeacoffee.com https://*.buymeacoffee.com https://va.vercel-scripts.com https://vercel.live https://scripts.clarity.ms",
+              "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://*.google.com https://*.googleapis.com https://*.netlify.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live https://cdn.buymeacoffee.com https://*.buymeacoffee.com https://www.googletagmanager.com https://vercel.live https://vercel.com",
+              "font-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live https://assets.vercel.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
-              "frame-src 'self' https://www.google.com https://app.netlify.com",
-              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com https://*.s3.amazonaws.com https://*.s3.ap-south-1.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://www.google-analytics.com https://www.googletagmanager.com https://github-contributions-api.jogruber.de",
+              "frame-src 'self' https://www.google.com https://app.netlify.com https://vercel.live",
+              "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://*.netlify.com https://*.s3.amazonaws.com https://*.s3.ap-south-1.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://www.google-analytics.com https://www.googletagmanager.com https://github-contributions-api.jogruber.de https://vercel.live wss://ws-us3.pusher.com https://*.ingest.sentry.io",
               "media-src 'self' blob: https://*.s3.amazonaws.com https://*.s3.ap-south-1.amazonaws.com https://*.cloudfront.net",
               'block-all-mixed-content',
               'upgrade-insecure-requests',
@@ -112,72 +114,46 @@ const nextConfig = {
       },
     ];
   },
-
-  webpack: (config, { isServer }) => {
-    // Optimize chunks
-    config.optimization.splitChunks = {
-      chunks: 'all',
-      minSize: 30000, // Increased minSize for better chunk splitting
-      maxSize: 250000, // Prevents oversized chunks
-      minChunks: 1,
-      maxAsyncRequests: 30,
-      maxInitialRequests: 30,
-      cacheGroups: {
-        default: false,
-        vendors: false,
-        framework: {
-          name: 'framework',
-          chunks: 'all',
-          test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-subscription)[\\/]/,
-          priority: 40,
-        },
-        lib: {
-          test(module) {
-            return (
-              module.size() > 160000 &&
-              /node_modules[/\\]/.test(module.identifier())
-            );
-          },
-          name(module) {
-            const hash = crypto.createHash('sha1');
-            hash.update(module.identifier());
-            return hash.digest('hex').substring(0, 8);
-          },
-          priority: 30,
-          minChunks: 1,
-          reuseExistingChunk: true,
-        },
-        commons: {
-          name: 'commons',
-          minChunks: 2,
-          priority: 20,
-        },
-        shared: {
-          name(module, chunks) {
-            return (
-              crypto
-                .createHash('sha1')
-                .update(chunks.reduce((acc, chunk) => acc + chunk.name, ''))
-                .digest('hex') + '-shared'
-            );
-          },
-          priority: 10,
-          minChunks: 2,
-          reuseExistingChunk: true,
-        },
-      },
-    };
-
-    if (!isServer) {
-      config.resolve.fallback = { fs: false }; // Avoid fs dependency issue
-    }
-
-    return config;
-  },
 };
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-export default withBundleAnalyzer(nextConfig);
+export default withSentryConfig(withBundleAnalyzer(nextConfig), {
+  // For all available options, see:
+  // https://www.npmjs.com/package/@sentry/webpack-plugin#options
+
+  org: 'akshaygupta',
+
+  project: 'personal-portfolio',
+
+  // Only print logs for uploading source maps in CI
+  silent: !process.env.CI,
+
+  // For all available options, see:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
+  widenClientFileUpload: true,
+
+  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+  // This can increase your server load as well as your hosting bill.
+  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+  // side errors will fail.
+  tunnelRoute: '/monitoring',
+
+  webpack: {
+    // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
+    // See the following for more information:
+    // https://docs.sentry.io/product/crons/
+    // https://vercel.com/docs/cron-jobs
+    automaticVercelMonitors: true,
+
+    // Tree-shaking options for reducing bundle size
+    treeshake: {
+      // Automatically tree-shake Sentry logger statements to reduce bundle size
+      removeDebugLogging: true,
+    },
+  },
+});

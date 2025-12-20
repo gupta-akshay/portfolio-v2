@@ -23,9 +23,8 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isFetched, setIsFetched] = useState(false);
 
-  const fetchReactions = useCallback(async () => {
+  const fetchReactions = useCallback(async (signal: AbortSignal) => {
     try {
-      const { signal } = new AbortController();
       const fingerprint = getOrCreateFingerprint();
 
       // Add timestamp to prevent any caching
@@ -48,7 +47,10 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
         setUserReactions(data.userReactions || []);
       }
     } catch (error) {
-      console.error('Error fetching reactions:', error);
+      // Don't log AbortError as it's expected when component unmounts
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Error fetching reactions:', error);
+      }
     } finally {
       setIsFetched(true);
     }
@@ -95,11 +97,15 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
 
   // Load reactions on component mount
   useEffect(() => {
-    fetchReactions();
+    const abortController = new AbortController();
+    fetchReactions(abortController.signal);
 
     // Show the reactions bar after a short delay
     const timer = setTimeout(() => setIsVisible(true), 1000);
-    return () => clearTimeout(timer);
+    return () => {
+      abortController.abort();
+      clearTimeout(timer);
+    };
   }, [blogSlug, fetchReactions]);
 
   const getReactionCount = (emoji: string) => {

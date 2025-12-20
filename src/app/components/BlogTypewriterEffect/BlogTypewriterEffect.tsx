@@ -20,6 +20,7 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const el = useRef<HTMLSpanElement>(null);
 
+
   const developerMessages = useMemo(
     () => [
       'Welcome, fellow developer! 👨‍💻',
@@ -36,7 +37,8 @@ const BlogTypewriterEffect: React.FC<BlogTypewriterEffectProps> = ({
     const sequence = 'dev';
     keySequenceRef.current += event.key.toLowerCase();
 
-    if (keySequenceRef.current.includes(sequence)) {
+    // Check if the current sequence ends with our target sequence
+    if (keySequenceRef.current.endsWith(sequence)) {
       setIsActive(true);
       setIsComplete(false);
       setCountdown(0);

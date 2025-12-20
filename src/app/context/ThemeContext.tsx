@@ -1,6 +1,6 @@
 'use client';
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -21,7 +21,10 @@ export function ThemeProvider({
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme');
     const isStoredThemeLight = storedTheme === 'theme-light';
-    setIsLightMode(isStoredThemeLight);
+    const setTheme = () => {
+      setIsLightMode(isStoredThemeLight);
+    };
+    setTheme();
 
     // Apply theme to body
     const bodyClassList = document.querySelector('body')?.classList;

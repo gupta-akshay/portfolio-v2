@@ -4,11 +4,6 @@ import Layout from '@/app/components/Layout';
 import { getPosts } from '@/sanity/lib/client';
 import BlogTile from '@/app/components/BlogTile';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
-import {
-  InteractiveBackground,
-  ScrollAnimation,
-  StaggerAnimation,
-} from '@/app/components';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live'),
@@ -87,13 +82,11 @@ async function BlogPosts() {
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <StaggerAnimation staggerDelay={0.1} useIntersectionObserver={true}>
-        <div className='row'>
-          {posts.map((post) => (
-            <BlogTile key={post._id} blog={post} />
-          ))}
-        </div>
-      </StaggerAnimation>
+      <div className='row'>
+        {posts.map((post) => (
+          <BlogTile key={post._id} blog={post} />
+        ))}
+      </div>
     </>
   );
 }
@@ -111,27 +104,13 @@ export default function Blog() {
           overflowX: 'hidden',
         }}
       >
-        <InteractiveBackground
-          variant='grid'
-          count={12}
-          color='#2fbf71'
-          size={40}
-          speed={0.8}
-          intensity={0.9}
-          interactive={true}
-          className='blog-background'
-        />
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <ScrollAnimation animation='fadeIn' duration={0.8}>
-            <div className='title'>
-              <h3>Latest Blogs.</h3>
-            </div>
-          </ScrollAnimation>
-          <ScrollAnimation animation='slideUp' duration={0.8} delay={0.2}>
-            <Suspense fallback={<LoadingIndicator />}>
-              <BlogPosts />
-            </Suspense>
-          </ScrollAnimation>
+          <div className='title'>
+            <h3>Latest Blogs.</h3>
+          </div>
+          <Suspense fallback={<LoadingIndicator />}>
+            <BlogPosts />
+          </Suspense>
         </div>
       </section>
     </Layout>

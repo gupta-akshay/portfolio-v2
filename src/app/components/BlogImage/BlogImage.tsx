@@ -1,6 +1,5 @@
 import { CSSProperties } from 'react';
 import Image from 'next/image';
-// @ts-ignore
 import { getImageDimensions } from '@sanity/asset-utils';
 import { urlFor } from '@/sanity/lib/image';
 import styles from './BlogImage.module.scss';

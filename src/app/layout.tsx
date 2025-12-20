@@ -5,20 +5,20 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik, cookie } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { CursorProvider } from './context/CursorContext';
 import { EasterEggProvider } from './context/EasterEggContext';
-import CustomCursor from './components/CustomCursor';
 import MatrixRain from './components/MatrixRain';
 import DiscoMode from './components/DiscoMode';
 import DiscoModeGlobalStyles from './components/DiscoModeGlobalStyles/DiscoModeGlobalStyles';
 import BlogTypewriterEffect from './components/BlogTypewriterEffect';
 import EasterEggHints from './components/EasterEggHints';
 import EasterEggWrapper from './components/EasterEggWrapper';
+import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
+import TerminalCTA from './components/TerminalCTA';
+import { TerminalCTAProvider } from './components/TerminalCTA/TerminalCTAContext';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import 'devicon/devicon.min.css';
 import './styles/globals.scss';
 
 config.autoAddCss = false;
@@ -94,10 +94,13 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ThemeProvider>
-          <CursorProvider>
+          <TerminalCTAProvider>
             <EasterEggProvider>
-              <LoadingProvider>{children}</LoadingProvider>
-              <CustomCursor />
+              <LoadingProvider>
+                {children}
+                <TerminalCTA />
+              </LoadingProvider>
+              <DeviconCSSLoader />
               <EasterEggWrapper>
                 <MatrixRain />
                 <DiscoMode />
@@ -106,7 +109,7 @@ export default function RootLayout({
                 <EasterEggHints />
               </EasterEggWrapper>
             </EasterEggProvider>
-          </CursorProvider>
+          </TerminalCTAProvider>
         </ThemeProvider>
         <Metrics />
         <SpeedInsights />

@@ -6,4 +6,8 @@ if (!process.env.DATABASE_URL) {
   dotenv.config({ path: '.env.local' });
 }
 
-export const db = drizzle(process.env.DATABASE_URL!, { schema });
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
+export const db = drizzle(process.env.DATABASE_URL, { schema });

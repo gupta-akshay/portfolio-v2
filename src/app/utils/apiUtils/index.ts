@@ -1,6 +1,3 @@
-// Rate limiting utilities
-export * from './rateLimit';
-
 // Email merge field utilities
 export * from './replaceMergeFields';
 

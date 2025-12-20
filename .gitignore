@@ -48,3 +48,6 @@ certificates
 /dist
 # Local Netlify folder
 .netlify
+
+# Sentry Config File
+.env.sentry-build-plugin
