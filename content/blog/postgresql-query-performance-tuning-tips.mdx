@@ -1,0 +1,267 @@
+export const metadata = {
+    title: 'PostgreSQL Query Performance Tuning Tips',
+    slug: 'postgresql-query-performance-tuning-tips',
+    publishedAt: '2024-10-30',
+    categories: ['postgres', 'database', 'performance'],
+    coverImage: '/images/blog/postgresql-query-performance-tuning-tips.avif',
+    coverImageAlt: 'PostgreSQL Query Performance Tuning Tips',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    },
+    excerpt: 'Practical PostgreSQL optimization techniques: indexing strategies, query rewrites, and configuration tweaks to drastically improve database performance.'
+}
+
+PostgreSQL is known for its robust capabilities, but ensuring optimal query performance requires a good understanding of how the database executes queries and manages data. In this post, I will try to cover some practical query tuning techniques, and we'll work through examples using a sample dataset to demonstrate how these techniques can drastically improve performance.
+
+## Generate Sample Data:
+```sql
+CREATE TABLE customers (
+  id SERIAL PRIMARY KEY,
+  customer_name VARCHAR(255),
+  email VARCHAR(255),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  customer_id INT REFERENCES customers(id),
+  order_date TIMESTAMPTZ DEFAULT NOW(),
+  total_amount NUMERIC(10, 2)
+);
+
+-- Insert sample customers
+INSERT INTO customers (customer_name, email) 
+SELECT 'Customer ' || i, 'customer' || i || '@example.com'
+FROM generate_series(1, 1000000) AS s(i);
+
+-- Insert sample orders for each customer
+INSERT INTO orders (customer_id, order_date, total_amount)
+SELECT (RANDOM() * 1000000)::INT, NOW() - interval '1 day' * (RANDOM() * 365)::int, (RANDOM() * 500 + 20)
+FROM generate_series(1, 1000000) AS s(i);
+```
+Above queries create two tables, `customers` and `orders`, with `customers` holding basic customer details and `orders` linking to `customers` through `customer_id`. After setting up the tables, 1,000,000 sample customers are generated, each with a unique name and email. Additionally, 1,000,000 random orders are created, each associated with a random customer, with `order_date` values within the past year and random `total_amount` values between $20 and $520.
+
+## Understanding `EXPLAIN` and `EXPLAIN ANALYZE`
+
+The foundation of any query tuning process in PostgreSQL is understanding how queries are executed. Now, using the generated sample dataset if we analyze a simple query:
+```sql
+EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 12345;
+```
+We get the below output:
+```sql
+Gather  (cost=1000.00..12578.53 rows=2 width=22) (actual time=18.416..62.509 rows=2 loops=1)
+  Workers Planned: 2
+  Workers Launched: 2
+  ->  Parallel Seq Scan on orders  (cost=0.00..11578.33 rows=1 width=22) (actual time=32.098..55.429 rows=1 loops=3)
+        Filter: (customer_id = 12345)
+        Rows Removed by Filter: 333333
+Planning Time: 2.180 ms
+Execution Time: 63.210 ms
+```
+A general thumb rule to read a query plan is to go from the innermost child node up to the topmost node, as it mirrors the execution order. Here's how I will interpret the above query plan:
+1. **Parallel Sequential Scan on `orders` table**:
+  - The innermost node is `Parallel Seq Scan`, which indicates that the `orders` table is scanned sequentially by each parallel worker.
+  - **Cost**: This shows the estimated cost for each worker to perform the sequential scan.
+  - **Rows**: It estimates that each worker will find 1 row meeting the filter condition (`customer_id = 12345`), with a row width of `22 bytes`.
+  - **Actual Time**: The real-time range for each worker to complete its scan on `orders` in milliseconds.
+  - **Filter Condition**: Each worker applies this filter to find rows matching the filter.
+  - **Rows Removed by Filter**: This indicates that each worker processed approximately `333,333` rows, removing all but 1 due to the filter.
+2. **Gather Operation**:
+  - The next node up, 'Gather', combines results from each parallel worker.
+  - **Workers Planned and Launched**: `Workers Planned: 2` and `Workers Launched: 2` shows that two workers were planned and successfully launched, running the 'Parallel Seq Scan'.
+  - **Cost**: Reflects the total estimated cost range for gathering results from all workers and assembling the final result.
+Rows (`rows=2 width=22`): The estimated total output is 2 rows from all workers.
+  - **Actual Time**: Again, this is the real time taken for the 'Gather' operation to complete.
+3. **Additional Planning and Execution Metrics**:
+  - **Planning Time (`Planning Time: 2.180 ms`)**: The time spend planning and creating the query execution plan.
+  - **Execution Time (`Execution Time: 63.210 ms`)**: The total time taken to execute the query, including scanning, filtering, and gathering results.
+
+When reading the query plan:
+
+- You should always start from the innermost operation and move outward, following each node's effect on the overall execution.
+- Step-by-step analysis from the innermost child helps you understand each action taken, leading to a more accurate performance assessment and clearer opportunities for optimization.
+
+I will go in more details around `EXPLAIN` and `EXPLAIN ANALYZE` and all the different types of nodes in a separate article.
+
+## Creating Indexes for Faster Data Retrieval
+
+Indexes allow PostgreSQL to quickly look up data instead of scanning the whole table. For the query in previous section, we can add an index to speed up the lookups by `customer_id`.
+
+```sql
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+```
+Now, if we run the previous query again. The query plan will be:
+```sql
+Index Scan using idx_orders_customer_id on orders  (cost=0.42..12.46 rows=2 width=22) (actual time=0.076..0.091 rows=2 loops=1)
+  Index Cond: (customer_id = 12345)
+Planning Time: 1.676 ms
+Execution Time: 0.546 ms
+```
+Here, we can see `Index Scan` instead of `Parallel Seq Scan`, and the query execution time has dropped significantly.
+
+**Composite Indexes**: If you often filter by multiple columns, you should use composite indexes.
+
+Example:
+```sql
+CREATE INDEX idx_orders_customer_id_date ON orders (customer_id, order_date);
+```
+This index will improve queries like:
+```sql
+EXPLAIN ANALYZE 
+SELECT * FROM orders WHERE customer_id = 12345 AND order_date > '2024-01-01';
+```
+**Partial Index**: These indexes are built on a subset of data and can be highly efficient for queries that filter on specific values.
+
+Example: Let's consider that we have a `is_active` column in `customers`, which indicates whether a customer is active or not. We can create a partial index here:
+```sql
+CREATE INDEX idx_active_customers ON customers (customer_name)
+WHERE is_active = true;
+```
+This index will be used only when querying active customers, and will significantly reduce the size of the index for large tables where only a portion of rows are relevant to common queries.
+
+## Use `LIMIT` and `OFFSET` Efficiently
+Pagination with `LIMIT` and `OFFSET` can lead to slow queries as the offset grows.
+
+Example:
+```sql
+SELECT * FROM orders ORDER BY order_date DESC LIMIT 10 OFFSET 100000;
+```
+This query will get slower as `OFFSET` increases because PostgreSQL still needs to scan through all preceding rows. Keyset pagination (or, cursor-based pagination) offers a better alternative:
+```sql
+SELECT * FROM orders
+WHERE order_date < '2024-01-01' 
+ORDER BY order_date DESC
+LIMIT 10;
+```
+In this case, you're using the last retrieved value to fetch the next batch of rows. This is more efficient, especially with large datasets.
+
+You can also go through [this ](https://use-the-index-luke.com/no-offset)article for some in-depth explanation on the topic.
+
+Tuning `work_mem` and `maintenance_work_mem`, especially for read-heavy queries with pagination is also a good option.
+
+**Memory Impact on Pagination**:
+
+For large result sets, PostgreSQL may sort and store immediate results in memory. Increasing `work_mem` allows the database to store larger result sets in memory instead of writing to the disk, thus improving query performance.
+
+```sql
+SET work_mem = '256MB';
+EXPLAIN ANALYZE SELECT * FROM orders ORDER BY order_date DESC LIMIT 10 OFFSET 100000;
+```
+## Leverage Index-Only Scans
+Index-only scans allow PostgreSQL to retrieve all the required information from the index without accessing the main table.
+
+**Example**: First, create an index that includes all the columns you need.
+```sql
+CREATE INDEX idx_orders_customer_total ON orders (customer_id, total_amount);
+```
+Now, when you run:
+```sql
+EXPLAIN ANALYZE SELECT customer_id, total_amount FROM orders WHERE customer_id = 12345;
+```
+You should see an index only scan, this is faster because PG doesn't need to fetch rows from the main table.
+
+To maximize the efficiency of index-only scans:
+- **Regularly Vacuum**: Index-only scans rely on up-to-date visibility maps. Running `VACUUM` more frequently ensures that PostgreSQL can take full advantage of this feature.
+```sql
+VACUUM ANALYZE orders;
+```
+
+## Avoid `SELECT *` in Production
+Using `SELECT *` forces PostgreSQL to fetch all columns, which can be inefficient. Instead, specify the columns you actually need. This avoids including unnecessary columns, increasing the data transfer load and processing time.
+```sql
+SELECT * FROM orders WHERE customer_id = 12345;
+```
+Specify the columns you need:
+```sql
+SELECT customer_id, total_amount
+FROM orders
+WHERE customer_id = 12345;
+```
+This reduces both CPU usage and network overhead, especially critical for large tables with many columns.
+
+Use tools like `pg_stat_statements` to identify frequently accessed columns and optimize the queries accordingly.
+
+## Optimizing JOINs
+When joining large tables, always ensure that join columns are indexed. Failure to do so can lead to expensive operations like Hash Join or Nested Loop Join, which can be slow for large tables.
+
+Example:
+```sql
+SELECT o.customer_id, o.order_date, c.customer_name
+FROM orders o
+JOIN customers c ON o.customer_id = c.id;
+```
+Ensure both `orders.customer_id` and `customers.id` are indexed to avoid full table scans during the join operation.
+
+Using `BUFFERS` in your `EXPLAIN ANALYZE` output can help you see whether data is being read from the memory (shared buffers) or disk (file system cache).
+```sql
+EXPLAIN (ANALYZE, BUFFERS) 
+SELECT o.customer_id, c.customer_name 
+FROM orders o 
+JOIN customers c ON o.customer_id = c.id;
+```
+In the output, look for high 'shared read' values, which indicates more disk access and suggests that increasing memory buffers could improve performance.
+```sql
+Hash Join  (cost=38670.00..71339.01 rows=1000000 width=19) (actual time=159.010..371.381 rows=1000000 loops=1)
+  Hash Cond: (o.customer_id = c.id)
+  Buffers: shared hit=514 read=16166, temp read=6846 written=6846
+  ->  Seq Scan on orders o  (cost=0.00..16370.00 rows=1000000 width=4) (actual time=0.035..38.159 rows=1000000 loops=1)
+        Buffers: shared hit=418 read=5952
+  ->  Hash  (cost=20310.00..20310.00 rows=1000000 width=19) (actual time=158.770..158.770 rows=1000000 loops=1)
+        Buckets: 131072  Batches: 8  Memory Usage: 7376kB
+        Buffers: shared hit=96 read=10214, temp written=4270
+        ->  Seq Scan on customers c  (cost=0.00..20310.00 rows=1000000 width=19) (actual time=0.035..60.866 rows=1000000 loops=1)
+              Buffers: shared hit=96 read=10214
+Planning:
+  Buffers: shared hit=29 read=6
+Planning Time: 1.309 ms
+Execution Time: 389.205 ms
+```
+## Partition Large Tables
+PostgreSQL supports table partitioning, which splits a large table into smaller, more manageable pieces. Partitioning can drastically reduce query times when accessing specific subsets of data, such as by date or region.
+
+Example by Partitioning by Range:
+```sql
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    customer_id INT,
+    order_date TIMESTAMPTZ,
+    total_amount NUMERIC(10, 2)
+) PARTITION BY RANGE (order_date);
+
+CREATE TABLE orders_2023 PARTITION OF orders FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');
+```
+With partitioning, PostgreSQL will only scan relevant partitions, optimizing query performance. For more information, you can read the official guide on [partitioning](https://www.postgresql.org/docs/16/ddl-partitioning.html).
+
+## Using Common Table Expressions (CTEs) Efficiently
+CTEs (WITH clauses) can simplify complex queries, but they can also be a performance drag. PostgreSQL materializes CTEs by default, meaning it runs the CTE once and stores the result. For large datasets, this can be costly.
+
+Example:
+```sql
+WITH recent_orders AS (
+    SELECT customer_id, order_date FROM orders WHERE order_date > '2023-01-01'
+)
+SELECT * FROM recent_orders WHERE customer_id = 12345;
+```
+From PostgreSQL 12 onwards, you can control whether CTE is materialized or not by using `NOT MATERIALIZED`:
+```sql
+WITH recent_orders AS NOT MATERIALIZED (
+    SELECT customer_id, order_date FROM orders WHERE order_date > '2023-01-01'
+)
+SELECT * FROM recent_orders WHERE customer_id = 12345;
+```
+For performance-critical queries, prefer using subqueries or inline views over CTEs if materialization isn't necessary.
+
+Again, if you're dealing with long-running queries, consider using `pg_stat_statements` to analyze how often CTEs are materialized and what impact this has on performance.
+
+PostgreSQL's [CTE documentation](https://www.postgresql.org/docs/16/queries-with.html) is a good read on the subject.
+
+## Conclusion
+PostgreSQL provides a powerful set of tools for optimizing queries, from indexes to execution plans. This article just covers the tip of the iceberg, but the above general tips can help you significantly improve the performance of your PostgreSQL queries, especially when working with large datasets and high-traffic environments. Always remember to profile your queries, test different strategies, and monitor the results.
+
+Further reading:
+- [Official PostgreSQL Performance Tips](https://www.postgresql.org/docs/current/performance-tips.html)
+- [Best practices for indexing in PostgreSQL](https://www.pgmustard.com/blog/indexing-best-practices-postgresql)
+- [A good read on Partitioning](https://www.enterprisedb.com/postgres-tutorials/how-use-table-partitioning-scale-postgresql)
+
+> Query optimization is like fine-tuning a high-performance engine: small adjustments yield big gains. Dive deep into PostgreSQL's toolkit — from indexes to memory tweaks — and watch your queries accelerate.

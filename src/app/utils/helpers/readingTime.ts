@@ -1,32 +1,5 @@
-import { PortableTextBlock } from 'sanity';
-
 // Average reading speed in words per minute
 const AVERAGE_READING_SPEED = 200;
-
-/**
- * Extracts plain text from PortableText blocks
- */
-function extractTextFromPortableText(blocks: PortableTextBlock[]): string {
-  return blocks
-    .map((block) => {
-      if (
-        block._type === 'block' &&
-        block.children &&
-        Array.isArray(block.children)
-      ) {
-        return block.children
-          .map((child: any) => {
-            if (child._type === 'span' && child.text) {
-              return child.text;
-            }
-            return '';
-          })
-          .join('');
-      }
-      return '';
-    })
-    .join(' ');
-}
 
 /**
  * Counts words in a text string
@@ -39,30 +12,11 @@ function countWords(text: string): number {
 }
 
 /**
- * Calculates estimated reading time from PortableText content
- * @param body - Array of PortableText blocks
- * @returns Object with reading time in minutes and formatted string
- */
-export function calculateReadingTime(body: PortableTextBlock[]): {
-  minutes: number;
-  text: string;
-} {
-  const plainText = extractTextFromPortableText(body);
-  const wordCount = countWords(plainText);
-  const minutes = Math.ceil(wordCount / AVERAGE_READING_SPEED);
-
-  return {
-    minutes,
-    text: `${minutes} min read`,
-  };
-}
-
-/**
  * Calculates estimated reading time from plain text
  * @param text - Plain text string
  * @returns Object with reading time in minutes and formatted string
  */
-export function calculateReadingTimeFromText(text: string): {
+export function calculateReadingTime(text: string): {
   minutes: number;
   text: string;
 } {
@@ -73,4 +27,27 @@ export function calculateReadingTimeFromText(text: string): {
     minutes,
     text: `${minutes} min read`,
   };
+}
+
+/**
+ * Calculates estimated reading time from MDX content
+ * Strips code blocks and markdown syntax before counting
+ * @param content - MDX content string
+ * @returns Object with reading time in minutes and formatted string
+ */
+export function calculateReadingTimeFromMDX(content: string): {
+  minutes: number;
+  text: string;
+} {
+  // Remove code blocks
+  const withoutCodeBlocks = content.replace(/```[\s\S]*?```/g, '');
+  // Remove inline code
+  const withoutInlineCode = withoutCodeBlocks.replace(/`[^`]*`/g, '');
+  // Remove markdown syntax
+  const plainText = withoutInlineCode
+    .replace(/[#*_~\[\]]/g, '')
+    .replace(/\([^)]*\)/g, '')
+    .trim();
+
+  return calculateReadingTime(plainText);
 }

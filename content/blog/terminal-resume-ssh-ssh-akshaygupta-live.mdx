@@ -1,0 +1,47 @@
+export const metadata = {
+    title: 'Terminal Resume - ssh.akshaygupta.live',
+    slug: 'terminal-resume-ssh-ssh-akshaygupta-live',
+    publishedAt: '2025-11-20',
+    categories: ['ssh', 'terminal', 'resume', 'hobby-project'],
+    coverImage: '/images/blog/terminal-resume-ssh-ssh-akshaygupta-live.avif',
+    coverImageAlt: 'Terminal Resume - ssh.akshaygupta.live',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    },
+    excerpt: 'An SSH-accessible resume that greets visitors with neon figlet banners and interactive commands. Built with TypeScript, ssh2, and deployed on Fly.io.'
+}
+
+## Introduction
+
+Ever wish a resume said "hi" the same way you do? 🚀 This one does. Pop open iTerm (or whatever shell keeps you grounded), paste `ssh ssh.akshaygupta.live`, and a neon figlet banner blooms like it's 1994. In a blink you're welcomed with the TL;DR, a friendly prompt, and zero browser chrome in sight. It feels like stepping into a dotfiles stash, only this one tells my career story.
+
+![Image description](/images/blog/terminal-resume-ssh-ssh-akshaygupta-live/4fobwbd0zr7aaaxzqm1d.gif)
+
+## How it works
+Under the hood it's just thoughtful TypeScript, and a little flair. Here's the tour 🧭
+
+- `terminal/server.ts` spins up an `ssh2.Server`, accepts every session and hands it off to a fresh `ResumeShell` so nobody fights for history or width.
+- The shell clears the screen, renders the marquee welcome (`renderWelcome` mixes `figlet`, `gradient-string` and `boxen`), and reacts to `window-change` events so everything stays readable from 80 columns to ultrawide setups.
+- Input flows through the `commander` map, so verbs like `summary`, `skills`, `experience`, `education`, `links`, `resume`, `clear`, and `help` are just plain object keys. Want a new section? Add another entry, done.
+- Formatting magic lives in `terminal/renderer.ts`, where `wrap-ansi` keeps paragraphs tidy, `boxen` frames each section, and `chalk` paints the `akshay@terminal $` prompt with that unmistakable gradient.
+- All copy comes straight from `terminal/resumeData.ts`, the same data powering `public/assets/akshay-cv.pdf`, which means the PDF, website, and shell stay perfectly in sync.
+
+Check the source code at [https://github.com/gupta-akshay/portfolio-v2](https://github.com/gupta-akshay/portfolio-v2).
+
+## How it is deployed
+
+Setting it up locally is a five-minute coffee break ☕️: run `ssh-keygen -t ed25519 -f ~/.ssh/akshay_terminal_host -N ""`, point `TERMINAL_SSH_HOST_KEY` at that file, and start `pnpm terminal:ssh`. It defaults to `0.0.0.0:2222`, but you can tweak `TERMINAL_SSH_HOST` and `TERMINAL_SSH_PORT` if your network has Opinions.
+
+Production takes the same pragmatic path outlined in the README:
+- `fly launch --no-deploy` to generate the Fly.io scaffolding from `fly.toml`.
+- `fly volumes create keys_volume --size 1` so the Ed25519 host key survives restarts.
+- `fly secrets set TERMINAL_SSH_HOST_KEY=/app/keys/terminal_host_ed25519` to wire up that volume.
+- `fly deploy` to ship the container that just runs `pnpm terminal:ssh`.
+- Allocate an IPv4 address, add an A record for `ssh.akshaygupta.live`, and keep Cloudflare in gray-cloud mode so raw SSH hits the box.
+
+Not a Fly.io fan? Any tiny VM, Railway container, or Raspberry Pi that can run Node 18+ will do, just mount the host key somewhere durable and pass the same env vars.
+
+## Conclusion
+
+`ssh ssh.akshaygupta.live` is a little nostalgia and a lot of signal ✨. It stays in lockstep with the canonical PDF, feels snappy even on spotty Wi-Fi, and is genuinely fun to demo in interviews or hallway chats. Swap in your GIF captures, keep `resumeData.ts` updated, and you’ve got a living resume that greets people the same way you would, prompt first, attitude included.

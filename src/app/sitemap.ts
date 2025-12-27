@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getPosts } from '@/sanity/lib/client';
-import { Blog } from '@/sanity/types/blog';
+import { getAllBlogs } from '@/lib/mdx';
 
 interface SitemapItem {
   url: string;
@@ -54,10 +53,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let blogRoutes: SitemapItem[] = [];
   try {
-    const posts = await getPosts();
-    blogRoutes = posts.map((post: Blog) => ({
-      url: `${baseUrl}/blog/${post.slug.current}`,
-      lastModified: new Date(post.publishedAt),
+    const posts = await getAllBlogs();
+    blogRoutes = posts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.metadata.publishedAt),
       changeFrequency: 'weekly',
       priority: 0.6,
     }));

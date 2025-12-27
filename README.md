@@ -6,10 +6,10 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 
 - **Next.js 16** & **React 19** with React Compiler
 - **TypeScript** & **Sass**
+- **MDX** for blog content with full SSR support
 - **TanStack Form** & **Zod** validation
 - **Web Audio API** for music player
 - **Drizzle ORM** & **Neon Database**
-- **Sanity CMS** for blog content
 - **AWS S3 + CloudFront** for music streaming
 - **Resend** for email delivery
 - **Sentry** for error tracking & performance monitoring
@@ -25,14 +25,17 @@ Live at [akshaygupta.live](https://akshaygupta.live)
   - Accessibility-first design (hidden on mobile/touch)
   - Mix-blend-mode effects for visibility across backgrounds
   - Comprehensive cursor interactions across all interactive elements
-- 📝 **Blog with CMS** powered by Sanity:
+- 📝 **MDX-powered Blog** with full SSR:
+  - Blog posts as `.mdx` files in `content/blog/`
+  - GitHub Flavored Markdown (tables, strikethrough, etc.)
+  - Syntax highlighting with Prism (Dracula theme)
   - Table of Contents with active section highlighting
   - Reading Progress Bar with real-time tracking
-  - Estimated Reading Time calculation
+  - Accurate Reading Time from actual content
   - Smart Category Overflow with "+n" indicators
   - Emoji Reactions system
   - Social Share buttons
-  - On-demand Revalidation via Sanity webhooks
+  - Static generation with `generateStaticParams`
 - 📧 **Contact Form** with validation and rate limiting
 - 🎵 **Music Player** with Web Audio API:
   - Real-time waveform visualization
@@ -49,11 +52,44 @@ Live at [akshaygupta.live](https://akshaygupta.live)
 - **Server-Side Rendering (SSR)** with Next.js App Router
 - **Client-Server Component Separation** for optimal performance
 - **React Compiler** for automatic optimizations
+- **MDX Integration** via `@next/mdx` with remark/rehype plugins
 - **Metadata Support** for SEO while maintaining interactivity
 - **Custom Hooks** for cursor interactions and state management
 - **Context-based State Management** for theme and cursor states
 - **Performance Optimized** with React 19 features and best practices
 - **Bundle Analysis** with `@next/bundle-analyzer`
+
+## 📝 Blog System (MDX)
+
+Blog posts are stored as `.mdx` files in `content/blog/`. Each post exports a `metadata` object:
+
+```mdx
+export const metadata = {
+  title: 'Your Blog Title',
+  slug: 'your-blog-slug',
+  publishedAt: '2025-01-15',
+  categories: ['category1', 'category2'],
+  coverImage: '/images/blog/your-cover.jpg',
+  coverImageAlt: 'Description of cover image',
+  author: {
+    name: 'Akshay Gupta',
+    avatar: '/images/blog-author.png',
+  },
+  excerpt: 'A short description of your blog post.',
+};
+
+## Your Content Here
+
+Write your markdown content with full MDX support!
+```
+
+### MDX Features
+
+- **Syntax Highlighting**: Code blocks with Prism.js (Dracula theme)
+- **GitHub Flavored Markdown**: Tables, strikethrough, task lists
+- **Automatic Heading IDs**: For Table of Contents navigation
+- **React Components**: Embed custom components in markdown
+- **Image Optimization**: Lazy loading with responsive sizing
 
 ## 📈 Observability & Monitoring
 
@@ -80,7 +116,7 @@ Comprehensive security headers configured in `next.config.mjs`:
 
 ## 🔍 SEO & PWA
 
-- **Dynamic Sitemap** - Auto-generated from blog posts (`/sitemap.xml`)
+- **Dynamic Sitemap** - Auto-generated from MDX blog posts (`/sitemap.xml`)
 - **Robots.txt** - Search engine crawling rules (`/robots.txt`)
 - **Web App Manifest** - PWA support with standalone display
 - **Dynamic OpenGraph Images** - Generated per page for rich social previews
@@ -110,13 +146,6 @@ Create `.env.local`:
 # Email service (Required)
 RESEND_API_KEY=your_key_here
 
-# Sanity CMS (Required)
-NEXT_PUBLIC_SANITY_PROJECT_ID=your_id_here
-NEXT_PUBLIC_SANITY_DATASET=production
-NEXT_PUBLIC_SANITY_HOOK_SECRET=your_secret_here
-# Optional: defaults to 2024-09-25 if not set
-NEXT_PUBLIC_SANITY_API_VERSION=2024-09-25
-
 # Neon Database (Required for emoji reactions)
 DATABASE_URL=your_neon_database_url_here
 
@@ -145,9 +174,8 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 1. **Database**: Create a Neon PostgreSQL database
 2. **Storage**: Set up AWS S3 + CloudFront for music files
 3. **Services**: Configure Resend for emails
-4. **CMS**: Set up Sanity project and configure webhook for revalidation
-5. **Run migrations**: `pnpm db:migrate`
-6. **Start development**:
+4. **Run migrations**: `pnpm db:migrate`
+5. **Start development**:
 
 ```bash
 pnpm dev
@@ -173,7 +201,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 You can now expose a terminal-native version of the resume via SSH (similar to `terminal.shop`).
 
-When browsers hit `ssh.akshaygupta.live`, a lightweight HTTP helper (served from `terminal/server.ts`) returns guidance to run `ssh ssh.akshaygupta.live` plus a link back to `https://akshaygupta.live`. Point your reverse proxy’s HTTP traffic to `TERMINAL_HTTP_PORT` so visitors always see friendly instructions.
+When browsers hit `ssh.akshaygupta.live`, a lightweight HTTP helper (served from `terminal/server.ts`) returns guidance to run `ssh ssh.akshaygupta.live` plus a link back to `https://akshaygupta.live`. Point your reverse proxy's HTTP traffic to `TERMINAL_HTTP_PORT` so visitors always see friendly instructions.
 
 ### Local preview
 
@@ -241,13 +269,13 @@ The terminal UI reads structured data from `terminal/resumeData.ts`, which mirro
    ```bash
    fly volumes create keys_volume --size 1 --region bom
    ```
-   (Pick the same region you deploy in; 1 GB is plenty.)
+   (Pick the same region you deploy in; 1 GB is plenty.)
 
 3. **Configure secrets/env**  
    ```bash
    fly secrets set TERMINAL_SSH_HOST_KEY=/app/keys/terminal_host_ed25519
    ```
-   The Docker entrypoint will create that file on first boot if it’s missing. `TERMINAL_SSH_PORT` defaults to `2222`, so the daemon listens on `0.0.0.0:2222` inside the container.
+   The Docker entrypoint will create that file on first boot if it's missing. `TERMINAL_SSH_PORT` defaults to `2222`, so the daemon listens on `0.0.0.0:2222` inside the container.
 
 4. **Deploy**  
    ```bash
@@ -272,7 +300,7 @@ The terminal UI reads structured data from `terminal/resumeData.ts`, which mirro
 Troubleshooting tips:
 - `fly machine logs <id>` shows entrypoint errors (missing volume, host key path, etc.).
 - `fly console ssh` lets you inspect `/app/keys/terminal_host_ed25519`.
-- If the proxy reports “connection refused,” confirm the process is still running (`fly machines list`) and that it’s bound to `0.0.0.0:$TERMINAL_SSH_PORT`.
+- If the proxy reports "connection refused," confirm the process is still running (`fly machines list`) and that it's bound to `0.0.0.0:$TERMINAL_SSH_PORT`.
 
 ---
 

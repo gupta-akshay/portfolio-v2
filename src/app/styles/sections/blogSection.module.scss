@@ -60,9 +60,11 @@
       object-fit: cover;
       background-position: center;
       width: 100%;
+      border-radius: 12px;
 
       @include down-md {
         max-height: 246px;
+        border-radius: 8px;
       }
     }
   }

@@ -1,69 +1,68 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
+import fs from 'fs';
+import path from 'path';
+import Image from 'next/image';
 import Layout from '@/app/components/Layout';
-import BlogImage from '@/app/components/BlogImage';
 import EmojiReactions from '@/app/components/EmojiReactions';
 import SocialShare from '@/app/components/SocialShare';
 import ReadingProgressBar from '@/app/components/ReadingProgressBar';
-import TableOfContents from '@/app/components/TableOfContents';
-import { getPostBySlug } from '@/sanity/lib/client';
-import { formatDate, calculateReadingTime } from '@/app/utils';
-import { urlFor } from '@/sanity/lib/image';
+import TableOfContentsMDX from './TableOfContentsMDX';
+import { getBlogBySlug, getBlogSlugs, calculateReadingTime } from '@/lib/mdx';
+import { formatDate } from '@/app/utils';
 
 import styles from '../../styles/sections/blogSection.module.scss';
-
-const SingleBlog = dynamic(() => import('@/app/components/SingleBlog'), {
-  loading: () => <div className='loading-blog-content'>Loading content...</div>,
-  ssr: true,
-});
 
 interface SingleBlogPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const revalidate = 3600;
+// Generate static paths for all blog posts
+export async function generateStaticParams() {
+  const slugs = getBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
-// Helper function to get MIME type from image asset
-const getImageMimeType = (mainImage: any): string => {
-  if (!mainImage?.asset) return 'image/png';
-
-  // If we have the mimeType from the asset, use it
-  if (mainImage.asset.mimeType) {
-    return mainImage.asset.mimeType;
-  }
-
-  // Fallback to PNG for dynamically generated OpenGraph images
-  return 'image/png';
-};
+// Don't allow dynamic params - only pre-rendered slugs
+export const dynamicParams = false;
 
 const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
-  const slug = (await params).slug;
+  const { slug } = await params;
 
-  const post = await getPostBySlug(slug);
+  // Import the MDX file dynamically
+  let Post;
+  let metadata;
 
-  if (!post) {
+  try {
+    const mdxModule = await import(`@/content/blog/${slug}.mdx`);
+    Post = mdxModule.default;
+    metadata = mdxModule.metadata;
+  } catch {
     notFound();
   }
 
-  const imageUrl = post.mainImage
-    ? urlFor(post.mainImage).width(1200).height(630).url()
-    : `https://akshaygupta.live/blog/${post.slug.current}/opengraph-image.png`;
+  if (!metadata) {
+    notFound();
+  }
 
-  const readingTime = calculateReadingTime(post.body);
+  // Read raw MDX content for reading time calculation
+  const contentPath = path.join(process.cwd(), 'content', 'blog', `${slug}.mdx`);
+  const rawContent = fs.readFileSync(contentPath, 'utf-8');
+  const readingTime = calculateReadingTime(rawContent);
+
+  const imageUrl = metadata.coverImage || '/images/about-me.png';
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.excerpt || post.title,
-    image: imageUrl,
-    datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    headline: metadata.title,
+    description: metadata.excerpt || metadata.title,
+    image: `https://akshaygupta.live${imageUrl}`,
+    datePublished: metadata.publishedAt,
+    dateModified: metadata.publishedAt,
     author: {
       '@type': 'Person',
-      name: post.author.name,
+      name: metadata.author.name,
       url: 'https://akshaygupta.live/about',
     },
     publisher: {
@@ -83,18 +82,18 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   return (
     <Layout isBlog>
       <ReadingProgressBar />
-      <TableOfContents content={post.body} />
+      <TableOfContentsMDX slug={slug} />
       <SocialShare
         url={`https://akshaygupta.live/blog/${slug}`}
-        title={post.title}
-        description={post.excerpt || post.title}
+        title={metadata.title}
+        description={metadata.excerpt || metadata.title}
       />
       <script
-        type='application/ld+json'
+        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div
-        id={post.slug.current}
+        id={slug}
         className={styles.singleBlog}
         style={{
           position: 'relative',
@@ -102,53 +101,60 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           overflowX: 'hidden',
         }}
       >
-        <div className='container' style={{ position: 'relative', zIndex: 10 }}>
+        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
           <div className={styles.blogFeatureImg}>
-            <BlogImage value={post.mainImage} isCoverImage />
+            {metadata.coverImage && (
+              <Image
+                src={metadata.coverImage}
+                alt={metadata.coverImageAlt || metadata.title}
+                width={1110}
+                height={663}
+                className={styles.blogImage}
+                priority
+              />
+            )}
           </div>
-          <div className='row justify-content-center'>
-            <div className='col-lg-8'>
+          <div className="row justify-content-center">
+            <div className="col-lg-8">
               <article className={styles.article}>
                 <div className={styles.articleTitle}>
                   <div className={styles.hashtags}>
-                    {post.categories.map((category) => (
+                    {metadata.categories.map((category: string) => (
                       <span
-                        key={category.slug.current}
+                        key={category}
                         className={styles.hashtag}
                       >
-                        #{category.title}
+                        #{category}
                       </span>
                     ))}
                   </div>
-                  <h2>{post.title}</h2>
+                  <h2>{metadata.title}</h2>
                   <div className={styles.media}>
                     <div className={styles.avatar}>
-                      <BlogImage value={post.author.image} isAuthor />
+                      <Image
+                        src={metadata.author.avatar}
+                        alt={metadata.author.name}
+                        width={45}
+                        height={45}
+                        style={{ borderRadius: '50%', objectFit: 'cover' }}
+                      />
                     </div>
                     <div className={styles.mediaBody}>
-                      <label>{post.author.name}</label>
+                      <label>{metadata.author.name}</label>
                       <span>
-                        {formatDate(post.publishedAt)} • {readingTime.text}
+                        {formatDate(metadata.publishedAt)} • {readingTime.text}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className={styles.articleContent}>
-                  <Suspense
-                    fallback={
-                      <div className='loading-blog-content'>
-                        Loading content...
-                      </div>
-                    }
-                  >
-                    <SingleBlog post={post} />
-                  </Suspense>
+                  <Post />
                 </div>
               </article>
             </div>
           </div>
         </div>
-        <EmojiReactions blogSlug={post.slug.current} />
+        <EmojiReactions blogSlug={slug} />
       </div>
     </Layout>
   );
@@ -158,78 +164,48 @@ export async function generateMetadata({
   params,
 }: SingleBlogPageProps): Promise<Metadata> {
   try {
-    const slug = (await params).slug;
-    const post = await getPostBySlug(slug);
+    const { slug } = await params;
+    const post = await getBlogBySlug(slug);
 
     if (!post) {
       return {
         title: 'Post Not Found | Akshay Gupta',
         description: `The blog post you're looking for does not exist`,
         metadataBase: new URL('https://akshaygupta.live'),
-        openGraph: {
-          type: 'article',
-          title: 'Post Not Found',
-          description: `The blog post you're looking for does not exist`,
-          url: `https://akshaygupta.live/blog/${slug}`,
-          siteName: 'Akshay Gupta',
-          locale: 'en_US',
-          images: [
-            {
-              url: '/images/about-me.png',
-              width: 1200,
-              height: 630,
-              alt: 'Blog Post Not Found',
-              type: 'image/png',
-            },
-          ],
-        },
-        twitter: {
-          card: 'summary_large_image',
-          title: 'Post Not Found',
-          description: `The blog post you're looking for does not exist`,
-          images: ['/images/about-me.png'],
-          creator: '@ashay_music',
-        },
-        alternates: {
-          canonical: `https://akshaygupta.live/blog/${slug}`,
-        },
       };
     }
 
-    const imageUrl = post.mainImage
-      ? urlFor(post.mainImage).width(1200).height(630).url()
-      : `https://akshaygupta.live/blog/${slug}/opengraph-image.png`;
-
-    const imageType = getImageMimeType(post.mainImage);
-    const description = post.excerpt || post.title;
+    const { metadata } = post;
+    const imageUrl = metadata.coverImage || '/images/about-me.png';
+    const description = metadata.excerpt || metadata.title;
 
     return {
-      title: `${post.title} | Akshay Gupta's Blog`,
+      title: `${metadata.title} | Akshay Gupta's Blog`,
       description: description,
       metadataBase: new URL('https://akshaygupta.live'),
       openGraph: {
         type: 'article',
-        title: post.title,
+        title: metadata.title,
         description: description,
         url: `https://akshaygupta.live/blog/${slug}`,
         siteName: 'Akshay Gupta',
         locale: 'en_US',
-        publishedTime: post.publishedAt,
-        modifiedTime: post.publishedAt,
-        authors: [post.author.name],
+        publishedTime: metadata.publishedAt,
+        modifiedTime: metadata.publishedAt,
+        authors: [metadata.author.name],
         images: [
           {
             url: imageUrl,
             width: 1200,
             height: 630,
-            alt: post.title,
-            type: imageType,
+            alt: metadata.title,
+            type: 'image/png',
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: post.title,
+        title: metadata.title,
         description: description,
         images: [imageUrl],
         creator: '@ashay_music',
@@ -244,33 +220,6 @@ export async function generateMetadata({
       title: 'Error | Akshay Gupta',
       description: 'An error occurred while loading this blog post',
       metadataBase: new URL('https://akshaygupta.live'),
-      openGraph: {
-        type: 'article',
-        title: 'Error',
-        description: 'An error occurred while loading this blog post',
-        url: 'https://akshaygupta.live/blog',
-        siteName: 'Akshay Gupta',
-        locale: 'en_US',
-        images: [
-          {
-            url: '/images/about-me.png',
-            width: 1200,
-            height: 630,
-            alt: 'Error Loading Blog Post',
-            type: 'image/png',
-          },
-        ],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: 'Error',
-        description: 'An error occurred while loading this blog post',
-        creator: '@ashay_music',
-        images: ['/images/about-me.png'],
-      },
-      alternates: {
-        canonical: 'https://akshaygupta.live/blog',
-      },
     };
   }
 }
