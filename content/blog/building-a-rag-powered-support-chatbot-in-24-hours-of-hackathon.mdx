@@ -1,0 +1,531 @@
+export const metadata = {
+    title: 'Building a RAG-Powered Support Chatbot in 24 Hours of Hackathon',
+    slug: 'building-a-rag-powered-support-chatbot-in-24-hours-of-hackathon',
+    publishedAt: '2025-02-15',
+    categories: ['chatbot', 'python', 'rag', 'ai', 'llm'],
+    coverImage: '/images/blog/building-a-rag-powered-support-chatbot-in-24-hours-of-hackathon.avif',
+    coverImageAlt: 'Building a RAG-Powered Support Chatbot in 24 Hours of Hackathon',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    }
+}
+
+Coffee? ✅ Chai? ✅ Determination to automate admin support? Double ✅
+
+In a recent 24-hour hackathon at annual PeopleGrove offsite, my team tackled an ambitious challenge: building an AI-powered support chatbot that could think and respond like a season platform administrator.
+
+Armed with Large Language Models (LLMs) and fueled by caffeine, we created a Retrieval-Augmented Generation (RAG) system that turned out to be surprisingly capable!
+
+## The Challenge
+**Picture this**: Our support heroes (admins and agents) spending their days 😅:
+
+- Answering the same questions from different institutions 🏫
+  - Repetitive SSO, analytics, and user management queries
+  - Same solutions, different institutions
+- Context-switching between multiple support channels 🔄
+  - Support tickets piling up
+  - Urgent Slack messages
+- Time-Consuming Routine Tasks ⏰
+  - Manual ticket search and response formatting
+- Complex Problem-Solving Getting Delayed 🎯
+  - Too much time on routine questions
+  - Limited bandwidth for critical platform improvements
+
+Our support team needed a solution that could:
+- Handle common queries intelligently 🤖
+- Provide consistent, accurate responses 📚
+- Free up time for complex problem-solving 💡
+- Scale support without scaling the team 📈
+- Maintain the human touch while automating routine tasks 🤝
+
+## Our Hackathon Solution
+
+We built ChatterMind 🤖 - an AI chatbot that combines the power of LLMs with a RAG system. Think of it as a super-smart intern who:
+
+- Never sleeps (unlike us during the hackathon) 😴
+- Has photographic memory of all support tickets 🧠
+- Knows the PeopleGrove documentation better than its authors 📚
+- Knows when to call for backup (aka create a ticket) 🆘
+- Remembers conversations (thanks to Redis - our MVP choice for the hackathon) 💾
+- Keeps secrets better than a vault 🔒
+
+## System Architecture 🏗️
+
+Here's a high-level overview of how ChatterMind processes and responds to queries:
+
+![Image description](/images/blog/building-a-rag-powered-support-chatbot-in-24-hours-of-hackathon/snhty7bda80vhfc7fzaz.png)
+
+## Technical Deep Dive
+
+Let's geek out about our tech choices for a minute! 🤓
+
+### Model Selection Journey
+
+Our initial choice was the DeepSeek model (1.5B parameters) because, well, it was lightweight and fast. But we quickly discovered it had a tendency to... let's say, get creative with the truth. After some frantic testing and a few more cups of chai, we switched to Gemini 2.0 Flash (experimental) which proved to be our goldilocks model:
+
+- More reliable responses
+- Better context understanding
+- Faster inference time
+- Stronger reasoning capabilities
+- Built-in safety features
+
+### Prompt Engineering Magic
+
+The secret sauce behind ChatterMind's human-like responses? Carefully crafted prompts! Our prompt engineering approach focused on:
+
+- Role Definition 🎭
+  - Defined as "Senior Product Support Specialist"
+  - Given a friendly personality and name
+  - Established clear boundaries of authority
+- Context Management 🧩
+  - User's current location in platform
+  - Previous conversation history
+  - Relevant documentation
+  - Similar support tickets
+  - Required permissions
+- Response Structuring 📝
+  - Natural, conversational flow
+  - Markdown formatting for readability
+  - Length limits (100-300 words)
+  - Clear action items when needed
+- Safety Guidelines 🛡️
+  - Strict PII protection rules
+  - Clear escalation paths
+  - Scope limitations
+  - Data privacy compliance
+- Dynamic Adaptation 🔄
+  - First-time vs follow-up questions
+  - Technical vs non-technical users
+  - Simple queries vs complex issues
+  - Error scenarios vs success paths
+
+Example Prompt Template 📝
+
+```bash
+System Context:
+You are ChatterMind, a Senior Product Support Specialist at PeopleGrove.
+Primary Goal: Provide clear, accurate, and helpful support while maintaining security.
+
+Behavioral Guidelines:
+- Be professional yet friendly
+- Start with a warm greeting for new conversations
+- For follow-ups, continue naturally without greeting
+- Keep responses under 300 words
+- Use markdown only when needed
+- Never share PII or sensitive data
+- If unsure, ask for clarification
+- For complex issues, guide towards ticket creation
+
+Current Context:
+- User Location: {current_path}
+- Required Permissions: {path_permissions}
+- User Role: {user_role}
+
+Previous Conversation:
+{chat_history}
+
+Reference Knowledge:
+{relevant_articles}
+{similar_tickets}
+{route_context}
+
+Current Question: {user_query}
+
+Response Format:
+1. [If new conversation] Brief greeting
+2. Acknowledge context/location
+3. Provide clear solution/steps
+4. Add relevant warnings/notes
+5. Offer follow-up assistance
+```
+
+This template ensures:
+- Consistent personality 🎭
+- Context-awareness 🧩
+- Security compliance 🔒
+- Natural conversation flow 💬
+- Helpful, actionable responses ✅
+
+### Data Processing & Embeddings
+
+We built our knowledge base from three main sources:
+
+Support Tickets:
+```python
+def process_tickets(tickets):
+  for ticket in tickets:
+    # Strip personal information
+    sanitized_content = remove_sensitive_info(ticket.content)
+    # Extract resolution steps
+    resolution = extract_resolution(ticket.comments)
+    # Create composite text for embedding
+    text = f"Issue: {sanitized_content}\nResolution: {resolution}"
+    return generate_embedding(text)
+```
+
+Help-Center Articles:
+```python
+def process_articles(articles):
+  for article in articles:
+    # Chunk long articles
+    chunks = chunk_text(article.content, max_length=512)
+    # Generate embeddings for each chunk
+    embeddings = [generate_embedding(chunk) for chunk in chunks]
+    return embeddings
+```
+
+Platform Routes & Permissions:
+```python
+def process_routes(routes):
+  for route in routes:
+    # Combine route info with permissions
+      context = f"""
+        Path: {route.path}
+        Required Permissions: {route.permissions}
+        Description: {route.description}
+      """
+      return generate_embedding(context)
+```
+
+### Vector Magic
+
+For embeddings, we chose the `all-MiniLM-L6-v2` model from `SentenceTransformers` because:
+
+- 384-dimensional embeddings (good balance of size vs. accuracy)
+- Fast inference time (crucial for real-time chat)
+- Great at capturing semantic meaning
+- Works well with technical content
+
+We stored these in ElasticSeach with cosine similarity search, which gave us:
+
+```python
+def search_similar_contexts(query, top_k=5):
+    query_embedding = generate_embedding(query)
+    results = es_client.search(
+        index="support_knowledge",
+        body={
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                        "params": {"query_vector": query_embedding}
+                    }
+                }
+            },
+            "size": top_k
+        }
+    )
+    return results
+```
+
+## Edge Cases & Safety Features
+
+ChatterMind turned out to be quite the responsible assistant. Some of our favourite edge case handles:
+
+Personal Data Protection:
+```bash
+User: "What's John Smith's email address?"
+ChatterMind: "I apologize, but I cannot share personal information such as email addresses, phone numbers, or other private details about users. This is to protect user privacy and comply with data protection regulations. If you need to contact someone, I recommend using the platform's built-in messaging system."
+```
+
+System Limitations:
+```bash
+User: "Can you update my database permissions?"
+ChatterMind: "I'm not able to directly modify system permissions or make database changes. This requires admin intervention for security reasons. Would you like me to help you create a ticket for this request?"
+```
+
+Handling Requests not related to Platform:
+```bash
+User: "What is 5 + 2 + 7?"
+ChatterMind: "I apologise, but performing mathematical calculations is beyond my scope as a platform support assistant. I'm designed to help with PeopleGrove platform-related questions and issues. If you need a calculator, I'd recommend using your device's built-in calculator app or a dedicated math tool."
+```
+
+Unclear Requests:
+```bash
+User: "It's not working"
+ChatterMind: "I notice you're on the messaging page, but I'll need more details to help you effectively. Could you please:
+1. Describe what specific feature isn't working
+2. What you were trying to do
+3. What error message (if any) you're seeing
+
+This will help me provide the most relevant solution."
+```
+
+## Inspiration & Resources
+
+Our implementation was heavily inspired by the excellent guide on building RAG systems with DeepSeek R1 by Asif Razzaq at MarkTechPost. While we ultimately chose Gemini 2.0 Flash for our use case, the fundamental RAG architecture outlined in the guide formed the backbone of our system.
+
+Key learnings we adapted from the guide:
+- Document processing pipeline structure
+- Vector store implementation with FAISS
+- Prompt template design
+- Efficient retrieval mechanisms
+
+We modified these concepts to fit our specific needs:
+
+```python
+# Original DeepSeek approach from the guide
+class SimpleRetriever:
+  def __init__(self, index, embeddings_model):
+    self.index = index
+    self.embeddings_model = embeddings_model
+    
+  def retrieve(self, query, k=3):
+    query_embedding = self.embeddings_model.embed(query)
+    distances, indices = self.index.search(
+      np.array([query_embedding]).astype('float32'), k
+    )
+    return [documents[i] for i in indices[0]]
+
+# Our enhanced version for multi-source retrieval
+def retrieve(self, query: str, current_path: str = None, k: int = 5):
+  results = {
+    'help_articles': [],
+    'tickets': [],
+    'routes': []
+  }
+    
+  # First, find exact and pattern matches for the current path
+  if current_path:
+    exact_matches = self._find_exact_route_matches(current_path)
+    pattern_matches = self._find_pattern_route_matches(current_path)
+    results['routes'].extend(exact_matches + pattern_matches)
+    
+    # Then perform vector search across all sources
+    query_embedding = self.embeddings_model.encode(query)
+    for source in ['help_articles', 'tickets', 'routes']:
+      results[source].extend(
+        self._vector_search(
+          query_embedding, 
+          source, 
+          k=k
+        )
+      )
+    
+    return results
+```
+
+The guide's emphasis on proper document chunking and context relevance directly influenced our implementation of the knowledge base processing:
+
+```python
+def chunk_document(self, document: str, chunk_size: int = 512):
+  """Enhanced chunking with overlap and metadata preservation"""
+  chunks = []
+  sentences = nltk.sent_tokenize(document)
+  current_chunk = []
+  current_length = 0
+    
+  for sentence in sentences:
+    sentence_length = len(sentence)
+    if current_length + sentence_length > chunk_size:
+      if current_chunk:
+        chunks.append(' '.join(current_chunk))
+        # Keep last sentence for context overlap
+        current_chunk = [current_chunk[-1], sentence]
+        current_length = len(current_chunk[-1]) + sentence_length
+      else:
+        chunks.append(sentence)
+        current_chunk = []
+        current_length = 0
+    else:
+      current_chunk.append(sentence)
+      current_length += sentence_length
+    
+  if current_chunk:
+    chunks.append(' '.join(current_chunk))
+    
+  return chunks
+```
+
+Read more: [Building a Retrieval-Augmented Generation (RAG) System with DeepSeek R1: A Step-by-Step Guide](https://www.marktechpost.com/2025/01/27/building-a-retrieval-augmented-generation-rag-system-with-deepseek-r1-a-step-by-step-guide/)
+
+### Real-time Communication with WebSockets
+
+Why WebSockets? Because nobody likes waiting! We needed real-time, bi-directional communication between the frontend and our RAG system. RESTful APIs would've meant:
+
+- Higher latency
+- No server-initiated messages
+- More complex state management
+- Chatbot responses getting suck "in transit"
+
+Here's how we implemented it:
+```python
+@app.websocket("/chat")
+async def websocket_endpoint(websocket: WebSocket):
+  await websocket.accept()
+  try:
+    # Authenticate user
+    auth_payload = await handle_authentication(websocket)
+        
+    # Set up connection
+    await manager.connect(websocket, auth_payload.user_id, auth_payload.user_name)
+        
+    # Send chat history
+    history = chat_history.get_history(auth_payload.user_id)
+    await websocket.send_json(Message(
+      message_type=MessageType.CHAT_HISTORY,
+      chat_history=history
+    ).to_json())
+        
+    # Handle messages in real-time
+    while True:
+      message = await websocket.receive_json()
+      response = await process_message(message)
+      await websocket.send_json(response)
+            
+  except WebSocketDisconnect:
+        manager.disconnect(auth_payload.user_id)
+```
+
+The WebSocket connection allows us to:
+- Stream responses in real-time
+- Maintain conversation state
+- Handle typing indicators
+- Manage connection status
+- Implement retry mechanism
+
+### ElasticSearch as Our Knowledge Base
+
+While FAISS was suggested in the DeepSeek guide, we chose ElasticSearch for our vector store because:
+- Built-in text search capabilities
+- Efficient vector similarity search
+- Real-time indexing
+- Scalability potential
+
+Here's our ElasticSearch setup:
+```python
+# Index mapping for optimal vector search
+help_articles_mapping = {
+   "settings": {
+      "index": {
+         "number_of_shards": 1,
+         "number_of_replicas": 0,
+         "refresh_interval": "30s",
+         "codec": "best_compression"
+      }
+   },
+   "mappings": {
+      "properties": {
+         "embedding": {
+            "type": "dense_vector",
+            "dims": 384,
+            "index": True,
+            "similarity": "cosine"
+         },
+         "content": {
+            "type": "text",
+            "analyzer": "standard"
+         }
+      }
+   }
+}
+
+# Hybrid search combining keyword and vector similarity
+def hybrid_search(query: str, top_k: int = 5):
+   # Generate embedding for vector search
+   query_embedding = embeddings_model.encode(query)
+
+   # Combine text and vector search
+   response = es_client.search(
+      index="support_knowledge",
+      body={
+         "query": {
+            "combined_fields": {
+               "query": query,
+               "fields": ["content", "title"]
+            }
+         },
+         "rescore": {
+            "window_size": top_k,
+            "query": {
+               "rescore_query": {
+                  "script_score": {
+                     "query": {"match_all": {}},
+                     "script": {
+                        "source": "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                        "params": {"query_vector": query_embedding}
+                     }
+                  }
+               }
+            }
+         },
+         "size": top_k
+      }
+   )
+   return response["hits"]["hits"]
+```
+
+This setup gave us:
+- Fast similarity search
+- Text search fallback
+- Real-time updates
+- Easy scaling options
+
+## Cool Features We're Proud Of
+
+- Context-Aware Responses
+  - The bot doesn't just search - it understands where the user is in the platform and what they've been talking about. It's like having a GPS for user context!
+- Privacy First
+  - We trained our bot to be as tight-lipped as a secret agent about sensitive data. Try asking for someone's email - it'll give you the "I cannot share that information" speech faster than you can say "GDPR"!
+- Beyond the Knowledge Base
+  - The real magic happens when users ask questions that aren't in any document. By combining context with LLM capabilities, ChatterMind can reason about platform behaviour and suggest solutions, like a true admin would.
+```bash
+ChatterMind: "Hi Akshay, my name is ChatterMind! 👋 Welcome to XYZ Support. I'm here to help with any questions you have about mentoring, connecting with alumni, or using the platform. How can I assist you today?"
+User: "Why is the page not working?"
+ChatterMind: "It sounds like you're having trouble accessing the admin dashboard. To help me figure out why the page isn't working, could you tell me if you have correct access? This page requires admin-level permissions to function correctly. Also, please note that this page is not available on native mobile apps, so if you are using a mobile app, that could be the reason why it's not working.
+
+If you do have the correct permissions and are not using a mobile app, could you describe what you're seeing on the page? Any details you can provide will help me troubleshoot the issue.
+
+Please let me know if you have any other questions."
+```
+
+## Hackathon Compromises (aka Technical Debt)
+
+Let's be real - in 24 hours, we had to cut some corners:
+
+- Redis for chat history
+  - Great for hackathon
+  - Would use a proper database for production
+  - No backup/persistence configuration
+- Security shortcuts
+  - Basic token authentication
+  - Local SSL certificates
+  - Minimal error handling
+- Performance trade-offs
+  - No caching layer
+  - Single-node ElasticSearch
+  - Basic vector search
+
+## What's Next?
+
+If we had more time (and less caffeine), we'd love to add:
+
+- Proper infrastructure
+  - Distributed chat history storage
+  - Load balancing
+  - Proper security measures
+- Cool features
+  - Voice interface (for those too tired to type)
+  - Multi-language support (because admins speak many languages)
+  - Predictive issue detection (stop problems before they happen!)
+
+## Team & Acknowledgments
+
+This project wouldn't have been possible (let alone won the hackathon! 🏆 🎉) without my amazing team's diverse skills and relentless energy. Special thanks to:
+
+- Our AI/ML engineer Suyash who became our guide at times and pointed us in right direction. 🧠
+- Our Engineers Rajat & Rahul who made WebSockets work like magic, and did the end-to-end integration on my core idea. ⚡
+- Our Engineers Manoj & Samrood who integrated ElasticSearch & became frontend ninjas who created a sleek chat-interface. 🎨
+- And countless Chai & Coffee that fuelled our coding marathons. 🥤
+
+Winning the hackathon was the cherry on top of an incredible 24-hour journey. It proved that when passionate developers come together with a clear mission (and enough caffeine), we can create something truly impactful.
+
+## Conclusion
+
+Our hackathon project proved that with modern LLMs, good prompt engineering, and a solid RAG system, you can build a surprisingly capable admin support chatbot in just 24 hours.
+
+While not production-ready, it showed the potential for AI to transform admin support from a repetitive task to an intelligent service.
+
+> No humans were harmed in the making of this chatbot, though several cups of Chai and Coffee were consumed! 🚀 ☕ 🎉

@@ -13,14 +13,11 @@ export { default as TypingAnimation } from './TypingAnimation';
 export { default as EmojiReactions } from './EmojiReactions';
 export { default as ReadingProgressBar } from './ReadingProgressBar';
 export { default as SocialShare } from './SocialShare';
-export { default as TableOfContents } from './TableOfContents';
 export { default as TerminalCTA } from './TerminalCTA';
 export { TerminalCTAProvider } from './TerminalCTA/TerminalCTAContext';
 
 // Content Components
-export { default as BlogImage } from './BlogImage';
-export { default as BlogTile } from './BlogTile';
-export { default as SingleBlog } from './SingleBlog';
+export { default as BlogTileMDX } from './BlogTileMDX';
 export { default as Experience } from './Experience';
 export { default as Skills } from './Skills';
 export { default as GitHubCalendar } from './GitHubCalendar';

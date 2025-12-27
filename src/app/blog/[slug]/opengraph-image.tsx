@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { getPostBySlug } from '@/sanity/lib/client';
+import { getBlogBySlug, getBlogSlugs } from '@/lib/mdx';
 
 export const contentType = 'image/png';
 export const size = {
@@ -9,7 +9,7 @@ export const size = {
 
 export default async function Image({ params }: { params: { slug: string } }) {
   const slug = (await params).slug;
-  
+
   if (!slug) {
     return new ImageResponse(
       (
@@ -32,7 +32,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
     );
   }
 
-  const post = await getPostBySlug(slug);
+  const post = await getBlogBySlug(slug);
 
   if (!post) {
     return new ImageResponse(
@@ -83,7 +83,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
             color: '#ffffff',
           }}
         >
-          {post.title}
+          {post.metadata.title}
         </div>
         <div
           style={{
@@ -93,7 +93,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
             fontWeight: 500,
           }}
         >
-          By {post.author.name}
+          By {post.metadata.author.name}
         </div>
         <div
           style={{
@@ -112,13 +112,18 @@ export default async function Image({ params }: { params: { slug: string } }) {
   );
 }
 
+export async function generateStaticParams() {
+  const slugs = getBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
 export async function generateImageMetadata({
   params,
 }: {
   params: { slug: string };
 }) {
   const slug = (await params).slug;
-  
+
   if (!slug) {
     return [
       {
@@ -130,13 +135,13 @@ export async function generateImageMetadata({
     ];
   }
 
-  const post = await getPostBySlug(slug);
+  const post = await getBlogBySlug(slug);
   return [
     {
       contentType: 'image/png',
       size: { width: 1200, height: 630 },
       id: 'og-image',
-      alt: post?.title || 'Blog Post',
+      alt: post?.metadata.title || 'Blog Post',
     },
   ];
 }

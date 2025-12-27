@@ -1,0 +1,376 @@
+export const metadata = {
+    title: 'Building a Music Showcase for My Portfolio: A Developer\'s Journey',
+    slug: 'building-a-music-showcase-for-my-portfolio-a-developer-s-journey',
+    publishedAt: '2025-03-09',
+    categories: ['javascript', 'typescript', 'web-audio', 'react', 'aws-s3', 'aws-cloudfront'],
+    coverImage: '/images/blog/building-a-music-showcase-for-my-portfolio-a-developer-s-journey.avif',
+    coverImageAlt: 'Building a Music Showcase for My Portfolio: A Developer\'s Journey',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    }
+}
+
+> Code is poetry, music is magic, and when they come together, something extraordinary happens.
+
+Hey there, fellow developers! 👋 Today, I want to share how I built the music section of my portfolio website. As someone who codes by day and produces electronic music by night, I wanted a space to showcase my tracks that was both functional and visually appealing.
+
+## The Double Life: Developer by Day, Music Producer by Night
+
+When I'm not writing code for my day job, I'm often tinkering with synthesizers and drum machines, creating electronic music. It's a creative outlet that balances nicely with the logical thinking required in software development. I've been making music for several years now, and I wanted to integrate this passion into my portfolio website.
+
+The goal was simple: create a section where visitors could easily browse and play my tracks with a modern, responsive interface that works across all devices.
+
+Before we go in further details, you can try the page for yourself at [https://akshaygupta.live/music](https://akshaygupta.live/music)
+
+
+## Why AWS S3 + CloudFront for Audio Hosting
+
+One of the first decisions I had to make was where to host my audio files. I needed a solution that was:
+
+1. Cost-effective for storing audio files
+2. Scalable if my library grows
+3. Fast for global users
+4. Secure with proper access controls
+
+After considering various options, I settled on AWS S3 for storage coupled with CloudFront for content delivery. Here's why:
+
+### S3 for Storage
+
+S3 provides reliable, secure storage at a reasonable cost. I can easily upload new tracks, organise them in folders, and set appropriate permissions.
+
+### CloudFront for Delivery
+
+CloudFront creates a global CDN that caches my audio files at edge locations around the world, reducing latency for listeners regardless of their location. This is crucial for streaming audio without buffering issues.
+
+Here's simplified version of how I fetch the audio file URL:
+
+```typescript
+export async function getAudioUrl(path: string): Promise<string> {
+  // If CloudFront is configured, use it
+  if (CLOUDFRONT_DOMAIN && CLOUDFRONT_KEY_PAIR_ID && CLOUDFRONT_PRIVATE_KEY) {
+    try {
+      // Generate signed CloudFront URL with 1-hour expiration
+      return getCloudfrontSignedUrl({
+        url: `https://${cleanDomain}/${path}`,
+        keyPairId: CLOUDFRONT_KEY_PAIR_ID,
+        privateKey: privateKey,
+        dateLessThan: new Date(Date.now() + 3600 * 1000).toISOString(),
+      });
+    } catch (error) {
+      console.error('Error getting CloudFront URL:', error);
+    }
+  }
+  
+  // Fallback to S3 pre-signed URL if CloudFront fails
+  console.log('Using S3 Fallback URL');
+  const command = new GetObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: path,
+    ResponseContentDisposition: 'inline',
+  });
+
+  return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+}
+```
+
+I implemented a fallback mechanism that uses S3 pre-signed URLs if CloudFront isn't configured or fails. This ensures my music is always accessible.
+
+---
+
+## Building a Custom Audio Player from Scratch
+
+I could have used an existing audio player library, but I wanted complete control over the UI, UX, and features. So I built a custom player from scratch using React and the Web Audio API.
+
+![screenshot](/images/blog/building-a-music-showcase-for-my-portfolio-a-developer-s-journey/v874jdna91sb89vb05gm.png)
+
+
+### Component Architecture
+
+I structured the player with a modular approach:
+
+```bash
+AudioPlayer/
+├── components/
+│   ├── FullScreenPlayer.tsx
+│   ├── MiniPlayer.tsx
+│   ├── NowPlaying.tsx
+│   ├── PlayerControls.tsx
+│   ├── QueuePanel.tsx
+│   ├── TrackList.tsx
+│   └── Waveform.tsx
+├── hooks/
+│   ├── useAudioContext.ts
+│   ├── useAudioPlayback.ts
+│   ├── useQueueManager.ts
+│   └── useVisualizer.ts
+├── AudioPlayer.tsx
+└── types.ts
+```
+
+This separation of concerns made the codebase more maintainable and allowed me to focus on specific features independently.
+
+### Key Features
+
+The player includes:
+- Play/pause, previous/next track controls
+- Volume control with mute toggle
+- Progress bar with seek functionality
+- Track queue management with drag-and-drop reordering
+- Shuffle mode
+- Responsive design that adapts to mobile and desktop
+- Full-screen mode with expanded visualizations.
+- Mini-player for compact viewing
+
+One of the most challenging aspects was ensuring smooth playback transitions between tracks. I had to carefully manage the audio element's state and handle various edge cases:
+
+```typescript
+const handlePlayPause = async () => {
+  if (!audio) return;
+  
+  try {
+    if (audio.paused) {
+      // Ensure audio context is running
+      if (audioContextRef.current?.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+      
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error('Playback failed:', error);
+          // Handle autoplay restrictions
+          if (error.name === 'NotAllowedError') {
+            setNeedsUserInteraction(true);
+          }
+        });
+      }
+    } else {
+      audio.pause();
+    }
+  } catch (error) {
+    console.error('Error toggling playback:', error);
+  }
+};
+```
+
+---
+
+## The Magic Behind the Visualisations
+
+The most eye-catching feature of the player is undoubtedly the audio visualisations. I implemented two types:
+
+- A waveform visualiser that shows the audio waveform in real-time.
+- A mini circular visualiser that pulses with the music's intensity.
+
+### Waveform Visualiser
+
+The waveform visualiser display's the audio's time-domain data as a smooth, animated wave:
+
+```typescript
+const drawWaveform = useCallback(() => {
+  if (!canvasRef.current || !analyserRef.current) return;
+  
+  const canvas = canvasRef.current;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  
+  const analyser = analyserRef.current;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  
+  // Get time-domain data
+  analyser.getByteTimeDomainData(dataArray);
+  
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw waveform
+  ctx.beginPath();
+  const sliceWidth = canvas.width / bufferLength;
+  let x = 0;
+  
+  for (let i = 0; i < bufferLength; i++) {
+    const v = dataArray[i] / 128.0;
+    const y = (v * canvas.height) / 2;
+    
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+    
+    x += sliceWidth;
+  }
+  
+  ctx.stroke();
+  
+  // Request next frame
+  requestAnimationFrame(drawWaveform);
+}, [canvasRef, analyserRef]);
+```
+
+### Mini Circular Visualiser
+
+The mini visualiser uses frequency data to create a pulsing circle that responds to the music's energy:
+
+```typescript
+const drawMiniVisualizer = useCallback(() => {
+  if (!miniCanvasRef.current || !analyserRef.current) return;
+  
+  const canvas = miniCanvasRef.current;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  
+  const analyser = analyserRef.current;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  
+  // Get frequency data
+  analyser.getByteFrequencyData(dataArray);
+  
+  // Calculate average frequency for scaling
+  let sum = 0;
+  for (let i = 0; i < bufferLength; i++) {
+    sum += dataArray[i];
+  }
+  const average = sum / bufferLength;
+  const scale = 0.3 + (average / 255) * 0.5;
+  
+  // Draw pulsing circle
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = Math.min(canvas.width, canvas.height) / 2;
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius * scale, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Request next frame
+  requestAnimationFrame(drawMiniVisualizer);
+}, [miniCanvasRef, analyserRef]);
+```
+
+To optimise performance, I implemented several techniques:
+- Frame rate limiting to prevent excessive CPU usage
+- Canvas size optimisation based on device capabilities
+- Gradient caching to avoid recreating gradients on each frame
+- Selective rendering based on visibility
+
+---
+
+## Cross-Browser and Cross-Device Compatibility
+
+One of the biggest challenges was ensuring the player worked consistently across different browsers and devices. Audio playback can be particularly tricky due to varying implementations of the Web Audio API and autoplay restrictions.
+
+### Safari and iOS Challenges
+
+Safari and iOS presented unique challenges:
+- **Audio Context Limitations**: Safari requires user interaction before allowing audio context creation
+- **Autoplay Restrictions**: iOS requires user interaction before any audio can play
+- **Web Audio API Differences**: Safari's implementation has subtle differences from Chrome and Firefox
+
+To address these issues, I implemented several workarounds:
+
+```typescript
+// Unlock audio context on user interaction
+const unlockAudioContext = useCallback(async () => {
+  if (audioContextRef.current?.state === 'suspended') {
+    try {
+      await audioContextRef.current.resume();
+    } catch (error) {
+      console.error('Error unlocking AudioContext:', error);
+    }
+  }
+}, []);
+
+useEffect(() => {
+  // Listen for any user interaction
+  document.addEventListener('click', unlockAudioContext);
+  document.addEventListener('touchstart', unlockAudioContext);
+  
+  return () => {
+    document.removeEventListener('click', unlockAudioContext);
+    document.removeEventListener('touchstart', unlockAudioContext);
+  };
+}, [unlockAudioContext]);
+```
+
+### Handle Playback Errors
+
+I implemented robust error handling to gracefully recover from playback issues:
+
+```typescript
+const onError = (e: Event) => {
+  console.error('Error loading audio:', e);
+  cleanup();
+  
+  // Try alternative URL or format if available
+  if (fallbackFormats.length > 0) {
+    tryNextFormat();
+  } else {
+    setError('Unable to play this track. Please try another.');
+  }
+};
+```
+
+---
+
+## The Result
+
+After weeks of development and testing, I'm proud of the final result. The music page provides a seamless listening experience with a visually appealing interface that works across all modern browsers and devices.
+
+![phone-1](/images/blog/building-a-music-showcase-for-my-portfolio-a-developer-s-journey/rb5h4g5etw2q9n0mvtjw.png) | ![phone-2](/images/blog/building-a-music-showcase-for-my-portfolio-a-developer-s-journey/divp32aoobsbqheohqs6.png)
+:-------------------------:|:-------------------------:
+
+The player has become one of the most commented-on features of my portfolio by friends, with many of my developer peers often surprised that it's a custom implementation rather than a third-party widget.
+
+## Check Out the Code
+
+If you're interested in exploring the code further or using it as inspiration for your own projects, you can find it in my GitHub repository:
+
+[https://github.com/gupta-akshay/portfolio-v2](https://github.com/gupta-akshay/portfolio-v2)
+
+Feel free to star the repo if you find it useful, and don't hesitate to reach out if you have any questions or suggestions!
+
+---
+
+## Future Considerations
+
+While I'm happy with the current implementation, I have several ideas for future enhancements:
+
+### SoundCloud-Inspired UI/UX
+
+I've always been a fan of Soundcloud's intuitive interface and user experience. Future iterations might incorporate some of their best design patterns:
+- Waveform visualisation with playback position indicator
+- Comment placement directly on the waveform
+- Continuous playback while browsing
+- More prominent artist information and artwork
+
+### Search and Filtering Capabilities
+
+As my music collection grows, I plan to implement:
+- Full-text search across track titles and metadata
+- Filtering by genre, year, and type (remix, original, etc.)
+- Sorting options (newest, most played, etc.)
+- Playlist creation and management
+
+### Open-Source NPM Package
+
+I've received requests from some of my peer-developers to make this player available as a reusable component. I'm considering:
+- Extracting the core functionality into a standalone package
+- Creating a well-documented API for customization
+- Supporting different themes and visualisation styles
+- Adding plugin support for extending functionality
+
+If you're interested in contributing to any of these future enhancements or have other ideas, please reach out!
+
+---
+
+## Final Thoughts
+
+Building this music player was a fun challenge that allowed me to combine my passions for coding and music. It reinforced my belief that creating custom solutions, while more time-consuming, can result in better user experiences that perfectly match your specific needs.
+
+What custom components have you built for your portfolio? I'd love to hear about your experiences in the comments below!
+
+Happy coding (and music-making)! 🎧👨‍💻
+
+> "The best music is essentially there to provide you something to face the world with." — Bruce Springsteen

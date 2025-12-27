@@ -1,0 +1,118 @@
+export const metadata = {
+    title: 'Snapshots, Brooms, and Arch Linux Chaos Control',
+    slug: 'snapshots-brooms-and-arch-linux-chaos-control',
+    publishedAt: '2025-12-02',
+    categories: ['arch-linux', 'linux', 'snapshots', 'cachyos'],
+    coverImage: '/images/blog/snapshots-brooms-and-arch-linux-chaos-control.avif',
+    coverImageAlt: 'Snapshots, Brooms, and Arch Linux Chaos Control',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    }
+}
+
+Arch gives you the steering wheel _and_ the broom. On my Arch setup, Limine boots a BTRFS root while Snapper snaps a before/after every time I poke `pacman`. It's gorgeous, rollbacks for days, but the snapshots stack up faster than RGB stickers unless I sweep them out. So I wrote this simple `cleanup.sh`, my tiny digital janitor.
+
+> "I use Arch btw."
+
+## Why I even bother
+
+- Pacman + Snapper hooks = instant safety net. If a wile build breaks stuff, I just reboot, pick the previous snapshot in Limine, and carry on.
+- I settled on [CachyOS](https://cachyos.org/) and [HyDE](https://hydeproject.pages.dev/) on top of it, after trying and experimenting with multiple setups. Now CachyOS loves performance tweaks, which means I love experimenting. Snapshots let me go full mad scientist without sweating the fallout.
+- Doing the cleanup myself keeps that classic Arch vibe: I decide what stays, what goes, and when my SSD gets to breathe.
+
+## How my cleanup script keeps me sane
+
+You can keep the below script anywhere on your system, and yes, it wants root (`sudo ./cleanup.sh [KEEP]`). Default keep count is 2, but bump it to whatever number keeps you cozy. The flow:
+
+- **Are we legit?**: Bails if you're not root or if `btrfs` tools are missing.
+- **Roll call**: Lists every `/.snapshots/<id>/snapshot`, nicely sorted so we know what's oldest.
+- **Pick favourites**: Shows what stays, what goes, and then asks "you sure?" so you don't rage-delete your lifeline.
+- **Yeet + sync**: Deletes the dusty stuff, cleans empty directories, and syncs the filesystem so everything feels fresh.
+
+Slide the whole script into your toolbox:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# How many latest snapshots to keep (default: 2)
+KEEP="${1:-2}"
+
+if [[ "$EUID" -ne 0 ]]; then
+  echo "Please run this script as root:"
+  echo "  sudo $0 [KEEP]"
+  exit 1
+fi
+
+if ! command -v btrfs &>/dev/null; then
+  echo "Error: 'btrfs' command not found. Is btrfs-progs installed?"
+  exit 1
+fi
+
+echo "Scanning for snapshots under /.snapshots ..."
+mapfile -t SNAPSHOTS < <(
+  btrfs subvolume list / \
+    | awk '$9 ~ /^\.snapshots\/[0-9]+\/snapshot$/ {print $9}' \
+    | sort -t'/' -k2,2n
+)
+
+TOTAL=${#SNAPSHOTS[@]}
+
+if (( TOTAL == 0 )); then
+  echo "No snapshots found under /.snapshots."
+  exit 0
+fi
+
+echo "Found $TOTAL snapshot subvolumes:"
+printf '  %s\n' "${SNAPSHOTS[@]}"
+echo
+
+if (( TOTAL <= KEEP )); then
+  echo "Total snapshots ($TOTAL) <= KEEP ($KEEP). Nothing to delete."
+  exit 0
+fi
+
+# Old ones to delete = everything except the last KEEP entries
+DELETE_COUNT=$(( TOTAL - KEEP ))
+TO_DELETE=( "${SNAPSHOTS[@]:0:DELETE_COUNT}" )
+TO_KEEP=( "${SNAPSHOTS[@]:DELETE_COUNT}" )
+
+echo "Will KEEP the latest $KEEP snapshot(s):"
+printf '  %s\n' "${TO_KEEP[@]}"
+echo
+echo "Will DELETE $DELETE_COUNT older snapshot(s):"
+printf '  %s\n' "${TO_DELETE[@]}"
+echo
+
+read -rp "Proceed with deletion? [y/N] " ans
+case "$ans" in
+  y|Y) ;;
+  *) echo "Aborted."; exit 0 ;;
+esac
+
+for relpath in "${TO_DELETE[@]}"; do
+  fullpath="/$relpath"
+  echo "Deleting subvolume: $fullpath"
+  btrfs subvolume delete "$fullpath"
+
+  # Try to remove the parent directory (/.snapshots/<id>) if it is empty
+  parent="/$(dirname "$relpath")"
+  if rmdir "$parent" 2>/dev/null; then
+    echo "Removed empty directory: $parent"
+  fi
+done
+
+echo "Syncing filesystem..."
+btrfs filesystem sync /
+
+echo "Cleanup complete."
+```
+
+## Why this feels 100% Arch
+
+- I'm the one dialling in how many snapshots survive, not some mystery cron job.
+- Limine keeps every snapshot bootable but leaves the housekeeping to me, which is exactly how I like it.
+- No silent "optimization" services, just a bash script, a terminal prompt, and the knowledge my restore points are ones I actually care about.
+
+Next time you finish spicy upgrade on your Arch system, kick back for a second and run `cleanup.sh`. Five seconds of sweeping, and boom: your Arch universe stays tidy, intentional, and totally yours.

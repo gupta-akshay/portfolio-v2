@@ -1,0 +1,203 @@
+export const metadata = {
+    title: 'Reading and Interpreting PostgreSQL Query Plans - A Friendly Guide',
+    slug: 'reading-and-interpreting-postgresql-query-plans-a-friendly-guide',
+    publishedAt: '2024-11-01',
+    categories: ['postgres', 'database', 'performance'],
+    coverImage: '/images/blog/reading-and-interpreting-postgresql-query-plans-a-friendly-guide.avif',
+    coverImageAlt: 'Reading and Interpreting PostgreSQL Query Plans',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    }
+}
+
+PostgreSQL's query execution plans can seem a little cryptic, but once you understand how to interpret them, you'll have a superpower for database optimization. Whether you're dealing with complex joins, struggling with slow query times, or trying to squeeze more performance out of a large dataset, `EXPLAIN` and `EXPLAIN ANALYZE` can reveal exactly what's going on under the hood.
+
+In this post, we'll take an easy-to-follow journey through PostgreSQL query plans, using real examples, and explore techniques for diagnosing and fixing query bottlenecks.
+
+## Setting the Scene: Database Schema and Sample Data
+To give these explanations some context, here's a schema and some sample data we'll refer to throughout:
+```sql
+-- Create customers table
+CREATE TABLE customers (
+  id SERIAL PRIMARY KEY,
+  customer_name VARCHAR(255),
+  email VARCHAR(255),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create orders table with a foreign key to customers
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  customer_id INT REFERENCES customers(id),
+  order_date TIMESTAMPTZ DEFAULT NOW(),
+  total_amount NUMERIC(10, 2)
+);
+
+-- Insert sample data
+INSERT INTO customers (customer_name, email)
+SELECT 'Customer ' || i, 'customer' || i || '@example.com'
+FROM generate_series(1, 1000000) AS s(i);
+
+INSERT INTO orders (customer_id, order_date, total_amount)
+SELECT (RANDOM() * 1000000)::INT, NOW() - interval '1 day' * (RANDOM() * 365)::int, (RANDOM() * 500 + 20)
+FROM generate_series(1, 1000000) AS s(i);
+```
+
+## The Basics: Using `EXPLAIN` and `EXPLAIN ANALYZE`
+
+- **EXPLAIN**: This command shows the execution plan for a query without actually running it. It's quick and useful for understanding how PostgreSQL intends to handle the query.
+- **EXPLAIN ANALYZE**: This does everything EXPLAIN does, but also executes the query, showing the actual time taken for each operation. It’s great for getting real insights into where time is spent.
+```sql
+EXPLAIN ANALYZE SELECT * FROM orders WHERE total_amount > 100;
+```
+This query will give us a full rundown of the operations PostgreSQL uses to get results, complete with estimated and actual costs and timing data.
+
+## Understanding Query Plans: A Tree Structure and How to Read it
+A query plan can be thought of as a tree structure, where each node represents an operation performed by PostgreSQL. The plan describes each step the database takes to complete a query, beginning from the innermost operations (leaf nodes), and building up to the final result (root node).
+**Reading from the Inside Out**
+The best way to read a query plan is to start with the innermost nodes and work outward. Why? Because each node represents a step in the process, and the outer nodes are typically aggregating or joining the results from the inner nodes. Here's how you can approach it:
+1. **Identify the Leaf Nodes**: These are the deepest (innermost) nodes in the plan, representing basic operations like scanning tables, applying filters, and using indexes.
+2. **Evaluate Each Node's Purpose**: Leaf nodes provide the raw data, while nodes higher up the tree represent operations that combine, sort, or filter these results. Each node usually depends on the data processed by nodes 'below' it.
+3. **Move Up the Tree**: As you move up, you'll encounter operations like joins, aggregations, or limits. Each node in this layer is using the output of the nodes below it.
+4. **Look for the Root Node**: This is the outermost node, representing the final step in query processing. By the time PostgreSQL reaches the root, all the data processing is complete, and the result set is ready to be returned.
+
+Reading a plan from the innermost node to the root gives you a clear understanding of how PostgreSQL builds the final result step by step.
+Let's dive into some specific query components to make this process easier to follow.
+
+## Anatomy of a Query Plan: Breaking Down the Components
+
+Each query plan is built from a series of nodes, representing each stage of processing (like scans, joins, and filters). Let’s walk through the key parts of a query plan.
+
+### Node Types - The Building Blocks 
+Each node represents a specific operation PostgreSQL performs as it processes the query.
+
+- `Seq Scan (Sequential Scan)`: Reads every row in the table. This is fast for small tables but becomes costly with larger datasets.
+- `Parallel Seq Scan`: For large tables, PostgreSQL can run multiple sequential scans simultaneously (in parallel) across CPU cores to reduce scan time. This often appears with big, unindexed tables.
+- `Index Scan`: Uses an index, meaning PostgreSQL doesn’t have to check every row. If you see this in a query plan, it means PostgreSQL is trying to be efficient.
+- `Bitmap Index Scan` and `Bitmap Heap Scan`: These work together, usually with larger datasets. A bitmap index scan is good when multiple conditions are involved, and the bitmap heap scan uses the bitmap to access the rows in bulk.
+- `Nested Loop`: Useful for smaller datasets or indexed tables. However, it can be slow with large datasets unless properly optimized.
+- `Hash Join` and `Merge Join`: These joins are much faster for large datasets. Hash joins work by building an in-memory hash table, while merge joins sort both tables by the join key before merging.
+- `BitmapAnd` and `BitmapOr`: Bitmap operations on indexes that allow combining conditions across multiple indexes. However, due to current limitations, these nodes always report zero actual row counts.
+
+### Cost - PostgreSQL's Estimate of Computational Expense
+Each node includes cost metrics, showing PostgreSQL’s estimates for computational resources needed. The cost is split into two parts:
+
+- **Startup Cost**: The estimated cost to initiate the node.
+- **Total Cost**: The estimated cost to complete the node’s task.
+
+PostgreSQL uses above estimates to decide which plan to choose. Lower cost values generally suggest more efficient operations.
+
+### Actual Time - The Reality Check
+
+When you use `EXPLAIN ANALYZE`, you get the real execution time for each node:
+
+- **Startup Time**: The time to start the node.
+- **Total Time**: The time to fully execute it.
+
+Differences between estimated costs and actual times can tell you if a query is underperforming (if the actual times are much higher).
+
+### Rows - Expected vs. Reality
+
+This shows the estimated versus actual rows processed:
+
+- **Plan Rows**: The number of rows PostgreSQL expects to process.
+- **Actual Rows**: The actual rows processed during execution.
+
+Large differences between expected and actual rows can indicate outdated statistics. If you see mismatches, running `ANALYZE` can help update PostgreSQL’s stats.
+
+### Loops - How many times a Node ran
+
+The `loops` value shows how often PostgreSQL had to repeat an operation. High loop counts can indicate inefficiencies, especially if used with nested loops on large datasets.
+
+> Note that the `actual time` values are in milliseconds of real time, whereas the `cost` estimates are expressed in arbitrary units; so they are unlikely to match up. The thing that's usually most important to look for is whether the estimated row counts are reasonably close to reality.
+
+
+## Example Query Analysis
+```sql
+EXPLAIN ANALYZE SELECT * FROM orders WHERE total_amount > 100;
+```
+Output Analysis:
+```sql
+Seq Scan on orders  (cost=0.00..18870.00 rows=844015 width=22) (actual time=0.192..80.885 rows=839795 loops=1)
+  Filter: (total_amount > '100'::numeric)
+  Rows Removed by Filter: 160205
+Planning Time: 1.560 ms
+Execution Time: 96.425 ms
+```
+- **Seq Scan**: A sequential scan is performed on the `orders` table, where PostgreSQL scans each row individually to locate matching rows. This method is typically used when no suitable index is available.
+- **Cost**: The cost range of `0.00..18870.00` indicates an expensive operation, as the scan processes a substantial number of rows (844,015). The cost is higher due to scanning the entire table to find matching rows.
+- **Actual Time**: The actual time range of `0.192..80.885 ms` reflects the time taken to complete the scan, suggesting that although sequential scans can be slower for large tables, this one was optimized to complete in a reasonable duration.
+- **Filter**: A filter condition (`total_amount > 100`) is applied during the scan. Rows not meeting this condition are excluded, resulting in 160,205 rows removed, leaving 839,795 rows that meet the condition.
+- **Planning Time**: The planning time of `1.560 ms` indicates the time PostgreSQL took to analyze and set up the query execution plan.
+- **Execution Time**: The total execution time of `96.425 ms` reflects the end-to-end time to complete the query after planning and applying the filter.
+
+**Optimization Tip**: For frequent queries on `total_amount`, adding an index would enable an Index Scan, potentially making the query faster.
+
+### Using `LIMIT` and its impact on Estimates
+Queries with `LIMIT` don't require processing every row, which can cause apparent discrepancies in `EXPLAIN ANALYZE` outputs.
+```sql
+EXPLAIN ANALYZE SELECT * FROM orders WHERE total_amount > 100 LIMIT 2;
+```
+Output:
+```sql
+Limit  (cost=0.00..0.04 rows=2 width=22) (actual time=0.024..0.025 rows=2 loops=1)
+  ->  Seq Scan on orders  (cost=0.00..18870.00 rows=844015 width=22) (actual time=0.022..0.023 rows=2 loops=1)
+        Filter: (total_amount > '100'::numeric)
+Planning Time: 0.147 ms
+Execution Time: 0.043 ms
+```
+The query planner chooses a Sequential Scan despite the index on `total_amount` due to the `LIMIT 2` clause. The cost and row estimates reflect the processing of more rows, but execution stops as soon as two rows matching the condition are found. This is not an estimation error but a reflection of PostgreSQL’s approach: it estimates costs as if the entire operation were to run without a limit, and then applies the limit during execution. As a result, even with an index, PostgreSQL may prefer a Sequential Scan for small result sets, especially when it anticipates a lower overall cost.
+
+### Join Query with Hash Join
+Hash joins process all rows from both tables as they build a hash table and probe for matches, ensuring that no rows are skipped. This approach is ideal when no order is required and all possible matches should be evaluated, reducing the risk of missed rows or mismatches.
+```sql
+EXPLAIN ANALYZE
+SELECT c.customer_name, o.total_amount
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+WHERE o.total_amount > 200;
+```
+Output Analysis:
+```sql
+Hash Join  (cost=38670.00..71347.50 rows=641330 width=21) (actual time=143.712..363.685 rows=640630 loops=1)
+  Hash Cond: (o.customer_id = c.id)
+  ->  Seq Scan on orders o  (cost=0.00..18870.00 rows=641330 width=10) (actual time=0.017..68.051 rows=640630 loops=1)
+        Filter: (total_amount > '200'::numeric)
+        Rows Removed by Filter: 359370
+  ->  Hash  (cost=20310.00..20310.00 rows=1000000 width=19) (actual time=143.408..143.408 rows=1000000 loops=1)
+        Buckets: 131072  Batches: 8  Memory Usage: 7376kB
+        ->  Seq Scan on customers c  (cost=0.00..20310.00 rows=1000000 width=19) (actual time=0.894..56.381 rows=1000000 loops=1)
+Planning Time: 0.340 ms
+Execution Time: 374.443 ms
+```
+The query uses a Hash Join to combine data from `customers` and `orders` based on matching `customer_id` values. PostgreSQL first performs a hash on the `customers` table, creating a hash table in memory, and then scans the orders table to find matching rows. This join strategy is efficient for large datasets where indexes may not be ideal.
+
+- **Hash Cond**: The join condition `o.customer_id = c.id` ensures that only records with matching `customer_id` values from both tables are joined.
+- **Seq Scan on orders**: PostgreSQL performs a Sequential Scan on the `orders` table with a filter (`total_amount > 200`). This filter reduces the scanned rows to `640,630`, discarding `359,370` rows.
+- **Hash Creation for customers**: The Hash step creates a hash table on the `customers` table, scanning all `1,000,000` rows and building buckets to optimize matching. This step uses memory efficiently, with a batch size of `8`, handling all customer records in one pass.
+- **Cost and Execution Time**: The cost reflects the complexity of scanning and joining large tables. The planning time of `2.859 ms` and execution time of `370.177 ms` indicate the overall time taken, with most time spent on scanning and filtering the `orders` table and building the hash.
+
+This query plan does not display early termination behavior (as seen with merge joins) but shows how the hash join efficiently processes large, unindexed data for an equi-join.
+
+## Important Caveats When Interpreting Query Plans
+
+1. **Index Selective Columns**: Index columns used frequently in `WHERE`, `JOIN`, and `ORDER BY` clauses. For instance, indexing `total_amount` in orders allows an `Index Scan`, reducing sequential scan costs.
+
+2. **Regularly Update Statistics**: Keep table statistics current using `ANALYZE`. Outdated statistics can lead to inaccurate estimates and suboptimal plans.
+
+3. **Consider Partial Indexes**: For frequently filtered data, a partial index (like `total_amount > 200`) may reduce scan times.
+
+4. **Optimize Joins**: Indexing join columns and using hash or merge joins for large tables can significantly reduce execution time.
+
+5. **Be Aware of Parallelism Limits**: PostgreSQL has settings that control the number of parallel workers. You can adjust these if your server has multiple CPU cores, especially for queries that benefit from `Parallel Seq Scan`.
+
+## Wrapping Up
+
+Interpreting PostgreSQL query plans is a skill that takes practice but pays off tremendously. By reading `EXPLAIN` and `EXPLAIN ANALYZE` results, you can pinpoint slow spots, make targeted improvements, and achieve faster query times. With these techniques and tips, you're well on your way to becoming a PostgreSQL optimization pro!
+
+Further Reading:
+- PostgreSQL Documentation: [Using EXPLAIN](https://www.postgresql.org/docs/16/using-explain.html)
+- EXPLAIN explained by Josh Berkus: [Watch here](https://www.youtube.com/watch?v=mCwwFAl1pBU)
+
+Happy querying! 🎉
