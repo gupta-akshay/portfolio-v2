@@ -77,6 +77,7 @@ export function calculateReadingTime(content: string): {
     .replace(/```[\s\S]*?```/g, '')
     .replace(/`.*?`/g, '')
     .replace(/<[^>]*>/g, '')
+    .replace(/[<>]/g, '') // Strip any remaining angle brackets for safety
     .replace(/[#*_~]/g, '')
     .trim();
 
