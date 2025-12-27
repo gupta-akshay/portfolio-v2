@@ -67,7 +67,6 @@ const nextConfig = {
               "frame-src 'self' https://www.google.com https://app.netlify.com https://vercel.live",
               "connect-src 'self' https://*.netlify.com https://*.s3.amazonaws.com https://*.s3.ap-south-1.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://www.google-analytics.com https://www.googletagmanager.com https://github-contributions-api.jogruber.de https://vercel.live wss://ws-us3.pusher.com https://*.ingest.sentry.io",
               "media-src 'self' blob: https://*.s3.amazonaws.com https://*.s3.ap-south-1.amazonaws.com https://*.cloudfront.net",
-              'block-all-mixed-content',
               'upgrade-insecure-requests',
             ].join('; '),
           },
