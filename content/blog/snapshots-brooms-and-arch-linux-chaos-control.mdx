@@ -8,7 +8,8 @@ export const metadata = {
     author: {
         name: 'Akshay Gupta',
         avatar: '/images/blog-author.png'
-    }
+    },
+    excerpt: 'A simple bash script to tame Btrfs snapshot sprawl on Arch Linux. Keep your SSD breathing while Snapper and Limine handle the safety net.'
 }
 
 Arch gives you the steering wheel _and_ the broom. On my Arch setup, Limine boots a BTRFS root while Snapper snaps a before/after every time I poke `pacman`. It's gorgeous, rollbacks for days, but the snapshots stack up faster than RGB stickers unless I sweep them out. So I wrote this simple `cleanup.sh`, my tiny digital janitor.
