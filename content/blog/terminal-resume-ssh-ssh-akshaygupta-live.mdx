@@ -25,7 +25,7 @@ Under the hood it's just thoughtful TypeScript, and a little flair. Here's the t
 - The shell clears the screen, renders the marquee welcome (`renderWelcome` mixes `figlet`, `gradient-string` and `boxen`), and reacts to `window-change` events so everything stays readable from 80 columns to ultrawide setups.
 - Input flows through the `commander` map, so verbs like `summary`, `skills`, `experience`, `education`, `links`, `resume`, `clear`, and `help` are just plain object keys. Want a new section? Add another entry, done.
 - Formatting magic lives in `terminal/renderer.ts`, where `wrap-ansi` keeps paragraphs tidy, `boxen` frames each section, and `chalk` paints the `akshay@terminal $` prompt with that unmistakable gradient.
-- All copy comes straight from `terminal/resumeData.ts`, the same data powering `public/assets/akshay-cv.pdf`, which means the PDF, website, and shell stay perfectly in sync.
+- All copy comes straight from `terminal/resumeData.ts`, the same data powering `public/assets/Akshay_Gupta_CV.pdf`, which means the PDF, website, and shell stay perfectly in sync.
 
 Check the source code at [https://github.com/gupta-akshay/portfolio-v2](https://github.com/gupta-akshay/portfolio-v2).
 

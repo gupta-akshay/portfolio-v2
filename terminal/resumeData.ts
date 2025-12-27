@@ -42,7 +42,7 @@ export interface ResumeData {
 
 export const resumePdfPath = path.resolve(
   process.cwd(),
-  'public/assets/akshay-cv.pdf',
+  'public/assets/Akshay_Gupta_CV.pdf',
 );
 
 const createBasics = (): ResumeBasics => ({
@@ -58,7 +58,7 @@ const createBasics = (): ResumeBasics => ({
   website: 'https://www.akshaygupta.live',
   linkedin: 'https://www.linkedin.com/in/akshayguptaujn',
   github: 'https://github.com/gupta-akshay',
-  resumeUrl: 'https://akshaygupta.live/assets/akshay-cv.pdf',
+  resumeUrl: 'https://akshaygupta.live/assets/Akshay_Gupta_CV.pdf',
 });
 
 const createSkills = (): ResumeSkillCategory[] => [

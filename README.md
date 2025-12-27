@@ -232,7 +232,7 @@ ssh -p 2222 localhost
 ### Deploying to `ssh.akshaygupta.live`
 
 1. Provision a lightweight VM/container (Fly.io, Railway, Hetzner, etc.).
-2. Copy `.env` variables and keep `akshay-cv.pdf` in `public/assets`.
+2. Copy `.env` variables and keep `Akshay_Gupta_CV.pdf` in `public/assets`.
 3. Build the Next.js site as usual (or skip if you only need the SSH process).
 4. Start the SSH server (systemd example):
 
@@ -255,7 +255,7 @@ WantedBy=multi-user.target
 5. Add an `A` record for `ssh.akshaygupta.live` (or the root domain if you want `ssh akshaygupta.live`) pointing to the VM. Route HTTP (ports 80/443) through your proxy to the helper server so browsers hitting the subdomain see instructions to use SSH or visit the main site.
 6. (Optional) If your primary SSH access already uses port 22, expose this service on another port (e.g., 2222) and instruct users to run `ssh -p 2222 ssh.akshaygupta.live`.
 
-The terminal UI reads structured data from `terminal/resumeData.ts`, which mirrors `public/assets/akshay-cv.pdf`. Update this file whenever the PDF changes to keep both sources consistent.
+The terminal UI reads structured data from `terminal/resumeData.ts`, which mirrors `public/assets/Akshay_Gupta_CV.pdf`. Update this file whenever the PDF changes to keep both sources consistent.
 
 ### Example: Fly.io + Cloudflare
 
