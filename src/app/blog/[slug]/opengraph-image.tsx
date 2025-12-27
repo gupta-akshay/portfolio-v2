@@ -1,6 +1,9 @@
 import { ImageResponse } from 'next/og';
 import { getBlogBySlug, getBlogSlugs } from '@/lib/mdx';
 
+// Force Node.js runtime since getBlogBySlug uses fs to read MDX files
+export const runtime = 'nodejs';
+
 export const contentType = 'image/png';
 export const size = {
   width: 1200,
