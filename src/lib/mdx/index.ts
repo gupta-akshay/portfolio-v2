@@ -72,12 +72,21 @@ export function calculateReadingTime(content: string): {
   minutes: number;
   words: number;
 } {
-  // Remove code blocks and special characters
-  const text = content
+  // Remove fenced code blocks and inline code
+  let sanitized = content
     .replace(/```[\s\S]*?```/g, '')
-    .replace(/`.*?`/g, '')
-    .replace(/<[^>]*>/g, '')
-    .replace(/[<>]/g, '') // Strip any remaining angle brackets for safety
+    .replace(/`[^`]*`/g, ''); // Safer: no nested backticks
+
+  // Repeatedly strip HTML tags to avoid incomplete multi-character sanitization
+  let previous: string;
+  do {
+    previous = sanitized;
+    sanitized = sanitized.replace(/<[^>]*>/g, '');
+  } while (sanitized !== previous);
+
+  // Final cleanup: strip remaining angle brackets and markdown punctuation
+  const text = sanitized
+    .replace(/[<>]/g, '')
     .replace(/[#*_~]/g, '')
     .trim();
 
