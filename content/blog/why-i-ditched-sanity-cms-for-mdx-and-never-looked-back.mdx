@@ -1,0 +1,390 @@
+export const metadata = {
+    title: 'Why I Ditched Sanity CMS for MDX (And Never Looked Back)',
+    slug: 'why-i-ditched-sanity-cms-for-mdx-and-never-looked-back',
+    publishedAt: '2025-12-31',
+    categories: ['nextjs', 'mdx', 'cms', 'developer-experience'],
+    coverImage: '/images/blog/why-i-ditched-sanity-cms-for-mdx-and-never-looked-back.jpeg',
+    coverImageAlt: 'MDX code editor showing markdown and JSX together',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    },
+    excerpt: 'How I migrated my portfolio blog from Sanity CMS to MDX files, reducing complexity while gaining full ownership of my content with better developer experience.'
+}
+
+> "Simplicity is the ultimate sophistication." - Leonardo da Vinci
+
+Sometimes the best technical decisions are the ones that remove complexity rather than add it. This is the story of how I migrated my blog from Sanity CMS to plain MDX files, and why it turned out to be one of the best decisions I've made for this portfolio.
+
+## The Setup: Why I Originally Chose Sanity
+
+When I first built this portfolio, Sanity CMS seemed like the obvious choice for managing blog content:
+
+- **Visual Editor**: A nice WYSIWYG interface for writing
+- **Structured Content**: Schema-driven content modeling
+- **Real-time Collaboration**: Though I was the only author 😅
+- **CDN-hosted Images**: Automatic image optimization
+- **Webhook Revalidation**: On-demand ISR when content changed
+
+It worked. But over time, the cracks started showing.
+
+## The Breaking Point: Why I Decided to Leave
+
+### 1. Overhead for a Single Author
+
+I was running an entire CMS infrastructure for... myself. The Sanity Studio added routes, dependencies, and complexity that felt increasingly unnecessary:
+
+```bash
+src/sanity/
+├── env.ts
+├── lib/
+│   ├── client.ts
+│   ├── image.ts
+│   └── queries.ts
+├── schemaTypes/
+│   ├── authorType.ts
+│   ├── blockContentType.ts
+│   ├── categoryType.ts
+│   └── postType.ts
+└── structure.ts
+```
+
+All this infrastructure for what could be a simple markdown file.
+
+### 2. The External Dependency Problem
+
+Every time I wanted to write, I had to:
+1. Open my site
+2. Navigate to `/studio`
+3. Wait for the Sanity Studio to load
+4. Write in their editor
+5. Hope the webhook fired correctly for revalidation
+
+My content lived on someone else's servers. If Sanity changed their pricing, had an outage, or sunset a feature, I'd be scrambling.
+
+### 3. Code Blocks Were a Pain
+
+As a developer writing technical content, code blocks are essential. Sanity's Portable Text format required custom serializers, and getting syntax highlighting right was always a battle:
+
+```typescript
+// Old Sanity code block serializer - verbose and fragile
+const CodeBlock = ({ value }: { value: CodeBlockValue }) => {
+  return (
+    <SyntaxHighlighter
+      language={value.language || 'text'}
+      style={oneDark}
+      customStyle={{ margin: '1.5rem 0', borderRadius: '8px' }}
+    >
+      {value.code}
+    </SyntaxHighlighter>
+  );
+};
+```
+
+With MDX, it's just... markdown:
+
+~~~markdown
+```typescript
+const greeting = "Hello, World!";
+```
+~~~
+
+### 4. Version Control? What Version Control?
+
+My code was in Git. My content was in Sanity. Two sources of truth, zero unified history. I couldn't easily:
+- Review content changes in PRs
+- Roll back a post to a previous version
+- See what changed alongside code changes
+
+## The Solution: MDX with Next.js
+
+MDX gives you the best of both worlds: Markdown's simplicity with React's power. Here's how I set it up.
+
+### Step 1: Install the Dependencies
+
+```bash
+pnpm add @next/mdx @mdx-js/loader @mdx-js/react
+pnpm add remark-gfm rehype-slug rehype-prism-plus
+```
+
+- **@next/mdx**: Official Next.js MDX integration
+- **remark-gfm**: GitHub Flavored Markdown (tables, strikethrough, etc.)
+- **rehype-slug**: Auto-generates IDs for headings (for Table of Contents)
+- **rehype-prism-plus**: Syntax highlighting with Prism.js
+
+### Step 2: Configure Next.js
+
+```javascript
+// next.config.mjs
+import createMDX from '@next/mdx';
+import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
+import rehypePrismPlus from 'rehype-prism-plus';
+
+const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  // ... other config
+};
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeSlug, [rehypePrismPlus, { ignoreMissing: true }]],
+  },
+});
+
+export default withMDX(nextConfig);
+```
+
+### Step 3: Create MDX Components
+
+The `mdx-components.tsx` file at the project root customizes how MDX elements render:
+
+```typescript
+// mdx-components.tsx
+import type { MDXComponents } from 'mdx/types';
+import Image from 'next/image';
+import Link from 'next/link';
+
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return {
+    // Custom heading with auto-generated ID
+    h2: ({ children, id }) => <h2 id={id}>{children}</h2>,
+    
+    // Smart links: internal vs external
+    a: ({ href, children }) => {
+      if (href?.startsWith('/')) {
+        return <Link href={href}>{children}</Link>;
+      }
+      return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
+    },
+    
+    // Accessible code blocks
+    pre: ({ children }) => (
+      <pre tabIndex={0} role="region" aria-label="Code snippet">
+        {children}
+      </pre>
+    ),
+    
+    ...components,
+  };
+}
+```
+
+### Step 4: Structure the Content
+
+Each blog post is now a simple `.mdx` file with exported metadata:
+
+```bash
+content/
+└── blog/
+    ├── my-first-post.mdx
+    ├── another-post.mdx
+    └── this-post.mdx
+```
+
+And the file structure is beautifully simple:
+
+```markdown
+export const metadata = {
+  title: 'My Blog Post',
+  slug: 'my-blog-post',
+  publishedAt: '2025-01-01',
+  categories: ['nextjs', 'react'],
+  coverImage: '/images/blog/my-post.avif',
+  author: {
+    name: 'Akshay Gupta',
+    avatar: '/images/blog-author.png'
+  },
+  excerpt: 'A short description of the post.'
+}
+
+## Introduction
+
+Your markdown content goes here...
+```
+
+### Step 5: Build the MDX Utilities
+
+I created a small utility library to handle blog operations:
+
+```typescript
+// src/lib/mdx/index.ts
+import fs from 'fs';
+import path from 'path';
+
+const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
+
+export function getBlogSlugs(): string[] {
+  const files = fs.readdirSync(CONTENT_DIR);
+  return files
+    .filter((file) => file.endsWith('.mdx'))
+    .map((file) => file.replace(/\.mdx$/, ''));
+}
+
+export async function getBlogBySlug(slug: string) {
+  const { metadata } = await import(`@/content/blog/${slug}.mdx`);
+  const rawContent = fs.readFileSync(
+    path.join(CONTENT_DIR, `${slug}.mdx`), 
+    'utf-8'
+  );
+  const readingTime = calculateReadingTime(rawContent);
+  
+  return { metadata, slug, readingTime };
+}
+```
+
+### Step 6: Render the Blog Page
+
+The dynamic route imports and renders MDX directly:
+
+```typescript
+// src/app/blog/[slug]/page.tsx
+export default async function BlogPost({ params }: Props) {
+  const { slug } = await params;
+  const post = await getBlogBySlug(slug);
+  
+  // Dynamic import of the MDX content
+  const { default: MDXContent } = await import(
+    `@/content/blog/${slug}.mdx`
+  );
+  
+  return (
+    <article>
+      <h1>{post.metadata.title}</h1>
+      <MDXContent />
+    </article>
+  );
+}
+
+export async function generateStaticParams() {
+  const slugs = getBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+```
+
+## The Migration: What Changed
+
+### Removed (~12,000 lines deleted)
+- Entire `src/sanity/` directory
+- Sanity Studio routes (`/studio`)
+- Webhook revalidation endpoint
+- Portable Text serializers
+- 8 Sanity-related npm packages
+
+### Added (~7,500 lines added)
+- 7 MDX blog posts in `content/blog/`
+- MDX utilities in `src/lib/mdx/`
+- Custom MDX components
+- Prism.js syntax highlighting theme
+- Cover images in `public/images/blog/`
+
+**Net result**: ~4,700 fewer lines of code. Less code, fewer bugs, simpler maintenance.
+
+## The Benefits I'm Enjoying Now
+
+### 1. Write Anywhere
+My favorite markdown editor, VS Code, Obsidian, or even `neovim` in a pinch. No browser required.
+
+### 2. Git-Native Content
+Every post is version controlled. I can see the full history, create branches for draft posts, and review content changes in PRs alongside code.
+
+### 3. Blazing Fast Builds
+No API calls during build. Everything is local filesystem reads. The build is noticeably faster.
+
+### 4. True Ownership
+My content lives in my repo. No vendor lock-in, no surprise pricing changes, no external dependencies.
+
+### 5. Better Code Blocks
+Prism.js with the Dracula theme, automatic language detection, and keyboard-accessible code regions. It just works:
+
+```typescript
+// Look ma, beautiful syntax highlighting!
+const sum = (a: number, b: number): number => a + b;
+```
+
+### 6. React Components in Markdown
+Need a custom callout? An interactive demo? Just import and use it:
+
+```markdown
+import { InteractiveDemo } from '@/components/Demo';
+
+Here's a live demo:
+
+<InteractiveDemo />
+```
+
+## Gotchas and Solutions
+
+### 1. OpenGraph Images Need Node.js Runtime
+
+The OG image generator uses `fs` to read MDX files, but Next.js image routes default to Edge runtime. Fix:
+
+```typescript
+// src/app/blog/[slug]/opengraph-image.tsx
+export const runtime = 'nodejs';
+```
+
+### 2. Reading Time Calculation
+
+With Sanity, I could query a computed field. With MDX, I calculate it from the raw content:
+
+```typescript
+export function calculateReadingTime(content: string) {
+  const text = content
+    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+    .replace(/`[^`]*`/g, '')        // Remove inline code
+    .replace(/<[^>]*>/g, '');       // Remove HTML
+  
+  const words = text.split(/\s+/).filter(Boolean).length;
+  const minutes = Math.ceil(words / 200);
+  
+  return { text: `${minutes} min read`, minutes, words };
+}
+```
+
+### 3. Table of Contents
+
+Without a structured AST from Sanity, I extract headings with regex:
+
+```typescript
+export function extractHeadings(content: string) {
+  const headingRegex = /^(#{1,4})\s+(.+)$/gm;
+  const headings = [];
+  
+  let match;
+  while ((match = headingRegex.exec(content)) !== null) {
+    const level = match[1].length;
+    const text = match[2].trim();
+    const id = text.toLowerCase().replace(/\s+/g, '-');
+    headings.push({ id, text, level });
+  }
+  
+  return headings;
+}
+```
+
+## Should You Make the Switch?
+
+**MDX is perfect if you:**
+- Are a solo author or small team
+- Write technical content with code blocks
+- Want content in version control
+- Value simplicity over features
+- Are comfortable with markdown
+
+**Stick with a CMS if you:**
+- Have non-technical content editors
+- Need complex workflows and approvals
+- Require real-time collaboration
+- Want a visual editing experience
+
+## Conclusion
+
+Moving from Sanity to MDX was like cleaning out a cluttered closet. The immediate benefit is obvious: less stuff, more space, easier to find things. But the real joy comes from the daily experience of just... writing.
+
+No dashboards. No loading spinners. No "syncing content." Just me, my editor, and markdown. The way blogging should be.
+
+The code for this entire blog system is open source at [github.com/gupta-akshay/portfolio-v2](https://github.com/gupta-akshay/portfolio-v2). Feel free to steal it. 🚀
+
+> "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away." - Antoine de Saint-Exupéry
