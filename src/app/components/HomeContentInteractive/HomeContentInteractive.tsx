@@ -15,7 +15,7 @@ export default function HomeContentInteractive({
     return (
       <a
         className='px-btn px-btn-regular'
-        href='/assets/akshay-cv.pdf'
+        href='/assets/Akshay_Gupta_CV.pdf'
         download
       >
         {children}

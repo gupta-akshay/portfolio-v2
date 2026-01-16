@@ -138,37 +138,182 @@ textarea,
   }
 }
 
-// Keyboard accessible code blocks
-.code-block-wrapper {
-  position: relative;
+// Prism.js Dracula Theme for MDX code blocks
+// Based on https://github.com/dracula/dracula-theme
+code[class*='language-'],
+pre[class*='language-'] {
+  color: #f8f8f2;
+  background: none;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
+}
+
+// Code blocks
+pre[class*='language-'] {
+  padding: 1em;
   margin: 1.5rem 0;
+  overflow: auto;
+  border-radius: 0.3em;
 
-  .keyboard-accessible-code {
+  // Keyboard accessibility
+  &[tabindex='0'] {
+    cursor: text;
+
     &:focus {
-      outline: 3px solid $px-theme !important;
-      outline-offset: 2px !important;
-    }
-
-    &[tabindex='0'] {
-      cursor: text;
-
-      &::before {
-        content: 'Keyboard accessible: use arrow keys to scroll';
-        display: block;
-        position: absolute;
-        top: -1.5rem;
-        right: 0;
-        font-size: 0.75rem;
-        color: $px-theme;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-      }
-
-      &:focus::before {
-        opacity: 1;
-      }
+      outline: 3px solid $px-theme;
+      outline-offset: 2px;
     }
   }
+}
+
+:not(pre) > code[class*='language-'],
+pre[class*='language-'] {
+  background: #282a36;
+}
+
+// Inline code
+:not(pre) > code[class*='language-'] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+// Inline code (not in pre) styling
+:not(pre) > code {
+  background: rgba($px-theme, 0.15);
+  color: $px-theme;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+
+  .theme-light & {
+    background: rgba($px-theme, 0.12);
+  }
+}
+
+// Prism token colors (Dracula theme)
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6272a4;
+}
+
+.token.punctuation {
+  color: #f8f8f2;
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #ff79c6;
+}
+
+.token.boolean,
+.token.number {
+  color: #bd93f9;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #50fa7b;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+  color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: #f1fa8c;
+}
+
+.token.keyword {
+  color: #8be9fd;
+}
+
+.token.regex,
+.token.important {
+  color: #ffb86c;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+// Line numbers (from rehype-prism-plus)
+.code-highlight {
+  float: left;
+  min-width: 100%;
+}
+
+.code-line {
+  display: block;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  border-left: 4px solid transparent;
+}
+
+.code-line.inserted {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+
+.code-line.deleted {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+.highlight-line {
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 12px;
+  background-color: rgba(55, 65, 81, 0.5);
+  border-left: 4px solid #60a5fa;
+}
+
+.line-number::before {
+  display: inline-block;
+  width: 1rem;
+  text-align: right;
+  margin-right: 16px;
+  color: rgb(156, 163, 175);
+  content: attr(line);
 }
 
 // Disco Mode Global Styles

@@ -46,8 +46,6 @@ certificates
 
 /.swc
 
-/.sanity
-
 /dist
 # Local Netlify folder
 .netlify

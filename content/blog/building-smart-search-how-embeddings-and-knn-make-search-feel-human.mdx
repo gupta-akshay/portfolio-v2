@@ -1,0 +1,166 @@
+export const metadata = {
+    title: 'Making Search Feel Human with kNN',
+    slug: 'building-smart-search-how-embeddings-and-knn-make-search-feel-human',
+    publishedAt: '2025-07-05',
+    categories: ['semantic-search', 'knn', 'machine-learning', 'embeddings'],
+    coverImage: '/images/blog/building-smart-search-how-embeddings-and-knn-make-search-feel-human.avif',
+    coverImageAlt: 'Making Search Feel Human with kNN',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.png'
+    },
+    excerpt: 'How embeddings and k-nearest neighbor search power intelligent semantic search. From understanding meaning to sub-50ms queries across 60k+ documents with Elasticsearch HNSW.'
+}
+
+> “The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.” - Marcel Proust
+
+Coffee? ✅ Chai? ✅ Excitement about building intelligent search? Double ✅
+
+Ever wondered how your favorite chatbot magically finds the perfect answer to your question, even if you didn't use the exact words? The secret sauce behind these smart search systems is a clever combination of something called embeddings and a neat technique known as k-nearest neighbor (kNN) search.
+
+Think of embeddings like your brain's ability to understand that "reset my password" and "forgot my login" basically mean the same thing. Embeddings translate words into numbers that capture their meaning, creating a sort of mathematical language that helps computers understand human intent.
+
+This system is part of a broader evolution from my earlier prototype: [Building a RAG-powered Support Chatbot in 24 Hours of Hackathon](https://dev.to/akshay_gupta/building-a-rag-powered-support-chatbot-in-24-hours-of-hackathon-5f7c). Back then, we hacked together a working retrieval-augmented generation (RAG) system with basic context retrieval. Since then, the approach has matured significantly; embedding quality, search efficiency, and real-time performance have all leveled up. Let’s dive into how this works now, at scale.
+
+## What's an Embedding, Anyway? 🤔
+
+Imagine you're searching for help with a forgotten password. Traditional search might not connect "reset password" to an article titled "recover your login credentials". But embeddings see the similarity immediately, it's like having a friend who always gets what you're saying, even if you're using different words.
+
+Here's how it works:
+
+```python
+# Simple example of embeddings
+text = "How do I reset my password?"
+embedding = create_embedding(text)
+# Result: [0.23, -0.45, 0.12, ...] (170 numbers representing meaning)
+```
+
+## Creating Embeddings (the Smart Way) 🏗️
+
+Here's the workflow we've built:
+
+- **Clean the Data** 🧹 : Remove noise, extra formatting, and HTML tags.
+- **Batch It Up** ⚡ : Process many documents at once to keep things fast.
+- **Shrink and Simplify** 📉 : Compress data to a compact, efficient 170-dimensional format.
+- **Normalize It** ⚖️ : Standardize embeddings so they place nicely together.
+
+We don't just look at titles or content alone; we combine both to capture the full story, like reading a headline and the article itself.
+
+## Storing Embeddings Smartly 💾
+
+We use **Elasticsearch** to store and query our embeddings efficiently. Elasticsearch is traditionally known for text-based search, but it now also supports **dense vector** fields, a perfect fit for storing high-dimensional embeddings.
+
+### What is a `dense_vector`?
+
+The `dense_vector` type in Elasticsearch allows you in store an array of floating-point numbers (your embeddings) inside a document. You can then perform vector-based similarity searches on them. When you set index: true, Elasticsearch builds an **HNSW (Hierarchical Navigable Small World)** graph structure over these vectors, enabling fast and approximate kNN searches.
+
+Each indexed document typically contains:
+
+- The original content (so users can read it).
+- The 170-dimensional vector embedding.
+- Metadata like url, category, and timestamps for filtering.
+
+Here's simplified example:
+
+```python
+{
+  "mappings": {
+    "properties": {
+      "embedding": { "type": "dense_vector", "dims": 170, "index": true },
+      "title": { "type": "text" },
+      "body": { "type": "text" },
+      "html_url": { "type": "keyword" }
+    }
+  }
+}
+```
+
+By indexing these vectors, we are enabling lighting-fast retrieval of semantically similar documents across multiple use cases.
+
+### What is k-Nearest Neighbor (KNN)?📍
+
+kNN is a search algorithm that finds the closest items to a query point in a multi-dimensional space. In our context, the query point is the user's question, represented as a 170-dimensional vector. kNN then searches the stored embeddings to find the k most similar vectors, i.e., the documents most relevant to the query.
+
+kNN is great for semantic search because it doesn’t rely on keywords. It looks at the **distance** between vectors, so two texts that mean the same thing will still be found together even if they don't share vocabulary.
+
+We use **HNSW (Hierarchical Navigable Small World)** for this, an efficient algorithm for approximate nearest neighbor searches, optimized for performance at scale.
+
+## Finding What You Really Mean 🔍
+
+Here's how our search works against a user question:
+
+- **Turn your question info numbers** 🧠 : Your question becomes an embedding.
+- **Find nearest matches** 🎯 : Quickly find similar embeddings using kNN.
+- **Score results** 📊 : Rank based on how close the matches are.
+- **Filter and Fine-Tune** 🧹 : Ensure only the best, most relevant answers make it through.
+
+Here's how the search happens:
+
+```python
+def find_relevant_context(user_question):
+    query_embedding = create_embedding(user_question)
+
+    high_priority_results = knn_search("high_priority_kb", query_embedding, k=10, boost=2.0, min_score=0.34)
+    low_priority_results = knn_search("low_priority_kb", query_embedding, k=10, boost=1.0, min_score=0.54, filter={"status": "complete"})
+
+    combined_results = combine_results(high_priority_results, low_priority_results)
+    return rank_by_score(combined_results)[:5]
+```
+
+## Why Not Stick with Regular Search? 🤷‍♂️
+
+Traditional searches struggle with understanding synonyms and context. kNN with embeddings shine because:
+
+- **Semantic Understanding**: Recognizes meaning, not just exact words.
+- **Synonyms and Variations**: Easily connects different phrases with similar meanings.
+- **Context Awareness**: Matches based on overall meaning, not keyword hits.
+- **Fast and Scalable**: Handles millions of items swiftly.
+
+## Why kNN Beats Cosine Similarity 🚀
+
+Cosine similarity works well for comparing a small number of vectors. But once you're dealing with thousands, or millions, of documents, it becomes a bottleneck.
+
+### Cosine Similarity Limitations:
+
+- **Linear Time Complexity**: It compares the query with every document. Painfully slow.
+- **Memory Intensive**: All embeddings need to be loaded into RAM.
+- **Doesn’t Scale Well**: Every new document adds to the workload.
+
+### Why kNN Wins:
+
+- **Sub-linear Time**: HNSW allows logarithmic-time searches—significantly faster.
+- **Approximate Matching**: 95% accuracy with 10x speed boost is a win.
+- **Scales Beautifully**: Works efficiently even with 60k+ documents.
+- **Integrated Filters**: Combine semantic search with metadata filters.
+
+In our system:
+- **Data Volume**: ~60k documents
+- **kNN Search Time**: &lt;50ms per query
+- **Cosine Similarity**: 3-5 seconds on same dataset, too slow for real-time apps.
+
+So while cosine similarity is great for academic demos, kNN with HNSW is what powers production-grade semantic search.
+
+## RAG System Integration: Where This Fits In 🔄
+
+This entire embedding and kNN infrastructure forms the **retrieval layer** in a **RAG (Retrieval-Augmented Generation)** system.
+- **Retrieval**: The user’s query is embedded and passed through KNN search to fetch top-k context documents.
+- **Augmentation**: These documents form the context that is passed to an LLM (like GPT or Claude).
+- **Generation**: The LLM uses this context to answer the question accurately and with reference to known content.
+
+In other words, this system helps the AI “know” what to say. Without it, even the smartest LLM would be guessing in the dark.
+
+From our hackathon RAG prototype to now, the major improvements include:
+- Better semantic matching via custom-trained embeddings
+- Much faster search with Elasticsearch HNSW
+- Contextual ranking and filtering
+- Higher relevance due to threshold tuning and boost factors
+
+Read more about the hackathon RAG prototype [here](https://dev.to/akshay_gupta/building-a-rag-powered-support-chatbot-in-24-hours-of-hackathon-5f7c).
+
+## Wrapping Up 🎉
+
+Embeddings and kNN have transformed search from simple matching to intelligent understanding. The future isn't about exact matches; it's about understanding what people mean and giving them exactly what they need, even when they don't quite know how to ask.
+
+That’s the magic behind modern search, and it's pretty cool! 🚀
+
+> "The future belongs to those who prepare for it today." - Malcolm X

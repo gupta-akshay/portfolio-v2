@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
-import { getPosts } from '@/sanity/lib/client';
-import BlogTile from '@/app/components/BlogTile';
+import BlogTileMDX from '@/app/components/BlogTileMDX';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
+import { getAllBlogs } from '@/lib/mdx';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live'),
@@ -41,10 +41,8 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 3600;
-
 async function BlogPosts() {
-  const posts = await getPosts();
+  const posts = await getAllBlogs();
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -60,10 +58,10 @@ async function BlogPosts() {
     },
     blogPost: posts.map((post) => ({
       '@type': 'BlogPosting',
-      headline: post.title,
-      url: `https://akshaygupta.live/blog/${post.slug.current}`,
-      datePublished: post.publishedAt,
-      dateModified: post.publishedAt,
+      headline: post.metadata.title,
+      url: `https://akshaygupta.live/blog/${post.slug}`,
+      datePublished: post.metadata.publishedAt,
+      dateModified: post.metadata.publishedAt,
       author: {
         '@type': 'Person',
         name: 'Akshay Gupta',
@@ -71,7 +69,7 @@ async function BlogPosts() {
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `https://akshaygupta.live/blog/${post.slug.current}`,
+        '@id': `https://akshaygupta.live/blog/${post.slug}`,
       },
     })),
   };
@@ -79,12 +77,12 @@ async function BlogPosts() {
   return (
     <>
       <script
-        type='application/ld+json'
+        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className='row'>
+      <div className="row">
         {posts.map((post) => (
-          <BlogTile key={post._id} blog={post} />
+          <BlogTileMDX key={post.slug} blog={post} />
         ))}
       </div>
     </>
@@ -95,17 +93,17 @@ export default function Blog() {
   return (
     <Layout>
       <section
-        id='blog'
-        data-nav-tooltip='Blog'
-        className='pp-section pp-scrollable section'
+        id="blog"
+        data-nav-tooltip="Blog"
+        className="pp-section pp-scrollable section"
         style={{
           position: 'relative',
           minHeight: '100vh',
           overflowX: 'hidden',
         }}
       >
-        <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <div className='title'>
+        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+          <div className="title">
             <h3>Latest Blogs.</h3>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
