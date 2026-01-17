@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import TypingAnimation from '@/app/components/TypingAnimation';
 import Layout from '@/app/components/Layout';
 import HomeContentInteractive from '@/app/components/HomeContentInteractive';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
@@ -72,7 +71,7 @@ export default function Home() {
                       Akshay Gupta
                     </h1>
                     <p className={styles.lead}>
-                      I am <TypingAnimation />
+                      Senior Staff Engineer &amp; Full Stack Developer
                     </p>
                     <p className={styles.desc}>
                       Hey there! 👋 I&apos;m currently a Senior Staff Engineer
@@ -114,7 +113,7 @@ export default function Home() {
                       Akshay Gupta
                     </h1>
                     <p className={styles.lead}>
-                      I am <TypingAnimation />
+                      Senior Staff Engineer &amp; Full Stack Developer
                     </p>
                     <p className={styles.desc}>
                       Hey there! 👋 I&apos;m currently a Senior Staff Engineer
