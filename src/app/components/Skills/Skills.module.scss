@@ -1,17 +1,11 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixin' as *;
-@use '../../styles/3d-effects' as *;
 
 // Light theme overrides
 :global(body.theme-light) {
   .skillsPill {
     color: $px-dark;
     background: $px-gray;
-
-    &:hover {
-      color: $px-dark;
-      background: $px-theme;
-    }
   }
 }
 
@@ -21,6 +15,9 @@
   gap: 15px;
 }
 
+// Skills pills are non-interactive, so no hover effects
+// Per portfolio guidelines: "under no circumstances should an element
+// indicate interactivity while not actually being interactive"
 .skillsPill {
   padding: 12px 20px;
   border-radius: 5px;
@@ -33,18 +30,6 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
-  @include transition(ease all 0.4s);
-
-  @include stacking-cards(2, 3px);
-  @include responsive-3d-effects;
-
-  &:hover {
-    background: $px-theme;
-    box-shadow:
-      rgba($px-white, 0.3) 0px 1px 2px 0px,
-      rgba($px-white, 0.15) 0px 2px 6px 2px;
-    color: $px-white;
-  }
 }
 
 .skillsPillIcon {
