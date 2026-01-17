@@ -55,6 +55,7 @@
     "sanitize-html": "^2.17.0",
     "ssh2": "^1.17.0",
     "tinygradient": "^2.0.1",
+    "typed.js": "^2.1.0",
     "wrap-ansi": "^9.0.2",
     "zod": "^4.3.5"
   },
