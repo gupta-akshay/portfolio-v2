@@ -164,33 +164,28 @@ export default function About() {
               </div>
             </div>
             <div className='col-lg-6 m-15px-tb'>
-              <div className={styles.aboutInfo}>
-                <div className='title' style={{ marginBottom: '50px' }}>
-                  <h3>Let me introduce myself!</h3>
+              <div className={`${styles.aboutInfo} route-shell`}>
+                <div className='title' style={{ marginBottom: '24px' }}>
+                  <h3>About</h3>
                 </div>
                 <div className={styles.aboutText}>
-                  <h4>Hi there! 👋</h4>
+                  <h4>Engineering Leadership with Product Focus</h4>
                   <p>
-                    I&apos;m a web developer at PeopleGrove, where I&apos;ve
-                    spent the last {yearsOfExperience} years creating cool stuff
-                    for the internet! I love making websites that are not just
-                    beautiful but also super easy to use. It&apos;s like
-                    building digital playgrounds where everything just works
-                    smoothly!
+                    I am a Senior Staff Engineer with {yearsOfExperience}+ years
+                    of experience building web platforms and internal systems. I
+                    work across architecture, delivery, and mentoring to help
+                    teams ship faster without compromising quality.
                   </p>
                   <p>
-                    When I&apos;m not coding, you&apos;ll find me mixing beats
-                    and DJing - it&apos;s my creative escape! I&apos;m also a
-                    big gaming fan, whether it&apos;s getting lost in console
-                    adventures or relaxing with some PC games. And whenever I
-                    need to recharge, I head to my favorite spot - the beautiful
-                    beaches of Goa. There&apos;s nothing like the sound of waves
-                    to refresh your mind! 🌊
+                    My strengths include scalable front-end architecture, robust
+                    backend services, and turning ambiguous requirements into
+                    practical roadmaps. Outside work, I produce music and stay
+                    active in developer communities.
                   </p>
                 </div>
                 <div className={styles.btnBar}>
                   <Link className='px-btn px-btn-regular' href='/contact'>
-                    <span>Let&apos;s Work Together!</span>
+                    <span>Start a Conversation</span>
                   </Link>
                 </div>
               </div>

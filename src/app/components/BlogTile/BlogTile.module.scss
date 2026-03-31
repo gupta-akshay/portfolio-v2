@@ -23,11 +23,6 @@
 .blogGrid {
   background-color: transparent;
 
-  // 3D effects
-  @include card-3d-tilt(3deg, 1.02, 0.12);
-  @include stacking-cards(2, 6px);
-  @include responsive-3d-effects;
-
   .blogImg {
     overflow: hidden;
     border-radius: 10px;
@@ -51,11 +46,12 @@
 
   .blogInfo {
     background: $px-dark;
-    padding: 25px;
-    margin: -80px 0 0 50px;
+    padding: 22px;
+    margin: -60px 0 0 28px;
     position: relative;
-    border: 1px solid transparent;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba($px-white, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
 
     @include down-md {
       margin-left: 40px;
@@ -74,18 +70,23 @@
 
       .hashtag {
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 500;
         color: $px-theme;
-        border-bottom: 1px solid $px-theme;
+        background: rgba($px-theme, 0.16);
+        border-radius: 99px;
+        border: none;
+        padding: 2px 8px;
       }
 
       .hashtagMore {
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 500;
         color: $px-theme;
-        border-bottom: 1px solid $px-theme;
+        background: rgba($px-theme, 0.16);
+        border-radius: 99px;
+        border: none;
+        padding: 2px 8px;
         opacity: 0.8;
-        font-style: italic;
       }
     }
 
@@ -113,9 +114,7 @@
   &:hover {
     .blogImg {
       img {
-        filter: grayscale(1);
-        -webkit-filter: grayscale(1);
-        @include scale(1.1);
+        @include scale(1.04);
       }
     }
     .blogInfo {

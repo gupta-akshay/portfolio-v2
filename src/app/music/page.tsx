@@ -79,16 +79,18 @@ export default function Music() {
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <div className='title'>
-            <h3>My Music.</h3>
+            <h3>Music</h3>
           </div>
-          <div className='music-description mb-4'>
+          <div className='music-description route-shell mb-4'>
             <p>
-              Hey there! 🎧 Welcome to my music collection! I love experimenting
-              with different genres and crafting unique sounds that blend styles
-              in unexpected ways. Whether it&apos;s a fresh remix or an original
-              production, every track is a piece of my creative journey.
+              Music is a creative practice that complements my engineering work.
+              This collection includes original productions and remixes across
+              electronic and melodic styles.
             </p>
-            <p>Hit play, turn up the volume, and enjoy the beats! 🚀</p>
+            <p>
+              Each track reflects experimentation in arrangement, texture, and
+              rhythm, with the same attention to detail I bring to software.
+            </p>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <MusicTracks />

@@ -116,7 +116,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           </div>
           <div className="row justify-content-center">
             <div className="col-lg-8">
-              <article className={styles.article}>
+              <article className={`${styles.article} route-shell`}>
                 <div className={styles.articleTitle}>
                   <div className={styles.hashtags}>
                     {metadata.categories.map((category: string) => (

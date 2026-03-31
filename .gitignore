@@ -49,3 +49,5 @@ certificates
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+/.cursor/skills

@@ -66,8 +66,8 @@ export default function ContactFormInteractive() {
   });
 
   return (
-    <div className='contact-form'>
-      <h4>Send your message here</h4>
+    <div className='contact-form route-shell'>
+      <h4>Tell me about your project</h4>
       <form
         onSubmit={(e) => {
           e.preventDefault();
