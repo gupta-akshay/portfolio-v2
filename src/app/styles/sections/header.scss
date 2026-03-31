@@ -147,6 +147,7 @@
         }
       }
       .nav-link {
+        cursor: pointer;
         margin: 0;
         padding: 12px 24px;
         color: rgba($px-white, 0.8);
@@ -222,6 +223,7 @@
     }
 
     a {
+      cursor: pointer;
       color: rgba($px-white, 0.7);
       font-size: 18px;
       margin: 0 8px;
@@ -317,6 +319,11 @@
   }
   .navbar-brand {
     padding: 0;
+
+    a {
+      cursor: pointer;
+      text-decoration: none;
+    }
   }
   .logo-text {
     font-weight: 600;
@@ -340,6 +347,7 @@
   background: $px-theme;
   border: none;
   margin-left: auto;
+  cursor: pointer;
   span {
     position: absolute;
     top: 0;

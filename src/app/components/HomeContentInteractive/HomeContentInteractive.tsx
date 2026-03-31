@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 interface HomeContentInteractiveProps {
   children: React.ReactNode;
   type: 'downloadButton' | 'peopleGroveLink';
@@ -25,9 +23,13 @@ export default function HomeContentInteractive({
 
   if (type === 'peopleGroveLink') {
     return (
-      <Link href='https://www.peoplegrove.com' target='_blank'>
+      <a
+        href='https://www.peoplegrove.com'
+        target='_blank'
+        rel='noopener noreferrer'
+      >
         {children}
-      </Link>
+      </a>
     );
   }
 

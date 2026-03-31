@@ -87,9 +87,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='name'>
+                      Name
+                    </label>
                     <input
                       id='name'
-                      placeholder='Full Name'
+                      placeholder='Full name'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       type='text'
                       value={field.state.value}
@@ -123,9 +126,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='email'>
+                      Email
+                    </label>
                     <input
                       id='email'
-                      placeholder='Your Email'
+                      placeholder='you@example.com'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       type='email'
                       value={field.state.value}
@@ -154,9 +160,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='subject'>
+                      Subject
+                    </label>
                     <input
                       id='subject'
-                      placeholder='Email Subject'
+                      placeholder='What is this regarding?'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       type='text'
                       value={field.state.value}
@@ -185,9 +194,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='message'>
+                      Message
+                    </label>
                     <textarea
                       id='message'
-                      placeholder='Write Your Message'
+                      placeholder='Your message'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       rows={5}
                       value={field.state.value}

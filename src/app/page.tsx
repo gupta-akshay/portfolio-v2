@@ -59,7 +59,6 @@ export default function Home() {
           // Mobile-friendly version without complex animations
           <div
             className={styles.homeBanner}
-            id='main-content'
             style={{ position: 'relative', zIndex: 2 }}
           >
             <div className={`container ${styles.container}`}>
@@ -97,7 +96,6 @@ export default function Home() {
         ) : (
           <div
             className={styles.homeBanner}
-            id='main-content'
             style={{ position: 'relative', zIndex: 2 }}
           >
             <div className={`container ${styles.container}`}>
@@ -136,7 +134,7 @@ export default function Home() {
                       alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'
                       width={600}
                       height={600}
-                      loading='lazy'
+                      priority
                     />
                   </div>
                 </div>

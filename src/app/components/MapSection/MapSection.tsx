@@ -12,10 +12,10 @@ export default function MapSection() {
         >
           <iframe
             loading='lazy'
-            title='map'
+            title='Map showing Mumbai, Maharashtra, India'
             className={styles.embedResponsiveItem}
             referrerPolicy='no-referrer-when-downgrade'
-            src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58688.52668488091!2d75.79722045!3d23.16899865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39637469de00ff23%3A0x7f82abdf7899d412!2sUjjain%2C%20Madhya%20Pradesh!5e0!3m2!1sen!2sin!4v1656359717223!5m2!1sen!2sin'
+            src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15079.504774759675!2d72.89155876663652!3d19.11308653848415!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c80bcbbc3515%3A0xce3eab5cbf511900!2sChandivali%2C%20Powai%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1774933113191!5m2!1sen!2sin'
           />
         </div>
       </div>

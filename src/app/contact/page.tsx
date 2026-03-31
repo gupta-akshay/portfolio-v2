@@ -37,7 +37,7 @@ export default function Contact() {
                       fontSize={20}
                     />
                     <span className='media-body'>
-                      Ujjain, Madhya Pradesh, India
+                      Mumbai, Maharashtra, India
                     </span>
                   </li>
                   <li className='media'>
