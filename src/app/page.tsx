@@ -59,34 +59,29 @@ export default function Home() {
           // Mobile-friendly version without complex animations
           <div
             className={styles.homeBanner}
-            id='main-content'
             style={{ position: 'relative', zIndex: 2 }}
           >
             <div className={`container ${styles.container}`}>
               <div className={`row ${styles.fullScreen} align-items-center`}>
                 <div className='col-12'>
-                  <div className={styles.typeBox}>
-                    <h6>Hello, I am</h6>
-                    <h1 className='font-alt glitch' data-text='Akshay Gupta'>
+                  <div className={`${styles.typeBox} route-shell`}>
+                    <h6>Senior Staff Engineer</h6>
+                    <h1 className='font-alt' data-text='Akshay Gupta'>
                       Akshay Gupta
                     </h1>
                     <p className={styles.lead}>
-                      Senior Staff Engineer &amp; Full Stack Developer
+                      Building high-quality product experiences and reliable
+                      systems
                     </p>
                     <p className={styles.desc}>
-                      Hey there! 👋 I&apos;m currently a Senior Staff Engineer
-                      at{' '}
+                      I lead full-stack initiatives at{' '}
                       <HomeContentInteractive type='peopleGroveLink'>
                         PeopleGrove
                       </HomeContentInteractive>
-                      . I love building websites and apps that are both
-                      user-friendly and powerful under the hood. Think of me as
-                      someone who enjoys creating digital solutions that make
-                      people&apos;s lives easier! I&apos;m passionate about
-                      working with teams to bring creative ideas to life and
-                      always excited to learn and try new things in the tech
-                      world. Whether it&apos;s making beautiful websites or
-                      solving complex technical challenges, I&apos;m your guy!
+                      , translating product goals into scalable architecture and
+                      polished user interfaces. My focus is delivering software
+                      that performs well, feels intuitive, and creates measurable
+                      business impact.
                     </p>
                     <div className={styles.btnBar}>
                       <HomeContentInteractive type='downloadButton'>
@@ -101,34 +96,29 @@ export default function Home() {
         ) : (
           <div
             className={styles.homeBanner}
-            id='main-content'
             style={{ position: 'relative', zIndex: 2 }}
           >
             <div className={`container ${styles.container}`}>
               <div className={`row ${styles.fullScreen} align-items-center`}>
                 <div className='col-lg-6'>
-                  <div className={styles.typeBox}>
-                    <h6>Hello, I am</h6>
-                    <h1 className='font-alt glitch' data-text='Akshay Gupta'>
+                  <div className={`${styles.typeBox} route-shell`}>
+                    <h6>Senior Staff Engineer</h6>
+                    <h1 className='font-alt' data-text='Akshay Gupta'>
                       Akshay Gupta
                     </h1>
                     <p className={styles.lead}>
-                      Senior Staff Engineer &amp; Full Stack Developer
+                      Building high-quality product experiences and reliable
+                      systems
                     </p>
                     <p className={styles.desc}>
-                      Hey there! 👋 I&apos;m currently a Senior Staff Engineer
-                      at{' '}
+                      I lead full-stack initiatives at{' '}
                       <HomeContentInteractive type='peopleGroveLink'>
                         PeopleGrove
                       </HomeContentInteractive>
-                      . I love building websites and apps that are both
-                      user-friendly and powerful under the hood. Think of me as
-                      someone who enjoys creating digital solutions that make
-                      people&apos;s lives easier! I&apos;m passionate about
-                      working with teams to bring creative ideas to life and
-                      always excited to learn and try new things in the tech
-                      world. Whether it&apos;s making beautiful websites or
-                      solving complex technical challenges, I&apos;m your guy!
+                      , translating product goals into scalable architecture and
+                      polished user interfaces. My focus is delivering software
+                      that performs well, feels intuitive, and creates measurable
+                      business impact.
                     </p>
                     <div className={styles.btnBar}>
                       <HomeContentInteractive type='downloadButton'>
@@ -144,7 +134,7 @@ export default function Home() {
                       alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'
                       width={600}
                       height={600}
-                      loading='lazy'
+                      priority
                     />
                   </div>
                 </div>

@@ -104,7 +104,13 @@ export default function Blog() {
       >
         <div className="container" style={{ position: 'relative', zIndex: 10 }}>
           <div className="title">
-            <h3>Latest Blogs.</h3>
+            <h3>Writing</h3>
+          </div>
+          <div className="route-shell mb-4">
+            <p className="section-intro">
+              Long-form notes on engineering, architecture, performance, and
+              practical lessons from shipping production software.
+            </p>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <BlogPosts />

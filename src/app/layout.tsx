@@ -5,13 +5,6 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik, cookie } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { EasterEggProvider } from './context/EasterEggContext';
-import MatrixRain from './components/MatrixRain';
-import DiscoMode from './components/DiscoMode';
-import DiscoModeGlobalStyles from './components/DiscoModeGlobalStyles/DiscoModeGlobalStyles';
-import BlogTypewriterEffect from './components/BlogTypewriterEffect';
-import EasterEggHints from './components/EasterEggHints';
-import EasterEggWrapper from './components/EasterEggWrapper';
 import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
 import TerminalCTA from './components/TerminalCTA';
@@ -95,20 +88,11 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <TerminalCTAProvider>
-            <EasterEggProvider>
-              <LoadingProvider>
-                {children}
-                <TerminalCTA />
-              </LoadingProvider>
-              <DeviconCSSLoader />
-              <EasterEggWrapper>
-                <MatrixRain />
-                <DiscoMode />
-                <DiscoModeGlobalStyles />
-                <BlogTypewriterEffect />
-                <EasterEggHints />
-              </EasterEggWrapper>
-            </EasterEggProvider>
+            <LoadingProvider>
+              {children}
+              <TerminalCTA />
+            </LoadingProvider>
+            <DeviconCSSLoader />
           </TerminalCTAProvider>
         </ThemeProvider>
         <Metrics />

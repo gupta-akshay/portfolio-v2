@@ -23,14 +23,11 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
-import { useEasterEgg } from '@/app/context/EasterEggContext';
 
 const Header = () => {
   const [sideBarToggle, setSideBarToggle] = useState(false);
   const [activeSection, setActiveSection] = useState('');
-  const [logoClickCount, setLogoClickCount] = useState(0);
   const pathname = usePathname();
-  const { toggleDiscoMode } = useEasterEgg();
 
   // Hover prefetch for main navigation pages
   const {
@@ -85,16 +82,6 @@ const Header = () => {
     setSideBarToggle(false);
   };
 
-  const handleLogoClick = () => {
-    const newCount = logoClickCount + 1;
-    setLogoClickCount(newCount);
-
-    if (newCount === 5) {
-      toggleDiscoMode();
-      setLogoClickCount(0); // Reset counter
-    }
-  };
-
   return (
     <Fragment>
       {/* Mobile Header */}
@@ -136,8 +123,7 @@ const Header = () => {
           <div className='hl-top'>
             <div
               className='hl-logo'
-              onClick={handleLogoClick}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'default' }}
             >
               <div className='img'>
                 <Image

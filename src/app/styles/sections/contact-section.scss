@@ -94,6 +94,19 @@
       animation: fade_in_show 0.1s;
     }
   }
+
+  .form-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba($px-white, 0.85);
+    margin-bottom: 0.35rem;
+
+    .theme-light & {
+      color: rgba($px-dark, 0.75);
+    }
+  }
   .form-control {
     height: calc(2em + 0.75rem + 2px);
     &.invalid {

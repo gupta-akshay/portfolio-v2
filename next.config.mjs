@@ -19,7 +19,6 @@ const nextConfig = {
       'devicon',
       'react-hot-toast',
       'resend',
-      'typed.js',
       'zod',
     ],
   },
