@@ -125,14 +125,18 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
   useEffect(() => {
     if (headings.length < minHeadings) return;
 
+    let observer: IntersectionObserver | null = null;
+
     // Headings are server-rendered so they exist immediately, but give the
     // browser one frame to paint before observing.
     const frameId = requestAnimationFrame(() => {
-      const observer = setupObserver();
-      return () => observer?.disconnect();
+      observer = setupObserver();
     });
 
-    return () => cancelAnimationFrame(frameId);
+    return () => {
+      cancelAnimationFrame(frameId);
+      observer?.disconnect();
+    };
   }, [setupObserver, headings, minHeadings]);
 
   useEffect(() => {
