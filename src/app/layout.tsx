@@ -11,7 +11,6 @@ import TerminalCTA from './components/TerminalCTA';
 import { TerminalCTAProvider } from './components/TerminalCTA/TerminalCTAContext';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import 'bootstrap/dist/css/bootstrap.css';
 import './styles/globals.scss';
 
 config.autoAddCss = false;

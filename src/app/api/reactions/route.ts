@@ -70,10 +70,23 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       reactions,
       userReactions,
     });
+
+    // Aggregate counts (no fingerprint) are safe to share via CDN.
+    // Fingerprint-scoped responses include per-user data, so keep them private.
+    if (fingerprint) {
+      response.headers.set('Cache-Control', 'private, max-age=0, must-revalidate');
+    } else {
+      response.headers.set(
+        'Cache-Control',
+        'public, s-maxage=60, stale-while-revalidate=300'
+      );
+    }
+
+    return response;
   } catch (error) {
     console.error('Error fetching reactions:', error);
     return NextResponse.json(
