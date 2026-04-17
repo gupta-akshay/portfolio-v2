@@ -18,7 +18,7 @@ function MusicTracks() {
   useEffect(() => {
     const fetchTracks = async () => {
       try {
-        const response = await fetch('/api/music/tracks');
+        const response = await fetch('/api/music/tracks', { cache: 'no-store' });
         if (!response.ok) throw new Error('Failed to fetch tracks');
         const tracksList: Track[] = await response.json();
         setTracks(tracksList);
