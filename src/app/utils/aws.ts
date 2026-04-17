@@ -8,19 +8,17 @@ import { getSignedUrl as getCloudfrontSignedUrl } from '@aws-sdk/cloudfront-sign
 import { Track } from '@/app/types';
 
 const s3Client = new S3Client({
-  region: process.env.NEXT_PUBLIC_AWS_REGION || 'ap-south-1',
+  region: process.env.AWS_REGION || 'ap-south-1',
   credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   },
 });
 
-const BUCKET_NAME = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME || '';
-const CLOUDFRONT_DOMAIN = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN || '';
-const CLOUDFRONT_KEY_PAIR_ID =
-  process.env.NEXT_PUBLIC_CLOUDFRONT_KEY_PAIR_ID || '';
-const CLOUDFRONT_PRIVATE_KEY =
-  process.env.NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY || '';
+const BUCKET_NAME = process.env.AWS_BUCKET_NAME || '';
+const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || '';
+const CLOUDFRONT_KEY_PAIR_ID = process.env.CLOUDFRONT_KEY_PAIR_ID || '';
+const CLOUDFRONT_PRIVATE_KEY = process.env.CLOUDFRONT_PRIVATE_KEY || '';
 
 /**
  * Parse track metadata from the file key

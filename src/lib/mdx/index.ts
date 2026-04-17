@@ -99,34 +99,3 @@ export function calculateReadingTime(content: string): {
     words,
   };
 }
-
-/**
- * Extract headings from MDX content string for Table of Contents
- */
-export function extractHeadings(
-  content: string
-): { id: string; text: string; level: number }[] {
-  const headingRegex = /^(#{1,4})\s+(.+)$/gm;
-  const headings: { id: string; text: string; level: number }[] = [];
-
-  let match;
-  while ((match = headingRegex.exec(content)) !== null) {
-    const hashes = match[1];
-    const headingText = match[2];
-    if (!hashes || !headingText) continue;
-
-    const level = hashes.length;
-    const text = headingText.trim();
-    // Generate slug from heading text (similar to rehype-slug)
-    const id = text
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-
-    headings.push({ id, text, level });
-  }
-
-  return headings;
-}

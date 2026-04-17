@@ -74,21 +74,3 @@ export function useTheme(): ThemeContextType {
   }
   return context;
 }
-
-// Custom hook for theme preferences
-export function useThemePreference() {
-  const { mode, setTheme } = useTheme();
-
-  const setSystemTheme = useCallback(() => {
-    const prefersDark = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    ).matches;
-    setTheme(prefersDark ? 'dark' : 'light');
-  }, [setTheme]);
-
-  return {
-    mode,
-    setTheme,
-    setSystemTheme,
-  };
-}
