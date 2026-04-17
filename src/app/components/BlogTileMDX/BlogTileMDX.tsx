@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef, useMemo, useCallback, memo } from 'react';
+import { useMemo, memo } from 'react';
 import { BlogPost } from '@/lib/mdx/types';
 import { formatDate } from '@/app/utils';
 import { useLoading } from '@/app/context/LoadingContext';
@@ -11,50 +11,13 @@ import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 
 import styles from '../BlogTile/BlogTile.module.scss';
 
-// Global cache for text measurements
-const textMeasurementCache = new Map<string, number>();
-
-const measureText = (
-  text: string,
-  fontSize = 12,
-  fontFamily = 'inherit'
-): number => {
-  const cacheKey = `${text}-${fontSize}-${fontFamily}`;
-
-  if (textMeasurementCache.has(cacheKey)) {
-    return textMeasurementCache.get(cacheKey)!;
-  }
-
-  const tempElement = document.createElement('span');
-  tempElement.style.visibility = 'hidden';
-  tempElement.style.position = 'absolute';
-  tempElement.style.fontSize = `${fontSize}px`;
-  tempElement.style.fontFamily = fontFamily;
-  tempElement.style.fontWeight = '600';
-  tempElement.style.whiteSpace = 'nowrap';
-  tempElement.textContent = text;
-
-  document.body.appendChild(tempElement);
-  const width = tempElement.offsetWidth;
-  document.body.removeChild(tempElement);
-
-  if (textMeasurementCache.size > 1000) {
-    textMeasurementCache.clear();
-  }
-  textMeasurementCache.set(cacheKey, width);
-
-  return width;
-};
+const MAX_VISIBLE_CATEGORIES = 3;
 
 const BlogTileMDX = memo(
   ({ blog }: { blog: BlogPost }) => {
     const { metadata, slug, readingTime } = blog;
     const router = useRouter();
     const { startLoading } = useLoading();
-    const metaRef = useRef<HTMLDivElement>(null);
-    const [visibleCategories, setVisibleCategories] = useState(
-      metadata.categories.length
-    );
 
     const blogHref = `/blog/${slug}`;
     const { handleMouseEnter, handleMouseLeave } = useHoverPrefetch(blogHref, {
@@ -67,99 +30,8 @@ const BlogTileMDX = memo(
       [metadata.publishedAt]
     );
 
-    const calculateVisibleCategories = useCallback(
-      (containerWidth: number) => {
-        if (containerWidth === 0) return metadata.categories.length;
-        if (metadata.categories.length === 0) return 0;
-
-        let fontFamily = 'inherit';
-        if (metaRef.current) {
-          const computedStyle = window.getComputedStyle(metaRef.current);
-          fontFamily = computedStyle.fontFamily || 'inherit';
-        }
-
-        const baseText = `${formattedDate} | ${readingTime} | `;
-        const baseWidth = measureText(baseText, 12, fontFamily);
-
-        let usedWidth = baseWidth;
-        let fittingCategories = 0;
-
-        for (let i = 0; i < metadata.categories.length; i++) {
-          const category = metadata.categories[i];
-          if (!category) break;
-
-          const categoryText = `#${category}`;
-          const categoryWidth = measureText(categoryText, 12, fontFamily) + 8;
-
-          if (usedWidth + categoryWidth < containerWidth - 40) {
-            usedWidth += categoryWidth;
-            fittingCategories++;
-          } else {
-            break;
-          }
-        }
-
-        if (fittingCategories < metadata.categories.length) {
-          while (fittingCategories > 0) {
-            const remainingCount = metadata.categories.length - fittingCategories;
-            const plusWidth =
-              measureText(`+${remainingCount}`, 12, fontFamily) + 8;
-
-            if (usedWidth + plusWidth <= containerWidth - 40) {
-              break;
-            }
-
-            const lastCategory = metadata.categories[fittingCategories - 1];
-            if (!lastCategory) {
-              fittingCategories--;
-              continue;
-            }
-
-            const lastCategoryText = `#${lastCategory}`;
-            const lastCategoryWidth =
-              measureText(lastCategoryText, 12, fontFamily) + 8;
-            usedWidth -= lastCategoryWidth;
-            fittingCategories--;
-          }
-        }
-
-        return fittingCategories;
-      },
-      [metadata.categories, formattedDate, readingTime]
-    );
-
-    useEffect(() => {
-      if (!metaRef.current) return;
-
-      const performInitialCalculation = () => {
-        if (!metaRef.current) return;
-        const initialWidth = metaRef.current.offsetWidth;
-        if (initialWidth > 0) {
-          const newVisibleCategories = calculateVisibleCategories(initialWidth);
-          setVisibleCategories(newVisibleCategories);
-        }
-      };
-
-      performInitialCalculation();
-
-      if (metaRef.current && metaRef.current.offsetWidth === 0) {
-        setTimeout(performInitialCalculation, 10);
-      }
-
-      const resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          const newWidth = entry.contentRect.width;
-          const newVisibleCategories = calculateVisibleCategories(newWidth);
-          setVisibleCategories(newVisibleCategories);
-        }
-      });
-
-      resizeObserver.observe(metaRef.current);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }, [calculateVisibleCategories]);
+    const visibleCategories = metadata.categories.slice(0, MAX_VISIBLE_CATEGORIES);
+    const remainingCount = Math.max(0, metadata.categories.length - MAX_VISIBLE_CATEGORIES);
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
@@ -208,24 +80,18 @@ const BlogTileMDX = memo(
             </Link>
           </div>
           <div className={styles.blogInfo}>
-            <div
-              className={styles.meta}
-              aria-label="Post metadata"
-              ref={metaRef}
-            >
+            <div className={styles.meta} aria-label="Post metadata">
               <time dateTime={metadata.publishedAt}>{formattedDate}</time>
               <span aria-hidden="true">|</span>
               <span className={styles.readingTime}>{readingTime}</span>
               <span aria-hidden="true">|</span>
-              {metadata.categories.slice(0, visibleCategories).map((category) => (
+              {visibleCategories.map((category) => (
                 <span key={category} className={styles.hashtag}>
                   #{category}
                 </span>
               ))}
-              {metadata.categories.length > visibleCategories && (
-                <span className={styles.hashtagMore}>
-                  +{metadata.categories.length - visibleCategories}
-                </span>
+              {remainingCount > 0 && (
+                <span className={styles.hashtagMore}>+{remainingCount}</span>
               )}
             </div>
             <h2 className={styles.blogTitle}>
