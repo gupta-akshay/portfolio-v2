@@ -6,7 +6,7 @@ import EmojiReactions from '@/app/components/EmojiReactions';
 import SocialShare from '@/app/components/SocialShare';
 import ReadingProgressBar from '@/app/components/ReadingProgressBar';
 import TableOfContentsMDX from './TableOfContentsMDX';
-import { getBlogBySlug, getBlogSlugs, getBlogHeadings } from '@/lib/mdx';
+import { getBlogBySlug, getAllBlogs, getBlogHeadings } from '@/lib/mdx';
 import { formatDate } from '@/app/utils';
 
 import styles from '../../styles/sections/blogSection.module.scss';
@@ -15,10 +15,10 @@ interface SingleBlogPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Generate static paths for all blog posts
+// Generate static paths for published blog posts only (excludes drafts in production)
 export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const posts = await getAllBlogs();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 // Don't allow dynamic params - only pre-rendered slugs
@@ -44,6 +44,11 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   }
 
   const post = await getBlogBySlug(slug);
+
+  if (process.env.NODE_ENV === 'production' && post?.metadata.draft === true) {
+    notFound();
+  }
+
   const readingTime = post?.readingTime ?? '';
   const headings = getBlogHeadings(slug);
 

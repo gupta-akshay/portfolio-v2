@@ -102,7 +102,9 @@ export function getBlogHeadings(slug: string): TOCHeading[] {
   const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
   if (!fs.existsSync(contentPath)) return [];
 
-  const content = fs.readFileSync(contentPath, 'utf-8');
+  const raw = fs.readFileSync(contentPath, 'utf-8');
+  // Strip fenced code blocks so lines like `# comment` inside code aren't treated as headings
+  const content = raw.replace(/```[\s\S]*?```/g, '');
   const headingRegex = /^(#{1,4})\s+(.+)$/gm;
   const headings: TOCHeading[] = [];
 
