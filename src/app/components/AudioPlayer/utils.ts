@@ -14,16 +14,6 @@ export const formatTime = (time: number): string => {
 };
 
 /**
- * Generate Cloudinary audio URL from public ID
- */
-export const getAudioUrl = (
-  publicId: string,
-  cloudName: string | undefined
-): string => {
-  return `https://res.cloudinary.com/${cloudName}/video/upload/${publicId}`;
-};
-
-/**
  * Check if the current theme is light
  */
 export const isLightTheme = (): boolean => {

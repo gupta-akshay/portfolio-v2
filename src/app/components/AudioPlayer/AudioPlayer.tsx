@@ -9,7 +9,6 @@ import {
   useMemo,
 } from 'react';
 import { AudioPlayerProps } from './types';
-import { getAudioUrl } from '@/app/utils/aws';
 import {
   useAudioContext,
   useAudioPlayback,
@@ -241,7 +240,13 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           }
         }
 
-        const newUrl = await getAudioUrl(tracks[currentTrackIndex].path);
+        const urlResponse = await fetch('/api/music/url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: tracks[currentTrackIndex].path }),
+        });
+        if (!urlResponse.ok) throw new Error('Failed to get audio URL');
+        const { url: newUrl } = await urlResponse.json() as { url: string };
 
         // If component unmounted or URL is the same, don't proceed
         if (!isMounted || newUrl === currentAudioUrl) {
