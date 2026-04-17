@@ -59,6 +59,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const [isFullScreenVisible, setIsFullScreenVisible] = useState(false);
   const shouldAutoPlayRef = useRef(false);
   const playAttemptInProgressRef = useRef(false);
+  const restoringFromStorageRef = useRef(false);
 
   // Memoize derived values
   const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
@@ -139,6 +140,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     if (!hasTracks || currentTrackIndex !== null) return;
     const prefs = loadPrefs();
     if (prefs.trackIndex !== null && prefs.trackIndex < tracks.length) {
+      restoringFromStorageRef.current = true;
       setCurrentTrackIndex(prefs.trackIndex);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,7 +261,12 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       setIsMetadataLoaded(false);
       setIsPlayable(false);
       setIsPlaying(false);
-      shouldAutoPlayRef.current = true;
+      if (restoringFromStorageRef.current) {
+        shouldAutoPlayRef.current = false;
+        restoringFromStorageRef.current = false;
+      } else {
+        shouldAutoPlayRef.current = true;
+      }
     }
   }, [currentTrack, setIsPlaying]);
 
