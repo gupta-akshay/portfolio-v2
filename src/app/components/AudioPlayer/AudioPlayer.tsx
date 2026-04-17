@@ -257,6 +257,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Reset states when track changes
   useEffect(() => {
     if (currentTrack) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(true);
       setIsMetadataLoaded(false);
       setIsPlayable(false);

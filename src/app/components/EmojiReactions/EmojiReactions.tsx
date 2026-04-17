@@ -98,7 +98,8 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
   // Load reactions on component mount
   useEffect(() => {
     const abortController = new AbortController();
-    fetchReactions(abortController.signal);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchReactions(abortController.signal); // async — setState is never called synchronously
 
     // Show the reactions bar after a short delay
     const timer = setTimeout(() => setIsVisible(true), 1000);
