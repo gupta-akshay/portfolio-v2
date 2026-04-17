@@ -1,4 +1,5 @@
-import React, { RefObject, TouchEvent, useRef } from 'react';
+import React, { RefObject, TouchEvent, useRef, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Track } from '../types';
@@ -55,6 +56,12 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   onToggleQueue,
 }) => {
   const touchStartYRef = useRef<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const handleTouchStart = (e: TouchEvent) => {
     touchStartYRef.current = e.touches[0]?.clientY ?? null;
@@ -62,21 +69,13 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
 
   const handleTouchEnd = (e: TouchEvent) => {
     if (touchStartYRef.current === null) return;
-
     const touchEndY = e.changedTouches[0]?.clientY;
     if (touchEndY === undefined) return;
-
-    const diffY = touchEndY - touchStartYRef.current;
-
-    // If swiped down significantly, close the player
-    if (diffY > 100) {
-      onClose();
-    }
-
+    if (touchEndY - touchStartYRef.current > 100) onClose();
     touchStartYRef.current = null;
   };
 
-  return (
+  const content = (
     <div
       className={`fullScreenPlayer ${isVisible ? 'visible' : ''}`}
       onTouchStart={handleTouchStart}
@@ -133,6 +132,9 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
       </div>
     </div>
   );
+
+  if (!mounted) return null;
+  return createPortal(content, document.body);
 };
 
 export default FullScreenPlayer;

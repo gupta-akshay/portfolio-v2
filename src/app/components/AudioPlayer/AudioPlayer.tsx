@@ -14,7 +14,28 @@ import {
   useAudioPlayback,
   useVisualizer,
   useQueueManager,
+  useKeyboardShortcuts,
 } from './hooks';
+
+const PREFS_KEY = 'audioPlayerPrefs';
+
+function loadPrefs(): { trackIndex: number | null; volume: number } {
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (!raw) return { trackIndex: null, volume: 0.7 };
+    return JSON.parse(raw);
+  } catch {
+    return { trackIndex: null, volume: 0.7 };
+  }
+}
+
+function savePrefs(trackIndex: number | null, volume: number) {
+  try {
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ trackIndex, volume }));
+  } catch {
+    // localStorage unavailable (private browsing etc.)
+  }
+}
 import {
   TrackList,
   PlayerControls,
@@ -38,6 +59,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const [isFullScreenVisible, setIsFullScreenVisible] = useState(false);
   const shouldAutoPlayRef = useRef(false);
   const playAttemptInProgressRef = useRef(false);
+  const restoringFromStorageRef = useRef(false);
 
   // Memoize derived values
   const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
@@ -65,7 +87,9 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     isPlaying,
     setIsPlaying,
     volume,
+    setVolume,
     isMuted,
+    setIsMuted,
     currentTime,
     duration,
     setDuration,
@@ -102,6 +126,31 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     getNextTrackIndex,
     getPreviousTrackIndex,
   } = useQueueManager(hasTracks ? tracks : []);
+
+  // Restore persisted volume on mount
+  useEffect(() => {
+    const prefs = loadPrefs();
+    if (prefs.volume !== 0.7) {
+      setVolume(prefs.volume);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Restore persisted track index once tracks are available
+  useEffect(() => {
+    if (!hasTracks || currentTrackIndex !== null) return;
+    const prefs = loadPrefs();
+    if (prefs.trackIndex !== null && prefs.trackIndex < tracks.length) {
+      restoringFromStorageRef.current = true;
+      setCurrentTrackIndex(prefs.trackIndex);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasTracks]);
+
+  // Persist volume + track index whenever they change
+  useEffect(() => {
+    savePrefs(currentTrackIndex, volume);
+  }, [currentTrackIndex, volume]);
 
   // Enhanced next/previous handlers that use queue management
   const handleNext = useCallback(() => {
@@ -209,11 +258,17 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Reset states when track changes
   useEffect(() => {
     if (currentTrack) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(true);
       setIsMetadataLoaded(false);
       setIsPlayable(false);
       setIsPlaying(false);
-      shouldAutoPlayRef.current = true;
+      if (restoringFromStorageRef.current) {
+        shouldAutoPlayRef.current = false;
+        restoringFromStorageRef.current = false;
+      } else {
+        shouldAutoPlayRef.current = true;
+      }
     }
   }, [currentTrack, setIsPlaying]);
 
@@ -548,6 +603,25 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     downloadLink.click();
     document.body.removeChild(downloadLink);
   }, [currentUrl, currentTrack]);
+
+  const handleVolumeSet = useCallback(
+    (v: number) => {
+      setVolume(v);
+      setIsMuted(v === 0);
+    },
+    [setVolume, setIsMuted]
+  );
+
+  // Global keyboard shortcuts (active when a track is loaded)
+  useKeyboardShortcuts({
+    enabled: hasTracks && currentTrackIndex !== null,
+    onPlayPause: handlePlayPause,
+    onNext: handleNext,
+    onPrevious: handlePrevious,
+    onToggleMute: toggleMute,
+    volume,
+    onVolumeSet: handleVolumeSet,
+  });
 
   // Memoize audio event handlers
   const handleLoadedMetadata = useCallback(

@@ -42,7 +42,9 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
   - custom audio player
   - queue controls
   - waveform/visualizer hooks
-  - S3/CloudFront signed URLs
+  - S3/CloudFront signed URLs (server-side signing only)
+  - playback state persisted across page loads (track, volume)
+  - keyboard shortcuts: Space (play/pause), M (mute), ←/→ (prev/next), ↑/↓ (volume)
 - Contact page with:
   - validated form submission
   - email API route (`/api/sendMail`)

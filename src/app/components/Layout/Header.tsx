@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBlog,
@@ -26,8 +26,15 @@ import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 
 const Header = () => {
   const [sideBarToggle, setSideBarToggle] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
   const pathname = usePathname();
+
+  const activeSection = useMemo(() => {
+    if (pathname === '/about') return 'about';
+    if (pathname === '/contact') return 'contact';
+    if (pathname === '/blog' || pathname.startsWith('/blog/')) return 'blog';
+    if (pathname === '/music') return 'music';
+    return 'home';
+  }, [pathname]);
 
   // Hover prefetch for main navigation pages
   const {
@@ -37,28 +44,6 @@ const Header = () => {
     delay: 100,
     enabled: true,
   });
-
-  useEffect(() => {
-    switch (true) {
-      case pathname === '/about':
-        setActiveSection('about');
-        break;
-      case pathname === '/contact':
-        setActiveSection('contact');
-        break;
-      case pathname === '/blog' || pathname.startsWith('/blog/'):
-        setActiveSection('blog');
-        break;
-      case pathname === '/music':
-        setActiveSection('music');
-        break;
-      default:
-        setActiveSection('home');
-        break;
-    }
-
-    return () => setActiveSection('home');
-  }, [pathname]);
 
   // Prevent body scroll when sidebar is open
   useEffect(() => {
