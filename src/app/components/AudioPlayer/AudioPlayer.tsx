@@ -89,6 +89,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     volume,
     setVolume,
     isMuted,
+    setIsMuted,
     currentTime,
     duration,
     setDuration,
