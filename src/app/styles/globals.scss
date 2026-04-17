@@ -2,6 +2,7 @@
 @use 'sass:math';
 @use './variables' as *;
 @use './mixin' as *;
+@use './bootstrap-shim';
 @use './base' as *;
 @use './sections/header' as *;
 @use './sections/contact-section' as *;

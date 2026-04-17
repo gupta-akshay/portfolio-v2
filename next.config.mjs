@@ -15,7 +15,6 @@ const nextConfig = {
       '@fortawesome/free-brands-svg-icons',
       '@fortawesome/free-solid-svg-icons',
       '@fortawesome/react-fontawesome',
-      'bootstrap',
       'devicon',
       'react-hot-toast',
       'resend',
