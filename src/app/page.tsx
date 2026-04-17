@@ -99,7 +99,12 @@ export default function Home() {
                     height={600}
                     priority
                     fetchPriority='high'
-                    sizes='(max-width: 992px) 0px, 600px'
+                    // Visibility / rendered sizes (see homeBanner.module.scss + d-none d-sm-block):
+                    //   <576px  hidden
+                    //   576-767 fixed 400px (down-sm rule)
+                    //   768-991 ~720px (full-row, container md max-width)
+                    //   >=992   ~600px (half-row with max-width: 120%)
+                    sizes='(max-width: 575px) 1px, (max-width: 767px) 400px, (max-width: 991px) 720px, 600px'
                   />
                 </div>
               </div>
