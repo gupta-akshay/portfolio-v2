@@ -1,12 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { BlogMetadata, BlogPost } from './types';
+import { cache } from 'react';
+import { BlogPost, TOCHeading } from './types';
+import { BlogMetadataSchema } from './schema';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
 
-/**
- * Get all blog post slugs from the content/blog directory
- */
 export function getBlogSlugs(): string[] {
   if (!fs.existsSync(CONTENT_DIR)) {
     return [];
@@ -18,44 +17,40 @@ export function getBlogSlugs(): string[] {
     .map((file) => file.replace(/\.mdx$/, ''));
 }
 
-/**
- * Get blog metadata by dynamically importing the MDX file
- */
-export async function getBlogBySlug(slug: string): Promise<BlogPost | null> {
+export const getBlogBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
   try {
-    const { metadata } = await import(`@/content/blog/${slug}.mdx`);
+    const { metadata: raw } = await import(`@/content/blog/${slug}.mdx`);
 
-    // Read raw content for reading time calculation
+    const parsed = BlogMetadataSchema.safeParse(raw);
+    if (!parsed.success) {
+      console.error(`Invalid metadata in ${slug}.mdx:`, parsed.error.flatten());
+      return null;
+    }
+
+    const metadata = parsed.data;
+
     const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
     const rawContent = fs.readFileSync(contentPath, 'utf-8');
     const { text: readingTime } = calculateReadingTime(rawContent);
 
-    return {
-      metadata: metadata as BlogMetadata,
-      slug,
-      readingTime,
-    };
+    return { metadata, slug, readingTime };
   } catch {
     return null;
   }
-}
+});
 
-/**
- * Get all blog posts with their metadata, sorted by date (newest first)
- */
 export async function getAllBlogs(): Promise<BlogPost[]> {
   const slugs = getBlogSlugs();
+  const isProd = process.env.NODE_ENV === 'production';
 
-  const posts = await Promise.all(
-    slugs.map(async (slug) => {
-      const post = await getBlogBySlug(slug);
-      return post;
-    })
-  );
+  const posts = await Promise.all(slugs.map((slug) => getBlogBySlug(slug)));
 
-  // Filter out null values and sort by date
   return posts
-    .filter((post): post is BlogPost => post !== null)
+    .filter((post): post is BlogPost => {
+      if (!post) return false;
+      if (isProd && post.metadata.draft === true) return false;
+      return true;
+    })
     .sort((a, b) => {
       const dateA = new Date(a.metadata.publishedAt);
       const dateB = new Date(b.metadata.publishedAt);
@@ -63,39 +58,68 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
     });
 }
 
-/**
- * Calculate reading time for MDX content
- * Note: For MDX, we'll estimate based on word count from the raw file
- */
 export function calculateReadingTime(content: string): {
   text: string;
   minutes: number;
   words: number;
 } {
-  // Remove fenced code blocks and inline code
   let sanitized = content
     .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]*`/g, ''); // Safer: no nested backticks
+    .replace(/`[^`]*`/g, '');
 
-  // Repeatedly strip HTML tags to avoid incomplete multi-character sanitization
   let previous: string;
   do {
     previous = sanitized;
     sanitized = sanitized.replace(/<[^>]*>/g, '');
   } while (sanitized !== previous);
 
-  // Final cleanup: strip remaining angle brackets and markdown punctuation
   const text = sanitized
     .replace(/[<>]/g, '')
     .replace(/[#*_~]/g, '')
     .trim();
 
   const words = text.split(/\s+/).filter(Boolean).length;
-  const minutes = Math.ceil(words / 200); // Average reading speed
+  const minutes = Math.ceil(words / 200);
 
   return {
     text: minutes <= 1 ? '1 min read' : `${minutes} min read`,
     minutes,
     words,
   };
+}
+
+// Generate a heading ID matching rehype-slug / github-slugger output
+function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+export function getBlogHeadings(slug: string): TOCHeading[] {
+  const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
+  if (!fs.existsSync(contentPath)) return [];
+
+  const raw = fs.readFileSync(contentPath, 'utf-8');
+  // Strip fenced code blocks so lines like `# comment` inside code aren't treated as headings
+  const content = raw.replace(/```[\s\S]*?```/g, '');
+  const headingRegex = /^(#{1,4})\s+(.+)$/gm;
+  const headings: TOCHeading[] = [];
+
+  let match;
+  while ((match = headingRegex.exec(content)) !== null) {
+    const hashes = match[1];
+    const headingText = match[2];
+    if (!hashes || !headingText) continue;
+
+    const level = hashes.length;
+    const text = headingText.trim();
+    const id = slugifyHeading(text);
+
+    headings.push({ id, text, level });
+  }
+
+  return headings;
 }

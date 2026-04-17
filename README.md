@@ -10,6 +10,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 - `/about` - About, skills, experience, and GitHub contribution calendar
 - `/blog` - Blog index from MDX content
 - `/blog/[slug]` - Individual blog post pages
+- `/feed.xml` - RSS feed of all published blog posts
 - `/music` - Music showcase with custom player
 - `/contact` - Contact form + map section
 
@@ -30,11 +31,13 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 - Theme toggle (dark/light)
 - SEO metadata and OpenGraph image routes
 - MDX blog pipeline with:
-  - table of contents
+  - table of contents (server-extracted headings, no DOM polling)
   - reading progress bar
   - reading time
   - social sharing
   - emoji reactions backed by PostgreSQL
+  - RSS feed at `/feed.xml`
+  - draft support (`draft: true` hides posts in production)
 - Music page with:
   - custom audio player
   - queue controls
@@ -128,17 +131,20 @@ Posts live in `content/blog/*.mdx`. Each post should export metadata:
 export const metadata = {
   title: 'Your Blog Title',
   slug: 'your-blog-slug',
-  publishedAt: '2025-01-15',
+  publishedAt: '2025-01-15',          // YYYY-MM-DD
   categories: ['category1', 'category2'],
-  coverImage: '/images/blog/your-cover.jpg',
+  coverImage: '/images/blog/your-cover.avif',
   coverImageAlt: 'Description of cover image',
   author: {
     name: 'Akshay Gupta',
     avatar: '/images/blog-author.png',
   },
   excerpt: 'A short description of your blog post.',
+  draft: true,                         // optional — omit or set false to publish
 };
 ```
+
+Metadata is validated at build time via Zod (`src/lib/mdx/schema.ts`). A missing required field or wrong `publishedAt` format will log an error and exclude the post from the listing. Posts with `draft: true` are visible in development but hidden in production builds.
 
 ## Terminal Resume (SSH)
 

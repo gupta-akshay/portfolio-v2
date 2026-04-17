@@ -1,19 +1,13 @@
-export interface BlogMetadata {
-  title: string;
-  slug: string;
-  publishedAt: string;
-  categories: string[];
-  coverImage: string;
-  coverImageAlt: string;
-  author: {
-    name: string;
-    avatar: string;
-  };
-  excerpt?: string;
+export type { BlogMetadata } from './schema';
+
+export interface TOCHeading {
+  id: string;
+  text: string;
+  level: number;
 }
 
 export interface BlogPost {
-  metadata: BlogMetadata;
+  metadata: import('./schema').BlogMetadata;
   slug: string;
   readingTime: string;
 }

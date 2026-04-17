@@ -1,14 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import fs from 'fs';
-import path from 'path';
 import Image from 'next/image';
 import Layout from '@/app/components/Layout';
 import EmojiReactions from '@/app/components/EmojiReactions';
 import SocialShare from '@/app/components/SocialShare';
 import ReadingProgressBar from '@/app/components/ReadingProgressBar';
 import TableOfContentsMDX from './TableOfContentsMDX';
-import { getBlogBySlug, getBlogSlugs, calculateReadingTime } from '@/lib/mdx';
+import { getBlogBySlug, getAllBlogs, getBlogHeadings } from '@/lib/mdx';
 import { formatDate } from '@/app/utils';
 
 import styles from '../../styles/sections/blogSection.module.scss';
@@ -17,10 +15,10 @@ interface SingleBlogPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Generate static paths for all blog posts
+// Generate static paths for published blog posts only (excludes drafts in production)
 export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const posts = await getAllBlogs();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 // Don't allow dynamic params - only pre-rendered slugs
@@ -45,10 +43,14 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
     notFound();
   }
 
-  // Read raw MDX content for reading time calculation
-  const contentPath = path.join(process.cwd(), 'content', 'blog', `${slug}.mdx`);
-  const rawContent = fs.readFileSync(contentPath, 'utf-8');
-  const readingTime = calculateReadingTime(rawContent);
+  const post = await getBlogBySlug(slug);
+
+  if (process.env.NODE_ENV === 'production' && post?.metadata.draft === true) {
+    notFound();
+  }
+
+  const readingTime = post?.readingTime ?? '';
+  const headings = getBlogHeadings(slug);
 
   const imageUrl = metadata.coverImage || '/images/about-me.png';
 
@@ -82,7 +84,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   return (
     <Layout isBlog>
       <ReadingProgressBar />
-      <TableOfContentsMDX slug={slug} />
+      <TableOfContentsMDX headings={headings} />
       <SocialShare
         url={`https://akshaygupta.live/blog/${slug}`}
         title={metadata.title}
@@ -142,7 +144,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
                     <div className={styles.mediaBody}>
                       <label>{metadata.author.name}</label>
                       <span>
-                        {formatDate(metadata.publishedAt)} • {readingTime.text}
+                        {formatDate(metadata.publishedAt)} • {readingTime}
                       </span>
                     </div>
                   </div>
