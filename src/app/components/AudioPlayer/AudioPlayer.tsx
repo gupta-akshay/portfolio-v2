@@ -14,7 +14,28 @@ import {
   useAudioPlayback,
   useVisualizer,
   useQueueManager,
+  useKeyboardShortcuts,
 } from './hooks';
+
+const PREFS_KEY = 'audioPlayerPrefs';
+
+function loadPrefs(): { trackIndex: number | null; volume: number } {
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (!raw) return { trackIndex: null, volume: 0.7 };
+    return JSON.parse(raw);
+  } catch {
+    return { trackIndex: null, volume: 0.7 };
+  }
+}
+
+function savePrefs(trackIndex: number | null, volume: number) {
+  try {
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ trackIndex, volume }));
+  } catch {
+    // localStorage unavailable (private browsing etc.)
+  }
+}
 import {
   TrackList,
   PlayerControls,
@@ -65,6 +86,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     isPlaying,
     setIsPlaying,
     volume,
+    setVolume,
     isMuted,
     currentTime,
     duration,
@@ -102,6 +124,30 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     getNextTrackIndex,
     getPreviousTrackIndex,
   } = useQueueManager(hasTracks ? tracks : []);
+
+  // Restore persisted volume on mount
+  useEffect(() => {
+    const prefs = loadPrefs();
+    if (prefs.volume !== 0.7) {
+      setVolume(prefs.volume);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Restore persisted track index once tracks are available
+  useEffect(() => {
+    if (!hasTracks || currentTrackIndex !== null) return;
+    const prefs = loadPrefs();
+    if (prefs.trackIndex !== null && prefs.trackIndex < tracks.length) {
+      setCurrentTrackIndex(prefs.trackIndex);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasTracks]);
+
+  // Persist volume + track index whenever they change
+  useEffect(() => {
+    savePrefs(currentTrackIndex, volume);
+  }, [currentTrackIndex, volume]);
 
   // Enhanced next/previous handlers that use queue management
   const handleNext = useCallback(() => {
@@ -548,6 +594,17 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     downloadLink.click();
     document.body.removeChild(downloadLink);
   }, [currentUrl, currentTrack]);
+
+  // Global keyboard shortcuts (active when a track is loaded)
+  useKeyboardShortcuts({
+    enabled: hasTracks && currentTrackIndex !== null,
+    onPlayPause: handlePlayPause,
+    onNext: handleNext,
+    onPrevious: handlePrevious,
+    onToggleMute: toggleMute,
+    volume,
+    onVolumeSet: setVolume,
+  });
 
   // Memoize audio event handlers
   const handleLoadedMetadata = useCallback(
