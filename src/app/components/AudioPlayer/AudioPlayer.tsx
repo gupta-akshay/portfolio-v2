@@ -603,6 +603,14 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     document.body.removeChild(downloadLink);
   }, [currentUrl, currentTrack]);
 
+  const handleVolumeSet = useCallback(
+    (v: number) => {
+      setVolume(v);
+      setIsMuted(v === 0);
+    },
+    [setVolume, setIsMuted]
+  );
+
   // Global keyboard shortcuts (active when a track is loaded)
   useKeyboardShortcuts({
     enabled: hasTracks && currentTrackIndex !== null,
@@ -611,7 +619,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     onPrevious: handlePrevious,
     onToggleMute: toggleMute,
     volume,
-    onVolumeSet: setVolume,
+    onVolumeSet: handleVolumeSet,
   });
 
   // Memoize audio event handlers
