@@ -1,3 +1,5 @@
+import { logger } from '@/app/utils/logger';
+
 // Client-side fingerprinting utility
 export function generateClientFingerprint(): string {
   const canvas = document.createElement('canvas');
@@ -74,7 +76,7 @@ export function getOrCreateFingerprint(): string {
   } catch (error) {
     // If localStorage fails (e.g., private browsing, quota exceeded),
     // fallback to generating a new fingerprint for this session
-    console.warn(
+    logger.warn(
       'localStorage not available, using session fingerprint:',
       error
     );

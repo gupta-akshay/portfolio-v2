@@ -1,5 +1,6 @@
 import { useState, useEffect, RefObject, useCallback } from 'react';
 import { Track } from '../types';
+import { logger } from '@/app/utils/logger';
 
 /**
  * Custom hook to manage audio playback state and controls
@@ -138,8 +139,10 @@ export const useAudioPlayback = (
   };
 
   const handlePlayPause = async () => {
-    if (!audioRef.current || !currentTrack)
-      return console.warn('Audio element or current track is missing');
+    if (!audioRef.current || !currentTrack) {
+      logger.warn('Audio element or current track is missing');
+      return;
+    }
 
     const audio = audioRef.current;
 
@@ -166,7 +169,7 @@ export const useAudioPlayback = (
             };
 
             const onError = (e: Event) => {
-              console.error('Error during load:', e);
+              logger.error('Error during load:', e);
               cleanup();
               reject(new Error('Failed to load audio'));
             };
@@ -191,7 +194,7 @@ export const useAudioPlayback = (
         startVisualizations();
       }
     } catch (error) {
-      console.error('Error playing audio:', error);
+      logger.error('Error playing audio:', error);
       setIsPlaying(false);
     }
   };

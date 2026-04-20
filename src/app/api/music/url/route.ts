@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAudioUrl } from '@/app/utils/aws';
+import { logger } from '@/app/utils/logger';
 
 const ALLOWED_PREFIX = 'tracks/';
 const ALLOWED_EXTENSIONS = /\.(mp3|wav)$/i;
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     const url = await getAudioUrl(path as string);
     return NextResponse.json({ url });
   } catch (error) {
-    console.error('Error generating signed URL:', error);
+    logger.error('Error generating signed URL:', error);
     return NextResponse.json({ error: 'Failed to generate URL' }, { status: 500 });
   }
 }

@@ -16,6 +16,7 @@ import {
   useQueueManager,
   useKeyboardShortcuts,
 } from './hooks';
+import { logger } from '@/app/utils/logger';
 
 const PREFS_KEY = 'audioPlayerPrefs';
 
@@ -197,7 +198,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     try {
       baseHandlePlayPause();
     } catch (error) {
-      console.error('Error in handlePlayPause:', error);
+      logger.error('Error in handlePlayPause:', error);
     } finally {
       // Reset the flag after a short delay to prevent rapid toggling
       setTimeout(() => {
@@ -291,7 +292,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             playAttemptInProgressRef.current = true;
             await audioRef.current.pause();
           } catch (e) {
-            console.error('Error pausing audio:', e);
+            logger.error('Error pausing audio:', e);
           }
         }
 
@@ -349,7 +350,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           };
 
           const onError = (e: Event) => {
-            console.error('Error loading audio:', e);
+            logger.error('Error loading audio:', e);
             cleanup();
             reject(new Error('Failed to load audio'));
           };
@@ -382,7 +383,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           };
 
           const onError = (e: Event) => {
-            console.error('Error during load:', e);
+            logger.error('Error during load:', e);
             cleanup();
             reject(new Error('Failed to load audio'));
           };
@@ -423,7 +424,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
                 }
               }
             } catch (error) {
-              console.error('Auto-play failed:', error);
+              logger.error('Auto-play failed:', error);
               if (isMounted) {
                 setIsPlaying(false);
               }
@@ -435,7 +436,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           playAttemptInProgressRef.current = false;
         }
       } catch (error) {
-        console.error('Error setting up track:', error);
+        logger.error('Error setting up track:', error);
         if (isMounted) {
           setIsLoading(false);
           // Still mark as playable even if preload fails
@@ -496,7 +497,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         animationFrameIds.mini = requestAnimationFrame(animateMiniVisualizer);
         miniAnimationRef.current = animationFrameIds.mini;
       } catch (error) {
-        console.error('Error starting visualizations:', error);
+        logger.error('Error starting visualizations:', error);
       }
     };
 
@@ -568,7 +569,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
               // console.log('AudioContext resumed successfully')
             })
             .catch((error) =>
-              console.error('Failed to resume AudioContext:', error)
+              logger.error('Failed to resume AudioContext:', error)
             );
         }
       }

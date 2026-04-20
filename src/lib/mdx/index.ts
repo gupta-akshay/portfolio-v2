@@ -3,6 +3,7 @@ import path from 'path';
 import { cache } from 'react';
 import { BlogPost, TOCHeading } from './types';
 import { BlogMetadataSchema } from './schema';
+import { logger } from '@/app/utils/logger';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
 
@@ -23,7 +24,7 @@ export const getBlogBySlug = cache(async (slug: string): Promise<BlogPost | null
 
     const parsed = BlogMetadataSchema.safeParse(raw);
     if (!parsed.success) {
-      console.error(`Invalid metadata in ${slug}.mdx:`, parsed.error.flatten());
+      logger.error(`Invalid metadata in ${slug}.mdx:`, parsed.error.flatten());
       return null;
     }
 
