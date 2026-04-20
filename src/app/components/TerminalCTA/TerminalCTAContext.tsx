@@ -44,4 +44,3 @@ export const TerminalCTAProvider = ({ children }: { children: ReactNode }) => {
     </TerminalCTAContext.Provider>
   );
 };
-

@@ -10,7 +10,6 @@ const eslintConfig = defineConfig([
   {
     rules: {
       'quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
-      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   // Override default ignores of eslint-config-next.

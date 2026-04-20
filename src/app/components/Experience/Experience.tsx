@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { getExperienceData } from '@/app/utils/data/experience';
 import { ExperienceProps } from '@/app/types/components';
+import { ExperienceItem } from '@/app/types';
 import { formatDateRange } from '@/app/utils/helpers/format';
 
 import styles from './Experience.module.scss';
@@ -12,7 +13,7 @@ interface GroupedExperience {
   company: string;
   logo: string;
   location: string;
-  experiences: any[];
+  experiences: ExperienceItem[];
   totalDuration: string;
 }
 
@@ -102,11 +103,13 @@ export default function Experience({
     setExpandedCompanies(newExpanded);
   };
 
-  const getVisibleExperiences = (companyGroup: GroupedExperience) => {
+  const getVisibleExperiences = (
+    companyGroup: GroupedExperience,
+  ): ExperienceItem[] => {
     const isExpanded = expandedCompanies.has(companyGroup.company);
-    return isExpanded
-      ? companyGroup.experiences
-      : [companyGroup.experiences[0]];
+    if (isExpanded) return companyGroup.experiences;
+    const first = companyGroup.experiences[0];
+    return first ? [first] : [];
   };
 
   return (
