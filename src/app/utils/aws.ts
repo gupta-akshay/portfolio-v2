@@ -6,19 +6,18 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getSignedUrl as getCloudfrontSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { Track } from '@/app/types';
+import { serverEnv } from '@/env';
+import { logger } from '@/app/utils/logger';
 
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION || 'ap-south-1',
+  region: serverEnv.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: serverEnv.AWS_ACCESS_KEY_ID,
+    secretAccessKey: serverEnv.AWS_SECRET_ACCESS_KEY,
   },
 });
 
-const BUCKET_NAME = process.env.AWS_BUCKET_NAME || '';
-const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || '';
-const CLOUDFRONT_KEY_PAIR_ID = process.env.CLOUDFRONT_KEY_PAIR_ID || '';
-const CLOUDFRONT_PRIVATE_KEY = process.env.CLOUDFRONT_PRIVATE_KEY || '';
+const BUCKET_NAME = serverEnv.AWS_BUCKET_NAME;
 
 /**
  * Parse track metadata from the file key
@@ -62,7 +61,7 @@ export async function getAudioFilesList(): Promise<Track[]> {
   try {
     const command = new ListObjectsV2Command({
       Bucket: BUCKET_NAME,
-      Prefix: 'tracks/', // Assuming tracks are stored in a 'tracks' folder
+      Prefix: 'tracks/',
     });
 
     const response = await s3Client.send(command);
@@ -90,7 +89,7 @@ export async function getAudioFilesList(): Promise<Track[]> {
 
     return tracks;
   } catch (error) {
-    console.error('Error fetching audio files from S3:', error);
+    logger.error('Error fetching audio files from S3:', error);
     throw error;
   }
 }
@@ -101,34 +100,29 @@ export async function getAudioFilesList(): Promise<Track[]> {
  * Otherwise, returns an S3 pre-signed URL
  */
 export async function getAudioUrl(path: string): Promise<string> {
+  const cloudfrontDomain = serverEnv.CLOUDFRONT_DOMAIN;
+  const cloudfrontKeyPairId = serverEnv.CLOUDFRONT_KEY_PAIR_ID;
+  const cloudfrontPrivateKey = serverEnv.CLOUDFRONT_PRIVATE_KEY;
+
   try {
-    // Only use CloudFront if ALL required config is present and valid
-    if (
-      CLOUDFRONT_DOMAIN &&
-      CLOUDFRONT_KEY_PAIR_ID &&
-      CLOUDFRONT_PRIVATE_KEY &&
-      CLOUDFRONT_PRIVATE_KEY.length > 0
-    ) {
+    if (cloudfrontDomain && cloudfrontKeyPairId && cloudfrontPrivateKey) {
       try {
-        // Decode base64 private key if needed
-        let privateKey = CLOUDFRONT_PRIVATE_KEY;
+        let privateKey = cloudfrontPrivateKey;
         if (!privateKey.includes('-----BEGIN RSA PRIVATE KEY-----')) {
           privateKey = Buffer.from(privateKey, 'base64').toString('utf-8');
         }
 
-        // Ensure the CloudFront domain doesn't include the protocol
-        const cleanDomain = CLOUDFRONT_DOMAIN.replace(/^https?:\/\//, '');
-
+        const cleanDomain = cloudfrontDomain.replace(/^https?:\/\//, '');
         const url = `https://${cleanDomain}/${path}`;
 
         return getCloudfrontSignedUrl({
           url,
-          keyPairId: CLOUDFRONT_KEY_PAIR_ID,
+          keyPairId: cloudfrontKeyPairId,
           privateKey: privateKey,
-          dateLessThan: new Date(Date.now() + 3600 * 1000).toISOString(), // URL expires in 1 hour
+          dateLessThan: new Date(Date.now() + 3600 * 1000).toISOString(),
         });
       } catch (cloudfrontError) {
-        console.error('Error getting CloudFront URL:', cloudfrontError);
+        logger.error('Error getting CloudFront URL:', cloudfrontError);
       }
     }
 
@@ -142,7 +136,7 @@ export async function getAudioUrl(path: string): Promise<string> {
       expiresIn: 3600,
     });
   } catch (error) {
-    console.error('Error getting audio URL:', error);
+    logger.error('Error getting audio URL:', error);
     throw error;
   }
 }
