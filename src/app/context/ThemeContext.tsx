@@ -1,49 +1,48 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { ThemeMode, ThemeContextType, ThemeProviderProps } from '@/app/types';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+function readInitialTheme(defaultTheme: ThemeMode): boolean {
+  if (typeof document === 'undefined') return defaultTheme === 'light';
+  // Inline script in layout.tsx sets `theme-light` on documentElement/body
+  // before hydration, so this matches what the user already sees.
+  return (
+    document.documentElement.classList.contains('theme-light') ||
+    document.body?.classList.contains('theme-light') ||
+    false
+  );
+}
 
 export function ThemeProvider({
   children,
   defaultTheme = 'dark',
 }: ThemeProviderProps) {
-  const [isLightMode, setIsLightMode] = useState(defaultTheme === 'light');
+  const [isLightMode, setIsLightMode] = useState<boolean>(() =>
+    readInitialTheme(defaultTheme),
+  );
 
-  // Initialize theme from localStorage when component mounts
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
-    const isStoredThemeLight = storedTheme === 'theme-light';
-    const setTheme = () => {
-      setIsLightMode(isStoredThemeLight);
-    };
-    setTheme();
-
-    // Apply theme to body
-    const bodyClassList = document.querySelector('body')?.classList;
-    if (isStoredThemeLight) {
-      bodyClassList?.add('theme-light');
-    } else {
-      bodyClassList?.remove('theme-light');
-    }
-  }, []);
-
-  // Update body class and localStorage when theme changes
-  useEffect(() => {
-    const bodyClassList = document.querySelector('body')?.classList;
+    const body = document.body;
+    const root = document.documentElement;
     if (isLightMode) {
-      bodyClassList?.add('theme-light');
-      localStorage.setItem('theme', 'theme-light');
+      body?.classList.add('theme-light');
+      root.classList.add('theme-light');
+      try {
+        localStorage.setItem('theme', 'theme-light');
+      } catch {
+        /* localStorage unavailable */
+      }
     } else {
-      bodyClassList?.remove('theme-light');
-      localStorage.setItem('theme', 'theme-dark');
+      body?.classList.remove('theme-light');
+      root.classList.remove('theme-light');
+      try {
+        localStorage.setItem('theme', 'theme-dark');
+      } catch {
+        /* localStorage unavailable */
+      }
     }
   }, [isLightMode]);
 
