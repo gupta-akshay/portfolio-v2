@@ -6,6 +6,8 @@ import { ContactFormData, ContactAPIResponse } from '@/app/types/api';
 import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
 import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
+import { logger } from '@/app/utils/logger';
+import { rateLimit } from '@/app/utils/ratelimit';
 
 // Define a schema for input validation
 const contactSchema = z.object({
@@ -26,6 +28,23 @@ export async function POST(
   req: NextRequest
 ): Promise<NextResponse<ContactAPIResponse>> {
   try {
+    const limit = rateLimit(req, {
+      id: 'sendMail',
+      limit: 5,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!limit.ok) {
+      const response: ContactAPIResponse = {
+        success: false,
+        message: 'Too many requests. Please try again later.',
+        statusCode: 429,
+      };
+      return NextResponse.json(response, {
+        status: 429,
+        headers: { 'Retry-After': String(limit.retryAfterSec) },
+      });
+    }
+
     const body = await req.json();
 
     // Validate input using Zod
@@ -87,7 +106,7 @@ export async function POST(
 
     return NextResponse.json(successResponse, { status: 200 });
   } catch (e) {
-    console.error('Error in sending mail:', e);
+    logger.error('Error in sending mail:', e);
 
     // Check for specific error types
     if (e instanceof Error) {

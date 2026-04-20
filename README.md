@@ -28,7 +28,10 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 
 ## Current Features
 
-- Theme toggle (dark/light)
+- Theme toggle (dark/light) with FOUC-free inline theme bootstrapping
+- Per-route error boundaries powered by a shared `RouteError` component (captures to Sentry in prod)
+- Typed env schema (`src/env.ts`) validated with Zod; boot fails fast on missing required keys
+- In-memory rate limiting on `/api/reactions` (30/min) and `/api/sendMail` (5/hour); returns 429 + `Retry-After`
 - SEO metadata and OpenGraph image routes
 - MDX blog pipeline with:
   - table of contents (server-extracted headings, no DOM polling)
@@ -67,7 +70,7 @@ public/                   # Static assets
 
 ## Environment Variables
 
-Create `.env.local` in project root.
+Create `.env.local` in project root. A committed `.env.example` mirrors the keys below.
 
 ```env
 # Required for contact form emails

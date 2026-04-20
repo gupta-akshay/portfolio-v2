@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { logger } from '@/app/utils/logger';
 
 export default function DeviconCSSLoader() {
   useEffect(() => {
@@ -9,16 +10,13 @@ export default function DeviconCSSLoader() {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css';
-        link.onload = () => {
-          console.log('Devicon CSS loaded successfully from CDN');
-        };
         link.onerror = () => {
-          console.error('Failed to load devicon CSS from CDN');
+          logger.error('Failed to load devicon CSS from CDN');
         };
-        
+
         document.head.appendChild(link);
       } catch (error) {
-        console.error('Error loading devicon CSS:', error);
+        logger.error('Error loading devicon CSS:', error);
       }
     };
 

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import toast from 'react-hot-toast';
+import { logger } from '@/app/utils/logger';
 
 export default function ContactFormInteractive() {
   const [isSending, setIsSending] = useState(false);
@@ -59,7 +60,7 @@ export default function ContactFormInteractive() {
           }
         );
       } catch (error) {
-        console.error('Error while submitting the form', error);
+        logger.error('Error while submitting the form', error);
         setIsSending(false);
       }
     },

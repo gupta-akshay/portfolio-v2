@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback, RefObject } from 'react';
+import { logger } from '@/app/utils/logger';
 
 /**
  * Custom hook to manage Web Audio API context and analyzer
@@ -26,7 +27,7 @@ export const useAudioContext = (
           latencyHint: 'interactive',
         });
       } catch (error) {
-        console.error('Failed to initialize AudioContext:', error);
+        logger.error('Failed to initialize AudioContext:', error);
       }
     }
   }, []);
@@ -37,7 +38,7 @@ export const useAudioContext = (
       try {
         await audioContextRef.current.resume();
       } catch (error) {
-        console.error('Error unlocking AudioContext:', error);
+        logger.error('Error unlocking AudioContext:', error);
       }
     }
   }, []);
@@ -87,7 +88,7 @@ export const useAudioContext = (
 
       isInitializedRef.current = true;
     } catch (error) {
-      console.error('Error setting up audio nodes:', error);
+      logger.error('Error setting up audio nodes:', error);
     }
   }, [audioRef]);
 

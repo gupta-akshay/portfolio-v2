@@ -4,6 +4,8 @@ import requestIp from 'request-ip';
 import { eq, and, count } from 'drizzle-orm';
 import { db } from '../../../../db';
 import { blogReactions, anonymousUsers } from '../../../../db/schema';
+import { logger } from '@/app/utils/logger';
+import { rateLimit } from '@/app/utils/ratelimit';
 
 // Helper function to generate user fingerprint
 function generateFingerprint(req: NextRequest): string {
@@ -88,7 +90,7 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Error fetching reactions:', error);
+    logger.error('Error fetching reactions:', error);
     return NextResponse.json(
       { error: 'Failed to fetch reactions' },
       { status: 500 }
@@ -99,6 +101,21 @@ export async function GET(request: NextRequest) {
 // POST: Add or update a reaction
 export async function POST(request: NextRequest) {
   try {
+    const limit = rateLimit(request, {
+      id: 'reactions',
+      limit: 30,
+      windowMs: 60_000,
+    });
+    if (!limit.ok) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again shortly.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(limit.retryAfterSec) },
+        },
+      );
+    }
+
     const {
       blogSlug,
       emoji,
@@ -209,7 +226,7 @@ export async function POST(request: NextRequest) {
       userReaction: existingReaction.length === 0 ? emoji : null, // null if removed, emoji if added
     });
   } catch (error) {
-    console.error('Error adding reaction:', error);
+    logger.error('Error adding reaction:', error);
     return NextResponse.json(
       { error: 'Failed to add reaction' },
       { status: 500 }

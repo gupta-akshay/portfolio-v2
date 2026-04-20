@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getOrCreateFingerprint } from '@/app/utils/fingerprint';
+import { logger } from '@/app/utils/logger';
 
 import styles from './EmojiReactions.module.scss';
 
@@ -49,7 +50,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
     } catch (error) {
       // Don't log AbortError as it's expected when component unmounts
       if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Error fetching reactions:', error);
+        logger.error('Error fetching reactions:', error);
       }
     } finally {
       setIsFetched(true);
@@ -87,7 +88,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
           }
         }
       } catch (error) {
-        console.error('Error adding reaction:', error);
+        logger.error('Error adding reaction:', error);
       } finally {
         setIsLoading(false);
       }

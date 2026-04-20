@@ -8,6 +8,7 @@ import ReadingProgressBar from '@/app/components/ReadingProgressBar';
 import TableOfContentsMDX from './TableOfContentsMDX';
 import { getBlogBySlug, getAllBlogs, getBlogHeadings } from '@/lib/mdx';
 import { formatDate } from '@/app/utils';
+import { logger } from '@/app/utils/logger';
 
 import styles from '../../styles/sections/blogSection.module.scss';
 
@@ -217,7 +218,7 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
-    console.error('Error generating metadata:', error);
+    logger.error('Error generating metadata:', error);
     return {
       title: 'Error | Akshay Gupta',
       description: 'An error occurred while loading this blog post',

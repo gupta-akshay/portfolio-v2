@@ -79,6 +79,8 @@ export const metadata: Metadata = {
   },
 };
 
+const themeInitScript = `try{var t=localStorage.getItem('theme');if(t==='theme-light'){document.documentElement.classList.add('theme-light');if(document.body)document.body.classList.add('theme-light')}}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: {
@@ -87,6 +89,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${rubik.variable} ${cookie.variable}`}>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <a href='#main-content' className='skip-link'>
           Skip to main content
         </a>
