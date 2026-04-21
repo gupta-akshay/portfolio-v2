@@ -11,7 +11,7 @@ const data = [
         <li>Developed an AI-powered Support ChatBot to automate recurring client issue resolution, reducing human dependency and improving response efficiency, while also redesigning and standardizing logging mechanisms, cutting Google Cloud Logging costs by 40%.</li>
       </ul>
     `,
-    imgSrc: '/images/peoplegrove.png',
+    imgSrc: '/images/peoplegrove.webp',
   },
   {
     id: 1,
@@ -25,7 +25,7 @@ const data = [
         <li>Enhanced PeopleGrove's first acquisition 'Student Opportunity Center' for optimal performance and led projects to reduce technical debt across key product codebases, significantly improving system efficiency.</li>
       </ul>
     `,
-    imgSrc: '/images/peoplegrove.png',
+    imgSrc: '/images/peoplegrove.webp',
   },
   {
     id: 2,
@@ -39,7 +39,7 @@ const data = [
         <li>Mentored a team of junior developers, spearheaded a BigQuery data sync process for Customer.io, and crafted a migration tool, seamlessly upgrading over 200 clients to PeopleGrove V2.</li>
       </ul>
     `,
-    imgSrc: '/images/peoplegrove.png',
+    imgSrc: '/images/peoplegrove.webp',
   },
   {
     id: 3,
@@ -53,7 +53,7 @@ const data = [
         <li>Dramatically optimized PostgreSQL queries for substantial dataset, spearheaded a large-scale newsletter service, and implemented front-end optimizations, significantly boosting user experience.</li>
       </ul>
     `,
-    imgSrc: '/images/peoplegrove.png',
+    imgSrc: '/images/peoplegrove.webp',
   },
   {
     id: 4,
@@ -67,7 +67,7 @@ const data = [
         <li>Developed automated Cron jobs, transitioned code from Angular.js to React enhancing user engagement, and mastered worker threads for efficient processing of CPU-intensive tasks.</li>
       </ul>
     `,
-    imgSrc: '/images/peoplegrove.png',
+    imgSrc: '/images/peoplegrove.webp',
   },
   {
     id: 5,
@@ -81,7 +81,7 @@ const data = [
         <li>Innovated 'Bulk Matching' tool enhancing revenue, developed 'Launch Groups' for feature-flagged releases, and streamlined email communications with Postmark integration.</li>
       </ul>
     `,
-    imgSrc: '/images/peoplegrove.png',
+    imgSrc: '/images/peoplegrove.webp',
   },
   {
     id: 6,

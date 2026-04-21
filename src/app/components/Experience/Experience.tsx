@@ -42,7 +42,7 @@ export default function Experience({
       } else {
         acc.push({
           company: experience.company,
-          logo: experience.logo || '/images/default-company.png',
+          logo: experience.logo || '/images/default-company.webp',
           location: experience.location,
           experiences: [experience],
           totalDuration: (() => {

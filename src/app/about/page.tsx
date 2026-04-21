@@ -105,7 +105,7 @@ export default function About() {
         url: 'https://www.peoplegrove.com',
       },
       url: 'https://akshaygupta.live',
-      image: 'https://akshaygupta.live/images/about-me.png',
+      image: 'https://akshaygupta.live/images/about-me.webp',
       description: `Senior Staff Engineer at PeopleGrove with over ${yearsOfExperience} years of experience in web development.`,
       sameAs: [
         'https://github.com/gupta-akshay',
@@ -154,7 +154,7 @@ export default function About() {
             <div className='col-lg-6 m-15px-tb d-none d-sm-block'>
               <div className={styles.aboutImg}>
                 <Image
-                  src='/images/about-me.png'
+                  src='/images/about-me.webp'
                   alt='about-image'
                   width={560}
                   height={560}

@@ -138,11 +138,11 @@ export const metadata = {
   slug: 'your-blog-slug',
   publishedAt: '2025-01-15',          // YYYY-MM-DD
   categories: ['category1', 'category2'],
-  coverImage: '/images/blog/your-cover.avif',
+  coverImage: '/images/blog/your-cover.webp',
   coverImageAlt: 'Description of cover image',
   author: {
     name: 'Akshay Gupta',
-    avatar: '/images/blog-author.png',
+    avatar: '/images/blog-author.webp',
   },
   excerpt: 'A short description of your blog post.',
   draft: true,                         // optional — omit or set false to publish

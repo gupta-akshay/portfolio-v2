@@ -53,7 +53,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   const readingTime = post?.readingTime ?? '';
   const headings = getBlogHeadings(slug);
 
-  const imageUrl = metadata.coverImage || '/images/about-me.png';
+  const imageUrl = metadata.coverImage || '/images/about-me.webp';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -180,7 +180,7 @@ export async function generateMetadata({
     }
 
     const { metadata } = post;
-    const imageUrl = metadata.coverImage || '/images/about-me.png';
+    const imageUrl = metadata.coverImage || '/images/about-me.webp';
     const description = metadata.excerpt || metadata.title;
 
     return {
