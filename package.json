@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "NODE_OPTIONS='--max-old-space-size=8192' eslint . --ext .js,.jsx,.ts,.tsx",
     "terminal:ssh": "tsx terminal/server.ts",
+    "images:to-webp": "node scripts/convert-images-to-webp.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
@@ -76,6 +77,7 @@
     "rehype-mermaid": "^3.0.0",
     "require-in-the-middle": "^8.0.1",
     "sass": "^1.99.0",
+    "sharp": "^0.34.5",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   },
