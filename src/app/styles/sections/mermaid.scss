@@ -1,9 +1,9 @@
 @use '../variables' as *;
 
-// Mermaid diagrams rendered by rehype-mermaid (inline SVG at build time).
-// SVGs are baked with mermaid's default light palette. In dark mode we
-// override the inlined <style> rules (which use id selectors, so we need
-// `!important` to win) so text, strokes, and node fills stay readable.
+// Mermaid diagrams rendered on the client by mermaid.js. The MermaidRenderer
+// component re-initialises mermaid with the active theme, but we still override
+// inlined <style> rules for dark mode (mermaid uses id selectors, so !important
+// is needed to win) so text, strokes, and node fills stay readable.
 
 svg[id^='mermaid-'] {
   display: block;

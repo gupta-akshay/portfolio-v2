@@ -114,7 +114,7 @@ const withMDX = createMDX({
     ],
     rehypePlugins: [
       'rehype-slug', // Add IDs to headings for TOC
-      ['rehype-mermaid', { strategy: 'inline-svg' }], // Render ```mermaid fences to inline SVG at build time (default light palette; dark-mode CSS inverts)
+      ['rehype-mermaid', { strategy: 'pre-mermaid' }], // Emit <pre class="mermaid"> and let mermaid.js render to SVG on the client (avoids needing chromium on the build server)
       ['rehype-prism-plus', { ignoreMissing: true }], // Syntax highlighting (runs after mermaid so it skips converted blocks)
     ],
   },

@@ -92,12 +92,12 @@ importers:
       gradient-string:
         specifier: ^3.0.0
         version: 3.0.0
+      mermaid:
+        specifier: ^11.4.1
+        version: 11.14.0
       next:
         specifier: ^16.2.4
         version: 16.2.4(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.99.0)
-      playwright:
-        specifier: ^1.59.1
-        version: 1.59.1
       postcss:
         specifier: ^8.5.10
         version: 8.5.10
@@ -10763,13 +10763,15 @@ snapshots:
       mlly: 1.8.2
       pathe: 2.0.3
 
-  playwright-core@1.59.1: {}
+  playwright-core@1.59.1:
+    optional: true
 
   playwright@1.59.1:
     dependencies:
       playwright-core: 1.59.1
     optionalDependencies:
       fsevents: 2.3.2
+    optional: true
 
   points-on-curve@0.2.0: {}
 

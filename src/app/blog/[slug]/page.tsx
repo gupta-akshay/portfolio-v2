@@ -5,6 +5,7 @@ import Layout from '@/app/components/Layout';
 import EmojiReactions from '@/app/components/EmojiReactions';
 import SocialShare from '@/app/components/SocialShare';
 import ReadingProgressBar from '@/app/components/ReadingProgressBar';
+import MermaidRenderer from '@/app/components/MermaidRenderer';
 import TableOfContentsMDX from './TableOfContentsMDX';
 import { getBlogBySlug, getAllBlogs, getBlogHeadings } from '@/lib/mdx';
 import { formatDate } from '@/app/utils';
@@ -85,6 +86,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   return (
     <Layout isBlog>
       <ReadingProgressBar />
+      <MermaidRenderer />
       <TableOfContentsMDX headings={headings} />
       <SocialShare
         url={`https://akshaygupta.live/blog/${slug}`}

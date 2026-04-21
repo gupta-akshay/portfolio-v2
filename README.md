@@ -41,7 +41,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
   - emoji reactions backed by PostgreSQL
   - RSS feed at `/feed.xml`
   - draft support (`draft: true` hides posts in production)
-  - mermaid diagrams rendered to inline SVG at build time via `rehype-mermaid` (Playwright headless Chromium), with theme-aware styling for dark/light modes
+  - mermaid diagrams rendered on the client via `mermaid` (ssr-safe; `rehype-mermaid` with the `pre-mermaid` strategy emits `<pre class="mermaid">` that the `MermaidRenderer` component hydrates into SVG), with theme-aware styling for dark/light modes
 - Music page with:
   - custom audio player
   - queue controls
@@ -163,7 +163,7 @@ flowchart LR
 ```
 ````
 
-Rendering runs in a Playwright-controlled headless Chromium, so `pnpm build` runs `playwright install chromium --only-shell` before `next build`. Vercel uses `vercel.json` to pin this build command.
+`rehype-mermaid` is configured with the `pre-mermaid` strategy, so MDX builds stay fast and hermetic — no Playwright/Chromium on the build server. The `MermaidRenderer` client component loads `mermaid` on demand on blog pages and re-renders when the theme changes.
 
 ## Terminal Resume (SSH)
 

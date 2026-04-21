@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--trace-deprecation' next dev",
-    "build": "playwright install chromium --only-shell && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "NODE_OPTIONS='--max-old-space-size=8192' eslint . --ext .js,.jsx,.ts,.tsx",
     "terminal:ssh": "tsx terminal/server.ts",
@@ -39,8 +39,8 @@
     "drizzle-orm": "^0.45.2",
     "figlet": "^1.11.0",
     "gradient-string": "^3.0.0",
+    "mermaid": "^11.4.1",
     "next": "^16.2.4",
-    "playwright": "^1.59.1",
     "postcss": "^8.5.10",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
