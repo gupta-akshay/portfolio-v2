@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--trace-deprecation' next dev",
-    "build": "next build",
+    "build": "playwright install --no-shell chromium && next build",
     "start": "next start",
     "lint": "NODE_OPTIONS='--max-old-space-size=8192' eslint . --ext .js,.jsx,.ts,.tsx",
     "terminal:ssh": "tsx terminal/server.ts",
@@ -71,7 +71,9 @@
     "eslint-config-prettier": "^10.1.8",
     "import-in-the-middle": "^3.0.1",
     "jsdom": "^29.0.2",
+    "playwright": "^1.59.1",
     "prettier": "^3.8.3",
+    "rehype-mermaid": "^3.0.0",
     "require-in-the-middle": "^8.0.1",
     "sass": "^1.99.0",
     "tsx": "^4.21.0",

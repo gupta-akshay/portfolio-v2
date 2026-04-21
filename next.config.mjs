@@ -114,7 +114,8 @@ const withMDX = createMDX({
     ],
     rehypePlugins: [
       'rehype-slug', // Add IDs to headings for TOC
-      ['rehype-prism-plus', { ignoreMissing: true }], // Syntax highlighting
+      ['rehype-mermaid', { strategy: 'inline-svg' }], // Render ```mermaid fences to inline SVG at build time (default light palette; dark-mode CSS inverts)
+      ['rehype-prism-plus', { ignoreMissing: true }], // Syntax highlighting (runs after mermaid so it skips converted blocks)
     ],
   },
 });
