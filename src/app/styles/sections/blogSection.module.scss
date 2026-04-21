@@ -35,6 +35,40 @@
     li {
       color: $px-body-light;
     }
+
+    ul li::marker,
+    ol li::marker {
+      color: $px-theme;
+    }
+
+    ul ul li::marker,
+    ol ol li::marker,
+    ul ol li::marker,
+    ol ul li::marker {
+      color: rgba($px-dark, 0.55);
+    }
+
+    table {
+      border-color: rgba($px-dark, 0.18);
+
+      th,
+      td {
+        border-color: rgba($px-dark, 0.14);
+      }
+
+      thead {
+        background: rgba($px-dark, 0.04);
+
+        th {
+          color: $px-dark;
+          border-bottom-color: rgba($px-dark, 0.25);
+        }
+      }
+
+      tbody tr:nth-child(even) {
+        background: rgba($px-dark, 0.025);
+      }
+    }
   }
 }
 
@@ -53,19 +87,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    max-width: 1110px;
+    margin: 0 auto;
+    aspect-ratio: 1792 / 1024;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba($px-white, 0.04);
+
+    @include down-md {
+      border-radius: 8px;
+    }
 
     .blogImage {
-      max-height: 663px;
-      max-width: 1110px;
+      width: 100% !important;
+      height: 100% !important;
       object-fit: cover;
-      background-position: center;
-      width: 100%;
-      border-radius: 12px;
-
-      @include down-md {
-        max-height: 246px;
-        border-radius: 8px;
-      }
+      object-position: center;
+      display: block;
     }
   }
 }
@@ -166,6 +205,63 @@
     color: $px-body;
   }
 
+  // MDX lists — restore indentation stripped by the global reset, give
+  // markers a bit of breathing room, and indent nested lists further.
+  ul,
+  ol {
+    margin: 0.75rem 0 1.25rem;
+    padding-left: 1.75rem;
+
+    li {
+      margin: 0.35rem 0;
+      padding-left: 0.25rem;
+      line-height: $px-line-height;
+
+      &::marker {
+        color: $px-theme;
+      }
+
+      > p {
+        margin: 0 0 0.5rem;
+      }
+
+      // Nested lists — extra indent + softer markers.
+      ul,
+      ol {
+        margin: 0.35rem 0 0.5rem;
+        padding-left: 1.5rem;
+
+        li::marker {
+          color: rgba($px-white, 0.55);
+        }
+      }
+    }
+  }
+
+  ul {
+    list-style: disc outside;
+
+    ul {
+      list-style: circle outside;
+
+      ul {
+        list-style: square outside;
+      }
+    }
+  }
+
+  ol {
+    list-style: decimal outside;
+
+    ol {
+      list-style: lower-alpha outside;
+
+      ol {
+        list-style: lower-roman outside;
+      }
+    }
+  }
+
   blockquote {
     max-width: 600px;
     padding: 15px 0 30px;
@@ -188,6 +284,51 @@
     @include px-hover {
       color: color.adjust($px-theme, $lightness: -8%);
       text-decoration: none;
+    }
+  }
+
+  // MDX tables — default (dark mode) styling.
+  table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.75rem 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    overflow-x: auto;
+    font-size: 0.95em;
+    border: 1px solid rgba($px-white, 0.14);
+    border-radius: 8px;
+
+    th,
+    td {
+      padding: 10px 14px;
+      border: 1px solid rgba($px-white, 0.1);
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    thead {
+      background: rgba($px-white, 0.04);
+
+      th {
+        color: $px-white;
+        font-weight: 600;
+        border-bottom: 1px solid rgba($px-white, 0.22);
+      }
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba($px-white, 0.025);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code {
+      white-space: nowrap;
     }
   }
 }

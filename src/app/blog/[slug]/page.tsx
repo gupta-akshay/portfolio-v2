@@ -110,9 +110,10 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
               <Image
                 src={metadata.coverImage}
                 alt={metadata.coverImageAlt || metadata.title}
-                width={1110}
-                height={663}
+                width={1792}
+                height={1024}
                 className={styles.blogImage}
+                sizes="(max-width: 991px) 100vw, 1110px"
                 priority
               />
             )}
