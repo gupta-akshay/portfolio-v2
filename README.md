@@ -18,7 +18,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 
 - Next.js 16 + React 19 + TypeScript
 - Sass modules + global Sass architecture
-- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`)
+- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`, `rehype-mermaid`)
 - TanStack Form + Zod for contact validation
 - Drizzle ORM + Neon/PostgreSQL (emoji reactions)
 - AWS S3 + CloudFront signing for music delivery
@@ -41,6 +41,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
   - emoji reactions backed by PostgreSQL
   - RSS feed at `/feed.xml`
   - draft support (`draft: true` hides posts in production)
+  - mermaid diagrams rendered to inline SVG at build time via `rehype-mermaid` (Playwright headless Chromium), with theme-aware styling for dark/light modes
 - Music page with:
   - custom audio player
   - queue controls
@@ -150,6 +151,19 @@ export const metadata = {
 ```
 
 Metadata is validated at build time via Zod (`src/lib/mdx/schema.ts`). A missing required field or wrong `publishedAt` format will log an error and exclude the post from the listing. Posts with `draft: true` are visible in development but hidden in production builds.
+
+### Mermaid diagrams
+
+Fence a code block with `mermaid` and it will be rendered to inline SVG at build time:
+
+````md
+```mermaid
+flowchart LR
+  A --> B
+```
+````
+
+Rendering runs in a Playwright-controlled headless Chromium, so `pnpm build` runs `playwright install chromium --only-shell` before `next build`. Vercel uses `vercel.json` to pin this build command.
 
 ## Terminal Resume (SSH)
 
