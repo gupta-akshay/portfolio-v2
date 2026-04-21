@@ -68,9 +68,9 @@ export const metadata = {
   slug: 'post-slug',
   publishedAt: 'YYYY-MM-DD',
   categories: ['tag1'],
-  coverImage: '/images/blog/cover.jpg',
+  coverImage: '/images/blog/cover.webp',
   coverImageAlt: 'Alt text',
-  author: { name: 'Akshay Gupta', avatar: '/images/blog-author.png' },
+  author: { name: 'Akshay Gupta', avatar: '/images/blog-author.webp' },
   excerpt: 'Short description.',
 };
 ```

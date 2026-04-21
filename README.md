@@ -18,7 +18,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 
 - Next.js 16 + React 19 + TypeScript
 - Sass modules + global Sass architecture
-- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`)
+- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`, `rehype-mermaid`)
 - TanStack Form + Zod for contact validation
 - Drizzle ORM + Neon/PostgreSQL (emoji reactions)
 - AWS S3 + CloudFront signing for music delivery
@@ -41,6 +41,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
   - emoji reactions backed by PostgreSQL
   - RSS feed at `/feed.xml`
   - draft support (`draft: true` hides posts in production)
+  - mermaid diagrams rendered on the client via `mermaid` (ssr-safe; `rehype-mermaid` with the `pre-mermaid` strategy emits `<pre class="mermaid">` that the `MermaidRenderer` component hydrates into SVG), with theme-aware styling for dark/light modes
 - Music page with:
   - custom audio player
   - queue controls
@@ -138,11 +139,11 @@ export const metadata = {
   slug: 'your-blog-slug',
   publishedAt: '2025-01-15',          // YYYY-MM-DD
   categories: ['category1', 'category2'],
-  coverImage: '/images/blog/your-cover.avif',
+  coverImage: '/images/blog/your-cover.webp',
   coverImageAlt: 'Description of cover image',
   author: {
     name: 'Akshay Gupta',
-    avatar: '/images/blog-author.png',
+    avatar: '/images/blog-author.webp',
   },
   excerpt: 'A short description of your blog post.',
   draft: true,                         // optional — omit or set false to publish
@@ -150,6 +151,19 @@ export const metadata = {
 ```
 
 Metadata is validated at build time via Zod (`src/lib/mdx/schema.ts`). A missing required field or wrong `publishedAt` format will log an error and exclude the post from the listing. Posts with `draft: true` are visible in development but hidden in production builds.
+
+### Mermaid diagrams
+
+Fence a code block with `mermaid` and it will be rendered to inline SVG at build time:
+
+````md
+```mermaid
+flowchart LR
+  A --> B
+```
+````
+
+`rehype-mermaid` is configured with the `pre-mermaid` strategy, so MDX builds stay fast and hermetic — no Playwright/Chromium on the build server. The `MermaidRenderer` client component loads `mermaid` on demand on blog pages and re-renders when the theme changes.
 
 ## Terminal Resume (SSH)
 

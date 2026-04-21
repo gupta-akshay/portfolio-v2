@@ -5,6 +5,7 @@ import Layout from '@/app/components/Layout';
 import EmojiReactions from '@/app/components/EmojiReactions';
 import SocialShare from '@/app/components/SocialShare';
 import ReadingProgressBar from '@/app/components/ReadingProgressBar';
+import MermaidRenderer from '@/app/components/MermaidRenderer';
 import TableOfContentsMDX from './TableOfContentsMDX';
 import { getBlogBySlug, getAllBlogs, getBlogHeadings } from '@/lib/mdx';
 import { formatDate } from '@/app/utils';
@@ -53,7 +54,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   const readingTime = post?.readingTime ?? '';
   const headings = getBlogHeadings(slug);
 
-  const imageUrl = metadata.coverImage || '/images/about-me.png';
+  const imageUrl = metadata.coverImage || '/images/about-me.webp';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -85,6 +86,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
   return (
     <Layout isBlog>
       <ReadingProgressBar />
+      <MermaidRenderer />
       <TableOfContentsMDX headings={headings} />
       <SocialShare
         url={`https://akshaygupta.live/blog/${slug}`}
@@ -110,9 +112,10 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
               <Image
                 src={metadata.coverImage}
                 alt={metadata.coverImageAlt || metadata.title}
-                width={1110}
-                height={663}
+                width={1792}
+                height={1024}
                 className={styles.blogImage}
+                sizes="(max-width: 991px) 100vw, 1110px"
                 priority
               />
             )}
@@ -179,7 +182,7 @@ export async function generateMetadata({
     }
 
     const { metadata } = post;
-    const imageUrl = metadata.coverImage || '/images/about-me.png';
+    const imageUrl = metadata.coverImage || '/images/about-me.webp';
     const description = metadata.excerpt || metadata.title;
 
     return {

@@ -9,7 +9,7 @@ export const experienceData: ExperienceItem[] = [
     startDate: '2024-05-01',
     description:
       'Developed an AI-powered Support ChatBot to automate recurring client issue resolution, reducing human dependency and improving response efficiency, while also redesigning and standardizing logging mechanisms, cutting Google Cloud Logging costs by 40%.',
-    logo: '/images/peoplegrove.png',
+    logo: '/images/peoplegrove.webp',
   },
   {
     id: 'staff-engineer',
@@ -20,7 +20,7 @@ export const experienceData: ExperienceItem[] = [
     endDate: '2024-05-01',
     description:
       "Enhanced PeopleGrove's first acquisition 'Student Opportunity Center' for optimal performance and led projects to reduce technical debt across key product codebases, significantly improving system efficiency.",
-    logo: '/images/peoplegrove.png',
+    logo: '/images/peoplegrove.webp',
   },
   {
     id: 'engineering-manager',
@@ -31,7 +31,7 @@ export const experienceData: ExperienceItem[] = [
     endDate: '2023-12-31',
     description:
       'Mentored a team of junior developers, spearheaded a BigQuery data sync process for Customer.io, and crafted a migration tool, seamlessly upgrading over 200 clients to PeopleGrove V2.',
-    logo: '/images/peoplegrove.png',
+    logo: '/images/peoplegrove.webp',
   },
   {
     id: 'senior-sde',
@@ -42,7 +42,7 @@ export const experienceData: ExperienceItem[] = [
     endDate: '2022-03-31',
     description:
       'Dramatically optimized PostgreSQL queries for substantial dataset, spearheaded a large-scale newsletter service, and implemented front-end optimizations, significantly boosting user experience.',
-    logo: '/images/peoplegrove.png',
+    logo: '/images/peoplegrove.webp',
   },
   {
     id: 'sde-ii',
@@ -53,7 +53,7 @@ export const experienceData: ExperienceItem[] = [
     endDate: '2021-03-31',
     description:
       'Developed automated Cron jobs, transitioned code from Angular.js to React enhancing user engagement, and mastered worker threads for efficient processing of CPU-intensive tasks.',
-    logo: '/images/peoplegrove.png',
+    logo: '/images/peoplegrove.webp',
   },
   {
     id: 'sde-i',
@@ -64,7 +64,7 @@ export const experienceData: ExperienceItem[] = [
     endDate: '2020-03-31',
     description:
       "Innovated 'Bulk Matching' tool enhancing revenue, developed 'Launch Groups' for feature-flagged releases, and streamlined email communications with Postmark integration.",
-    logo: '/images/peoplegrove.png',
+    logo: '/images/peoplegrove.webp',
   },
   {
     id: 'ase-tcs',

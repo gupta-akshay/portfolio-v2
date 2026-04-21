@@ -55,21 +55,16 @@ const BlogTileMDX = memo(
                 <Image
                   src={metadata.coverImage}
                   alt={metadata.coverImageAlt || metadata.title}
-                  width={600}
-                  height={400}
+                  width={1792}
+                  height={1024}
                   className={styles.tileImage}
-                  style={{ objectFit: 'cover', width: '100%', height: 'auto' }}
+                  sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 540px"
                 />
               ) : (
                 <div
                   className={styles.placeholderImage}
                   style={{
-                    width: '100%',
-                    height: '200px',
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     color: 'white',
                     fontSize: '1.5rem',
                   }}
