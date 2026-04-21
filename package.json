@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--trace-deprecation' next dev",
-    "build": "playwright install --no-shell chromium && next build",
+    "build": "playwright install chromium --only-shell && next build",
     "start": "next start",
     "lint": "NODE_OPTIONS='--max-old-space-size=8192' eslint . --ext .js,.jsx,.ts,.tsx",
     "terminal:ssh": "tsx terminal/server.ts",
