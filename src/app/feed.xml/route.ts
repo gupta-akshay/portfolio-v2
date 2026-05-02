@@ -1,14 +1,14 @@
 import { getAllBlogs } from '@/lib/mdx';
-
-const SITE_URL = 'https://akshaygupta.live';
+import { getSiteUrl } from '@/lib/site-url';
 
 export async function GET() {
+  const siteUrl = getSiteUrl();
   const posts = await getAllBlogs();
 
   const items = posts
     .map((post) => {
       const { metadata, slug } = post;
-      const url = `${SITE_URL}/blog/${slug}`;
+      const url = `${siteUrl}/blog/${slug}`;
       const pubDate = new Date(metadata.publishedAt).toUTCString();
       const description = metadata.excerpt
         ? `<![CDATA[${metadata.excerpt}]]>`
@@ -31,10 +31,10 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Akshay Gupta Blog</title>
-    <link>${SITE_URL}/blog</link>
+    <link>${siteUrl}/blog</link>
     <description>Long-form notes on engineering, architecture, performance, and practical lessons from shipping production software.</description>
     <language>en-US</language>
-    <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml" />
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     ${items}
   </channel>

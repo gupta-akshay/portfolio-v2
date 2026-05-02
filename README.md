@@ -32,7 +32,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 - Per-route error boundaries powered by a shared `RouteError` component (captures to Sentry in prod)
 - Typed env schema (`src/env.ts`) validated with Zod; boot fails fast on missing required keys
 - In-memory rate limiting on `/api/reactions` (30/min) and `/api/sendMail` (5/hour); returns 429 + `Retry-After`
-- SEO metadata and OpenGraph image routes
+- SEO metadata and OpenGraph image routes; canonical URLs use `getSiteUrl()` (`src/lib/site-url.ts`). Set `NEXT_PUBLIC_SITE_URL` in production to match your Vercel primary domain so Open Graph, canonical links, RSS, sitemap, and JSON-LD stay aligned
 - MDX blog pipeline with:
   - table of contents (server-extracted headings, no DOM polling)
   - reading progress bar
@@ -88,6 +88,9 @@ AWS_BUCKET_NAME=
 CLOUDFRONT_DOMAIN=
 CLOUDFRONT_KEY_PAIR_ID=
 CLOUDFRONT_PRIVATE_KEY=
+
+# Optional: canonical public URL (no trailing slash); match Vercel primary domain
+NEXT_PUBLIC_SITE_URL=
 
 # Optional analytics
 NEXT_PUBLIC_GOOGLE_ANALYTICS=

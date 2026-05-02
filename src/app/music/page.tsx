@@ -3,9 +3,12 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
+import { getSiteUrl } from '@/lib/site-url';
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: 'My Music | Akshay Gupta',
   description:
     'Listen to my latest remixes and music productions. Enjoy the beats!',
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
     title: 'My Music | Akshay Gupta',
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
-    url: 'https://akshaygupta.live/music',
+    url: `${siteUrl}/music`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
     images: [
@@ -36,7 +39,7 @@ export const metadata: Metadata = {
     images: ['/music/opengraph-image'],
   },
   alternates: {
-    canonical: 'https://akshaygupta.live/music',
+    canonical: `${siteUrl}/music`,
   },
 };
 
@@ -46,15 +49,15 @@ export default function Music() {
     '@type': 'MusicPlaylist',
     name: 'Akshay Gupta Music Collection',
     description: 'Listen to my remixes and music productions. Enjoy the beats!',
-    url: 'https://akshaygupta.live/music',
+    url: `${siteUrl}/music`,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': 'https://akshaygupta.live/music',
+      '@id': `${siteUrl}/music`,
     },
     creator: {
       '@type': 'Person',
       name: 'Akshay Gupta',
-      url: 'https://akshaygupta.live',
+      url: siteUrl,
     },
   };
 

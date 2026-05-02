@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getAllBlogs } from '@/lib/mdx';
 import { logger } from '@/app/utils/logger';
+import { getSiteUrl } from '@/lib/site-url';
 
 interface SitemapItem {
   url: string;
@@ -17,7 +18,7 @@ interface SitemapItem {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://akshaygupta.live';
+  const baseUrl = getSiteUrl();
 
   const staticRoutes: SitemapItem[] = [
     {

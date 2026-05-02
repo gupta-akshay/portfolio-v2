@@ -8,6 +8,7 @@ import ReadingProgressBar from '@/app/components/ReadingProgressBar';
 import MermaidRenderer from '@/app/components/MermaidRenderer';
 import TableOfContentsMDX from './TableOfContentsMDX';
 import { getBlogBySlug, getAllBlogs, getBlogHeadings } from '@/lib/mdx';
+import { getSiteUrl } from '@/lib/site-url';
 import { formatDate } from '@/app/utils';
 import { logger } from '@/app/utils/logger';
 
@@ -53,33 +54,34 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   const readingTime = post?.readingTime ?? '';
   const headings = getBlogHeadings(slug);
+  const siteUrl = getSiteUrl();
 
-  const imageUrl = metadata.coverImage || '/images/about-me.webp';
+  const ogImageUrl = `${siteUrl}/blog/${slug}/opengraph-image`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: metadata.title,
     description: metadata.excerpt || metadata.title,
-    image: `https://akshaygupta.live${imageUrl}`,
+    image: ogImageUrl,
     datePublished: metadata.publishedAt,
     dateModified: metadata.publishedAt,
     author: {
       '@type': 'Person',
       name: metadata.author.name,
-      url: 'https://akshaygupta.live/about',
+      url: `${siteUrl}/about`,
     },
     publisher: {
       '@type': 'Organization',
       name: 'Akshay Gupta',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://akshaygupta.live/icon?size=192',
+        url: `${siteUrl}/icon?size=192`,
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://akshaygupta.live/blog/${slug}`,
+      '@id': `${siteUrl}/blog/${slug}`,
     },
   };
 
@@ -89,7 +91,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
       <MermaidRenderer />
       <TableOfContentsMDX headings={headings} />
       <SocialShare
-        url={`https://akshaygupta.live/blog/${slug}`}
+        url={`${siteUrl}/blog/${slug}`}
         title={metadata.title}
         description={metadata.excerpt || metadata.title}
       />
@@ -169,6 +171,8 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 export async function generateMetadata({
   params,
 }: SingleBlogPageProps): Promise<Metadata> {
+  const siteUrl = getSiteUrl();
+
   try {
     const { slug } = await params;
     const post = await getBlogBySlug(slug);
@@ -177,47 +181,36 @@ export async function generateMetadata({
       return {
         title: 'Post Not Found | Akshay Gupta',
         description: `The blog post you're looking for does not exist`,
-        metadataBase: new URL('https://akshaygupta.live'),
+        metadataBase: new URL(siteUrl),
       };
     }
 
     const { metadata } = post;
-    const imageUrl = metadata.coverImage || '/images/about-me.webp';
     const description = metadata.excerpt || metadata.title;
 
     return {
       title: `${metadata.title} | Akshay Gupta's Blog`,
-      description: description,
-      metadataBase: new URL('https://akshaygupta.live'),
+      description,
+      metadataBase: new URL(siteUrl),
       openGraph: {
         type: 'article',
         title: metadata.title,
-        description: description,
-        url: `https://akshaygupta.live/blog/${slug}`,
+        description,
+        url: `${siteUrl}/blog/${slug}`,
         siteName: 'Akshay Gupta',
         locale: 'en_US',
         publishedTime: metadata.publishedAt,
         modifiedTime: metadata.publishedAt,
         authors: [metadata.author.name],
-        images: [
-          {
-            url: imageUrl,
-            width: 1200,
-            height: 630,
-            alt: metadata.title,
-            type: 'image/png',
-          },
-        ],
       },
       twitter: {
         card: 'summary_large_image',
         title: metadata.title,
-        description: description,
-        images: [imageUrl],
+        description,
         creator: '@ashay_music',
       },
       alternates: {
-        canonical: `https://akshaygupta.live/blog/${slug}`,
+        canonical: `${siteUrl}/blog/${slug}`,
       },
     };
   } catch (error) {
@@ -225,7 +218,7 @@ export async function generateMetadata({
     return {
       title: 'Error | Akshay Gupta',
       description: 'An error occurred while loading this blog post',
-      metadataBase: new URL('https://akshaygupta.live'),
+      metadataBase: new URL(siteUrl),
     };
   }
 }

@@ -9,11 +9,14 @@ import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
 import TerminalCTA from './components/TerminalCTA';
 import { TerminalCTAProvider } from './components/TerminalCTA/TerminalCTAContext';
+import { getSiteUrl } from '@/lib/site-url';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import './styles/globals.scss';
 
 config.autoAddCss = false;
+
+const siteUrl = getSiteUrl();
 
 export const viewport = {
   width: 'device-width',
@@ -22,7 +25,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'Akshay Gupta | Full-Stack Web Developer',
     template: '%s | Akshay Gupta',
@@ -45,7 +48,7 @@ export const metadata: Metadata = {
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    url: 'https://akshaygupta.live',
+    url: siteUrl,
     locale: 'en_US',
     images: [
       {
@@ -74,7 +77,7 @@ export const metadata: Metadata = {
   },
   alternates: {
     types: {
-      'application/rss+xml': 'https://akshaygupta.live/feed.xml',
+      'application/rss+xml': `${siteUrl}/feed.xml`,
     },
   },
 };
