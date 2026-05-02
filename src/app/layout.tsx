@@ -7,8 +7,6 @@ import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
 import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
-import TerminalCTA from './components/TerminalCTA';
-import { TerminalCTAProvider } from './components/TerminalCTA/TerminalCTAContext';
 import { getSiteUrl } from '@/lib/site-url';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -97,13 +95,8 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ThemeProvider>
-          <TerminalCTAProvider>
-            <LoadingProvider>
-              {children}
-              <TerminalCTA />
-            </LoadingProvider>
-            <DeviconCSSLoader />
-          </TerminalCTAProvider>
+          <LoadingProvider>{children}</LoadingProvider>
+          <DeviconCSSLoader />
         </ThemeProvider>
         <Metrics />
         <SpeedInsights />

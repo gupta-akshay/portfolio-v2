@@ -12,8 +12,6 @@ export { default as LoadingIndicator } from './LoadingIndicator';
 export { default as EmojiReactions } from './EmojiReactions';
 export { default as ReadingProgressBar } from './ReadingProgressBar';
 export { default as SocialShare } from './SocialShare';
-export { default as TerminalCTA } from './TerminalCTA';
-export { TerminalCTAProvider } from './TerminalCTA/TerminalCTAContext';
 
 // Content Components
 export { default as BlogTileMDX } from './BlogTileMDX';
