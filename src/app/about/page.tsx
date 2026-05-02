@@ -5,11 +5,14 @@ import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 import { GitHubCalendar } from '@/app/components';
+import { getSiteUrl } from '@/lib/site-url';
 
 import styles from '../styles/sections/aboutSection.module.scss';
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: 'About | Akshay Gupta',
   description:
     'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
@@ -18,7 +21,7 @@ export const metadata: Metadata = {
     title: 'About Akshay Gupta | Full-Stack Developer',
     description:
       'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
-    url: 'https://akshaygupta.live/about',
+    url: `${siteUrl}/about`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
     images: [
@@ -40,7 +43,7 @@ export const metadata: Metadata = {
     images: ['/about/opengraph-image'],
   },
   alternates: {
-    canonical: 'https://akshaygupta.live/about',
+    canonical: `${siteUrl}/about`,
   },
 };
 
@@ -104,8 +107,8 @@ export default function About() {
         name: 'PeopleGrove',
         url: 'https://www.peoplegrove.com',
       },
-      url: 'https://akshaygupta.live',
-      image: 'https://akshaygupta.live/images/about-me.webp',
+      url: siteUrl,
+      image: `${siteUrl}/images/about-me.webp`,
       description: `Senior Staff Engineer at PeopleGrove with over ${yearsOfExperience} years of experience in web development.`,
       sameAs: [
         'https://github.com/gupta-akshay',

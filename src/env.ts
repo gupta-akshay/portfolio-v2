@@ -19,6 +19,7 @@ const serverEnvSchema = z.object({
 });
 
 const publicEnvSchema = z.object({
+  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   NEXT_PUBLIC_GOOGLE_ANALYTICS: z.string().optional(),
   NEXT_PUBLIC_CLARITY_APP_CODE: z.string().optional(),
 });
@@ -42,6 +43,7 @@ function parseServerEnv(): ServerEnv {
 
 function parsePublicEnv(): PublicEnv {
   const result = publicEnvSchema.safeParse({
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
     NEXT_PUBLIC_CLARITY_APP_CODE: process.env.NEXT_PUBLIC_CLARITY_APP_CODE,
   });

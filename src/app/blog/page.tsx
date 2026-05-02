@@ -4,9 +4,12 @@ import Layout from '@/app/components/Layout';
 import BlogTileMDX from '@/app/components/BlogTileMDX';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import { getAllBlogs } from '@/lib/mdx';
+import { getSiteUrl } from '@/lib/site-url';
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: 'Blog | Akshay Gupta',
   description:
     'Read my latest thoughts and insights about web development, technology, and software engineering.',
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
     title: 'Blog | Akshay Gupta',
     description:
       'Read my latest thoughts and insights about web development, technology, and software engineering.',
-    url: 'https://akshaygupta.live/blog',
+    url: `${siteUrl}/blog`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
     images: [
@@ -37,7 +40,7 @@ export const metadata: Metadata = {
     creator: '@ashay_music',
   },
   alternates: {
-    canonical: 'https://akshaygupta.live/blog',
+    canonical: `${siteUrl}/blog`,
   },
 };
 
@@ -48,28 +51,28 @@ async function BlogPosts() {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'Akshay Gupta Blog',
-    url: 'https://akshaygupta.live/blog',
+    url: `${siteUrl}/blog`,
     description:
       'Read my latest thoughts and insights about web development and technology.',
     author: {
       '@type': 'Person',
       name: 'Akshay Gupta',
-      url: 'https://akshaygupta.live',
+      url: siteUrl,
     },
     blogPost: posts.map((post) => ({
       '@type': 'BlogPosting',
       headline: post.metadata.title,
-      url: `https://akshaygupta.live/blog/${post.slug}`,
+      url: `${siteUrl}/blog/${post.slug}`,
       datePublished: post.metadata.publishedAt,
       dateModified: post.metadata.publishedAt,
       author: {
         '@type': 'Person',
         name: 'Akshay Gupta',
-        url: 'https://akshaygupta.live',
+        url: siteUrl,
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `https://akshaygupta.live/blog/${post.slug}`,
+        '@id': `${siteUrl}/blog/${post.slug}`,
       },
     })),
   };

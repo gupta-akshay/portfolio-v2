@@ -1,6 +1,9 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/lib/site-url';
 
 export default function robots(): MetadataRoute.Robots {
+  const siteUrl = getSiteUrl();
+
   return {
     rules: [
       {
@@ -9,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/private/', '/studio/', '/studio'],
       },
     ],
-    sitemap: 'https://akshaygupta.live/sitemap.xml',
-    host: 'https://akshaygupta.live',
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   };
 }

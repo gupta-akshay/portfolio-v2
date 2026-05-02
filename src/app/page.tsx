@@ -1,43 +1,45 @@
 import Image from 'next/image';
 import Layout from '@/app/components/Layout';
+import { getSiteUrl } from '@/lib/site-url';
 
 import styles from './styles/sections/homeBanner.module.scss';
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Akshay Gupta',
-  jobTitle: 'Senior Staff Engineer',
-  worksFor: {
-    '@type': 'Organization',
-    name: 'PeopleGrove',
-    url: 'https://www.peoplegrove.com',
-  },
-  url: 'https://akshaygupta.live',
-  image: 'https://akshaygupta.live/images/home-banner.webp',
-  description:
-    'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-  sameAs: [
-    'https://github.com/gupta-akshay',
-    'https://linkedin.com/in/akshayguptaujn',
-    'https://twitter.com/ashay_music',
-  ],
-  knowsAbout: [
-    'Web Development',
-    'JavaScript',
-    'React',
-    'Node.js',
-    'TypeScript',
-    'Next.js',
-    'Postgres',
-    'ElasticSearch',
-    'Redis',
-    'RabbitMQ',
-    'Google Cloud Platform',
-  ],
-};
-
 export default function Home() {
+  const siteUrl = getSiteUrl();
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Akshay Gupta',
+    jobTitle: 'Senior Staff Engineer',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'PeopleGrove',
+      url: 'https://www.peoplegrove.com',
+    },
+    url: siteUrl,
+    image: `${siteUrl}/images/home-banner.webp`,
+    description:
+      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    sameAs: [
+      'https://github.com/gupta-akshay',
+      'https://linkedin.com/in/akshayguptaujn',
+      'https://twitter.com/ashay_music',
+    ],
+    knowsAbout: [
+      'Web Development',
+      'JavaScript',
+      'React',
+      'Node.js',
+      'TypeScript',
+      'Next.js',
+      'Postgres',
+      'ElasticSearch',
+      'Redis',
+      'RabbitMQ',
+      'Google Cloud Platform',
+    ],
+  };
+
   return (
     <Layout>
       <script

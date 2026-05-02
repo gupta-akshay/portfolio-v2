@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
+import { getSiteUrl } from '@/lib/site-url';
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: 'Contact | Akshay Gupta',
   description:
     'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
     title: 'Contact Akshay Gupta',
     description:
       'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
-    url: 'https://akshaygupta.live/contact',
+    url: `${siteUrl}/contact`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
     images: [
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
     images: ['/contact/opengraph-image'],
   },
   alternates: {
-    canonical: 'https://akshaygupta.live/contact',
+    canonical: `${siteUrl}/contact`,
   },
 };
 
@@ -47,20 +50,20 @@ export default function ContactLayout({
     name: 'Contact Akshay Gupta',
     description:
       'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
-    url: 'https://akshaygupta.live/contact',
+    url: `${siteUrl}/contact`,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': 'https://akshaygupta.live/contact',
+      '@id': `${siteUrl}/contact`,
     },
     author: {
       '@type': 'Person',
       name: 'Akshay Gupta',
-      url: 'https://akshaygupta.live',
+      url: siteUrl,
     },
     provider: {
       '@type': 'Organization',
       name: 'Akshay Gupta Portfolio',
-      url: 'https://akshaygupta.live',
+      url: siteUrl,
       contactPoint: {
         '@type': 'ContactPoint',
         email: 'contact@akshaygupta.live',
