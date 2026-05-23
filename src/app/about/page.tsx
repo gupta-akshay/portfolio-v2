@@ -5,11 +5,14 @@ import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 import { GitHubCalendar } from '@/app/components';
+import { getSiteUrl } from '@/lib/site-url';
 
 import styles from '../styles/sections/aboutSection.module.scss';
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: 'About | Akshay Gupta',
   description:
     'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
@@ -18,7 +21,7 @@ export const metadata: Metadata = {
     title: 'About Akshay Gupta | Full-Stack Developer',
     description:
       'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
-    url: 'https://akshaygupta.live/about',
+    url: `${siteUrl}/about`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
     images: [
@@ -40,7 +43,7 @@ export const metadata: Metadata = {
     images: ['/about/opengraph-image'],
   },
   alternates: {
-    canonical: 'https://akshaygupta.live/about',
+    canonical: `${siteUrl}/about`,
   },
 };
 
@@ -104,8 +107,8 @@ export default function About() {
         name: 'PeopleGrove',
         url: 'https://www.peoplegrove.com',
       },
-      url: 'https://akshaygupta.live',
-      image: 'https://akshaygupta.live/images/about-me.png',
+      url: siteUrl,
+      image: `${siteUrl}/images/about-me.webp`,
       description: `Senior Staff Engineer at PeopleGrove with over ${yearsOfExperience} years of experience in web development.`,
       sameAs: [
         'https://github.com/gupta-akshay',
@@ -154,7 +157,7 @@ export default function About() {
             <div className='col-lg-6 m-15px-tb d-none d-sm-block'>
               <div className={styles.aboutImg}>
                 <Image
-                  src='/images/about-me.png'
+                  src='/images/about-me.webp'
                   alt='about-image'
                   width={560}
                   height={560}
@@ -164,33 +167,28 @@ export default function About() {
               </div>
             </div>
             <div className='col-lg-6 m-15px-tb'>
-              <div className={styles.aboutInfo}>
-                <div className='title' style={{ marginBottom: '50px' }}>
-                  <h3>Let me introduce myself!</h3>
+              <div className={`${styles.aboutInfo} route-shell`}>
+                <div className='title' style={{ marginBottom: '24px' }}>
+                  <h3>About</h3>
                 </div>
                 <div className={styles.aboutText}>
-                  <h4>Hi there! 👋</h4>
+                  <h4>Engineering Leadership with Product Focus</h4>
                   <p>
-                    I&apos;m a web developer at PeopleGrove, where I&apos;ve
-                    spent the last {yearsOfExperience} years creating cool stuff
-                    for the internet! I love making websites that are not just
-                    beautiful but also super easy to use. It&apos;s like
-                    building digital playgrounds where everything just works
-                    smoothly!
+                    I am a Senior Staff Engineer with {yearsOfExperience}+ years
+                    of experience building web platforms and internal systems. I
+                    work across architecture, delivery, and mentoring to help
+                    teams ship faster without compromising quality.
                   </p>
                   <p>
-                    When I&apos;m not coding, you&apos;ll find me mixing beats
-                    and DJing - it&apos;s my creative escape! I&apos;m also a
-                    big gaming fan, whether it&apos;s getting lost in console
-                    adventures or relaxing with some PC games. And whenever I
-                    need to recharge, I head to my favorite spot - the beautiful
-                    beaches of Goa. There&apos;s nothing like the sound of waves
-                    to refresh your mind! 🌊
+                    My strengths include scalable front-end architecture, robust
+                    backend services, and turning ambiguous requirements into
+                    practical roadmaps. Outside work, I produce music and stay
+                    active in developer communities.
                   </p>
                 </div>
                 <div className={styles.btnBar}>
                   <Link className='px-btn px-btn-regular' href='/contact'>
-                    <span>Let&apos;s Work Together!</span>
+                    <span>Start a Conversation</span>
                   </Link>
                 </div>
               </div>

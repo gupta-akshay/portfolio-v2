@@ -4,32 +4,33 @@
 // Light theme overrides
 :global(body.theme-light) {
   .notFound::after {
-    background: $px-gray;
-  }
-
-  .notFoundContent {
-    h2 {
-      color: $px-dark;
-    }
-
-    p {
-      color: $px-dark;
-    }
+    background: radial-gradient(
+      circle at center,
+      rgba($px-theme, 0.12) 0%,
+      rgba($px-gray, 0.95) 70%,
+      $px-white 100%
+    );
   }
 }
 
 .notFound {
   min-height: 100vh;
+  position: relative;
 
   &::after {
     content: '';
     position: absolute;
-    right: -20vh;
-    top: -20vh;
-    width: 100vh;
-    height: 100vh;
+    right: -25vh;
+    top: -30vh;
+    width: 90vh;
+    height: 90vh;
     border-radius: 50%;
-    background: $px-dark;
+    background: radial-gradient(
+      circle at center,
+      rgba($px-theme, 0.22) 0%,
+      rgba($px-bg-2, 0.86) 65%,
+      rgba($px-bg-1, 0.96) 100%
+    );
     z-index: 0;
   }
 
@@ -39,16 +40,40 @@
   }
 
   .notFoundContent {
-    min-height: 100vh;
+    min-height: calc(100vh - 120px);
     position: relative;
     z-index: 1;
+    padding: 2rem 1rem;
+    gap: 1rem;
+  }
+}
 
-    h2 {
-      color: $px-white;
-    }
+.notFoundKicker {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $px-theme;
+  margin: 0;
+}
 
-    p {
-      color: $px-body;
-    }
+.notFoundTitle {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 600;
+  color: $px-white;
+  margin: 0;
+
+  :global(body.theme-light) & {
+    color: $px-dark;
+  }
+}
+
+.notFoundDesc {
+  max-width: 36rem;
+  color: $px-body;
+  margin: 0 0 0.5rem;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
   }
 }

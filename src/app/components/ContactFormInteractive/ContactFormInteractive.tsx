@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import toast from 'react-hot-toast';
+import { logger } from '@/app/utils/logger';
 
 export default function ContactFormInteractive() {
   const [isSending, setIsSending] = useState(false);
@@ -59,15 +60,15 @@ export default function ContactFormInteractive() {
           }
         );
       } catch (error) {
-        console.error('Error while submitting the form', error);
+        logger.error('Error while submitting the form', error);
         setIsSending(false);
       }
     },
   });
 
   return (
-    <div className='contact-form'>
-      <h4>Send your message here</h4>
+    <div className='contact-form route-shell'>
+      <h4>Tell me about your project</h4>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -87,9 +88,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='name'>
+                      Name
+                    </label>
                     <input
                       id='name'
-                      placeholder='Full Name'
+                      placeholder='Full name'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       type='text'
                       value={field.state.value}
@@ -123,9 +127,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='email'>
+                      Email
+                    </label>
                     <input
                       id='email'
-                      placeholder='Your Email'
+                      placeholder='you@example.com'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       type='email'
                       value={field.state.value}
@@ -154,9 +161,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='subject'>
+                      Subject
+                    </label>
                     <input
                       id='subject'
-                      placeholder='Email Subject'
+                      placeholder='What is this regarding?'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       type='text'
                       value={field.state.value}
@@ -185,9 +195,12 @@ export default function ContactFormInteractive() {
               >
                 {(field) => (
                   <>
+                    <label className='form-label' htmlFor='message'>
+                      Message
+                    </label>
                     <textarea
                       id='message'
-                      placeholder='Write Your Message'
+                      placeholder='Your message'
                       className={`form-control${field.state.meta.errors.length ? ' invalid' : ''}`}
                       rows={5}
                       value={field.state.value}

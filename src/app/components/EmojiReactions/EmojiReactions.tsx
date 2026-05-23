@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getOrCreateFingerprint } from '@/app/utils/fingerprint';
+import { logger } from '@/app/utils/logger';
 
 import styles from './EmojiReactions.module.scss';
 
@@ -49,7 +50,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
     } catch (error) {
       // Don't log AbortError as it's expected when component unmounts
       if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Error fetching reactions:', error);
+        logger.error('Error fetching reactions:', error);
       }
     } finally {
       setIsFetched(true);
@@ -87,7 +88,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
           }
         }
       } catch (error) {
-        console.error('Error adding reaction:', error);
+        logger.error('Error adding reaction:', error);
       } finally {
         setIsLoading(false);
       }
@@ -98,7 +99,8 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
   // Load reactions on component mount
   useEffect(() => {
     const abortController = new AbortController();
-    fetchReactions(abortController.signal);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchReactions(abortController.signal); // async — setState is never called synchronously
 
     // Show the reactions bar after a short delay
     const timer = setTimeout(() => setIsVisible(true), 1000);

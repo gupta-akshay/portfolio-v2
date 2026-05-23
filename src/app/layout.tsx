@@ -5,23 +5,16 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { rubik, cookie } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { EasterEggProvider } from './context/EasterEggContext';
-import MatrixRain from './components/MatrixRain';
-import DiscoMode from './components/DiscoMode';
-import DiscoModeGlobalStyles from './components/DiscoModeGlobalStyles/DiscoModeGlobalStyles';
-import BlogTypewriterEffect from './components/BlogTypewriterEffect';
-import EasterEggHints from './components/EasterEggHints';
-import EasterEggWrapper from './components/EasterEggWrapper';
 import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
-import TerminalCTA from './components/TerminalCTA';
-import { TerminalCTAProvider } from './components/TerminalCTA/TerminalCTAContext';
+import { getSiteUrl } from '@/lib/site-url';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import 'bootstrap/dist/css/bootstrap.css';
 import './styles/globals.scss';
 
 config.autoAddCss = false;
+
+const siteUrl = getSiteUrl();
 
 export const viewport = {
   width: 'device-width',
@@ -30,7 +23,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'Akshay Gupta | Full-Stack Web Developer',
     template: '%s | Akshay Gupta',
@@ -53,15 +46,15 @@ export const metadata: Metadata = {
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    url: 'https://akshaygupta.live',
+    url: siteUrl,
     locale: 'en_US',
     images: [
       {
-        url: '/images/about-me.png',
+        url: '/images/about-me.webp',
         width: 1200,
         height: 630,
         alt: 'Akshay Gupta - Full-Stack Web Developer',
-        type: 'image/png',
+        type: 'image/webp',
       },
     ],
   },
@@ -71,7 +64,7 @@ export const metadata: Metadata = {
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
-    images: ['/images/about-me.png'],
+    images: ['/images/about-me.webp'],
   },
   verification: {
     google: 'rcbqH3Qckh-CLqTHJHg3ze_tDDYoEMWKxrS4qWy1Bb0',
@@ -80,7 +73,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    types: {
+      'application/rss+xml': `${siteUrl}/feed.xml`,
+    },
+  },
 };
+
+const themeInitScript = `try{var t=localStorage.getItem('theme');if(t==='theme-light'){document.documentElement.classList.add('theme-light');if(document.body)document.body.classList.add('theme-light')}}catch(e){}`;
 
 export default function RootLayout({
   children,
@@ -90,26 +90,13 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${rubik.variable} ${cookie.variable}`}>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <a href='#main-content' className='skip-link'>
           Skip to main content
         </a>
         <ThemeProvider>
-          <TerminalCTAProvider>
-            <EasterEggProvider>
-              <LoadingProvider>
-                {children}
-                <TerminalCTA />
-              </LoadingProvider>
-              <DeviconCSSLoader />
-              <EasterEggWrapper>
-                <MatrixRain />
-                <DiscoMode />
-                <DiscoModeGlobalStyles />
-                <BlogTypewriterEffect />
-                <EasterEggHints />
-              </EasterEggWrapper>
-            </EasterEggProvider>
-          </TerminalCTAProvider>
+          <LoadingProvider>{children}</LoadingProvider>
+          <DeviconCSSLoader />
         </ThemeProvider>
         <Metrics />
         <SpeedInsights />

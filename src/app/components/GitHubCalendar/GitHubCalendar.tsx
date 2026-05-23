@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ComponentProps } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
+import { logger } from '@/app/utils/logger';
 import styles from './GitHubCalendar.module.scss';
+
+type CalendarTheme = ComponentProps<typeof GitHubCalendar>['theme'];
 
 interface GitHubCalendarProps {
   username: string;
-  theme?: any; // Using any to avoid type conflicts with the library
+  theme?: CalendarTheme;
 }
 
 const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
@@ -55,7 +58,7 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
           throw new Error('No contribution data found for this user');
         }
       } catch (err) {
-        console.error('GitHub Calendar Error:', err);
+        logger.error('GitHub Calendar Error:', err);
         setError(
           err instanceof Error ? err.message : 'Failed to load GitHub activity'
         );

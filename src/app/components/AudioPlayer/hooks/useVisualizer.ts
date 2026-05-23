@@ -1,6 +1,7 @@
 import { useRef, RefObject, useCallback } from 'react';
 import { ExtendedHTMLCanvasElement } from '../types';
 import { isLightTheme } from '../utils';
+import { logger } from '@/app/utils/logger';
 
 /**
  * Custom hook for managing audio visualizations
@@ -123,7 +124,7 @@ export const useVisualizer = (
       ctx.fillStyle = fillGradient;
       ctx.fill();
     } catch (error) {
-      console.error('Error drawing waveform:', error);
+      logger.error('Error drawing waveform:', error);
     }
   }, [canvasRef, analyserRef]);
 
@@ -215,7 +216,7 @@ export const useVisualizer = (
       ctx.strokeStyle = isLightMode ? '#2fbf71' : '#5fd99a';
       ctx.stroke();
     } catch (error) {
-      console.error('Error drawing mini visualizer:', error);
+      logger.error('Error drawing mini visualizer:', error);
     }
   }, [miniCanvasRef, analyserRef]);
 

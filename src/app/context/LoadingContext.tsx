@@ -125,28 +125,3 @@ export function useLoading(): LoadingContextType {
   }
   return context;
 }
-
-// Custom hook for loading state management
-export function useLoadingState() {
-  const { isLoading, message, startLoading, stopLoading } = useLoading();
-
-  const withLoading = useCallback(
-    async <T,>(fn: () => Promise<T>, loadingMessage?: string): Promise<T> => {
-      startLoading(loadingMessage);
-      try {
-        return await fn();
-      } finally {
-        stopLoading();
-      }
-    },
-    [startLoading, stopLoading]
-  );
-
-  return {
-    isLoading,
-    message,
-    startLoading,
-    stopLoading,
-    withLoading,
-  };
-}

@@ -1,15 +1,11 @@
-'use client';
-
 import Image from 'next/image';
 import Layout from '@/app/components/Layout';
-import HomeContentInteractive from '@/app/components/HomeContentInteractive';
-import { useIsMobile } from '@/app/hooks/useIsMobile';
+import { getSiteUrl } from '@/lib/site-url';
 
 import styles from './styles/sections/homeBanner.module.scss';
 
 export default function Home() {
-  const isMobile = useIsMobile();
-
+  const siteUrl = getSiteUrl();
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -20,8 +16,8 @@ export default function Home() {
       name: 'PeopleGrove',
       url: 'https://www.peoplegrove.com',
     },
-    url: 'https://akshaygupta.live',
-    image: 'https://akshaygupta.live/images/home-banner.webp',
+    url: siteUrl,
+    image: `${siteUrl}/images/home-banner.webp`,
     description:
       'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
     sameAs: [
@@ -55,103 +51,68 @@ export default function Home() {
         data-nav-tooltip='Home'
         className='pp-section pp-scrollable'
       >
-        {isMobile ? (
-          // Mobile-friendly version without complex animations
-          <div
-            className={styles.homeBanner}
-            id='main-content'
-            style={{ position: 'relative', zIndex: 2 }}
-          >
-            <div className={`container ${styles.container}`}>
-              <div className={`row ${styles.fullScreen} align-items-center`}>
-                <div className='col-12'>
-                  <div className={styles.typeBox}>
-                    <h6>Hello, I am</h6>
-                    <h1 className='font-alt glitch' data-text='Akshay Gupta'>
-                      Akshay Gupta
-                    </h1>
-                    <p className={styles.lead}>
-                      Senior Staff Engineer &amp; Full Stack Developer
-                    </p>
-                    <p className={styles.desc}>
-                      Hey there! 👋 I&apos;m currently a Senior Staff Engineer
-                      at{' '}
-                      <HomeContentInteractive type='peopleGroveLink'>
-                        PeopleGrove
-                      </HomeContentInteractive>
-                      . I love building websites and apps that are both
-                      user-friendly and powerful under the hood. Think of me as
-                      someone who enjoys creating digital solutions that make
-                      people&apos;s lives easier! I&apos;m passionate about
-                      working with teams to bring creative ideas to life and
-                      always excited to learn and try new things in the tech
-                      world. Whether it&apos;s making beautiful websites or
-                      solving complex technical challenges, I&apos;m your guy!
-                    </p>
-                    <div className={styles.btnBar}>
-                      <HomeContentInteractive type='downloadButton'>
-                        Download CV
-                      </HomeContentInteractive>
-                    </div>
+        <div
+          className={styles.homeBanner}
+          style={{ position: 'relative', zIndex: 2 }}
+        >
+          <div className={`container ${styles.container}`}>
+            <div className={`row ${styles.fullScreen} align-items-center`}>
+              <div className='col-12 col-lg-6'>
+                <div className={`${styles.typeBox} route-shell`}>
+                  <h6>Senior Staff Engineer</h6>
+                  <h1 className='font-alt' data-text='Akshay Gupta'>
+                    Akshay Gupta
+                  </h1>
+                  <p className={styles.lead}>
+                    Building high-quality product experiences and reliable
+                    systems
+                  </p>
+                  <p className={styles.desc}>
+                    I lead full-stack initiatives at{' '}
+                    <a
+                      href='https://www.peoplegrove.com'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      PeopleGrove
+                    </a>
+                    , translating product goals into scalable architecture and
+                    polished user interfaces. My focus is delivering software
+                    that performs well, feels intuitive, and creates measurable
+                    business impact.
+                  </p>
+                  <div className={styles.btnBar}>
+                    <a
+                      className='px-btn px-btn-regular'
+                      href='/assets/Akshay_Gupta_CV.pdf'
+                      download
+                    >
+                      Download CV
+                    </a>
                   </div>
+                </div>
+              </div>
+              <div className='col-lg-6 d-none d-sm-block'>
+                <div className={styles.hbImg}>
+                  <Image
+                    src='/images/home-banner.webp'
+                    alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'
+                    width={600}
+                    height={600}
+                    priority
+                    fetchPriority='high'
+                    // Visibility / rendered sizes (see homeBanner.module.scss + d-none d-sm-block):
+                    //   <576px  hidden
+                    //   576-767 fixed 400px (down-sm rule)
+                    //   768-991 ~720px (full-row, container md max-width)
+                    //   >=992   ~600px (half-row with max-width: 120%)
+                    sizes='(max-width: 575px) 1px, (max-width: 767px) 400px, (max-width: 991px) 720px, 600px'
+                  />
                 </div>
               </div>
             </div>
           </div>
-        ) : (
-          <div
-            className={styles.homeBanner}
-            id='main-content'
-            style={{ position: 'relative', zIndex: 2 }}
-          >
-            <div className={`container ${styles.container}`}>
-              <div className={`row ${styles.fullScreen} align-items-center`}>
-                <div className='col-lg-6'>
-                  <div className={styles.typeBox}>
-                    <h6>Hello, I am</h6>
-                    <h1 className='font-alt glitch' data-text='Akshay Gupta'>
-                      Akshay Gupta
-                    </h1>
-                    <p className={styles.lead}>
-                      Senior Staff Engineer &amp; Full Stack Developer
-                    </p>
-                    <p className={styles.desc}>
-                      Hey there! 👋 I&apos;m currently a Senior Staff Engineer
-                      at{' '}
-                      <HomeContentInteractive type='peopleGroveLink'>
-                        PeopleGrove
-                      </HomeContentInteractive>
-                      . I love building websites and apps that are both
-                      user-friendly and powerful under the hood. Think of me as
-                      someone who enjoys creating digital solutions that make
-                      people&apos;s lives easier! I&apos;m passionate about
-                      working with teams to bring creative ideas to life and
-                      always excited to learn and try new things in the tech
-                      world. Whether it&apos;s making beautiful websites or
-                      solving complex technical challenges, I&apos;m your guy!
-                    </p>
-                    <div className={styles.btnBar}>
-                      <HomeContentInteractive type='downloadButton'>
-                        Download CV
-                      </HomeContentInteractive>
-                    </div>
-                  </div>
-                </div>
-                <div className='col-lg-6 d-none d-sm-block'>
-                  <div className={styles.hbImg}>
-                    <Image
-                      src='/images/home-banner.webp'
-                      alt='Akshay Gupta - Senior Staff Engineer at PeopleGrove'
-                      width={600}
-                      height={600}
-                      loading='lazy'
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </section>
     </Layout>
   );

@@ -1,23 +1,21 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { TOCHeading } from '@/lib/mdx/types';
 
 import '../../../app/components/TableOfContents/TableOfContents.scss';
 
-interface TOCItem {
-  id: string;
-  text: string;
-  level: number;
+interface TOCItem extends TOCHeading {
   children?: TOCItem[];
 }
 
 interface TableOfContentsMDXProps {
-  slug: string;
+  headings: TOCHeading[];
   minHeadings?: number;
   className?: string;
 }
 
-const buildNestedTOC = (headings: TOCItem[]): TOCItem[] => {
+const buildNestedTOC = (headings: TOCHeading[]): TOCItem[] => {
   const result: TOCItem[] = [];
   const stack: TOCItem[] = [];
 
@@ -31,19 +29,14 @@ const buildNestedTOC = (headings: TOCItem[]): TOCItem[] => {
       }
     }
 
-    const newItem: TOCItem = {
-      ...heading,
-      children: [],
-    };
+    const newItem: TOCItem = { ...heading, children: [] };
 
     if (stack.length === 0) {
       result.push(newItem);
     } else {
       const parent = stack[stack.length - 1];
       if (parent) {
-        if (!parent.children) {
-          parent.children = [];
-        }
+        if (!parent.children) parent.children = [];
         parent.children.push(newItem);
       }
     }
@@ -60,11 +53,7 @@ const scrollToHeading = (id: string) => {
     const headerOffset = 80;
     const elementPosition = element.getBoundingClientRect().top;
     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
   }
 };
 
@@ -85,6 +74,7 @@ const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
               scrollToHeading(item.id);
             }}
             className={`toc-link ${activeId === item.id ? 'active' : ''}`}
+            aria-current={activeId === item.id ? 'location' : undefined}
           >
             {item.text}
           </a>
@@ -98,60 +88,21 @@ const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
 };
 
 const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
-  slug,
+  headings,
   minHeadings = 3,
   className = '',
 }) => {
   const [activeId, setActiveId] = useState<string>('');
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [headings, setHeadings] = useState<TOCItem[]>([]);
-
-  // Extract headings from the DOM after render
-  useEffect(() => {
-    const extractHeadingsFromDOM = () => {
-      const headingElements = document.querySelectorAll(
-        'article h1[id], article h2[id], article h3[id], article h4[id]'
-      );
-
-      const extractedHeadings: TOCItem[] = [];
-      headingElements.forEach((el) => {
-        const tagName = el.tagName.toLowerCase();
-        const level = parseInt(tagName.charAt(1));
-        const id = el.id;
-        const text = el.textContent || '';
-
-        if (id && text) {
-          extractedHeadings.push({ id, text, level });
-        }
-      });
-
-      setHeadings(extractedHeadings);
-    };
-
-    // Wait for MDX content to render
-    const timer = setTimeout(extractHeadingsFromDOM, 100);
-    return () => clearTimeout(timer);
-  }, [slug]);
 
   const nestedHeadings = buildNestedTOC(headings);
 
   const setupObserver = useCallback(() => {
-    if (headings.length < minHeadings) {
-      return null;
-    }
+    if (headings.length < minHeadings) return null;
 
-    const headingElements = headings.map((heading) =>
-      document.getElementById(heading.id)
-    );
-
-    const allElementsExist = headingElements.every(
-      (element) => element !== null
-    );
-
-    if (!allElementsExist) {
-      return null;
-    }
+    const headingElements = headings.map((h) => document.getElementById(h.id));
+    if (headingElements.some((el) => el === null)) return null;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -161,63 +112,38 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
           }
         });
       },
-      {
-        rootMargin: '-80px 0px -80% 0px',
-      }
+      { rootMargin: '-80px 0px -80% 0px' }
     );
 
-    headingElements.forEach((element) => {
-      if (element) {
-        observer.observe(element);
-      }
+    headingElements.forEach((el) => {
+      if (el) observer.observe(el);
     });
 
     return observer;
   }, [headings, minHeadings]);
 
   useEffect(() => {
-    if (headings.length < minHeadings) {
-      return;
-    }
+    if (headings.length < minHeadings) return;
 
     let observer: IntersectionObserver | null = null;
-    let retryCount = 0;
-    let timeoutId: NodeJS.Timeout | null = null;
-    const maxRetries = 50;
 
-    const trySetupObserver = () => {
+    // Headings are server-rendered so they exist immediately, but give the
+    // browser one frame to paint before observing.
+    const frameId = requestAnimationFrame(() => {
       observer = setupObserver();
-
-      if (!observer && retryCount < maxRetries) {
-        retryCount++;
-        timeoutId = setTimeout(trySetupObserver, 100);
-      }
-    };
-
-    trySetupObserver();
+    });
 
     return () => {
-      if (observer) {
-        observer.disconnect();
-      }
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      cancelAnimationFrame(frameId);
+      observer?.disconnect();
     };
   }, [setupObserver, headings, minHeadings]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setIsVisible(scrollY > 300);
-    };
-
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1200);
-    };
+    const handleScroll = () => setIsVisible(window.scrollY > 300);
+    const handleResize = () => setIsMobile(window.innerWidth <= 1200);
 
     handleResize();
-
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
 
@@ -227,9 +153,7 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
     };
   }, []);
 
-  if (headings.length < minHeadings || isMobile) {
-    return null;
-  }
+  if (headings.length < minHeadings || isMobile) return null;
 
   return (
     <div
@@ -239,7 +163,7 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
         <div className="toc-header">
           <h4>Table of Contents</h4>
         </div>
-        <nav className="toc-nav">
+        <nav className="toc-nav" aria-label="Table of contents">
           <TOCList items={nestedHeadings} activeId={activeId} />
         </nav>
       </div>

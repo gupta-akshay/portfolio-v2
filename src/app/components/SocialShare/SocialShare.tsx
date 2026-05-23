@@ -14,6 +14,7 @@ import {
   EmailIcon,
 } from 'react-share';
 import { SocialShareProps } from '@/app/types/components';
+import { logger } from '@/app/utils/logger';
 
 import styles from './SocialShare.module.scss';
 
@@ -54,7 +55,7 @@ export default function SocialShare({
       // Reset copied state after 2 seconds
       copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Failed to copy link', error);
+      logger.error('Failed to copy link', error);
     }
   };
 

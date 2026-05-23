@@ -17,10 +17,6 @@ interface MiniPlayerProps {
   miniCanvasRef: RefObject<HTMLCanvasElement>;
   onPlayPause: () => void;
   onExpand: () => void;
-  onDownload?: () => void;
-  canDownload?: boolean;
-  onPrevious?: () => void;
-  onNext?: () => void;
 }
 
 const MiniPlayer: React.FC<MiniPlayerProps> = ({

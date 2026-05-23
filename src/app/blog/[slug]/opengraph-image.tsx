@@ -10,8 +10,12 @@ export const size = {
   height: 630,
 };
 
-export default async function Image({ params }: { params: { slug: string } }) {
-  const slug = (await params).slug;
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
 
   if (!slug) {
     return new ImageResponse(
@@ -123,9 +127,9 @@ export async function generateStaticParams() {
 export async function generateImageMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const slug = (await params).slug;
+  const { slug } = await params;
 
   if (!slug) {
     return [

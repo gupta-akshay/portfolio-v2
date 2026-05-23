@@ -10,7 +10,6 @@ const eslintConfig = defineConfig([
   {
     rules: {
       'quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
-      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   // Override default ignores of eslint-config-next.
@@ -19,6 +18,8 @@ const eslintConfig = defineConfig([
     '.next/**',
     'out/**',
     'build/**',
+    // Generated bundles/artifacts:
+    'dist/**',
     'next-env.d.ts',
   ]),
 ]);

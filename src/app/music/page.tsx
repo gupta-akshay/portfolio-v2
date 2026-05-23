@@ -3,9 +3,12 @@ import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
+import { getSiteUrl } from '@/lib/site-url';
+
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://akshaygupta.live'),
+  metadataBase: new URL(siteUrl),
   title: 'My Music | Akshay Gupta',
   description:
     'Listen to my latest remixes and music productions. Enjoy the beats!',
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
     title: 'My Music | Akshay Gupta',
     description:
       'Listen to my latest remixes and music productions. Enjoy the beats!',
-    url: 'https://akshaygupta.live/music',
+    url: `${siteUrl}/music`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
     images: [
@@ -36,7 +39,7 @@ export const metadata: Metadata = {
     images: ['/music/opengraph-image'],
   },
   alternates: {
-    canonical: 'https://akshaygupta.live/music',
+    canonical: `${siteUrl}/music`,
   },
 };
 
@@ -46,15 +49,15 @@ export default function Music() {
     '@type': 'MusicPlaylist',
     name: 'Akshay Gupta Music Collection',
     description: 'Listen to my remixes and music productions. Enjoy the beats!',
-    url: 'https://akshaygupta.live/music',
+    url: `${siteUrl}/music`,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': 'https://akshaygupta.live/music',
+      '@id': `${siteUrl}/music`,
     },
     creator: {
       '@type': 'Person',
       name: 'Akshay Gupta',
-      url: 'https://akshaygupta.live',
+      url: siteUrl,
     },
   };
 
@@ -79,16 +82,18 @@ export default function Music() {
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <div className='title'>
-            <h3>My Music.</h3>
+            <h3>Music</h3>
           </div>
-          <div className='music-description mb-4'>
+          <div className='music-description route-shell mb-4'>
             <p>
-              Hey there! 🎧 Welcome to my music collection! I love experimenting
-              with different genres and crafting unique sounds that blend styles
-              in unexpected ways. Whether it&apos;s a fresh remix or an original
-              production, every track is a piece of my creative journey.
+              Music is a creative practice that complements my engineering work.
+              This collection includes original productions and remixes across
+              electronic and melodic styles.
             </p>
-            <p>Hit play, turn up the volume, and enjoy the beats! 🚀</p>
+            <p>
+              Each track reflects experimentation in arrangement, texture, and
+              rhythm, with the same attention to detail I bring to software.
+            </p>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <MusicTracks />

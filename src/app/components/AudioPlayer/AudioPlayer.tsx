@@ -9,13 +9,34 @@ import {
   useMemo,
 } from 'react';
 import { AudioPlayerProps } from './types';
-import { getAudioUrl } from '@/app/utils/aws';
 import {
   useAudioContext,
   useAudioPlayback,
   useVisualizer,
   useQueueManager,
+  useKeyboardShortcuts,
 } from './hooks';
+import { logger } from '@/app/utils/logger';
+
+const PREFS_KEY = 'audioPlayerPrefs';
+
+function loadPrefs(): { trackIndex: number | null; volume: number } {
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (!raw) return { trackIndex: null, volume: 0.7 };
+    return JSON.parse(raw);
+  } catch {
+    return { trackIndex: null, volume: 0.7 };
+  }
+}
+
+function savePrefs(trackIndex: number | null, volume: number) {
+  try {
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ trackIndex, volume }));
+  } catch {
+    // localStorage unavailable (private browsing etc.)
+  }
+}
 import {
   TrackList,
   PlayerControls,
@@ -39,6 +60,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const [isFullScreenVisible, setIsFullScreenVisible] = useState(false);
   const shouldAutoPlayRef = useRef(false);
   const playAttemptInProgressRef = useRef(false);
+  const restoringFromStorageRef = useRef(false);
 
   // Memoize derived values
   const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
@@ -66,7 +88,9 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     isPlaying,
     setIsPlaying,
     volume,
+    setVolume,
     isMuted,
+    setIsMuted,
     currentTime,
     duration,
     setDuration,
@@ -103,6 +127,31 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     getNextTrackIndex,
     getPreviousTrackIndex,
   } = useQueueManager(hasTracks ? tracks : []);
+
+  // Restore persisted volume on mount
+  useEffect(() => {
+    const prefs = loadPrefs();
+    if (prefs.volume !== 0.7) {
+      setVolume(prefs.volume);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Restore persisted track index once tracks are available
+  useEffect(() => {
+    if (!hasTracks || currentTrackIndex !== null) return;
+    const prefs = loadPrefs();
+    if (prefs.trackIndex !== null && prefs.trackIndex < tracks.length) {
+      restoringFromStorageRef.current = true;
+      setCurrentTrackIndex(prefs.trackIndex);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasTracks]);
+
+  // Persist volume + track index whenever they change
+  useEffect(() => {
+    savePrefs(currentTrackIndex, volume);
+  }, [currentTrackIndex, volume]);
 
   // Enhanced next/previous handlers that use queue management
   const handleNext = useCallback(() => {
@@ -149,7 +198,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     try {
       baseHandlePlayPause();
     } catch (error) {
-      console.error('Error in handlePlayPause:', error);
+      logger.error('Error in handlePlayPause:', error);
     } finally {
       // Reset the flag after a short delay to prevent rapid toggling
       setTimeout(() => {
@@ -210,11 +259,17 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Reset states when track changes
   useEffect(() => {
     if (currentTrack) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(true);
       setIsMetadataLoaded(false);
       setIsPlayable(false);
       setIsPlaying(false);
-      shouldAutoPlayRef.current = true;
+      if (restoringFromStorageRef.current) {
+        shouldAutoPlayRef.current = false;
+        restoringFromStorageRef.current = false;
+      } else {
+        shouldAutoPlayRef.current = true;
+      }
     }
   }, [currentTrack, setIsPlaying]);
 
@@ -237,11 +292,17 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             playAttemptInProgressRef.current = true;
             await audioRef.current.pause();
           } catch (e) {
-            console.error('Error pausing audio:', e);
+            logger.error('Error pausing audio:', e);
           }
         }
 
-        const newUrl = await getAudioUrl(tracks[currentTrackIndex].path);
+        const urlResponse = await fetch('/api/music/url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: tracks[currentTrackIndex].path }),
+        });
+        if (!urlResponse.ok) throw new Error('Failed to get audio URL');
+        const { url: newUrl } = await urlResponse.json() as { url: string };
 
         // If component unmounted or URL is the same, don't proceed
         if (!isMounted || newUrl === currentAudioUrl) {
@@ -289,7 +350,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           };
 
           const onError = (e: Event) => {
-            console.error('Error loading audio:', e);
+            logger.error('Error loading audio:', e);
             cleanup();
             reject(new Error('Failed to load audio'));
           };
@@ -322,7 +383,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           };
 
           const onError = (e: Event) => {
-            console.error('Error during load:', e);
+            logger.error('Error during load:', e);
             cleanup();
             reject(new Error('Failed to load audio'));
           };
@@ -363,7 +424,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
                 }
               }
             } catch (error) {
-              console.error('Auto-play failed:', error);
+              logger.error('Auto-play failed:', error);
               if (isMounted) {
                 setIsPlaying(false);
               }
@@ -375,7 +436,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           playAttemptInProgressRef.current = false;
         }
       } catch (error) {
-        console.error('Error setting up track:', error);
+        logger.error('Error setting up track:', error);
         if (isMounted) {
           setIsLoading(false);
           // Still mark as playable even if preload fails
@@ -436,7 +497,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         animationFrameIds.mini = requestAnimationFrame(animateMiniVisualizer);
         miniAnimationRef.current = animationFrameIds.mini;
       } catch (error) {
-        console.error('Error starting visualizations:', error);
+        logger.error('Error starting visualizations:', error);
       }
     };
 
@@ -508,7 +569,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
               // console.log('AudioContext resumed successfully')
             })
             .catch((error) =>
-              console.error('Failed to resume AudioContext:', error)
+              logger.error('Failed to resume AudioContext:', error)
             );
         }
       }
@@ -543,6 +604,25 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     downloadLink.click();
     document.body.removeChild(downloadLink);
   }, [currentUrl, currentTrack]);
+
+  const handleVolumeSet = useCallback(
+    (v: number) => {
+      setVolume(v);
+      setIsMuted(v === 0);
+    },
+    [setVolume, setIsMuted]
+  );
+
+  // Global keyboard shortcuts (active when a track is loaded)
+  useKeyboardShortcuts({
+    enabled: hasTracks && currentTrackIndex !== null,
+    onPlayPause: handlePlayPause,
+    onNext: handleNext,
+    onPrevious: handlePrevious,
+    onToggleMute: toggleMute,
+    volume,
+    onVolumeSet: handleVolumeSet,
+  });
 
   // Memoize audio event handlers
   const handleLoadedMetadata = useCallback(

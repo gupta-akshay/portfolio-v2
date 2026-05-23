@@ -36,12 +36,17 @@
   &::after {
     content: '';
     position: absolute;
-    right: -20vh;
-    top: -20vh;
-    width: 100vh;
-    height: 100vh;
+    right: -25vh;
+    top: -30vh;
+    width: 90vh;
+    height: 90vh;
     border-radius: 50%;
-    background: $px-dark;
+    background: radial-gradient(
+      circle at center,
+      rgba($px-theme, 0.22) 0%,
+      rgba($px-bg-2, 0.86) 65%,
+      rgba($px-bg-1, 0.96) 100%
+    );
     z-index: 0;
     transition: background-color 0.2s ease-in-out;
     transform: translateZ(-2px) scale(1.02);
@@ -81,9 +86,10 @@
     padding-bottom: 40px;
 
     h6 {
-      color: $px-white;
-      font-size: 25px;
+      color: rgba($px-white, 0.86);
+      font-size: 17px;
       font-weight: 500;
+      letter-spacing: 0.6px;
       margin: 0 0 20px;
 
       @include down-sm {
@@ -93,17 +99,14 @@
     }
 
     h1 {
-      font-size: 65px;
+      font-size: 58px;
       font-weight: 700;
       line-height: 1;
       margin: 0 0 20px;
       color: $px-white;
 
-      @include text-3d-shadow(3px, 2px);
-      @include responsive-3d-effects;
-
       @include down-lg {
-        font-size: 70px;
+        font-size: 52px;
       }
 
       @include down-sm {
@@ -115,8 +118,8 @@
     .lead {
       color: $px-white;
       font-weight: 500;
-      font-size: 18px;
-      margin-bottom: 25px;
+      font-size: 20px;
+      margin-bottom: 18px;
 
       @include down-sm {
         font-size: 16px;
@@ -125,8 +128,9 @@
     }
 
     .desc {
-      max-width: 450px;
-      font-size: 18px;
+      max-width: 560px;
+      font-size: 17px;
+      line-height: 1.75;
       color: $px-body;
 
       @include down-sm {

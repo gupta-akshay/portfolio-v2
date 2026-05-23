@@ -32,7 +32,6 @@
   &:focus-visible {
     outline: 3px solid $px-theme;
     outline-offset: 2px;
-    transform: scale(1.1);
   }
 
   @include down-lg {

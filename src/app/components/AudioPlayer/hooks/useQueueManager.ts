@@ -115,7 +115,8 @@ export const useQueueManager = (tracks: Track[]) => {
           return newIds;
         });
 
-        return tracks.findIndex((track) => track.id === nextTrack.id) || 0;
+        const idx = tracks.findIndex((track) => track.id === nextTrack.id);
+        return idx !== -1 ? idx : currentIndex;
       }
 
       return Math.min(currentIndex + 1, tracks.length - 1);

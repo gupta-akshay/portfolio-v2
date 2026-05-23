@@ -1,0 +1,216 @@
+// Targeted Bootstrap replacement.
+// Replaces `bootstrap/dist/css/bootstrap.css` (~150KB) with the
+// ~2KB subset of utilities actually used across the app.
+// Breakpoints mirror Bootstrap 5 to keep existing `col-*-*` classes correct.
+@use 'sass:math';
+
+// Bootstrap 5 breakpoints
+$bp-sm: 576px;
+$bp-md: 768px;
+$bp-lg: 992px;
+$bp-xl: 1200px;
+$bp-xxl: 1400px;
+
+// Grid container paddings (Bootstrap default 0.75rem => 12px)
+$grid-gutter: 1.5rem; // 24px, matches Bootstrap --bs-gutter-x default
+$grid-half-gutter: calc(#{$grid-gutter} / 2);
+
+// Grid container
+.container,
+.container-fluid {
+  width: 100%;
+  padding-right: $grid-half-gutter;
+  padding-left: $grid-half-gutter;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container {
+  @media (min-width: $bp-sm) { max-width: 540px; }
+  @media (min-width: $bp-md) { max-width: 720px; }
+  @media (min-width: $bp-lg) { max-width: 960px; }
+  @media (min-width: $bp-xl) { max-width: 1140px; }
+  @media (min-width: $bp-xxl) { max-width: 1320px; }
+}
+
+// Row (flex 12-col grid)
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: calc(-1 * #{$grid-half-gutter});
+  margin-left: calc(-1 * #{$grid-half-gutter});
+
+  > * {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: $grid-half-gutter;
+    padding-left: $grid-half-gutter;
+  }
+}
+
+// Auto-sizing column base
+@mixin col-base {
+  flex: 1 0 0%;
+}
+
+// Fixed N/12 column
+@mixin col($n) {
+  flex: 0 0 auto;
+  width: math.percentage(math.div($n, 12));
+}
+
+.col { @include col-base; }
+
+@for $i from 1 through 12 {
+  .col-#{$i} { @include col($i); }
+}
+
+$breakpoints: (
+  'sm': $bp-sm,
+  'md': $bp-md,
+  'lg': $bp-lg,
+  'xl': $bp-xl,
+  'xxl': $bp-xxl,
+);
+
+@each $name, $bp in $breakpoints {
+  @media (min-width: $bp) {
+    .col-#{$name} { @include col-base; }
+    @for $i from 1 through 12 {
+      .col-#{$name}-#{$i} { @include col($i); }
+    }
+  }
+}
+
+// Display utilities (responsive subset used in app)
+@mixin display-utilities($suffix: '') {
+  .d#{$suffix}-none { display: none !important; }
+  .d#{$suffix}-inline { display: inline !important; }
+  .d#{$suffix}-inline-block { display: inline-block !important; }
+  .d#{$suffix}-block { display: block !important; }
+  .d#{$suffix}-flex { display: flex !important; }
+  .d#{$suffix}-inline-flex { display: inline-flex !important; }
+}
+
+@include display-utilities;
+
+@each $name, $bp in $breakpoints {
+  @media (min-width: $bp) {
+    @include display-utilities('-#{$name}');
+  }
+}
+
+// Flex utilities
+.flex-row { flex-direction: row !important; }
+.flex-row-reverse { flex-direction: row-reverse !important; }
+.flex-column { flex-direction: column !important; }
+.flex-column-reverse { flex-direction: column-reverse !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-nowrap { flex-wrap: nowrap !important; }
+
+.align-items-start { align-items: flex-start !important; }
+.align-items-end { align-items: flex-end !important; }
+.align-items-center { align-items: center !important; }
+.align-items-baseline { align-items: baseline !important; }
+.align-items-stretch { align-items: stretch !important; }
+
+.justify-content-start { justify-content: flex-start !important; }
+.justify-content-end { justify-content: flex-end !important; }
+.justify-content-center { justify-content: center !important; }
+.justify-content-between { justify-content: space-between !important; }
+.justify-content-around { justify-content: space-around !important; }
+.justify-content-evenly { justify-content: space-evenly !important; }
+
+// Text alignment + color utilities
+.text-start { text-align: left !important; }
+.text-end { text-align: right !important; }
+.text-center { text-align: center !important; }
+.text-danger { color: #dc3545 !important; }
+
+// Spacing utilities (Bootstrap scale: 0=0, 1=.25rem, 2=.5rem, 3=1rem, 4=1.5rem, 5=3rem)
+$spacers: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 1rem,
+  4: 1.5rem,
+  5: 3rem,
+);
+
+@each $key, $value in $spacers {
+  .m-#{$key}  { margin: $value !important; }
+  .mt-#{$key} { margin-top: $value !important; }
+  .mb-#{$key} { margin-bottom: $value !important; }
+  .ms-#{$key} { margin-left: $value !important; }
+  .me-#{$key} { margin-right: $value !important; }
+  .mx-#{$key} { margin-left: $value !important; margin-right: $value !important; }
+  .my-#{$key} { margin-top: $value !important; margin-bottom: $value !important; }
+
+  .p-#{$key}  { padding: $value !important; }
+  .pt-#{$key} { padding-top: $value !important; }
+  .pb-#{$key} { padding-bottom: $value !important; }
+  .ps-#{$key} { padding-left: $value !important; }
+  .pe-#{$key} { padding-right: $value !important; }
+  .px-#{$key} { padding-left: $value !important; padding-right: $value !important; }
+  .py-#{$key} { padding-top: $value !important; padding-bottom: $value !important; }
+}
+
+.m-auto  { margin: auto !important; }
+.mt-auto { margin-top: auto !important; }
+.mb-auto { margin-bottom: auto !important; }
+.ms-auto { margin-left: auto !important; }
+.me-auto { margin-right: auto !important; }
+.mx-auto { margin-left: auto !important; margin-right: auto !important; }
+.my-auto { margin-top: auto !important; margin-bottom: auto !important; }
+
+// Bootstrap 4 alias used in about page; keep it working for visual parity
+.ml-auto { margin-left: auto !important; }
+.mr-auto { margin-right: auto !important; }
+
+// Form control base (matches Bootstrap .form-control basics used by contact form)
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: inherit;
+  background-color: transparent;
+  background-clip: padding-box;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.375rem;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+  appearance: none;
+
+  &:focus {
+    outline: 0;
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.08);
+  }
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+  }
+}
+
+// Nav (used in Header; actual visual styling is in header.scss)
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease-in-out;
+}

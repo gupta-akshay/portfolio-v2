@@ -1,0 +1,92 @@
+@use '../variables' as *;
+
+// Mermaid diagrams rendered on the client by mermaid.js. The MermaidRenderer
+// component re-initialises mermaid with the active theme, but we still override
+// inlined <style> rules for dark mode (mermaid uses id selectors, so !important
+// is needed to win) so text, strokes, and node fills stay readable.
+
+svg[id^='mermaid-'] {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.75rem auto;
+  background: transparent;
+  width: 100% !important;
+}
+
+// Dark mode (site default when `.theme-light` is absent).
+body:not(.theme-light) {
+  svg[id^='mermaid-'] {
+    // Node text + any foreignObject text
+    .label,
+    .nodeLabel,
+    .edgeLabel,
+    .cluster-label,
+    .label text,
+    .nodeLabel p,
+    .edgeLabel p,
+    .cluster-label p,
+    foreignObject span,
+    foreignObject div {
+      color: rgba($px-white, 0.92) !important;
+      fill: rgba($px-white, 0.92) !important;
+    }
+
+    // Node shapes (rect / polygon / ellipse / circle / path)
+    .node rect,
+    .node polygon,
+    .node ellipse,
+    .node circle,
+    .node path,
+    .node .outer-path,
+    .node .basic {
+      fill: #1c1c2b !important;
+      stroke: $px-theme !important;
+    }
+
+    // Edge lines + arrows
+    .edgePath .path,
+    .flowchart-link {
+      stroke: rgba($px-white, 0.55) !important;
+    }
+
+    .marker,
+    .marker.cross,
+    .arrowheadPath,
+    marker path,
+    marker polygon,
+    marker circle {
+      fill: rgba($px-white, 0.7) !important;
+      stroke: rgba($px-white, 0.7) !important;
+    }
+
+    // Edge label chips (the little pills on connections)
+    .edgeLabel,
+    .edgeLabel rect,
+    .labelBkg {
+      background-color: rgba($px-bg-1, 0.85) !important;
+      fill: rgba($px-bg-1, 0.85) !important;
+    }
+
+    .edgeLabel p,
+    .edgeLabel span {
+      background-color: transparent !important;
+    }
+
+    // Cluster (subgraph) boxes
+    .cluster rect {
+      fill: rgba($px-white, 0.04) !important;
+      stroke: rgba($px-white, 0.25) !important;
+    }
+
+    // Drop shadows baked into some shapes read as harsh dark blobs on a
+    // dark background — neutralise them.
+    .node .outer-path,
+    [data-look='neo'].node rect,
+    [data-look='neo'].node polygon,
+    [data-look='neo'].node path,
+    [data-look='neo'].node circle {
+      filter: none !important;
+    }
+  }
+}

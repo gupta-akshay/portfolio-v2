@@ -15,11 +15,9 @@ const nextConfig = {
       '@fortawesome/free-brands-svg-icons',
       '@fortawesome/free-solid-svg-icons',
       '@fortawesome/react-fontawesome',
-      'bootstrap',
       'devicon',
       'react-hot-toast',
       'resend',
-      'typed.js',
       'zod',
     ],
   },
@@ -94,10 +92,6 @@ const nextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
           },
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
         ],
       },
     ];
@@ -116,7 +110,8 @@ const withMDX = createMDX({
     ],
     rehypePlugins: [
       'rehype-slug', // Add IDs to headings for TOC
-      ['rehype-prism-plus', { ignoreMissing: true }], // Syntax highlighting
+      ['rehype-mermaid', { strategy: 'pre-mermaid' }], // Emit <pre class="mermaid"> and let mermaid.js render to SVG on the client (avoids needing chromium on the build server)
+      ['rehype-prism-plus', { ignoreMissing: true }], // Syntax highlighting (runs after mermaid so it skips converted blocks)
     ],
   },
 });

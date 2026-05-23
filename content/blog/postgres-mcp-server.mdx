@@ -1,0 +1,149 @@
+export const metadata = {
+    title: 'Postgres MCP in Go - Giving Claude Code a Live Line to Your Database',
+    slug: 'postgres-mcp-go-server',
+    publishedAt: '2026-04-21',
+    categories: ['go', 'postgresql', 'mcp', 'ai-tooling'],
+    coverImage: '/images/blog/postgres-mcp-server.webp',
+    coverImageAlt: 'Postgres MCP in Go - Giving Claude Code a Live Line to Your Database',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.webp'
+    },
+    excerpt: 'A pure-Go Model Context Protocol server that lets AI coding assistants run EXPLAIN plans, simulate hypothetical indexes, and audit database health without ever leaving the chat. Single 15 MB static binary, no CGo, no Python.'
+}
+
+## Introduction
+
+Copy-pasting SQL from a chat window into a DB client and back again is how most "AI + database" workflows actually feel. 🙃 It breaks flow, loses context, and the assistant never sees your real schema - so it guesses.
+
+The [Model Context Protocol](https://modelcontextprotocol.io) fixes that by letting an AI assistant speak to tools over a standard channel. This project is a Go MCP server that plugs Claude Code (or Cursor) directly into a live PostgreSQL database. Ask *"why is this query slow?"* and the assistant can actually run `EXPLAIN ANALYZE`, peek at `pg_stat_statements`, and even simulate an index with `hypopg` before you ever touch the schema.
+
+It's inspired by the excellent Python [crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp), reimplemented from scratch in Go so the whole thing ships as a single ~15 MB static binary - no Python runtime, no CGo, no system libs to chase down.
+
+## What it can do
+
+The server exposes nine tools over MCP. The assistant picks whichever fits the question:
+
+| Tool | What the AI can do with it |
+|------|----------------------------|
+| `list_schemas` / `list_objects` / `get_object_details` | Understand your real tables, columns, indexes, constraints |
+| `execute_sql` | Run arbitrary SQL (read-only when started in restricted mode) |
+| `explain_query` | `EXPLAIN (ANALYZE)` a query, optionally with a hypothetical index |
+| `get_top_queries` | Pull the slowest queries from `pg_stat_statements` |
+| `analyze_workload_indexes` | Recommend indexes from real workload via a DTA greedy algorithm |
+| `analyze_query_indexes` | Same, but for an explicit list of queries you care about |
+| `analyze_db_health` | Parallel health checks: vacuum, XID wraparound, connections, sequences, replication lag, buffer cache, invalid indexes |
+
+Translated into actual conversations, that means you can just say things like:
+
+> "Show me the 10 slowest queries right now, then simulate adding an index on `orders(user_id, status)` and tell me if it would help."
+
+…and the assistant does the work instead of handing you a snippet to paste.
+
+## How it works
+
+```mermaid
+flowchart LR
+    U[You in Claude Code / Cursor] -->|natural language| A[AI Assistant]
+    A -->|MCP tool call| S[postgres-mcp<br/>Go binary]
+    S -->|pgx/v5 pool| P[(PostgreSQL)]
+    P -.->|pg_stat_statements| S
+    P -.->|hypopg| S
+    S -->|JSON result| A
+    A -->|answer| U
+```
+
+Zooming into the server itself, each layer has one job:
+
+- **Transport** - two MCP transports are supported. `stdio` is the default: the assistant spawns the binary per session, which is great for local dev. `SSE` runs the same binary as a long-lived HTTP server so multiple clients can share it.
+- **Tool registry** - each of the nine tools is registered with a typed input schema, so the assistant sees proper parameter hints and the server rejects malformed calls before they hit Postgres.
+- **DB layer** - a thin `Querier` interface wraps a `pgxpool.Pool`. Everything else in the codebase depends on the interface, not the pool, which is what makes the unit tests fast and deterministic.
+- **Access modes** - `unrestricted` for local hacking, `restricted` for anything shared. Restricted mode wraps every call in a `READ ONLY` transaction, so write protection is enforced by Postgres itself, not by hopeful string matching.
+- **Index advisor** - the `analyze_*_indexes` tools implement a greedy Database Tuning Advisor: enumerate candidate indexes, ask the planner (via `hypopg`) how much each one would save, keep the winner, repeat until cost stops dropping.
+- **Health checks** - seven independent checks run in parallel goroutines and merge into a single report, so `analyze_db_health` feels instant even against a real database.
+
+A typical tool call looks like this on the wire:
+
+```json
+// request from the assistant
+{
+  "tool": "explain_query",
+  "arguments": {
+    "sql": "SELECT * FROM orders WHERE user_id = $1 AND status = 'open'",
+    "hypothetical_indexes": [
+      { "table": "orders", "columns": ["user_id", "status"] }
+    ]
+  }
+}
+```
+
+The server runs the `EXPLAIN` inside a transaction that creates the hypothetical index, captures the plan, rolls back, and returns JSON the assistant can reason about.
+
+## Running it locally
+
+Ship artifact is a single Docker image, so trying it out is basically three commands:
+
+```bash
+# 1. Build the image (static binary on Alpine, ~15 MB)
+docker build -t postgres-mcp:latest .
+
+# 2. Point Claude Code at it - ~/.claude/settings.json
+```
+
+```json
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-e", "DATABASE_URI",
+        "-e", "ACCESS_MODE",
+        "--add-host=host.docker.internal:host-gateway",
+        "postgres-mcp:latest"
+      ],
+      "env": {
+        "DATABASE_URI": "postgresql://user:pass@host.docker.internal:5432/mydb",
+        "ACCESS_MODE": "unrestricted"
+      }
+    }
+  }
+}
+```
+
+```bash
+# 3. Restart Claude Code - MCP servers are loaded at startup only.
+```
+
+For shared setups the same image runs as a long-lived SSE server behind `docker compose`, and clients just point at `http://host:8000/sse`.
+
+Two Postgres extensions make everything sing:
+
+- `pg_stat_statements` - unlocks `get_top_queries` and `analyze_workload_indexes`.
+- `hypopg` - lets `explain_query` and both index advisors simulate an index without actually creating it. This is the magic bit: you get real planner cost numbers for an index that never existed.
+
+Without these the server still works, it just turns off the tools that depend on them and tells the assistant why.
+
+## Testing strategy
+
+This part was honestly as fun as the server itself. The suite is split three ways:
+
+- **Unit** - every sub-package tested against a `MockQuerier` double. Pure Go, no Docker, runs in under a second.
+- **Integration** - the real `pgx` driver against a live Postgres, covering connection modes, restricted-mode write blocking, and JSON column decoding edge cases.
+- **End-to-end** - every one of the nine MCP tools driven over the actual MCP protocol through an in-process client, against a Postgres container that has `pg_stat_statements` and `hypopg` baked in.
+
+CI fails the build if overall coverage drops below 95%. A `make test-db-up` target spins up a disposable Postgres on port 5433 (so it doesn't fight your host DB on 5432), and `make test-integration` wires the whole thing together.
+
+## Things I learned
+
+- **Interfaces at the DB boundary pay for themselves fast.** The `Querier` abstraction made the mock-based unit tests trivial and kept handler logic independent of pgx details.
+- **Planner-assisted index advice is surprisingly powerful.** A greedy loop over `hypopg` gets you recommendations that feel magical, because the planner is doing the hard thinking.
+- **Static Go binaries are still underrated for tooling.** No Python env drift, no `pip install`, no Node version matrix. `docker run` and it just works.
+- **MCP is a nice little protocol.** Once you model your tools as typed function calls, integrating with any MCP-aware assistant is basically free.
+
+## Conclusion
+
+Wiring an AI assistant directly to Postgres turns a chat window into something closer to a pair of senior hands on the keyboard ✨. EXPLAIN plans, index experiments, and health audits stop being chores you context-switch into - they're just part of the conversation.
+
+
+The whole thing is ~15 MB, has no runtime dependencies, and drops into any MCP-capable editor with a five-line JSON config. If you spend any real time inside Claude Code or Cursor and also spend any real time worrying about Postgres, this is the kind of glue that quietly earns its keep.
