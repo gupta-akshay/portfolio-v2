@@ -13,9 +13,9 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1053.0",
-    "@aws-sdk/cloudfront-signer": "^3.1052.0",
-    "@aws-sdk/s3-request-presigner": "^3.1053.0",
+    "@aws-sdk/client-s3": "^3.1061.0",
+    "@aws-sdk/cloudfront-signer": "^3.1059.0",
+    "@aws-sdk/s3-request-presigner": "^3.1061.0",
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-brands-svg-icons": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
@@ -23,10 +23,10 @@
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@neondatabase/serverless": "^1.1.0",
-    "@next/bundle-analyzer": "^16.2.6",
-    "@next/mdx": "^16.2.6",
-    "@sentry/nextjs": "^10.53.1",
-    "@tanstack/react-form": "^1.32.0",
+    "@next/bundle-analyzer": "^16.2.7",
+    "@next/mdx": "^16.2.7",
+    "@sentry/nextjs": "^10.56.0",
+    "@tanstack/react-form": "^1.33.0",
     "@types/mdx": "^2.0.13",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
@@ -34,10 +34,10 @@
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "mermaid": "^11.15.0",
-    "next": "^16.2.6",
+    "next": "^16.2.7",
     "postcss": "^8.5.15",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-github-calendar": "^5.0.6",
     "react-hot-toast": "^2.6.0",
     "react-share": "^5.3.0",
@@ -46,7 +46,7 @@
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "request-ip": "^3.3.0",
-    "resend": "^6.12.3",
+    "resend": "^6.12.4",
     "sanitize-html": "^2.17.4",
     "zod": "^4.4.3"
   },
@@ -59,7 +59,7 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.6",
+    "eslint-config-next": "^16.2.7",
     "eslint-config-prettier": "^10.1.8",
     "import-in-the-middle": "^3.0.1",
     "jsdom": "^29.1.1",
@@ -67,30 +67,7 @@
     "require-in-the-middle": "^8.0.1",
     "sass": "^1.100.0",
     "sharp": "^0.34.5",
-    "tsx": "^4.22.3",
+    "tsx": "^4.22.4",
     "typescript": "^6.0.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "npm:types-react@19.0.0-rc.1",
-      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-      "prismjs": ">=1.30.0",
-      "esbuild": ">=0.25.0",
-      "minimatch": "10.2.3",
-      "diff": "8.0.3",
-      "webpack": "5.104.1",
-      "fast-uri": ">=3.1.2",
-      "fast-xml-builder": ">=1.1.7",
-      "postcss": ">=8.5.10",
-      "brace-expansion": ">=5.0.6"
-    },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@sentry/cli",
-      "@vercel/speed-insights",
-      "esbuild",
-      "sharp",
-      "unrs-resolver"
-    ]
   }
 }

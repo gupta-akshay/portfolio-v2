@@ -1,0 +1,27 @@
+overrides:
+  '@types/react': 'npm:types-react@19.0.0-rc.1'
+  '@types/react-dom': 'npm:types-react-dom@19.0.0-rc.1'
+  prismjs: '>=1.30.0'
+  esbuild: '>=0.25.0'
+  minimatch: '10.2.3'
+  diff: '8.0.3'
+  webpack: '5.104.1'
+  fast-uri: '>=3.1.2'
+  fast-xml-builder: '>=1.1.7'
+  postcss: '>=8.5.10'
+  brace-expansion: '>=5.0.6'
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@sentry/cli'
+  - '@vercel/speed-insights'
+  - esbuild
+  - sharp
+  - unrs-resolver
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@sentry/cli': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

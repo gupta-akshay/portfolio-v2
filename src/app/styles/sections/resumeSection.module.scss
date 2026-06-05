@@ -1,0 +1,439 @@
+@use 'sass:color';
+@use '../variables' as *;
+@use '../mixin' as *;
+
+// Light theme overrides
+:global(body.theme-light) {
+  .resumeSectionTitle {
+    color: $px-dark;
+  }
+
+  .resumeName {
+    color: $px-dark;
+  }
+
+  .resumeHeadline {
+    color: $px-theme;
+  }
+
+  .resumeContact {
+    a,
+    span {
+      color: $px-body-light;
+    }
+  }
+
+  .resumeSummaryText {
+    color: $px-body-light;
+  }
+
+  .skillDetails {
+    color: $px-body-light;
+  }
+
+  .companyBlock {
+    border-bottom-color: rgba($px-dark, 0.08);
+  }
+
+  .companyName {
+    color: $px-dark;
+  }
+
+  .companyLocation {
+    color: rgba($px-dark, 0.5);
+  }
+
+  .companySummary {
+    color: rgba($px-dark, 0.55);
+  }
+
+  .roleTitle {
+    color: $px-dark;
+  }
+
+  .bulletList li {
+    color: $px-body-light;
+  }
+
+  .eduInstitution {
+    color: $px-dark;
+  }
+
+  .eduDegree {
+    color: $px-body-light;
+  }
+
+  .eduLocation {
+    color: rgba($px-dark, 0.5);
+  }
+}
+
+// Page header row: title + action buttons
+.resumePageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  @include down-sm {
+    flex-direction: column;
+  }
+}
+
+.resumeActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+// Contact header card
+.resumeContactHeader {
+  margin-bottom: 40px;
+}
+
+.resumeName {
+  color: $px-white;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+
+  @include down-sm {
+    font-size: 1.8rem;
+  }
+}
+
+.resumeHeadline {
+  color: $px-theme;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0 0 14px;
+}
+
+.resumeContact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  font-size: 0.9rem;
+
+  a {
+    color: $px-body;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $px-theme;
+    }
+  }
+
+  span {
+    color: $px-body;
+  }
+}
+
+// Section block
+.resumeSection {
+  margin-bottom: 44px;
+}
+
+.resumeSectionTitle {
+  color: $px-white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding-bottom: 10px;
+  margin: 0 0 24px;
+  border-bottom: 2px solid $px-theme;
+}
+
+// Summary
+.resumeSummaryText {
+  color: $px-body;
+  line-height: 1.75;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+// Skills: definition list as two-column grid
+.skillsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 0;
+
+  @include up-sm {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 32px;
+  }
+}
+
+.skillRow {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  line-height: 1.5;
+}
+
+.skillLabel {
+  color: $px-theme;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  min-width: 100px;
+  flex-shrink: 0;
+
+  &::after {
+    content: ':';
+  }
+}
+
+.skillDetails {
+  color: $px-body;
+  font-size: 0.88rem;
+}
+
+// Experience
+.companyBlock {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba($px-white, 0.06);
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.companyHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.companyName {
+  color: $px-white;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.companyLocation {
+  color: rgba($px-white, 0.45);
+  font-size: 0.85rem;
+}
+
+.companySummary {
+  color: rgba($px-white, 0.5);
+  font-size: 0.85rem;
+  font-style: italic;
+  margin: 4px 0 8px;
+}
+
+.roleBlock {
+  padding: 14px 0 14px 18px;
+  border-left: 2px solid rgba($px-theme, 0.35);
+  margin: 14px 0 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.roleHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.roleTitle {
+  color: $px-white;
+  font-size: 0.97rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.roleDates {
+  color: $px-theme;
+  font-size: 0.82rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bulletList {
+  margin: 0;
+  padding-left: 1.3rem;
+  list-style: disc outside;
+
+  li {
+    color: $px-body;
+    font-size: 0.9rem;
+    line-height: 1.68;
+    margin-bottom: 7px;
+
+    &::marker {
+      color: $px-theme;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Education
+.eduBlock {
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.eduHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.eduInstitution {
+  color: $px-white;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.eduDate {
+  color: $px-theme;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.eduDegree {
+  color: $px-body;
+  font-size: 0.9rem;
+  margin: 2px 0;
+}
+
+.eduLocation {
+  color: rgba($px-white, 0.45);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+// ============================================================
+// PRINT STYLES
+// ============================================================
+@media print {
+  :global(.header-left),
+  :global(.mob-header),
+  :global(.fixed-controls),
+  :global(.sidebar-overlay) {
+    display: none !important;
+  }
+
+  :global(.main-right) {
+    left: 0 !important;
+    width: 100% !important;
+    position: static !important;
+    height: auto !important;
+  }
+
+  :global(.pp-section) {
+    background: #fff !important;
+    min-height: unset !important;
+    overflow: visible !important;
+  }
+
+  :global(.pp-scrollable) {
+    overflow: visible !important;
+  }
+
+  :global(.route-shell) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .resumeActions {
+    display: none !important;
+  }
+
+  .resumePageHeader {
+    margin-bottom: 16px;
+  }
+
+  .resumeName,
+  .companyName,
+  .roleTitle,
+  .eduInstitution {
+    color: #000 !important;
+  }
+
+  .resumeHeadline,
+  .skillLabel,
+  .roleDates,
+  .eduDate {
+    color: #1a7a45 !important;
+  }
+
+  .resumeSummaryText,
+  .skillDetails,
+  .companyLocation,
+  .companySummary,
+  .bulletList li,
+  .eduDegree,
+  .eduLocation {
+    color: #333 !important;
+  }
+
+  .resumeContact {
+    a,
+    span {
+      color: #333 !important;
+    }
+  }
+
+  .resumeSectionTitle {
+    color: #000 !important;
+    border-bottom-color: #1a7a45 !important;
+  }
+
+  .companyBlock {
+    border-bottom-color: #ddd !important;
+  }
+
+  .roleBlock {
+    border-left-color: #1a7a45 !important;
+  }
+
+  .bulletList li::marker {
+    color: #1a7a45 !important;
+  }
+
+  .companyBlock,
+  .roleBlock,
+  .eduBlock {
+    page-break-inside: avoid;
+  }
+
+  .resumeSectionTitle {
+    page-break-after: avoid;
+  }
+}
