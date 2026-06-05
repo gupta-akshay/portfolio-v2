@@ -99,7 +99,7 @@ export default function Home() {
                       href='/assets/Akshay_Gupta_CV.pdf'
                       download
                     >
-                      Download CV
+                      Download Resume
                     </a>
                   </div>
                 </div>

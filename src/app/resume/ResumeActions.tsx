@@ -20,7 +20,7 @@ export default function ResumeActions() {
         className='px-btn px-btn-regular'
         href='/assets/Akshay_Gupta_CV.pdf'
         download
-        aria-label='Download CV as PDF'
+        aria-label='Download resume as PDF'
       >
         <FontAwesomeIcon icon={faFileArrowDown as IconProp} />
         <span>Download PDF</span>
