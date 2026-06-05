@@ -11,7 +11,7 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Resume | Akshay Gupta',
+  title: 'Resume',
   description:
     'Resume of Akshay Gupta — Senior Staff Engineer with 8+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS.',
   openGraph: {
