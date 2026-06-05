@@ -8,6 +8,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 
 - `/` - Home
 - `/about` - About, skills, experience, and GitHub contribution calendar
+- `/resume` - Print-ready resume with full CV content (summary, skills, experience, education)
 - `/blog` - Blog index from MDX content
 - `/blog/[slug]` - Individual blog post pages
 - `/feed.xml` - RSS feed of all published blog posts
@@ -49,6 +50,11 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
   - S3/CloudFront signed URLs (server-side signing only)
   - playback state persisted across page loads (track, volume)
   - keyboard shortcuts: Space (play/pause), M (mute), ←/→ (prev/next), ↑/↓ (volume)
+- Resume page (`/resume`) with:
+  - structured single-column layout matching site dark/green theme
+  - bullet-point experience sourced from CV YAML (`data.ts`)
+  - `@media print` styles: hides nav/controls, forces readable colors, avoids page breaks inside atomic blocks
+  - Print button + Download Resume PDF action
 - Contact page with:
   - validated form submission
   - email API route (`/api/sendMail`)

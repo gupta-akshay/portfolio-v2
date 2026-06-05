@@ -7,6 +7,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBlog,
+  faFileLines,
   faHouse,
   faIdBadge,
   faMapLocation,
@@ -30,6 +31,7 @@ const Header = () => {
 
   const activeSection = useMemo(() => {
     if (pathname === '/about') return 'about';
+    if (pathname === '/resume') return 'resume';
     if (pathname === '/contact') return 'contact';
     if (pathname === '/blog' || pathname.startsWith('/blog/')) return 'blog';
     if (pathname === '/music') return 'music';
@@ -150,6 +152,20 @@ const Header = () => {
                   width={20}
                 />
                 <span>About Me</span>
+              </Link>
+            </li>
+            <li className={activeSection === 'resume' ? 'active' : ''}>
+              <Link
+                className='nav-link'
+                href='/resume'
+                onClick={() => setSideBarToggle(false)}
+              >
+                <FontAwesomeIcon
+                  icon={faFileLines as IconProp}
+                  height={20}
+                  width={20}
+                />
+                <span>Resume</span>
               </Link>
             </li>
             <li className={activeSection === 'blog' ? 'active' : ''}>

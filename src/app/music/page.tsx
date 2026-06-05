@@ -9,7 +9,7 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'My Music | Akshay Gupta',
+  title: 'My Music',
   description:
     'Listen to my latest remixes and music productions. Enjoy the beats!',
   openGraph: {

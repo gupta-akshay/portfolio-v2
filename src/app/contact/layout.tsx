@@ -5,7 +5,7 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Contact | Akshay Gupta',
+  title: 'Contact',
   description:
     'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
   openGraph: {

@@ -179,7 +179,7 @@ export async function generateMetadata({
 
     if (!post) {
       return {
-        title: 'Post Not Found | Akshay Gupta',
+        title: 'Post Not Found',
         description: `The blog post you're looking for does not exist`,
         metadataBase: new URL(siteUrl),
       };
@@ -189,7 +189,7 @@ export async function generateMetadata({
     const description = metadata.excerpt || metadata.title;
 
     return {
-      title: `${metadata.title} | Akshay Gupta's Blog`,
+      title: metadata.title,
       description,
       metadataBase: new URL(siteUrl),
       openGraph: {
@@ -216,7 +216,7 @@ export async function generateMetadata({
   } catch (error) {
     logger.error('Error generating metadata:', error);
     return {
-      title: 'Error | Akshay Gupta',
+      title: 'Error',
       description: 'An error occurred while loading this blog post',
       metadataBase: new URL(siteUrl),
     };
