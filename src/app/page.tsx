@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import { getSiteUrl } from '@/lib/site-url';
 
@@ -81,7 +82,18 @@ export default function Home() {
                     that performs well, feels intuitive, and creates measurable
                     business impact.
                   </p>
-                  <div className={styles.btnBar}>
+                  <div
+                    className={styles.btnBar}
+                    style={{
+                      display: 'flex',
+                      gap: '12px',
+                      flexWrap: 'wrap',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Link className='px-btn px-btn-regular' href='/resume'>
+                      View Resume
+                    </Link>
                     <a
                       className='px-btn px-btn-regular'
                       href='/assets/Akshay_Gupta_CV.pdf'
