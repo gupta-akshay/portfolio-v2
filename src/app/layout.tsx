@@ -8,6 +8,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
 import { getSiteUrl } from '@/lib/site-url';
+import { getYearsOfExperience } from './utils/helpers/format';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import './styles/globals.scss';
@@ -15,6 +16,7 @@ import './styles/globals.scss';
 config.autoAddCss = false;
 
 const siteUrl = getSiteUrl();
+const experienceDesc = `Senior Staff Engineer at PeopleGrove with over ${getYearsOfExperience()} years of experience in web development.`;
 
 export const viewport = {
   width: 'device-width',
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
     template: '%s | Akshay Gupta',
   },
   description:
-    'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    experienceDesc,
   keywords: [
     'web development',
     'full-stack developer',
@@ -45,7 +47,7 @@ export const metadata: Metadata = {
     siteName: 'Akshay Gupta',
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
-      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+      experienceDesc,
     url: siteUrl,
     locale: 'en_US',
     images: [
@@ -63,7 +65,7 @@ export const metadata: Metadata = {
     creator: '@ashay_music',
     title: 'Akshay Gupta | Full-Stack Web Developer',
     description:
-      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+      experienceDesc,
     images: ['/images/about-me.webp'],
   },
   verification: {
