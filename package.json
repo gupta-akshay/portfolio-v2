@@ -13,9 +13,9 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1062.0",
+    "@aws-sdk/client-s3": "^3.1064.0",
     "@aws-sdk/cloudfront-signer": "^3.1059.0",
-    "@aws-sdk/s3-request-presigner": "^3.1062.0",
+    "@aws-sdk/s3-request-presigner": "^3.1064.0",
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-brands-svg-icons": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
@@ -27,7 +27,7 @@
     "@next/mdx": "^16.2.7",
     "@sentry/nextjs": "^10.56.0",
     "@tanstack/react-form": "^1.33.0",
-    "@types/mdx": "^2.0.13",
+    "@types/mdx": "^2.0.14",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "devicon": "^2.17.0",
@@ -35,7 +35,6 @@
     "drizzle-orm": "^0.45.2",
     "mermaid": "^11.15.0",
     "next": "^16.2.7",
-    "postcss": "^8.5.15",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-github-calendar": "^5.0.6",
@@ -51,7 +50,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^25.9.1",
+    "@types/node": "^25.9.2",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "@types/request-ip": "^0.0.41",
@@ -61,13 +60,11 @@
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.7",
     "eslint-config-prettier": "^10.1.8",
-    "import-in-the-middle": "^3.0.1",
-    "jsdom": "^29.1.1",
+    "import-in-the-middle": "^3.0.2",
     "prettier": "^3.8.3",
     "require-in-the-middle": "^8.0.1",
     "sass": "^1.100.0",
     "sharp": "^0.34.5",
-    "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }
 }
