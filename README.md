@@ -102,9 +102,14 @@ NEXT_PUBLIC_CLARITY_APP_CODE=
 
 # Optional Sentry source-map upload in CI
 SENTRY_AUTH_TOKEN=
+
+# Optional: skip server env validation (for Docker build stages)
+# SKIP_ENV_VALIDATION=true
 ```
 
 ## Local Development
+
+Requires Node v24 (`.nvmrc`) and pnpm.
 
 ```bash
 pnpm install
