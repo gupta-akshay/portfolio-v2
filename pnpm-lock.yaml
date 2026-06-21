@@ -38,7 +38,7 @@ importers:
         version: 3.1.1(webpack@5.104.1)
       '@mdx-js/react':
         specifier: ^3.1.1
-        version: 3.1.1(react@19.2.7)(types-react@19.0.0-rc.1)
+        version: 3.1.1(@types/react@19.2.17)(react@19.2.7)
       '@neondatabase/serverless':
         specifier: ^1.1.0
         version: 1.1.0
@@ -47,7 +47,7 @@ importers:
         version: 16.2.9
       '@next/mdx':
         specifier: ^16.2.9
-        version: 16.2.9(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(react@19.2.7)(types-react@19.0.0-rc.1))
+        version: 16.2.9(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))
       '@sentry/nextjs':
         specifier: ^10.59.0
         version: 10.59.0(@opentelemetry/core@2.8.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.8.0(@opentelemetry/api@1.9.1))(next@16.2.9(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(sass@1.101.0))(react@19.2.7)(webpack@5.104.1)
@@ -122,11 +122,11 @@ importers:
         specifier: ^26.0.0
         version: 26.0.0
       '@types/react':
-        specifier: npm:types-react@19.0.0-rc.1
-        version: types-react@19.0.0-rc.1
+        specifier: ^19.2.17
+        version: 19.2.17
       '@types/react-dom':
-        specifier: npm:types-react-dom@19.0.0-rc.1
-        version: types-react-dom@19.0.0-rc.1
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
       '@types/request-ip':
         specifier: ^0.0.41
         version: 0.0.41
@@ -1940,6 +1940,11 @@ packages:
 
   '@types/prismjs@1.26.6':
     resolution: {integrity: sha512-vqlvI7qlMvcCBbVe0AKAb4f97//Hy0EBTaiW8AalRnG/xAN5zOiWWyrNqNXeq8+KAuvRewjCVY1+IPxk4RdNYw==}
+
+  '@types/react-dom@19.2.3':
+    resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
+    peerDependencies:
+      '@types/react': ^19.2.0
 
   '@types/react@19.2.17':
     resolution: {integrity: sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==}
@@ -4690,12 +4695,6 @@ packages:
     resolution: {integrity: sha512-phPGCwqr2+Qo0fwniCE8e4pKnGu/yFb5nD5Y8bf0EEeiI5GklnACYA9GFy/DrAeRrKHXvHn+1SUsOWgJp6RO+g==}
     engines: {node: '>= 0.4'}
 
-  types-react-dom@19.0.0-rc.1:
-    resolution: {integrity: sha512-VSLZJl8VXCD0fAWp7DUTFUDCcZ8DVXOQmjhJMD03odgeFmu14ZQJHCXeETm3BEAhJqfgJaFkLnGkQv88sRx0fQ==}
-
-  types-react@19.0.0-rc.1:
-    resolution: {integrity: sha512-RshndUfqTW6K3STLPis8BtAYCGOkMbtvYsi90gmVNDZBXUyUc5juf2PE9LfS/JmOlUIRO8cWTS/1MTnmhjDqyQ==}
-
   typescript-eslint@8.60.1:
     resolution: {integrity: sha512-6m5hkkRAp8lKvhVpcprAIn5KkehQEh+47oHH2VGnExEh7dhNxXlg6GPAOIu6TxbVQxhebrJDvjl3020ooiWCMA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -5840,10 +5839,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/react@3.1.1(react@19.2.7)(types-react@19.0.0-rc.1)':
+  '@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7)':
     dependencies:
       '@types/mdx': 2.0.14
-      '@types/react': types-react@19.0.0-rc.1
+      '@types/react': 19.2.17
       react: 19.2.7
 
   '@mermaid-js/parser@1.1.1':
@@ -5872,12 +5871,12 @@ snapshots:
     dependencies:
       fast-glob: 3.3.1
 
-  '@next/mdx@16.2.9(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(react@19.2.7)(types-react@19.0.0-rc.1))':
+  '@next/mdx@16.2.9(@mdx-js/loader@3.1.1(webpack@5.104.1))(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))':
     dependencies:
       source-map: 0.7.6
     optionalDependencies:
       '@mdx-js/loader': 3.1.1(webpack@5.104.1)
-      '@mdx-js/react': 3.1.1(react@19.2.7)(types-react@19.0.0-rc.1)
+      '@mdx-js/react': 3.1.1(@types/react@19.2.17)(react@19.2.7)
 
   '@next/swc-darwin-arm64@16.2.9':
     optional: true
@@ -6567,6 +6566,10 @@ snapshots:
     optional: true
 
   '@types/prismjs@1.26.6': {}
+
+  '@types/react-dom@19.2.3(@types/react@19.2.17)':
+    dependencies:
+      '@types/react': 19.2.17
 
   '@types/react@19.2.17':
     dependencies:
@@ -9999,14 +10002,6 @@ snapshots:
       is-typed-array: 1.1.15
       possible-typed-array-names: 1.1.0
       reflect.getprototypeof: 1.0.10
-
-  types-react-dom@19.0.0-rc.1:
-    dependencies:
-      '@types/react': 19.2.17
-
-  types-react@19.0.0-rc.1:
-    dependencies:
-      csstype: 3.2.3
 
   typescript-eslint@8.60.1(eslint@9.39.4(jiti@2.6.1))(typescript@6.0.3):
     dependencies:
