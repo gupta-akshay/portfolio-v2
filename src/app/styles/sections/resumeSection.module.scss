@@ -88,6 +88,13 @@
   align-items: center;
   flex-wrap: wrap;
   padding-top: 8px;
+
+  a,
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
 }
 
 // Contact header card
