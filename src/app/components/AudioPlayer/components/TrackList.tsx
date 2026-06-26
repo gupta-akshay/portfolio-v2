@@ -1,6 +1,5 @@
 import React, { KeyboardEvent } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faList } from '@fortawesome/free-solid-svg-icons';
+import Icon from '@/app/components/Icon/Icon';
 import { Track } from '../types';
 
 interface TrackListProps {
@@ -104,7 +103,7 @@ const TrackList: React.FC<TrackListProps> = ({
               <div className='trackActions'>
                 {isQueued && (
                   <span className='inQueueIndicator' title='In queue'>
-                    <FontAwesomeIcon icon={faList} />
+                    <Icon name='list' />
                   </span>
                 )}
                 <button
@@ -116,7 +115,7 @@ const TrackList: React.FC<TrackListProps> = ({
                   aria-label={`Add ${track.name || track.title} to queue`}
                   title='Add to queue'
                 >
-                  <FontAwesomeIcon icon={faPlus} />
+                  <Icon name='plus' />
                 </button>
               </div>
             </li>

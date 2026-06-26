@@ -4,25 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useMemo, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faBlog,
-  faFileLines,
-  faHouse,
-  faIdBadge,
-  faMapLocation,
-  faMusic,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  faGithub,
-  faLinkedin,
-  faSoundcloud,
-  faInstagram,
-  faFacebook,
-  faMedium,
-  faDev,
-} from '@fortawesome/free-brands-svg-icons';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import Icon from '@/app/components/Icon/Icon';
 import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 
 const Header = () => {
@@ -132,11 +114,7 @@ const Header = () => {
                 href='/'
                 onClick={() => setSideBarToggle(false)}
               >
-                <FontAwesomeIcon
-                  icon={faHouse as IconProp}
-                  height={20}
-                  width={20}
-                />
+                <Icon name='house' />
                 <span>Home</span>
               </Link>
             </li>
@@ -146,11 +124,7 @@ const Header = () => {
                 href='/about'
                 onClick={() => setSideBarToggle(false)}
               >
-                <FontAwesomeIcon
-                  icon={faIdBadge as IconProp}
-                  height={20}
-                  width={20}
-                />
+                <Icon name='id-badge' />
                 <span>About Me</span>
               </Link>
             </li>
@@ -160,11 +134,7 @@ const Header = () => {
                 href='/resume'
                 onClick={() => setSideBarToggle(false)}
               >
-                <FontAwesomeIcon
-                  icon={faFileLines as IconProp}
-                  height={20}
-                  width={20}
-                />
+                <Icon name='file-lines' />
                 <span>Resume</span>
               </Link>
             </li>
@@ -176,11 +146,7 @@ const Header = () => {
                 onMouseEnter={handleBlogMouseEnter}
                 onMouseLeave={handleBlogMouseLeave}
               >
-                <FontAwesomeIcon
-                  icon={faBlog as IconProp}
-                  height={20}
-                  width={20}
-                />
+                <Icon name='blog' />
                 <span>Blogs</span>
               </Link>
             </li>
@@ -190,11 +156,7 @@ const Header = () => {
                 href='/music'
                 onClick={() => setSideBarToggle(false)}
               >
-                <FontAwesomeIcon
-                  icon={faMusic as IconProp}
-                  height={20}
-                  width={20}
-                />
+                <Icon name='music' />
                 <span>My Music</span>
               </Link>
             </li>
@@ -204,11 +166,7 @@ const Header = () => {
                 href='/contact'
                 onClick={() => setSideBarToggle(false)}
               >
-                <FontAwesomeIcon
-                  icon={faMapLocation as IconProp}
-                  height={20}
-                  width={20}
-                />
+                <Icon name='map-location' />
                 <span>Contact Me</span>
               </Link>
             </li>
@@ -224,7 +182,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Github'
           >
-            <FontAwesomeIcon icon={faGithub as IconProp} />
+            <Icon name='github' />
           </Link>
           <Link
             href='https://www.linkedin.com/in/akshayguptaujn'
@@ -232,7 +190,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Linkedin'
           >
-            <FontAwesomeIcon icon={faLinkedin as IconProp} />
+            <Icon name='linkedin' />
           </Link>
           <Link
             href='https://medium.com/@akshaygupta.live'
@@ -240,7 +198,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Medium'
           >
-            <FontAwesomeIcon icon={faMedium as IconProp} />
+            <Icon name='medium' />
           </Link>
           <Link
             href='https://dev.to/akshay_gupta'
@@ -248,7 +206,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Dev.to'
           >
-            <FontAwesomeIcon icon={faDev as IconProp} />
+            <Icon name='dev' />
           </Link>
           <Link
             href='https://www.instagram.com/dja_shay'
@@ -256,7 +214,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Instagram'
           >
-            <FontAwesomeIcon icon={faInstagram as IconProp} />
+            <Icon name='instagram' />
           </Link>
           <Link
             href='https://www.facebook.com/deejay.ashay'
@@ -264,7 +222,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Facebook'
           >
-            <FontAwesomeIcon icon={faFacebook as IconProp} />
+            <Icon name='facebook' />
           </Link>
           <Link
             href='https://soundcloud.com/dj_ashay'
@@ -272,7 +230,7 @@ const Header = () => {
             rel='noopener noreferrer'
             aria-label='Soundcloud'
           >
-            <FontAwesomeIcon icon={faSoundcloud as IconProp} />
+            <Icon name='soundcloud' />
           </Link>
         </div>
       </header>

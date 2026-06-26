@@ -1,7 +1,6 @@
 import React, { RefObject, TouchEvent, useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import Icon from '@/app/components/Icon/Icon';
 import { Track } from '../types';
 import PlayerControls from './PlayerControls';
 import Waveform from './Waveform';
@@ -86,7 +85,7 @@ const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
         onClick={onClose}
         aria-label='Close full screen player'
       >
-        <FontAwesomeIcon icon={faTimes} />
+        <Icon name='times' />
       </button>
 
       <div className='fullScreenContent'>

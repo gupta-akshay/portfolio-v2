@@ -1,16 +1,5 @@
 import { ChangeEvent } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlay,
-  faPause,
-  faBackward,
-  faForward,
-  faVolumeHigh,
-  faVolumeMute,
-  faDownload,
-  faShuffle,
-  faList,
-} from '@fortawesome/free-solid-svg-icons';
+import Icon from '@/app/components/Icon/Icon';
 import { formatTime } from '../utils';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -81,7 +70,7 @@ const PlayerControls = ({
             aria-label={isQueueVisible ? 'Hide queue' : 'Show queue'}
             title={isQueueVisible ? 'Hide queue' : 'Show queue'}
           >
-            <FontAwesomeIcon icon={faList} />
+            <Icon name='list' />
           </button>
         </div>
 
@@ -92,7 +81,7 @@ const PlayerControls = ({
             aria-label={isShuffleActive ? 'Disable shuffle' : 'Enable shuffle'}
             title={isShuffleActive ? 'Disable shuffle' : 'Enable shuffle'}
           >
-            <FontAwesomeIcon icon={faShuffle} />
+            <Icon name='shuffle' />
           </button>
         </div>
 
@@ -103,7 +92,7 @@ const PlayerControls = ({
             aria-label='Previous track'
             disabled={isLoading}
           >
-            <FontAwesomeIcon icon={faBackward} />
+            <Icon name='backward' />
           </button>
 
           <button
@@ -115,7 +104,7 @@ const PlayerControls = ({
             {isLoading ? (
               <LoadingSpinner />
             ) : (
-              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+              <Icon name={isPlaying ? 'pause' : 'play'} />
             )}
           </button>
 
@@ -125,7 +114,7 @@ const PlayerControls = ({
             aria-label='Next track'
             disabled={isLoading}
           >
-            <FontAwesomeIcon icon={faForward} />
+            <Icon name='forward' />
           </button>
         </div>
 
@@ -137,7 +126,7 @@ const PlayerControls = ({
               aria-label='Download track'
               disabled={isLoading}
             >
-              <FontAwesomeIcon icon={faDownload} />
+              <Icon name='download' />
             </button>
           </div>
         )}
@@ -148,7 +137,7 @@ const PlayerControls = ({
             className='muteButton'
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
-            <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeHigh} />
+            <Icon name={isMuted ? 'volume-mute' : 'volume-high'} />
           </button>
           <input
             type='range'
