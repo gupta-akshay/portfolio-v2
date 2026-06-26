@@ -37,6 +37,11 @@ const Icon = ({
   const style: React.CSSProperties | undefined =
     fontSize !== undefined ? { fontSize } : undefined;
 
+  // Default decorative icons to aria-hidden. Only expose to assistive tech
+  // when a title is provided (making the icon meaningful) or the caller
+  // explicitly opts in via aria-hidden={false}.
+  const resolvedAriaHidden = ariaHidden ?? (title ? undefined : true);
+
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -44,7 +49,7 @@ const Icon = ({
       height={svgHeight}
       width={svgWidth}
       fill='currentColor'
-      aria-hidden={ariaHidden}
+      aria-hidden={resolvedAriaHidden}
       className={classNames}
       style={style}
     >
