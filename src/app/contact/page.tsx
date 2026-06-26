@@ -1,8 +1,6 @@
 'use client';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import Icon from '@/app/components/Icon/Icon';
 import { Toaster } from 'react-hot-toast';
 import Layout from '@/app/components/Layout';
 import ContactFormInteractive from '@/app/components/ContactFormInteractive';
@@ -32,8 +30,8 @@ export default function Contact() {
                 </p>
                 <ul>
                   <li className='media'>
-                    <FontAwesomeIcon
-                      icon={faMapMarkerAlt as IconProp}
+                    <Icon
+                      name='map-marker-alt'
                       fontSize={20}
                     />
                     <span className='media-body'>
@@ -41,7 +39,7 @@ export default function Contact() {
                     </span>
                   </li>
                   <li className='media'>
-                    <FontAwesomeIcon icon={faEnvelope as IconProp} />
+                    <Icon name='envelope' />
                     <span className='media-body'>
                       <a href='mailto:contact@akshaygupta.live'>
                         contact@akshaygupta.live
@@ -49,7 +47,7 @@ export default function Contact() {
                     </span>
                   </li>
                   <li className='media'>
-                    <FontAwesomeIcon icon={faEnvelope as IconProp} />
+                    <Icon name='envelope' />
                     <span className='media-body'>
                       <a href='mailto:akshaygupta.live@gmail.com'>
                         akshaygupta.live@gmail.com
