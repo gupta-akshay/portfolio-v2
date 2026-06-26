@@ -5,8 +5,7 @@ import React, {
   useState,
   TouchEvent,
 } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faPause, faExpand } from '@fortawesome/free-solid-svg-icons';
+import Icon from '@/app/components/Icon/Icon';
 import { Track } from '../types';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -113,7 +112,7 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
           {isLoading ? (
             <LoadingSpinner />
           ) : (
-            <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+            <Icon name={isPlaying ? 'pause' : 'play'} />
           )}
         </button>
 
@@ -123,7 +122,7 @@ const MiniPlayer: React.FC<MiniPlayerProps> = ({
           className='expandButton'
           aria-label='Expand player'
         >
-          <FontAwesomeIcon icon={faExpand} />
+          <Icon name='expand' />
         </button>
       </div>
     </div>

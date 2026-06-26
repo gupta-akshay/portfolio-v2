@@ -54,6 +54,10 @@ public/               # Static assets
 - **Rate limiting**: `src/app/utils/ratelimit.ts` — per-instance in-memory only (not coordinated across serverless instances); guards casual abuse, not DDoS. Used by API routes.
 - **SEO/feeds**: `src/app/sitemap.ts`, `robots.ts`, `manifest.ts`, `feed.xml/route.ts`, and per-route `opengraph-image.tsx` generate metadata/OG images dynamically.
 
+### Icons
+
+All icons are rendered via `src/app/components/Icon/Icon.tsx` — a zero-dependency component that wraps inline SVGs. SVG path data lives in `src/app/components/Icon/icons.ts` (a typed record keyed by slug). There are no `@fortawesome/*` packages; do not add them back. To use an icon: `<Icon name="play" />`. Supported props: `name` (required), `className`, `title`, `aria-hidden`, `spin`, `size` (`'2x'`|`'3x'`), `height`, `width`, `fontSize`. To add a new icon, extract the `width`, `height`, and `svgPathData` from the source package's individual JS file, add an entry to `icons.ts`, and extend the `IconName` union.
+
 ### Styling conventions
 
 - Global styles: `src/app/styles/globals.scss` (imports all partials)

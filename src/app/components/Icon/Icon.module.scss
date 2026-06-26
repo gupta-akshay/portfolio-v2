@@ -1,0 +1,19 @@
+.icon {
+  display: inline-block;
+  overflow: visible;
+  vertical-align: -0.125em;
+}
+
+.spin {
+  animation: icon-spin 2s linear infinite;
+}
+
+@keyframes icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

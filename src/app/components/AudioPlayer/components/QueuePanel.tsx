@@ -1,11 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faTimes,
-  faGripVertical,
-  faMusic,
-  faList,
-} from '@fortawesome/free-solid-svg-icons';
+import Icon from '@/app/components/Icon/Icon';
 import { Track } from '../types';
 
 interface QueuePanelProps {
@@ -81,7 +75,7 @@ const QueuePanel: React.FC<QueuePanelProps> = ({
     <div className={`queuePanel ${isVisible ? 'visible' : ''}`}>
       <div className='queueHeader'>
         <h3>
-          <FontAwesomeIcon icon={faList} className='queueIcon' />
+          <Icon name='list' className='queueIcon' />
           Now Playing Queue
         </h3>
         <button
@@ -89,7 +83,7 @@ const QueuePanel: React.FC<QueuePanelProps> = ({
           onClick={onClose}
           aria-label='Close queue panel'
         >
-          <FontAwesomeIcon icon={faTimes} />
+          <Icon name='times' />
         </button>
       </div>
 
@@ -99,7 +93,7 @@ const QueuePanel: React.FC<QueuePanelProps> = ({
             <h4>Now Playing</h4>
             <div className='queueTrackItem nowPlayingItem'>
               <div className='queueTrackInfo'>
-                <FontAwesomeIcon icon={faMusic} className='nowPlayingIcon' />
+                <Icon name='music' className='nowPlayingIcon' />
                 <div className='queueTrackDetails'>
                   <span className='queueTrackTitle'>
                     {currentTrack.name || currentTrack.title}
@@ -130,7 +124,7 @@ const QueuePanel: React.FC<QueuePanelProps> = ({
                   onDragEnd={handleDragEnd}
                 >
                   <div className='queueDragHandle'>
-                    <FontAwesomeIcon icon={faGripVertical} />
+                    <Icon name='grip-vertical' />
                   </div>
                   <div
                     className='queueTrackInfo'
@@ -151,7 +145,7 @@ const QueuePanel: React.FC<QueuePanelProps> = ({
                     }}
                     aria-label={`Remove ${track.name || track.title} from queue`}
                   >
-                    <FontAwesomeIcon icon={faTimes} />
+                    <Icon name='times' />
                   </button>
                 </li>
               ))}
