@@ -26,6 +26,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 - Resend for email sending
 - Sentry + Vercel Analytics + Vercel Speed Insights
 - Google Analytics + Microsoft Clarity
+- Inline SVG icons via a local `Icon` component (no external icon runtime)
 
 ## Current Features
 
