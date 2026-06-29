@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
-import { GitHubCalendar } from '@/app/components';
+import GitHubCalendar from '@/app/components/GitHubCalendar/GitHubCalendarLazy';
 import { getSiteUrl } from '@/lib/site-url';
 
 import styles from '../styles/sections/aboutSection.module.scss';
