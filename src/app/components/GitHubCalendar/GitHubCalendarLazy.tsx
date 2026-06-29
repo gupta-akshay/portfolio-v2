@@ -1,11 +1,10 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import LoadingIndicator from '@/app/components/LoadingIndicator';
 
 const GitHubCalendarLazy = dynamic(() => import('./GitHubCalendar'), {
   ssr: false,
-  loading: () => <LoadingIndicator />,
+  loading: () => <div style={{ minHeight: '200px' }} />,
 });
 
 export default GitHubCalendarLazy;
