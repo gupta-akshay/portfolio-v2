@@ -2,6 +2,19 @@
  * Date formatting utilities
  */
 
+
+const CAREER_START = new Date('2017-09-01');
+
+export const getYearsOfExperience = (): number => {
+  const now = new Date();
+  const years = now.getFullYear() - CAREER_START.getFullYear();
+  const beforeAnniversary =
+    now.getMonth() < CAREER_START.getMonth() ||
+    (now.getMonth() === CAREER_START.getMonth() &&
+      now.getDate() < CAREER_START.getDate());
+  return beforeAnniversary ? years - 1 : years;
+};
+
 /**
  * Format a date string to display format
  * @param dateString - ISO date string

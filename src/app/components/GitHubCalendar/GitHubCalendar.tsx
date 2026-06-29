@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, ComponentProps } from 'react';
+import React, { ComponentProps } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
-import { logger } from '@/app/utils/logger';
 import styles from './GitHubCalendar.module.scss';
 
 type CalendarTheme = ComponentProps<typeof GitHubCalendar>['theme'];
@@ -12,119 +11,27 @@ interface GitHubCalendarProps {
   theme?: CalendarTheme;
 }
 
+const defaultTheme: CalendarTheme = {
+  light: [
+    '#0b0b13',
+    'rgba(47, 191, 113, 0.3)',
+    'rgba(47, 191, 113, 0.5)',
+    'rgba(47, 191, 113, 0.7)',
+    '#2fbf71',
+  ],
+  dark: [
+    '#0b0b13',
+    'rgba(47, 191, 113, 0.3)',
+    'rgba(47, 191, 113, 0.5)',
+    'rgba(47, 191, 113, 0.7)',
+    '#2fbf71',
+  ],
+};
+
 const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
   username,
-  theme = {
-    light: [
-      '#0b0b13',
-      'rgba(47, 191, 113, 0.3)',
-      'rgba(47, 191, 113, 0.5)',
-      'rgba(47, 191, 113, 0.7)',
-      '#2fbf71',
-    ],
-    dark: [
-      '#0b0b13',
-      'rgba(47, 191, 113, 0.3)',
-      'rgba(47, 191, 113, 0.5)',
-      'rgba(47, 191, 113, 0.7)',
-      '#2fbf71',
-    ],
-  },
+  theme = defaultTheme,
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const checkGitHubData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        // Test if we can fetch GitHub data for the user
-        const response = await fetch(
-          `https://github-contributions-api.jogruber.de/v4/${username}`
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `GitHub API returned ${response.status}: ${response.statusText}`
-          );
-        }
-
-        const data = await response.json();
-
-        // Check if we have valid contribution data
-        if (!data.contributions || data.contributions.length === 0) {
-          throw new Error('No contribution data found for this user');
-        }
-      } catch (err) {
-        logger.error('GitHub Calendar Error:', err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to load GitHub activity'
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (username) {
-      checkGitHubData();
-    }
-  }, [username]);
-
-  if (isLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}></div>
-        <p>Loading GitHub activity...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.errorContainer}>
-        <p>Unable to load GitHub activity: {error}</p>
-        <button
-          onClick={() => {
-            setIsLoading(true);
-            setError(null);
-            // Trigger a re-fetch by updating the effect
-            const checkGitHubData = async () => {
-              try {
-                const response = await fetch(
-                  `https://github-contributions-api.jogruber.de/v4/${username}`
-                );
-                if (!response.ok) {
-                  throw new Error(
-                    `GitHub API returned ${response.status}: ${response.statusText}`
-                  );
-                }
-                const data = await response.json();
-                if (!data.contributions || data.contributions.length === 0) {
-                  throw new Error('No contribution data found for this user');
-                }
-                setError(null);
-              } catch (err) {
-                setError(
-                  err instanceof Error
-                    ? err.message
-                    : 'Failed to load GitHub activity'
-                );
-              } finally {
-                setIsLoading(false);
-              }
-            };
-            checkGitHubData();
-          }}
-          className={styles.retryButton}
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className='title'>
@@ -148,10 +55,6 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
             showColorLegend={true}
             showMonthLabels={true}
             showWeekdayLabels={true}
-            transformData={(data) => {
-              // You can transform the data here if needed
-              return data;
-            }}
           />
         </div>
 

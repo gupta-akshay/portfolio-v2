@@ -1,0 +1,347 @@
+export const metadata = {
+    title: 'PostgreSQL Indexing Deep Dive - Choosing the Right Index',
+    slug: 'postgresql-indexing-deep-dive-choosing-the-right-index',
+    publishedAt: '2026-06-21',
+    categories: ['postgres', 'database', 'performance'],
+    coverImage: '/images/blog/postgresql-indexing-deep-dive-choosing-the-right-index.webp',
+    coverImageAlt: 'PostgreSQL Indexing Deep Dive',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.webp'
+    },
+    excerpt: 'A practical tour of PostgreSQL index types - B-tree, Hash, GIN, GiST, SP-GiST, BRIN - plus composite, partial, covering, and expression indexes, and how to pick the right one.'
+}
+
+In the earlier posts of this series, we looked at [practical query tuning tips](/blog/postgresql-query-performance-tuning-tips) and how to [read and interpret query plans](/blog/reading-and-interpreting-postgresql-query-plans-a-friendly-guide). A recurring theme in both was: "add an index here." But "add an index" is a bit like saying "use the right tool" — the interesting part is _which_ one.
+
+PostgreSQL ships with several index types, each tuned for a different kind of data and query. Picking the wrong one means PostgreSQL quietly ignores your index and goes back to a sequential scan. In this post, we'll walk through the main index types, when each shines, and the special index variations (composite, partial, covering, expression) that often matter more than the type itself.
+
+## Setting the Scene: Schema and Sample Data
+
+We'll reuse the same schema from the previous posts, with one small addition — a `metadata` JSONB column and a `tags` array on `orders`, so we can explore the more exotic index types.
+
+```sql
+CREATE TABLE customers (
+  id SERIAL PRIMARY KEY,
+  customer_name VARCHAR(255),
+  email VARCHAR(255),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  customer_id INT REFERENCES customers(id),
+  order_date TIMESTAMPTZ DEFAULT NOW(),
+  total_amount NUMERIC(10, 2),
+  status VARCHAR(20),
+  tags TEXT[],
+  metadata JSONB
+);
+
+-- Insert sample customers
+INSERT INTO customers (customer_name, email)
+SELECT 'Customer ' || i, 'customer' || i || '@example.com'
+FROM generate_series(1, 1000000) AS s(i);
+
+-- Insert sample orders
+INSERT INTO orders (customer_id, order_date, total_amount, status, tags, metadata)
+SELECT
+  (RANDOM() * 1000000)::INT,
+  NOW() - interval '1 day' * (RANDOM() * 365)::int,
+  (RANDOM() * 500 + 20),
+  (ARRAY['pending', 'shipped', 'delivered', 'cancelled'])[FLOOR(RANDOM() * 4 + 1)],
+  ARRAY[(ARRAY['gift', 'priority', 'fragile', 'bulk'])[FLOOR(RANDOM() * 4 + 1)]],
+  jsonb_build_object('channel', (ARRAY['web', 'mobile', 'store'])[FLOOR(RANDOM() * 3 + 1)])
+FROM generate_series(1, 1000000) AS s(i);
+
+ANALYZE customers;
+ANALYZE orders;
+```
+
+> Remember to run `ANALYZE` after a big bulk load. Without fresh statistics, the planner is guessing, and it may skip an index you just built.
+
+## How PostgreSQL Decides to Use an Index
+
+One thing to get straight first: **an index is an offer, not a command.** PostgreSQL's planner compares the estimated cost of using an index against a sequential scan and picks the cheaper one. An index on a low-selectivity column (one where most rows match) is often _slower_ than just reading the whole table, because random index lookups plus heap fetches cost more than one big sequential read.
+
+So the question isn't "should this column have an index?" but "does my query filter to a small enough slice that an index lookup beats a scan?"
+
+## B-tree: The Default Workhorse
+
+If you create an index without specifying a type, you get a B-tree. It's the right choice the overwhelming majority of the time. B-trees handle equality (`=`) and range (`<`, `<=`, `>`, `>=`, `BETWEEN`) queries, `ORDER BY`, and `IN` lists — anything where data has a natural sort order.
+
+```sql
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+```
+
+```sql
+EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 12345;
+```
+
+```sql
+Index Scan using idx_orders_customer_id on orders  (cost=0.42..12.46 rows=2 width=86) (actual time=0.045..0.053 rows=2 loops=1)
+  Index Cond: (customer_id = 12345)
+Planning Time: 0.824 ms
+Execution Time: 0.067 ms
+```
+
+B-trees also power range scans and sorted output. This query can read straight from the index in order, skipping a sort step entirely:
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE customer_id = 12345 ORDER BY order_date DESC;
+```
+
+**Use B-tree for**: scalar columns (integers, text, timestamps, numerics), equality and range filters, sorting, and primary/foreign keys. When in doubt, it's a B-tree.
+
+## Composite (Multicolumn) Indexes and Column Order
+
+When you frequently filter on more than one column together, a composite index can serve the whole predicate at once.
+
+```sql
+CREATE INDEX idx_orders_customer_date ON orders (customer_id, order_date);
+```
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM orders
+WHERE customer_id = 12345 AND order_date > '2024-01-01';
+```
+
+The catch — and it trips up a lot of people — is **column order matters**. A composite index on `(customer_id, order_date)` can be used for:
+
+- `WHERE customer_id = 12345`
+- `WHERE customer_id = 12345 AND order_date > '2024-01-01'`
+
+…but it is **much** less useful for `WHERE order_date > '2024-01-01'` alone, because `order_date` is the _second_ column. Think of a phone book sorted by (last name, first name): great for finding "Smith, John", useless for finding everyone named "John".
+
+**Rule of thumb**: put the column(s) you filter by equality first, and the column(s) you filter by range (or sort by) last. This is sometimes called the "equality first, range last" principle.
+
+## Covering Indexes with `INCLUDE`
+
+An index-only scan (covered in the tuning post) lets PostgreSQL answer a query entirely from the index without touching the table. You can extend this with `INCLUDE` columns — extra payload stored in the index leaf nodes that isn't part of the searchable key.
+
+```sql
+CREATE INDEX idx_orders_customer_covering
+ON orders (customer_id) INCLUDE (total_amount, status);
+```
+
+```sql
+EXPLAIN ANALYZE
+SELECT customer_id, total_amount, status
+FROM orders WHERE customer_id = 12345;
+```
+
+```sql
+Index Only Scan using idx_orders_customer_covering on orders  (cost=0.42..4.46 rows=2 width=19) (actual time=1.746..1.750 rows=2 loops=1)
+  Index Cond: (customer_id = 12345)
+  Heap Fetches: 0
+Planning Time: 0.660 ms
+Execution Time: 1.768 ms
+```
+
+The `Heap Fetches: 0` line is the prize — PostgreSQL never visited the table. The difference between `INCLUDE` and just adding the columns to the key is that `INCLUDE` columns don't bloat the searchable B-tree structure and don't have to be sortable, but they're available to satisfy `SELECT` lists.
+
+> `Heap Fetches` rely on the visibility map being up to date. If you see a high heap-fetch count on an index-only scan, the table likely needs a `VACUUM`.
+
+## Partial Indexes: Index Only What You Query
+
+If your queries always target a subset of rows, a partial index covers just that slice — smaller on disk, cheaper to maintain, and faster to scan.
+
+```sql
+CREATE INDEX idx_orders_pending
+ON orders (customer_id)
+WHERE status = 'pending';
+```
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE customer_id = 12345 AND status = 'pending';
+```
+
+PostgreSQL can use this index only when the query's `WHERE` clause implies the index predicate (here, `status = 'pending'`). Because the index holds roughly a quarter of the rows, it's a fraction of the size of a full index — a big win on large, skewed tables where you only ever query the "hot" rows (active records, unprocessed jobs, undeleted rows, etc.).
+
+## Expression (Functional) Indexes
+
+A plain index on a column can't help a query that wraps that column in a function — the function defeats the index. This is one of the most common "why isn't my index used?" mysteries:
+
+```sql
+-- This will NOT use a plain index on email
+SELECT * FROM customers WHERE LOWER(email) = 'customer42@example.com';
+```
+
+The fix is to index the _expression_ itself:
+
+```sql
+CREATE INDEX idx_customers_lower_email ON customers (LOWER(email));
+```
+
+Now the same query uses the index. The rule: index the exact expression your queries use. This applies to date truncation (`date_trunc('day', order_date)`), casts, concatenations, and any deterministic function.
+
+## GIN: Indexing "Many Values per Row"
+
+B-trees assume one comparable value per column. But what about a JSONB document, an array, or a full-text document where a single row contains _many_ searchable values? That's where **GIN (Generalized Inverted Index)** comes in. It builds an inverted map from each contained element back to the rows holding it.
+
+**JSONB containment:**
+
+```sql
+CREATE INDEX idx_orders_metadata ON orders USING GIN (metadata);
+```
+
+```sql
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE metadata @> '{"channel": "mobile"}';
+```
+
+```sql
+Bitmap Heap Scan on orders  (cost=2307.45..21143.95 rows=330200 width=86) (actual time=46.274..213.945 rows=334109 loops=1)
+  Recheck Cond: (metadata @> '{"channel": "mobile"}'::jsonb)
+  Heap Blocks: exact=14709
+  ->  Bitmap Index Scan on idx_orders_metadata  (cost=0.00..2224.90 rows=330200 width=0) (actual time=43.965..43.965 rows=334109 loops=1)
+        Index Cond: (metadata @> '{"channel": "mobile"}'::jsonb)
+Planning Time: 0.609 ms
+Execution Time: 219.956 ms
+```
+
+**Array membership:**
+
+```sql
+CREATE INDEX idx_orders_tags ON orders USING GIN (tags);
+
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE tags @> ARRAY['priority'];
+```
+
+```sql
+Bitmap Heap Scan on orders  (cost=1691.49..19513.83 rows=249067 width=86) (actual time=28.086..59.800 rows=249923 loops=1)
+  Recheck Cond: (tags @> '{priority}'::text[])
+  Heap Blocks: exact=14709
+  ->  Bitmap Index Scan on idx_orders_tags  (cost=0.00..1629.22 rows=249067 width=0) (actual time=25.291..25.291 rows=249923 loops=1)
+        Index Cond: (tags @> '{priority}'::text[])
+Planning Time: 0.993 ms
+Execution Time: 67.231 ms
+```
+
+**Full-text search** (with `tsvector`) and **trigram search** (with the `pg_trgm` extension, great for `LIKE '%foo%'` and fuzzy matching) also rely on GIN:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX idx_customers_name_trgm ON customers USING GIN (customer_name gin_trgm_ops);
+
+EXPLAIN ANALYZE
+SELECT * FROM customers WHERE customer_name ILIKE '%Customer 99%';
+```
+
+**Use GIN for**: JSONB, arrays, full-text search, and trigram/`LIKE` matching. The trade-off is that GIN indexes are slower to update and larger than B-trees, so they suit read-heavy, search-style workloads.
+
+## GiST: Geometry, Ranges, and Nearest-Neighbour
+
+**GiST (Generalized Search Tree)** is a framework for indexing data that doesn't fit a linear order — geometric shapes, ranges, and "distance" queries. If you use PostGIS for spatial data, you're using GiST. It also handles range types and the `&&` (overlap) operator.
+
+```sql
+-- Suppose orders had a valid_period range column
+CREATE INDEX idx_orders_period ON orders USING GIST (valid_period);
+
+SELECT * FROM orders WHERE valid_period && '[2024-01-01, 2024-02-01)'::tstzrange;
+```
+
+GiST also enables exclusion constraints (e.g. "no two bookings can overlap for the same room") and `ORDER BY location <-> point` nearest-neighbour queries. For the trigram case above, GiST is an alternative to GIN. GIN searches faster but builds slower. GiST is the reverse.
+
+**Use GiST for**: geometric/spatial data (PostGIS), range overlap queries, exclusion constraints, and nearest-neighbour search.
+
+## SP-GiST: Space-Partitioned Trees for Clustered Data
+
+GiST has a sibling: **SP-GiST (Space-Partitioned GiST)**. Where GiST builds balanced trees, SP-GiST builds non-balanced ones — quadtrees, k-d trees, and radix trees (tries). The idea is to repeatedly split the search space into partitions that don't have to be the same size. That fits data which clusters into non-overlapping regions: 2D points, IP address ranges, and text that shares common prefixes.
+
+The everyday win is prefix matching on text with the `^@` (starts-with) operator:
+
+```sql
+CREATE INDEX idx_customers_email_spgist
+ON customers USING SPGIST (email text_ops);
+
+EXPLAIN ANALYZE
+SELECT * FROM customers WHERE email ^@ 'customer999';
+```
+
+The `text_ops` class also supports the ordinary comparison operators (`=`, `<`, `>`), so the same index serves range and sort queries. For points there are two classes — `quad_point_ops` (a quadtree, the default) and `kd_point_ops` (a k-d tree) — and both support k-nearest-neighbour `<->` ordering, just like GiST. The `inet_ops` class indexes `inet`/`cidr` columns with the network containment operators (`<<`, `>>`, `&&`).
+
+So when do you pick SP-GiST over GiST? When your data partitions cleanly and the partitions don't overlap — points scattered on a map, IP subnets, strings walking down a prefix tree. GiST handles overlapping data (like bounding boxes that intersect); SP-GiST is built for the non-overlapping case.
+
+**Use SP-GiST for**: non-overlapping geometric data (points, quadtrees/k-d trees), `inet`/`cidr` network ranges, and text prefix matching.
+
+## BRIN: Tiny Indexes for Naturally Ordered Data
+
+**BRIN (Block Range Index)** is the lightweight outlier. Instead of indexing every row, it stores the min/max value for each _block range_ of the table. This makes BRIN indexes tiny — often kilobytes where a B-tree would be gigabytes — but they only help when the column's values are **physically correlated with their storage order**.
+
+The classic fit is an append-only `order_date` on a table where rows are inserted in date order:
+
+```sql
+CREATE INDEX idx_orders_date_brin ON orders USING BRIN (order_date);
+
+EXPLAIN ANALYZE
+SELECT * FROM orders WHERE order_date BETWEEN '2024-06-01' AND '2024-06-30';
+```
+
+Because rows from June are clustered together on disk, BRIN can skip every block range outside that window. If the data is _not_ correlated (e.g. `customer_id`, which is random in our sample), BRIN is useless — it can't rule out any block.
+
+**Use BRIN for**: huge, append-only tables where the indexed column tracks insert order (timestamps, sequential IDs, log data). It trades a bit of precision for a massive size saving.
+
+## Hash Indexes: Equality-Only
+
+**Hash indexes** support only the `=` operator — no ranges, no sorting. Since PostgreSQL 10 they're crash-safe and replicated (before that they were best avoided). For simple equality on a large column, a hash index can be slightly smaller than a B-tree.
+
+```sql
+CREATE INDEX idx_orders_status_hash ON orders USING HASH (status);
+```
+
+In practice, a B-tree handles equality just as well _and_ supports ranges and sorting, so hash indexes are a niche choice. Reach for one only when you've measured a real benefit on equality-only lookups.
+
+## Choosing the Right Index — A Cheat Sheet
+
+| Index Type | Best For | Operators |
+|-----------|----------|-----------|
+| **B-tree** | Scalars, ranges, sorting (the default) | `=`, `<`, `>`, `BETWEEN`, `IN`, `ORDER BY` |
+| **GIN** | JSONB, arrays, full-text, trigram `LIKE` | `@>`, `?`, `@@`, `ILIKE` (with `pg_trgm`) |
+| **GiST** | Geometry, ranges, nearest-neighbour | `&&`, `<->`, overlap, exclusion |
+| **SP-GiST** | Non-overlapping points, IP ranges, text prefixes | `^@`, `<->`, `<<`, `>>`, `<@` |
+| **BRIN** | Huge append-only, correlated columns | `=`, range (block-level) |
+| **Hash** | Equality-only on large columns | `=` |
+
+Layer the variations on top: make it **composite** if you filter on multiple columns, **partial** if you only query a subset, **covering** (`INCLUDE`) to enable index-only scans, and **expression**-based if your queries wrap the column in a function.
+
+## The Cost of Indexes: They Aren't Free
+
+Every index speeds up reads but slows down writes — each `INSERT`, `UPDATE`, and `DELETE` has to maintain every index on the table. Indexes also consume disk and memory, and they can bloat over time just like tables.
+
+**Find unused indexes** so you can drop the dead weight:
+
+```sql
+SELECT
+  schemaname, relname AS table, indexrelname AS index,
+  idx_scan AS times_used,
+  pg_size_pretty(pg_relation_size(indexrelid)) AS index_size
+FROM pg_stat_user_indexes
+WHERE idx_scan = 0
+ORDER BY pg_relation_size(indexrelid) DESC;
+```
+
+An index with `idx_scan = 0` after a representative period is a strong candidate for removal — it's pure write overhead.
+
+**Find bloated / rebuild indexes**: heavy update/delete churn leaves indexes bloated. Rebuild without locking out writes using:
+
+```sql
+REINDEX INDEX CONCURRENTLY idx_orders_customer_id;
+```
+
+> Always prefer `CREATE INDEX CONCURRENTLY` and `REINDEX ... CONCURRENTLY` in production. They avoid the heavy locks that would otherwise block writes for the duration of the build.
+
+## Wrapping Up
+
+Indexing is where a lot of PostgreSQL performance lives, but it's not about indexing everything — it's about matching the index to the shape of your data and your queries. Start with a B-tree, reach for GIN/GiST/BRIN when your data outgrows a simple sort order, and use the composite/partial/covering/expression variations to make each index pull its weight. Then verify with `EXPLAIN ANALYZE` (from the previous post) that the planner actually takes the offer — and prune the indexes that never get used.
+
+Further reading:
+- PostgreSQL Documentation: [Indexes](https://www.postgresql.org/docs/17/indexes.html)
+- PostgreSQL Documentation: [Index Types](https://www.postgresql.org/docs/17/indexes-types.html)
+- [Use The Index, Luke!](https://use-the-index-luke.com/) — still the best free resource on how indexes actually work
+
+Happy indexing! 🎉

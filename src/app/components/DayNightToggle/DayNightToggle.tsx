@@ -1,8 +1,6 @@
 'use client';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import Icon from '@/app/components/Icon/Icon';
 import { handleKeyDown } from '@/app/utils';
 import { useTheme } from '@/app/context/ThemeContext';
 import { DayNightToggleProps } from '@/app/types/components';
@@ -26,8 +24,8 @@ const DayNightToggle = ({ isLight, onToggle }: DayNightToggleProps) => {
       aria-checked={lightMode}
       title={`Switch to ${lightMode ? 'dark' : 'light'} mode`}
     >
-      <FontAwesomeIcon
-        icon={(lightMode ? faMoon : faSun) as IconProp}
+      <Icon
+        name={lightMode ? 'moon' : 'sun'}
         aria-hidden='true'
       />
       <span className={styles.visuallyHidden}>

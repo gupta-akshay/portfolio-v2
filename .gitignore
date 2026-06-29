@@ -51,3 +51,4 @@ certificates
 .env.sentry-build-plugin
 
 /.cursor/skills
+.env*

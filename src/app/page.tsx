@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import { getSiteUrl } from '@/lib/site-url';
+import { getYearsOfExperience } from '@/app/utils/helpers/format';
 
 import styles from './styles/sections/homeBanner.module.scss';
 
@@ -19,8 +20,7 @@ export default function Home() {
     },
     url: siteUrl,
     image: `${siteUrl}/images/home-banner.webp`,
-    description:
-      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development.',
+    description: `Senior Staff Engineer at PeopleGrove with over ${getYearsOfExperience()} years of experience in web development.`,
     sameAs: [
       'https://github.com/gupta-akshay',
       'https://linkedin.com/in/akshayguptaujn',

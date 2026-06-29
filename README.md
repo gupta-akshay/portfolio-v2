@@ -26,6 +26,7 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 - Resend for email sending
 - Sentry + Vercel Analytics + Vercel Speed Insights
 - Google Analytics + Microsoft Clarity
+- Inline SVG icons via a local `Icon` component (no external icon runtime)
 
 ## Current Features
 
@@ -102,9 +103,14 @@ NEXT_PUBLIC_CLARITY_APP_CODE=
 
 # Optional Sentry source-map upload in CI
 SENTRY_AUTH_TOKEN=
+
+# Optional: skip server env validation (for Docker build stages)
+# SKIP_ENV_VALIDATION=true
 ```
 
 ## Local Development
+
+Requires Node v24 (`.nvmrc`) and pnpm.
 
 ```bash
 pnpm install

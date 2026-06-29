@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
+import { getYearsOfExperience } from './utils/helpers/format';
+
+const years = getYearsOfExperience();
+const experienceDesc = `Senior Staff Engineer at PeopleGrove with over ${years} years of experience in web development. Specialized in building user-friendly and powerful web applications.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://akshaygupta.live'),
   title: 'Akshay Gupta | Full-Stack Web Developer',
-  description:
-    'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
+  description: experienceDesc,
   openGraph: {
     type: 'website',
     title: 'Akshay Gupta | Full-Stack Web Developer',
-    description:
-      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
+    description: experienceDesc,
     url: 'https://akshaygupta.live',
     siteName: 'Akshay Gupta',
     locale: 'en_US',
@@ -27,8 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Akshay Gupta | Full-Stack Web Developer',
-    description:
-      'Senior Staff Engineer at PeopleGrove with over 7 years of experience in web development. Specialized in building user-friendly and powerful web applications.',
+    description: experienceDesc,
     creator: '@ashay_music',
     images: ['https://akshaygupta.live/images/home-banner.webp'],
   },
