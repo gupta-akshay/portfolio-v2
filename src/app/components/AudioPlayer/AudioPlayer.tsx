@@ -154,9 +154,10 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     savePrefs(currentTrackIndex, volume);
   }, [currentTrackIndex, volume]);
 
-  // Enhanced next/previous handlers that use queue management
+  // Enhanced next/previous handlers that use queue management.
+  // These are intentionally metric-free — handleEnded calls handleNext for
+  // natural track completion, which should not register as a user skip.
   const handleNext = useCallback(() => {
-    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'next' } });
     if (currentTrackIndex !== null) {
       const nextIndex = getNextTrackIndex(currentTrackIndex);
       if (nextIndex !== null) {
@@ -173,7 +174,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   ]);
 
   const handlePrevious = useCallback(() => {
-    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'previous' } });
     if (currentTrackIndex !== null) {
       const prevIndex = getPreviousTrackIndex(currentTrackIndex);
       if (prevIndex !== null) {
@@ -188,6 +188,19 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     setCurrentTrackIndex,
     baseHandlePrevious,
   ]);
+
+  // Wrappers used only for explicit user actions (button / keyboard).
+  // handleEnded keeps calling handleNext directly so natural completions
+  // are not counted as skips.
+  const handleNextUser = useCallback(() => {
+    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'next' } });
+    handleNext();
+  }, [handleNext]);
+
+  const handlePreviousUser = useCallback(() => {
+    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'previous' } });
+    handlePrevious();
+  }, [handlePrevious]);
 
   // Enhanced play/pause handler with safety checks
   const handlePlayPause = useCallback(() => {
@@ -642,8 +655,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   useKeyboardShortcuts({
     enabled: hasTracks && currentTrackIndex !== null,
     onPlayPause: handlePlayPause,
-    onNext: handleNext,
-    onPrevious: handlePrevious,
+    onNext: handleNextUser,
+    onPrevious: handlePreviousUser,
     onToggleMute: toggleMute,
     volume,
     onVolumeSet: handleVolumeSet,
@@ -737,8 +750,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       isLoading,
       isShuffleActive,
       onPlayPause: handlePlayPause,
-      onPrevious: handlePrevious,
-      onNext: handleNext,
+      onPrevious: handlePreviousUser,
+      onNext: handleNextUser,
       onTimeChange: handleTimeChange,
       onVolumeChange: handleVolumeChange,
       onToggleMute: toggleMute,
@@ -757,8 +770,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       isLoading,
       isShuffleActive,
       handlePlayPause,
-      handlePrevious,
-      handleNext,
+      handlePreviousUser,
+      handleNextUser,
       handleTimeChange,
       handleVolumeChange,
       toggleMute,
@@ -809,8 +822,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             canvasRef: canvasRef as RefObject<HTMLCanvasElement>,
             onClose: handleCloseFullScreen,
             onPlayPause: handlePlayPause,
-            onPrevious: handlePrevious,
-            onNext: handleNext,
+            onPrevious: handlePreviousUser,
+            onNext: handleNextUser,
             onTimeChange: handleTimeChange,
             onVolumeChange: handleVolumeChange,
             onToggleMute: toggleMute,
@@ -834,8 +847,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       canvasRef,
       handleCloseFullScreen,
       handlePlayPause,
-      handlePrevious,
-      handleNext,
+      handlePreviousUser,
+      handleNextUser,
       handleTimeChange,
       handleVolumeChange,
       toggleMute,
