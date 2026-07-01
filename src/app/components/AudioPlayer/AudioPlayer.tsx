@@ -17,6 +17,7 @@ import {
   useKeyboardShortcuts,
 } from './hooks';
 import { logger } from '@/app/utils/logger';
+import * as Sentry from '@sentry/nextjs';
 
 const PREFS_KEY = 'audioPlayerPrefs';
 
@@ -155,6 +156,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Enhanced next/previous handlers that use queue management
   const handleNext = useCallback(() => {
+    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'next' } });
     if (currentTrackIndex !== null) {
       const nextIndex = getNextTrackIndex(currentTrackIndex);
       if (nextIndex !== null) {
@@ -171,6 +173,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   ]);
 
   const handlePrevious = useCallback(() => {
+    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'previous' } });
     if (currentTrackIndex !== null) {
       const prevIndex = getPreviousTrackIndex(currentTrackIndex);
       if (prevIndex !== null) {
@@ -211,7 +214,11 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const handleAddToQueue = useCallback(
     (index: number) => {
       if (index >= 0 && index < tracks.length) {
-        addToQueue(tracks[index]!);
+        const track = tracks[index]!;
+        addToQueue(track);
+        Sentry.metrics.count('audio.queue.add', 1, {
+          attributes: { track_id: track.id, track_name: track.name },
+        });
       }
     },
     [tracks, addToQueue]
@@ -525,6 +532,12 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   const handleTrackSelect = useCallback(
     (index: number) => {
+      const track = tracks[index];
+      if (track) {
+        Sentry.metrics.count('audio.track.play', 1, {
+          attributes: { track_id: track.id, track_name: track.name },
+        });
+      }
       setCurrentTrackIndex(index);
 
       // Add all tracks after the selected track to the queue
@@ -590,6 +603,10 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const handleDownload = useCallback(() => {
     if (!currentUrl || !currentTrack) return;
 
+    Sentry.metrics.count('audio.track.download', 1, {
+      attributes: { track_id: currentTrack.id, track_name: currentTrack.name },
+    });
+
     // Create a temporary anchor element
     const downloadLink = document.createElement('a');
     downloadLink.href = currentUrl;
@@ -612,6 +629,14 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     },
     [setVolume, setIsMuted]
   );
+
+  const handleToggleShuffle = useCallback(() => {
+    const next = !isShuffleActive;
+    Sentry.metrics.count('audio.shuffle.toggle', 1, {
+      attributes: { enabled: String(next) },
+    });
+    toggleShuffle();
+  }, [isShuffleActive, toggleShuffle]);
 
   // Global keyboard shortcuts (active when a track is loaded)
   useKeyboardShortcuts({
@@ -717,7 +742,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       onTimeChange: handleTimeChange,
       onVolumeChange: handleVolumeChange,
       onToggleMute: toggleMute,
-      onToggleShuffle: toggleShuffle,
+      onToggleShuffle: handleToggleShuffle,
       onDownload: handleDownload,
       canDownload: !!currentTrack,
       onToggleQueue: toggleQueueVisibility,
@@ -737,7 +762,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       handleTimeChange,
       handleVolumeChange,
       toggleMute,
-      toggleShuffle,
+      handleToggleShuffle,
       handleDownload,
       currentTrack,
       toggleQueueVisibility,
@@ -789,7 +814,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             onTimeChange: handleTimeChange,
             onVolumeChange: handleVolumeChange,
             onToggleMute: toggleMute,
-            onToggleShuffle: toggleShuffle,
+            onToggleShuffle: handleToggleShuffle,
             onDownload: handleDownload,
             canDownload: !!currentTrack,
             isQueueVisible,
@@ -814,7 +839,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       handleTimeChange,
       handleVolumeChange,
       toggleMute,
-      toggleShuffle,
+      handleToggleShuffle,
       handleDownload,
       isQueueVisible,
       toggleQueueVisibility,
