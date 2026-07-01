@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
+import * as Sentry from '@sentry/nextjs';
 import { ContactFormData, ContactAPIResponse } from '@/app/types/api';
 import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
@@ -27,6 +28,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(
   req: NextRequest
 ): Promise<NextResponse<ContactAPIResponse>> {
+  const start = performance.now();
   try {
     const limit = rateLimit(req, {
       id: 'sendMail',
@@ -34,6 +36,7 @@ export async function POST(
       windowMs: 60 * 60 * 1000,
     });
     if (!limit.ok) {
+      Sentry.metrics.count('api.sendmail.rate_limited', 1);
       const response: ContactAPIResponse = {
         success: false,
         message: 'Too many requests. Please try again later.',
@@ -94,6 +97,11 @@ export async function POST(
       }),
     ]);
 
+    Sentry.metrics.count('contact.email.sent', 1, { attributes: { status: 'success' } });
+    Sentry.metrics.distribution('api.sendmail.duration', performance.now() - start, {
+      unit: 'millisecond',
+    });
+
     const successResponse: ContactAPIResponse = {
       success: true,
       message: 'Email sent successfully',
@@ -107,6 +115,11 @@ export async function POST(
     return NextResponse.json(successResponse, { status: 200 });
   } catch (e) {
     logger.error('Error in sending mail:', e);
+    Sentry.metrics.count('contact.email.sent', 1, { attributes: { status: 'error' } });
+    Sentry.metrics.distribution('api.sendmail.duration', performance.now() - start, {
+      attributes: { error: 'true' },
+      unit: 'millisecond',
+    });
 
     // Check for specific error types
     if (e instanceof Error) {
