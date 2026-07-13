@@ -5,6 +5,7 @@ import BlogTileMDX from '@/app/components/BlogTileMDX';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import { getAllBlogs } from '@/lib/mdx';
 import { getSiteUrl } from '@/lib/site-url';
+import { blogIntro } from '@/lib/site-content';
 
 const siteUrl = getSiteUrl();
 
@@ -110,10 +111,7 @@ export default function Blog() {
             <h3>Writing</h3>
           </div>
           <div className="route-shell mb-4">
-            <p className="section-intro">
-              Long-form notes on engineering, architecture, performance, and
-              practical lessons from shipping production software.
-            </p>
+            <p className="section-intro">{blogIntro}</p>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <BlogPosts />

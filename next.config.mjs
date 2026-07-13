@@ -44,6 +44,16 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/',
+        headers: [
+          {
+            key: 'Link',
+            value:
+              '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+          },
+        ],
+      },
+      {
         source: '/:path*',
         headers: [
           {

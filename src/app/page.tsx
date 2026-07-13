@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import { getSiteUrl } from '@/lib/site-url';
+import { homeContent } from '@/lib/site-content';
 import { getYearsOfExperience } from '@/app/utils/helpers/format';
 
 import styles from './styles/sections/homeBanner.module.scss';
@@ -60,27 +61,23 @@ export default function Home() {
             <div className={`row ${styles.fullScreen} align-items-center`}>
               <div className='col-12 col-lg-6'>
                 <div className={`${styles.typeBox} route-shell`}>
-                  <h6>Senior Staff Engineer</h6>
+                  <h6>{homeContent.role}</h6>
                   <h1 className='font-alt' data-text='Akshay Gupta'>
                     Akshay Gupta
                   </h1>
                   <p className={styles.lead}>
-                    Building high-quality product experiences and reliable
-                    systems
+                    {homeContent.lead}
                   </p>
                   <p className={styles.desc}>
                     I lead full-stack initiatives at{' '}
                     <a
-                      href='https://www.peoplegrove.com'
+                      href={homeContent.employer.url}
                       target='_blank'
                       rel='noopener noreferrer'
                     >
-                      PeopleGrove
+                      {homeContent.employer.name}
                     </a>
-                    , translating product goals into scalable architecture and
-                    polished user interfaces. My focus is delivering software
-                    that performs well, feels intuitive, and creates measurable
-                    business impact.
+                    , {homeContent.intro}
                   </p>
                   <div
                     className={styles.btnBar}

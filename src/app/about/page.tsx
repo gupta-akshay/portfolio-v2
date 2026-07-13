@@ -6,6 +6,7 @@ import Skills from '@/app/components/Skills';
 import Experience from '@/app/components/Experience';
 import GitHubCalendar from '@/app/components/GitHubCalendar/GitHubCalendarLazy';
 import { getSiteUrl } from '@/lib/site-url';
+import { aboutContent } from '@/lib/site-content';
 
 import styles from '../styles/sections/aboutSection.module.scss';
 
@@ -62,26 +63,19 @@ const EducationAndSkills = () => (
     <div className='row'>
       <div className='col-lg-4 m-15px-tb'>
         <ul className={styles.educationBox}>
-          <li>
-            <span>2013-2017</span>
-            <h6>Bachelor of Engineering in Computer Science</h6>
-            <p>RGPV, India</p>
-          </li>
-          <li>
-            <span>2013</span>
-            <h6>High School Diploma</h6>
-            <p>Central Board of Secondary Education</p>
-          </li>
+          {aboutContent.education.map((item) => (
+            <li key={item.qualification}>
+              <span>{item.dates}</span>
+              <h6>{item.qualification}</h6>
+              <p>{item.institution}</p>
+            </li>
+          ))}
         </ul>
       </div>
       <div className='col-lg-7 ml-auto m-15px-tb'>
         <div className={styles.skillsBox}>
           <h3>What I Can Do</h3>
-          <p>
-            I love building websites and apps from start to finish! Over the
-            years, I&apos;ve learned to use many different tools to create
-            amazing things on the internet.
-          </p>
+          <p>{aboutContent.skillsIntro}</p>
           <Skills />
         </div>
       </div>
@@ -172,19 +166,14 @@ export default function About() {
                   <h3>About</h3>
                 </div>
                 <div className={styles.aboutText}>
-                  <h4>Engineering Leadership with Product Focus</h4>
+                  <h4>{aboutContent.heading}</h4>
                   <p>
-                    I am a Senior Staff Engineer with {yearsOfExperience}+ years
-                    of experience building web platforms and internal systems. I
-                    work across architecture, delivery, and mentoring to help
-                    teams ship faster without compromising quality.
+                    {aboutContent.paragraphs[0]?.replace(
+                      '{years}',
+                      String(yearsOfExperience)
+                    )}
                   </p>
-                  <p>
-                    My strengths include scalable front-end architecture, robust
-                    backend services, and turning ambiguous requirements into
-                    practical roadmaps. Outside work, I produce music and stay
-                    active in developer communities.
-                  </p>
+                  <p>{aboutContent.paragraphs[1]}</p>
                 </div>
                 <div className={styles.btnBar}>
                   <Link className='px-btn px-btn-regular' href='/contact'>
