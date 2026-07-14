@@ -4,6 +4,7 @@ import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
 import { getSiteUrl } from '@/lib/site-url';
+import { musicContent } from '@/lib/site-content';
 
 const siteUrl = getSiteUrl();
 
@@ -85,15 +86,9 @@ export default function Music() {
             <h3>Music</h3>
           </div>
           <div className='music-description route-shell mb-4'>
-            <p>
-              Music is a creative practice that complements my engineering work.
-              This collection includes original productions and remixes across
-              electronic and melodic styles.
-            </p>
-            <p>
-              Each track reflects experimentation in arrangement, texture, and
-              rhythm, with the same attention to detail I bring to software.
-            </p>
+            {musicContent.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <MusicTracks />

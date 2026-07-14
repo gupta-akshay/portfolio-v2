@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import Layout from '@/app/components/Layout';
 import ContactFormInteractive from '@/app/components/ContactFormInteractive';
 import MapSection from '@/app/components/MapSection';
+import { contactContent } from '@/lib/site-content';
 
 export default function Contact() {
   return (
@@ -23,11 +24,8 @@ export default function Contact() {
           <div className='row'>
             <div className='col-lg-5 col-xl-4 m-15px-tb'>
               <div className='contact-info route-shell'>
-                <h4>Let&apos;s connect</h4>
-                <p>
-                  I am open to high-impact product collaborations, engineering
-                  leadership roles, and strategic consulting engagements.
-                </p>
+                <h4>{contactContent.heading}</h4>
+                <p>{contactContent.intro}</p>
                 <ul>
                   <li className='media'>
                     <Icon
@@ -35,25 +33,17 @@ export default function Contact() {
                       fontSize={20}
                     />
                     <span className='media-body'>
-                      Mumbai, Maharashtra, India
+                      {contactContent.location}
                     </span>
                   </li>
-                  <li className='media'>
-                    <Icon name='envelope' />
-                    <span className='media-body'>
-                      <a href='mailto:contact@akshaygupta.live'>
-                        contact@akshaygupta.live
-                      </a>
-                    </span>
-                  </li>
-                  <li className='media'>
-                    <Icon name='envelope' />
-                    <span className='media-body'>
-                      <a href='mailto:akshaygupta.live@gmail.com'>
-                        akshaygupta.live@gmail.com
-                      </a>
-                    </span>
-                  </li>
+                  {contactContent.emails.map((email) => (
+                    <li key={email} className='media'>
+                      <Icon name='envelope' />
+                      <span className='media-body'>
+                        <a href={`mailto:${email}`}>{email}</a>
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>

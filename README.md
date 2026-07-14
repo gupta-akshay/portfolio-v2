@@ -15,6 +15,21 @@ Modern portfolio built with Next.js App Router, MDX blogging, a custom music sho
 - `/music` - Music showcase with custom player
 - `/contact` - Contact form + map section
 
+Public content routes support HTTP content negotiation for agents. Send
+`Accept: text/markdown` to the canonical URL to receive a source-backed Markdown
+representation while regular browser requests continue to receive HTML:
+
+```bash
+curl -H 'Accept: text/markdown' https://akshaygupta.live/blog
+```
+
+Because production is proxied through Cloudflare, add a Cache Rule for
+`akshaygupta.live` that bypasses cache when any `Accept` header value contains
+`text/markdown`. If a negotiated request is still blocked, inspect the matching
+Security Event and narrowly exempt only GET/HEAD Markdown requests from the
+specific WAF or bot rule that produced the 403; do not disable bot protection
+for the zone.
+
 ## Tech Stack
 
 - Next.js 16 + React 19 + TypeScript
