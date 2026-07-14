@@ -22,7 +22,7 @@
     "@next/bundle-analyzer": "^16.2.10",
     "@next/mdx": "^16.2.10",
     "@sentry/nextjs": "^10.65.0",
-    "@tanstack/react-form": "^1.33.1",
+    "@tanstack/react-form": "^1.33.2",
     "@types/mdx": "^2.0.14",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
