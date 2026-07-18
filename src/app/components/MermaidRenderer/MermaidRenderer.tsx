@@ -3,7 +3,22 @@
 import { useEffect } from 'react';
 import { useTheme } from '@/app/context/ThemeContext';
 
+const MERMAID_CODE_SELECTOR = 'pre > code.language-mermaid';
 const MERMAID_SELECTOR = 'pre.mermaid';
+
+const prepareMermaidNodes = () => {
+  document.querySelectorAll<HTMLElement>(MERMAID_CODE_SELECTOR).forEach((code) => {
+    const pre = code.parentElement;
+    if (!(pre instanceof HTMLPreElement)) return;
+
+    const source = code.textContent ?? '';
+    pre.classList.add('mermaid');
+    pre.setAttribute('data-mermaid-source', source);
+    pre.textContent = source;
+  });
+
+  return document.querySelectorAll<HTMLElement>(MERMAID_SELECTOR);
+};
 
 const MermaidRenderer = () => {
   const { mode } = useTheme();
@@ -12,7 +27,7 @@ const MermaidRenderer = () => {
     let cancelled = false;
 
     const render = async () => {
-      const nodes = document.querySelectorAll<HTMLElement>(MERMAID_SELECTOR);
+      const nodes = prepareMermaidNodes();
       if (nodes.length === 0) return;
 
       const { default: mermaid } = await import('mermaid');

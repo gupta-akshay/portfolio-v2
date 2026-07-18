@@ -76,18 +76,11 @@ The map is conservative. `VACUUM` sets visibility bits only when it can prove th
 
 During an index-only scan, PostgreSQL follows this decision:
 
-```text
-candidate index entry
-        |
-        v
-is the heap page marked all-visible?
-        |
-   yes  |  no
-    |       |
-    v       v
-return     visit heap tuple
-from       to check MVCC
-index      visibility
+```mermaid
+flowchart TD
+    A[Candidate index entry] --> B{Is the heap page marked all-visible?}
+    B -->|Yes| C[Return from index]
+    B -->|No| D[Visit heap tuple to check MVCC visibility]
 ```
 
 The visibility map is much smaller than the heap it describes, so it is far more likely to remain cached. When the all-visible bit is set, PostgreSQL can avoid the heap access. When it is clear, PostgreSQL must inspect the heap tuple even if every selected column already exists in the index. [PostgreSQL documentation: How index-only scans use the visibility map](https://www.postgresql.org/docs/18/indexes-index-only-scans.html)
