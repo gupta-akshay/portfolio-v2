@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 import requestIp from 'request-ip';
 import { eq, and, count } from 'drizzle-orm';
+import * as Sentry from '@sentry/nextjs';
 import { db } from '../../../../db';
 import { blogReactions, anonymousUsers } from '../../../../db/schema';
 import { logger } from '@/app/utils/logger';
@@ -24,6 +25,7 @@ function hashIP(ip: string): string {
 
 // GET: Get reactions for a blog post
 export async function GET(request: NextRequest) {
+  const start = performance.now();
   try {
     const { searchParams } = new URL(request.url);
     const blogSlug = searchParams.get('blogSlug');
@@ -88,9 +90,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
+      attributes: { method: 'GET' },
+      unit: 'millisecond',
+    });
+
     return response;
   } catch (error) {
     logger.error('Error fetching reactions:', error);
+    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
+      attributes: { method: 'GET', error: 'true' },
+      unit: 'millisecond',
+    });
     return NextResponse.json(
       { error: 'Failed to fetch reactions' },
       { status: 500 }
@@ -100,6 +111,7 @@ export async function GET(request: NextRequest) {
 
 // POST: Add or update a reaction
 export async function POST(request: NextRequest) {
+  const start = performance.now();
   try {
     const limit = rateLimit(request, {
       id: 'reactions',
@@ -107,6 +119,7 @@ export async function POST(request: NextRequest) {
       windowMs: 60_000,
     });
     if (!limit.ok) {
+      Sentry.metrics.count('api.reactions.rate_limited', 1);
       return NextResponse.json(
         { error: 'Too many requests. Please try again shortly.' },
         {
@@ -196,11 +209,12 @@ export async function POST(request: NextRequest) {
       )
       .limit(1);
 
-    if (existingReaction.length > 0 && existingReaction[0]?.id) {
+    const isRemoving = existingReaction.length > 0 && !!existingReaction[0]?.id;
+    if (isRemoving) {
       // User already reacted with this emoji, remove the reaction (toggle off)
       await db
         .delete(blogReactions)
-        .where(eq(blogReactions.id, existingReaction[0].id));
+        .where(eq(blogReactions.id, existingReaction[0]!.id));
     } else {
       // Create new reaction (user can have multiple different emoji reactions)
       await db.insert(blogReactions).values({
@@ -209,6 +223,10 @@ export async function POST(request: NextRequest) {
         userId: userId!,
       });
     }
+
+    Sentry.metrics.count('blog.reaction.toggle', 1, {
+      attributes: { emoji, blog_slug: blogSlug, action: isRemoving ? 'removed' : 'added' },
+    });
 
     // Return updated reaction counts
     const reactions = await db
@@ -220,13 +238,22 @@ export async function POST(request: NextRequest) {
       .where(eq(blogReactions.blogSlug, blogSlug))
       .groupBy(blogReactions.emoji);
 
+    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
+      attributes: { method: 'POST' },
+      unit: 'millisecond',
+    });
+
     return NextResponse.json({
       success: true,
       reactions,
-      userReaction: existingReaction.length === 0 ? emoji : null, // null if removed, emoji if added
+      userReaction: isRemoving ? null : emoji,
     });
   } catch (error) {
     logger.error('Error adding reaction:', error);
+    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
+      attributes: { method: 'POST', error: 'true' },
+      unit: 'millisecond',
+    });
     return NextResponse.json(
       { error: 'Failed to add reaction' },
       { status: 500 }

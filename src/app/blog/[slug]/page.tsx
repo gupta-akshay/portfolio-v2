@@ -11,6 +11,7 @@ import { getBlogBySlug, getAllBlogs, getBlogHeadings } from '@/lib/mdx';
 import { getSiteUrl } from '@/lib/site-url';
 import { formatDate } from '@/app/utils';
 import { logger } from '@/app/utils/logger';
+import BlogViewTracker from './BlogViewTracker';
 
 import styles from '../../styles/sections/blogSection.module.scss';
 
@@ -87,6 +88,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   return (
     <Layout isBlog>
+      <BlogViewTracker slug={slug} />
       <ReadingProgressBar />
       <MermaidRenderer />
       <TableOfContentsMDX headings={headings} />

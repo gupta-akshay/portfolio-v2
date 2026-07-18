@@ -40,6 +40,42 @@ export const getBlogBySlug = cache(async (slug: string): Promise<BlogPost | null
   }
 });
 
+export const getBlogRawMarkdown = cache(
+  async (slug: string): Promise<string | null> => {
+    if (!/^[a-z0-9-]+$/.test(slug)) return null;
+
+    const post = await getBlogBySlug(slug);
+    if (!post) return null;
+    if (process.env.NODE_ENV === 'production' && post.metadata.draft === true) {
+      return null;
+    }
+
+    const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
+    if (!fs.existsSync(contentPath)) return null;
+
+    const raw = fs.readFileSync(contentPath, 'utf-8');
+    const body = raw
+      .replace(/^export const metadata\s*=\s*\{[\s\S]*?^\}\s*;?\s*$/m, '')
+      .trim();
+    const { metadata } = post;
+
+    return [
+      '---',
+      `title: ${JSON.stringify(metadata.title)}`,
+      `description: ${JSON.stringify(metadata.excerpt ?? metadata.title)}`,
+      `publishedAt: ${JSON.stringify(metadata.publishedAt)}`,
+      `categories: ${JSON.stringify(metadata.categories)}`,
+      `author: ${JSON.stringify(metadata.author.name)}`,
+      `canonical: ${JSON.stringify(`/blog/${slug}`)}`,
+      '---',
+      '',
+      `# ${metadata.title}`,
+      '',
+      body,
+    ].join('\n');
+  }
+);
+
 export async function getAllBlogs(): Promise<BlogPost[]> {
   const slugs = getBlogSlugs();
   const isProd = process.env.NODE_ENV === 'production';
