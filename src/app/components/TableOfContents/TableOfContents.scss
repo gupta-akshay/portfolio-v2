@@ -16,8 +16,7 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-  overflow-y: auto;
-  scroll-behavior: auto;
+  overflow: hidden;
 
   // Add full glassmorphism effects manually (preserving position: fixed)
   backdrop-filter: blur(15px);
@@ -30,7 +29,10 @@
     border-radius: 12px;
     padding: 1rem;
     min-height: 100%;
+    max-height: 60vh;
     position: relative;
+    display: flex;
+    flex-direction: column;
 
     // Glassmorphism gradient overlay
     &::before {
@@ -76,6 +78,7 @@
   }
 
   .toc-header {
+    flex-shrink: 0;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -97,6 +100,10 @@
   }
 
   .toc-nav {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
     .toc-list {
       list-style: none;
       padding: 0;

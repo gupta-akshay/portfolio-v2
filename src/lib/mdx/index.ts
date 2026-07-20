@@ -1,11 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 import { cache } from 'react';
+import GithubSlugger from 'github-slugger';
+import { toString } from 'mdast-util-to-string';
+import remarkGfm from 'remark-gfm';
+import remarkMdx from 'remark-mdx';
+import remarkParse from 'remark-parse';
+import { unified } from 'unified';
+import { visit } from 'unist-util-visit';
 import { BlogPost, TOCHeading } from './types';
 import { BlogMetadataSchema } from './schema';
 import { logger } from '@/app/utils/logger';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
+const mdxParser = unified().use(remarkParse).use(remarkMdx).use(remarkGfm);
 
 export function getBlogSlugs(): string[] {
   if (!fs.existsSync(CONTENT_DIR)) {
@@ -139,38 +147,27 @@ export function calculateReadingTime(content: string): {
   };
 }
 
-// Generate a heading ID matching rehype-slug / github-slugger output
-function slugifyHeading(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
 export function getBlogHeadings(slug: string): TOCHeading[] {
   const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
   if (!fs.existsSync(contentPath)) return [];
 
   const raw = fs.readFileSync(contentPath, 'utf-8');
-  // Strip fenced code blocks so lines like `# comment` inside code aren't treated as headings
-  const content = raw.replace(/```[\s\S]*?```/g, '');
-  const headingRegex = /^(#{1,4})\s+(.+)$/gm;
+  const tree = mdxParser.parse(raw);
   const headings: TOCHeading[] = [];
+  const slugger = new GithubSlugger();
 
-  let match;
-  while ((match = headingRegex.exec(content)) !== null) {
-    const hashes = match[1];
-    const headingText = match[2];
-    if (!hashes || !headingText) continue;
+  visit(tree, 'heading', (heading) => {
+    if (heading.depth > 4) return;
 
-    const level = hashes.length;
-    const text = headingText.trim();
-    const id = slugifyHeading(text);
+    const text = toString(heading).trim();
+    if (!text) return;
 
-    headings.push({ id, text, level });
-  }
+    headings.push({
+      id: slugger.slug(text),
+      text,
+      level: heading.depth,
+    });
+  });
 
   return headings;
 }
