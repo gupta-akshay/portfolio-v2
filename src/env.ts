@@ -8,9 +8,7 @@ const serverEnvSchema = z.object({
   RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required'),
   AWS_REGION: z.string().default('ap-south-1'),
   AWS_ACCESS_KEY_ID: z.string().min(1, 'AWS_ACCESS_KEY_ID is required'),
-  AWS_SECRET_ACCESS_KEY: z
-    .string()
-    .min(1, 'AWS_SECRET_ACCESS_KEY is required'),
+  AWS_SECRET_ACCESS_KEY: z.string().min(1, 'AWS_SECRET_ACCESS_KEY is required'),
   AWS_BUCKET_NAME: z.string().min(1, 'AWS_BUCKET_NAME is required'),
   CLOUDFRONT_DOMAIN: z.string().optional(),
   CLOUDFRONT_KEY_PAIR_ID: z.string().optional(),
@@ -65,7 +63,7 @@ export const serverEnv: ServerEnv = new Proxy({} as ServerEnv, {
   get(_, key: string) {
     if (typeof window !== 'undefined') {
       throw new Error(
-        `Attempted to read serverEnv.${key} on the client. Use publicEnv instead.`,
+        `Attempted to read serverEnv.${key} on the client. Use publicEnv instead.`
       );
     }
     if (!_serverEnv) _serverEnv = parseServerEnv();

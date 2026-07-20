@@ -1,6 +1,9 @@
 import { experienceData } from '@/app/utils/data/experience';
 import { skillsData } from '@/app/utils/data/skills';
-import { formatDateRange, getYearsOfExperience } from '@/app/utils/helpers/format';
+import {
+  formatDateRange,
+  getYearsOfExperience,
+} from '@/app/utils/helpers/format';
 import { resumeData } from '@/app/resume/data';
 import {
   aboutContent,
