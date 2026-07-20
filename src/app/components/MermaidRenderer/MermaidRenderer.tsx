@@ -7,15 +7,17 @@ const MERMAID_CODE_SELECTOR = 'pre > code.language-mermaid';
 const MERMAID_SELECTOR = 'pre.mermaid';
 
 const prepareMermaidNodes = () => {
-  document.querySelectorAll<HTMLElement>(MERMAID_CODE_SELECTOR).forEach((code) => {
-    const pre = code.parentElement;
-    if (!(pre instanceof HTMLPreElement)) return;
+  document
+    .querySelectorAll<HTMLElement>(MERMAID_CODE_SELECTOR)
+    .forEach((code) => {
+      const pre = code.parentElement;
+      if (!(pre instanceof HTMLPreElement)) return;
 
-    const source = code.textContent ?? '';
-    pre.classList.add('mermaid');
-    pre.setAttribute('data-mermaid-source', source);
-    pre.textContent = source;
-  });
+      const source = code.textContent ?? '';
+      pre.classList.add('mermaid');
+      pre.setAttribute('data-mermaid-source', source);
+      pre.textContent = source;
+    });
 
   return document.querySelectorAll<HTMLElement>(MERMAID_SELECTOR);
 };

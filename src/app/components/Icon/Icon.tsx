@@ -27,7 +27,8 @@ const Icon = ({
 }: IconProps) => {
   const icon = icons[name];
 
-  const svgHeight: number | string = height ?? (size ? `${parseFloat(size)}em` : '1em');
+  const svgHeight: number | string =
+    height ?? (size ? `${parseFloat(size)}em` : '1em');
   // Omit width when not explicitly set — the browser derives it from the
   // viewBox aspect ratio. Passing width="auto" as an SVG attribute is treated
   // as 100% by many browsers (SVG 1.1 default), which breaks inline layout.

@@ -6,12 +6,12 @@
   background: $px-dark;
   padding: 30px;
   border-radius: 8px;
-  
+
   // Add 3D effects
   @include floating-3d(3px, 0.1);
   @include stacking-cards(1, 4px);
   @include responsive-3d-effects;
-  
+
   .theme-light & {
     background: $px-gray;
   }
@@ -67,12 +67,12 @@
   background: $px-dark;
   padding: 30px;
   border-radius: 8px;
-  
+
   // Add 3D effects
   @include floating-3d(3px, 0.1);
   @include stacking-cards(1, 4px);
   @include responsive-3d-effects;
-  
+
   .theme-light & {
     background: $px-gray;
   }
@@ -120,11 +120,11 @@
     border: 1px solid rgba($px-white, 0.3);
     border-radius: 2px;
     box-shadow: none;
-    
+
     // Add subtle 3D effects
     @include floating-3d(1px, 0.03);
     @include responsive-3d-effects;
-    
+
     .theme-light & {
       color: $px-dark;
       border: 1px solid rgba($px-dark, 0.3);

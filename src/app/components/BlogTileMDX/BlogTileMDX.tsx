@@ -30,8 +30,14 @@ const BlogTileMDX = memo(
       [metadata.publishedAt]
     );
 
-    const visibleCategories = metadata.categories.slice(0, MAX_VISIBLE_CATEGORIES);
-    const remainingCount = Math.max(0, metadata.categories.length - MAX_VISIBLE_CATEGORIES);
+    const visibleCategories = metadata.categories.slice(
+      0,
+      MAX_VISIBLE_CATEGORIES
+    );
+    const remainingCount = Math.max(
+      0,
+      metadata.categories.length - MAX_VISIBLE_CATEGORIES
+    );
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
@@ -40,7 +46,7 @@ const BlogTileMDX = memo(
     };
 
     return (
-      <div className="col-md-6 m-15px-tb">
+      <div className='col-md-6 m-15px-tb'>
         <article className={styles.blogGrid}>
           <div className={styles.blogImg}>
             <Link
@@ -58,13 +64,14 @@ const BlogTileMDX = memo(
                   width={1792}
                   height={1024}
                   className={styles.tileImage}
-                  sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 540px"
+                  sizes='(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 540px'
                 />
               ) : (
                 <div
                   className={styles.placeholderImage}
                   style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    background:
+                      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     color: 'white',
                     fontSize: '1.5rem',
                   }}
@@ -75,11 +82,11 @@ const BlogTileMDX = memo(
             </Link>
           </div>
           <div className={styles.blogInfo}>
-            <div className={styles.meta} aria-label="Post metadata">
+            <div className={styles.meta} aria-label='Post metadata'>
               <time dateTime={metadata.publishedAt}>{formattedDate}</time>
-              <span aria-hidden="true">|</span>
+              <span aria-hidden='true'>|</span>
               <span className={styles.readingTime}>{readingTime}</span>
-              <span aria-hidden="true">|</span>
+              <span aria-hidden='true'>|</span>
               {visibleCategories.map((category) => (
                 <span key={category} className={styles.hashtag}>
                   #{category}
@@ -109,7 +116,8 @@ const BlogTileMDX = memo(
     return (
       prevProps.blog.slug === nextProps.blog.slug &&
       prevProps.blog.metadata.title === nextProps.blog.metadata.title &&
-      prevProps.blog.metadata.publishedAt === nextProps.blog.metadata.publishedAt
+      prevProps.blog.metadata.publishedAt ===
+        nextProps.blog.metadata.publishedAt
     );
   }
 );

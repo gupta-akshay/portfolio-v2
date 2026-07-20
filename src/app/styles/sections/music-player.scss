@@ -100,7 +100,7 @@
     background-color 0.2s,
     border-left 0.2s;
   border-radius: 8px;
-  
+
   // Add 3D card tilt effect
   @include card-3d-tilt(2deg, 1.01, 0.08);
   @include responsive-3d-effects;
@@ -407,7 +407,7 @@
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    
+
     &::after {
       content: '';
       position: absolute;
@@ -418,7 +418,7 @@
       width: 1px;
       margin-right: 10px;
       background-color: rgba($px-white, 0.2);
-      
+
       .theme-light & {
         background-color: rgba($px-dark, 0.2);
       }
@@ -433,16 +433,16 @@
     left: 80px;
     top: 50%;
     transform: translateY(-50%);
-    
+
     // Remove gap between shuffle and repeat buttons
     .controlButton {
       margin: 0;
-      
+
       &:first-child {
         margin-right: 0;
       }
     }
-    
+
     &::after {
       content: '';
       position: absolute;
@@ -452,7 +452,7 @@
       height: 24px;
       width: 1px;
       background-color: rgba($px-white, 0.2);
-      
+
       .theme-light & {
         background-color: rgba($px-dark, 0.2);
       }
@@ -476,7 +476,7 @@
     right: 150px;
     top: 50%;
     transform: translateY(-50%);
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -486,7 +486,7 @@
       height: 24px;
       width: 1px;
       background-color: rgba($px-white, 0.2);
-      
+
       .theme-light & {
         background-color: rgba($px-dark, 0.2);
       }
@@ -508,26 +508,26 @@
     flex-direction: column;
     gap: 20px;
     padding: 0;
-    
-    .queueControl, 
+
+    .queueControl,
     .playbackControls,
-    .mainControls, 
-    .downloadControl, 
+    .mainControls,
+    .downloadControl,
     .volumeControl {
       position: static;
       margin: 5px;
       transform: none;
-      
+
       &::after,
       &::before {
         display: none;
       }
     }
-    
+
     .playbackControls .controlButton {
       margin: 0 5px;
     }
-    
+
     .volumeControl {
       width: 100%;
       justify-content: center;
@@ -550,7 +550,7 @@
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s;
-  
+
   // Add 3D button press effect
   @include floating-3d(2px, 0.06);
   @include responsive-3d-effects;
@@ -628,12 +628,12 @@
       }
     }
   }
-  
+
   // Main controls specific margins
   .mainControls & {
     margin: 0 10px;
   }
-  
+
   // Active state for shuffle and repeat buttons
   &.active {
     color: $px-theme;
@@ -972,7 +972,7 @@
     align-items: center;
     justify-content: space-between;
     height: 70px;
-    
+
     border-top: 1px solid rgba($px-white, 0.1);
 
     .theme-light & {
@@ -1188,9 +1188,9 @@
       position: relative;
       height: auto;
       padding: 0;
-      
+
       // Main row: queue, shuffle, repeat, previous, play/pause, next
-      .queueControl, 
+      .queueControl,
       .playbackControls,
       .mainControls {
         position: static;
@@ -1198,61 +1198,61 @@
         display: flex;
         align-items: center;
         margin: 0;
-        
+
         &::after,
         &::before {
           display: none;
         }
       }
-      
+
       // Queue control
       .queueControl {
         order: 1;
         margin-right: 10px;
         margin-bottom: 30px;
       }
-      
+
       // Playback controls (shuffle, repeat)
       .playbackControls {
         order: 2;
         display: flex;
         gap: 10px;
         margin-bottom: 30px;
-        
+
         .controlButton {
           margin: 0;
-          
+
           &:first-child {
             margin-right: 0;
           }
         }
       }
-      
+
       // Main controls (previous, play/pause, next)
       .mainControls {
         order: 3;
         margin: 0 10px;
         margin-bottom: 30px;
       }
-      
+
       // Bottom row: download (left) and volume (right)
-      .downloadControl, 
+      .downloadControl,
       .volumeControl {
         position: absolute;
         bottom: -60px;
         transform: none;
-        
+
         &::after,
         &::before {
           display: none;
         }
       }
-      
+
       // Download control (bottom left)
       .downloadControl {
         left: 0;
       }
-      
+
       // Volume control (bottom right)
       .volumeControl {
         right: 0;
@@ -1260,11 +1260,11 @@
         max-width: 120px;
       }
     }
-    
+
     // Time controls (audio seeker)
     .timeControls {
       margin: 20px 0 60px;
-      
+
       .progressBar {
         &::-webkit-slider-runnable-track {
           background: linear-gradient(
@@ -1273,7 +1273,7 @@
             $px-theme var(--seek-fill, 0%),
             rgba($px-white, 0.2) var(--seek-fill, 0%)
           );
-          
+
           .theme-light & {
             background: linear-gradient(
               to right,
@@ -1283,13 +1283,13 @@
             );
           }
         }
-        
+
         &::-moz-range-progress {
           background: $px-theme;
         }
       }
     }
-    
+
     // Volume control in full screen
     .volumeControl {
       .volumeSlider {
@@ -1300,7 +1300,7 @@
             $px-theme var(--volume-fill, 0%),
             rgba($px-white, 0.2) var(--volume-fill, 0%)
           );
-          
+
           .theme-light & {
             background: linear-gradient(
               to right,
@@ -1310,7 +1310,7 @@
             );
           }
         }
-        
+
         &::-moz-range-progress {
           background: $px-theme;
         }
@@ -1706,7 +1706,7 @@
     width: 36px;
     height: 36px;
     margin: 0;
-    
+
     &.playButton {
       width: 42px;
       height: 42px;
@@ -1722,7 +1722,7 @@
     cursor: pointer;
     padding: 5px;
     transition: all 0.2s ease;
-    
+
     &:hover {
       transform: scale(1.1);
     }

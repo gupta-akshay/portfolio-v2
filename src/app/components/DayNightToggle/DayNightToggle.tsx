@@ -24,10 +24,7 @@ const DayNightToggle = ({ isLight, onToggle }: DayNightToggleProps) => {
       aria-checked={lightMode}
       title={`Switch to ${lightMode ? 'dark' : 'light'} mode`}
     >
-      <Icon
-        name={lightMode ? 'moon' : 'sun'}
-        aria-hidden='true'
-      />
+      <Icon name={lightMode ? 'moon' : 'sun'} aria-hidden='true' />
       <span className={styles.visuallyHidden}>
         {lightMode ? 'Switch to dark mode' : 'Switch to light mode'}
       </span>
