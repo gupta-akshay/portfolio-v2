@@ -143,7 +143,7 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
   }, [setupObserver, headings, minHeadings]);
 
   useEffect(() => {
-    if (!activeId) return;
+    if (!activeId || isMobile) return;
 
     const nav = tocNavRef.current;
     const activeLink = nav?.querySelector<HTMLElement>(
@@ -171,7 +171,7 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
           : 'smooth',
       });
     }
-  }, [activeId]);
+  }, [activeId, isMobile]);
 
   useEffect(() => {
     const handleScroll = () => setIsVisible(window.scrollY > 300);
