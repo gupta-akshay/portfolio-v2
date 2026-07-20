@@ -60,6 +60,12 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@neondatabase/serverless@1.1.0)(@opentelemetry/api@1.9.1)
+      github-slugger:
+        specifier: ^2.0.0
+        version: 2.0.0
+      mdast-util-to-string:
+        specifier: ^4.0.0
+        version: 4.0.0
       mermaid:
         specifier: ^11.16.0
         version: 11.16.0
@@ -90,6 +96,12 @@ importers:
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1
+      remark-mdx:
+        specifier: ^3.1.1
+        version: 3.1.1
+      remark-parse:
+        specifier: ^11.0.0
+        version: 11.0.0
       request-ip:
         specifier: ^3.3.0
         version: 3.3.0
@@ -99,6 +111,12 @@ importers:
       sanitize-html:
         specifier: ^2.17.6
         version: 2.17.6
+      unified:
+        specifier: ^11.0.5
+        version: 11.0.5
+      unist-util-visit:
+        specifier: ^5.1.0
+        version: 5.1.0
       zod:
         specifier: ^4.4.3
         version: 4.4.3

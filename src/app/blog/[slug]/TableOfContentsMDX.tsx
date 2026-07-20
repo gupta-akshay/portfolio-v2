@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { TOCHeading } from '@/lib/mdx/types';
 
 import '../../../app/components/TableOfContents/TableOfContents.scss';
@@ -95,14 +95,17 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
   const [activeId, setActiveId] = useState<string>('');
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const tocNavRef = useRef<HTMLElement>(null);
 
   const nestedHeadings = buildNestedTOC(headings);
 
   const setupObserver = useCallback(() => {
     if (headings.length < minHeadings) return null;
 
-    const headingElements = headings.map((h) => document.getElementById(h.id));
-    if (headingElements.some((el) => el === null)) return null;
+    const headingElements = headings
+      .map((heading) => document.getElementById(heading.id))
+      .filter((element): element is HTMLElement => element !== null);
+    if (headingElements.length === 0) return null;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -140,6 +143,37 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
   }, [setupObserver, headings, minHeadings]);
 
   useEffect(() => {
+    if (!activeId || isMobile) return;
+
+    const nav = tocNavRef.current;
+    const activeLink = nav?.querySelector<HTMLElement>(
+      '.toc-link[aria-current="location"]'
+    );
+
+    if (!nav || !activeLink) return;
+
+    const navRect = nav.getBoundingClientRect();
+    const activeLinkRect = activeLink.getBoundingClientRect();
+    const scrollPadding = 8;
+    let scrollDelta = 0;
+
+    if (activeLinkRect.top < navRect.top + scrollPadding) {
+      scrollDelta = activeLinkRect.top - navRect.top - scrollPadding;
+    } else if (activeLinkRect.bottom > navRect.bottom - scrollPadding) {
+      scrollDelta = activeLinkRect.bottom - navRect.bottom + scrollPadding;
+    }
+
+    if (scrollDelta !== 0) {
+      nav.scrollBy({
+        top: scrollDelta,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+      });
+    }
+  }, [activeId, isMobile]);
+
+  useEffect(() => {
     const handleScroll = () => setIsVisible(window.scrollY > 300);
     const handleResize = () => setIsMobile(window.innerWidth <= 1200);
 
@@ -163,7 +197,7 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
         <div className='toc-header'>
           <h4>Table of Contents</h4>
         </div>
-        <nav className='toc-nav' aria-label='Table of contents'>
+        <nav ref={tocNavRef} className='toc-nav' aria-label='Table of contents'>
           <TOCList items={nestedHeadings} activeId={activeId} />
         </nav>
       </div>
