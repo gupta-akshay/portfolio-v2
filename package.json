@@ -21,7 +21,7 @@
     "@neondatabase/serverless": "^1.1.0",
     "@next/bundle-analyzer": "^16.2.10",
     "@next/mdx": "^16.2.10",
-    "@sentry/nextjs": "^10.66.0",
+    "@sentry/nextjs": "^10.67.0",
     "@tanstack/react-form": "^1.33.2",
     "@types/mdx": "^2.0.14",
     "@vercel/analytics": "^2.0.1",
