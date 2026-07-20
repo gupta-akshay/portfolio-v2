@@ -12,6 +12,7 @@ export default function Home() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
+    '@id': `${siteUrl}/#person`,
     name: 'Akshay Gupta',
     jobTitle: 'Senior Staff Engineer',
     worksFor: {
@@ -65,9 +66,7 @@ export default function Home() {
                   <h1 className='font-alt' data-text='Akshay Gupta'>
                     Akshay Gupta
                   </h1>
-                  <p className={styles.lead}>
-                    {homeContent.lead}
-                  </p>
+                  <p className={styles.lead}>{homeContent.lead}</p>
                   <p className={styles.desc}>
                     I lead full-stack initiatives at{' '}
                     <a

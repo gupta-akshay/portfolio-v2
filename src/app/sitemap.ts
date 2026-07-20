@@ -3,68 +3,50 @@ import { getAllBlogs } from '@/lib/mdx';
 import { logger } from '@/app/utils/logger';
 import { getSiteUrl } from '@/lib/site-url';
 
-interface SitemapItem {
-  url: string;
-  lastModified: Date;
-  changeFrequency:
-    | 'always'
-    | 'hourly'
-    | 'daily'
-    | 'weekly'
-    | 'monthly'
-    | 'yearly'
-    | 'never';
-  priority: number;
-}
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl();
 
-  const staticRoutes: SitemapItem[] = [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 1,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/resume`,
-      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/blog`,
-      lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/contact`,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,
     },
     {
       url: `${baseUrl}/music`,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,
     },
   ];
 
-  let blogRoutes: SitemapItem[] = [];
+  let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     const posts = await getAllBlogs();
     blogRoutes = posts.map((post) => ({
       url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: new Date(post.metadata.publishedAt),
+      lastModified: new Date(
+        post.metadata.modifiedAt ?? post.metadata.publishedAt
+      ),
       changeFrequency: 'weekly',
       priority: 0.6,
     }));

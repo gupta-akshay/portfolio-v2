@@ -137,16 +137,16 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start Next.js dev server |
-| `pnpm build` | Production build |
-| `pnpm start` | Run production server |
-| `pnpm lint` | Run ESLint |
-| `pnpm db:generate` | Generate Drizzle migrations |
-| `pnpm db:migrate` | Apply migrations |
-| `pnpm db:studio` | Open Drizzle Studio |
-| `ANALYZE=true pnpm build` | Build with bundle analyzer |
+| Command                   | Description                 |
+| ------------------------- | --------------------------- |
+| `pnpm dev`                | Start Next.js dev server    |
+| `pnpm build`              | Production build            |
+| `pnpm start`              | Run production server       |
+| `pnpm lint`               | Run ESLint                  |
+| `pnpm db:generate`        | Generate Drizzle migrations |
+| `pnpm db:migrate`         | Apply migrations            |
+| `pnpm db:studio`          | Open Drizzle Studio         |
+| `ANALYZE=true pnpm build` | Build with bundle analyzer  |
 
 ## Blog Authoring (MDX)
 
@@ -156,7 +156,8 @@ Posts live in `content/blog/*.mdx`. Each post should export metadata:
 export const metadata = {
   title: 'Your Blog Title',
   slug: 'your-blog-slug',
-  publishedAt: '2025-01-15',          // YYYY-MM-DD
+  publishedAt: '2025-01-15', // YYYY-MM-DD
+  modifiedAt: '2025-02-01', // optional; only for substantive updates
   categories: ['category1', 'category2'],
   coverImage: '/images/blog/your-cover.webp',
   coverImageAlt: 'Description of cover image',
@@ -165,11 +166,11 @@ export const metadata = {
     avatar: '/images/blog-author.webp',
   },
   excerpt: 'A short description of your blog post.',
-  draft: true,                         // optional — omit or set false to publish
+  draft: true, // optional — omit or set false to publish
 };
 ```
 
-Metadata is validated at build time via Zod (`src/lib/mdx/schema.ts`). A missing required field or wrong `publishedAt` format will log an error and exclude the post from the listing. Posts with `draft: true` are visible in development but hidden in production builds.
+Metadata is validated at build time via Zod (`src/lib/mdx/schema.ts`). A missing required field, a filename/`slug` mismatch, an invalid date format, or a `modifiedAt` earlier than `publishedAt` will log an error and exclude the post from the listing. Posts with `draft: true` are visible in development but hidden in production builds.
 
 ### Mermaid diagrams
 

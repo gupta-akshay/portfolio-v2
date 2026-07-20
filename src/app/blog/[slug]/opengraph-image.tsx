@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { getBlogBySlug, getBlogSlugs } from '@/lib/mdx';
+import { getAllBlogs, getBlogBySlug } from '@/lib/mdx';
 
 // Force Node.js runtime since getBlogBySlug uses fs to read MDX files
 export const runtime = 'nodejs';
@@ -19,22 +19,20 @@ export default async function Image({
 
   if (!slug) {
     return new ImageResponse(
-      (
-        <div
-          style={{
-            fontSize: 48,
-            background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-          }}
-        >
-          Invalid Blog Post
-        </div>
-      ),
+      <div
+        style={{
+          fontSize: 48,
+          background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+        }}
+      >
+        Invalid Blog Post
+      </div>,
       { ...size }
     );
   }
@@ -43,76 +41,72 @@ export default async function Image({
 
   if (!post) {
     return new ImageResponse(
-      (
-        <div
-          style={{
-            fontSize: 48,
-            background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-          }}
-        >
-          Blog Post Not Found
-        </div>
-      ),
+      <div
+        style={{
+          fontSize: 48,
+          background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+        }}
+      >
+        Blog Post Not Found
+      </div>,
       { ...size }
     );
   }
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        fontSize: 48,
+        background: 'linear-gradient(135deg, #000000, #1a1a1a, #2a2a2a)',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-end',
+        color: 'white',
+        padding: '60px 80px',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+      }}
+    >
       <div
         style={{
-          fontSize: 48,
-          background: 'linear-gradient(135deg, #000000, #1a1a1a, #2a2a2a)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          justifyContent: 'flex-end',
-          color: 'white',
-          padding: '60px 80px',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
+          fontSize: 56,
+          fontWeight: 'bold',
+          marginBottom: 30,
+          maxWidth: '85%',
+          lineHeight: 1.1,
+          color: '#ffffff',
         }}
       >
-        <div
-          style={{
-            fontSize: 56,
-            fontWeight: 'bold',
-            marginBottom: 30,
-            maxWidth: '85%',
-            lineHeight: 1.1,
-            color: '#ffffff',
-          }}
-        >
-          {post.metadata.title}
-        </div>
-        <div
-          style={{
-            fontSize: 28,
-            color: '#e0e0e0',
-            marginBottom: 20,
-            fontWeight: 500,
-          }}
-        >
-          By {post.metadata.author.name}
-        </div>
-        <div
-          style={{
-            fontSize: 24,
-            color: '#2fbf71',
-            fontWeight: 500,
-          }}
-        >
-          akshaygupta.live
-        </div>
+        {post.metadata.title}
       </div>
-    ),
+      <div
+        style={{
+          fontSize: 28,
+          color: '#e0e0e0',
+          marginBottom: 20,
+          fontWeight: 500,
+        }}
+      >
+        {`By ${post.metadata.author.name}`}
+      </div>
+      <div
+        style={{
+          fontSize: 24,
+          color: '#2fbf71',
+          fontWeight: 500,
+        }}
+      >
+        akshaygupta.live
+      </div>
+    </div>,
     {
       ...size,
     }
@@ -120,8 +114,8 @@ export default async function Image({
 }
 
 export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const posts = await getAllBlogs();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateImageMetadata({

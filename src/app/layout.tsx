@@ -12,6 +12,7 @@ import { getYearsOfExperience } from './utils/helpers/format';
 import './styles/globals.scss';
 
 const siteUrl = getSiteUrl();
+const siteTitle = 'Akshay Gupta | Senior Staff Engineer';
 const experienceDesc = `Senior Staff Engineer at PeopleGrove with over ${getYearsOfExperience()} years of experience in web development.`;
 
 export const viewport = {
@@ -23,11 +24,10 @@ export const viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Akshay Gupta | Full-Stack Web Developer',
+    default: siteTitle,
     template: '%s | Akshay Gupta',
   },
-  description:
-    experienceDesc,
+  description: experienceDesc,
   keywords: [
     'web development',
     'full-stack developer',
@@ -41,28 +41,26 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'Akshay Gupta',
-    title: 'Akshay Gupta | Full-Stack Web Developer',
-    description:
-      experienceDesc,
+    title: siteTitle,
+    description: experienceDesc,
     url: siteUrl,
     locale: 'en_US',
     images: [
       {
-        url: '/images/about-me.webp',
+        url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Akshay Gupta - Full-Stack Web Developer',
-        type: 'image/webp',
+        alt: 'Akshay Gupta - Senior Staff Engineer at PeopleGrove',
+        type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     creator: '@ashay_music',
-    title: 'Akshay Gupta | Full-Stack Web Developer',
-    description:
-      experienceDesc,
-    images: ['/images/about-me.webp'],
+    title: siteTitle,
+    description: experienceDesc,
+    images: ['/opengraph-image'],
   },
   verification: {
     google: 'rcbqH3Qckh-CLqTHJHg3ze_tDDYoEMWKxrS4qWy1Bb0',
@@ -72,6 +70,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
+    canonical: siteUrl,
     types: {
       'application/rss+xml': `${siteUrl}/feed.xml`,
     },

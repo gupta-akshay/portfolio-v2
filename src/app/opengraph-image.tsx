@@ -1,77 +1,77 @@
 import { ImageResponse } from 'next/og';
 import { getYearsOfExperience } from '@/app/utils/helpers/format';
 
-export const alt = 'Resume — Akshay Gupta, Senior Staff Engineer';
+export const alt = 'Akshay Gupta - Senior Staff Engineer at PeopleGrove';
 export const size = {
   width: 1200,
   height: 630,
 };
 export const contentType = 'image/png';
 
-export default async function Image() {
+export default function Image() {
   return new ImageResponse(
     <div
       style={{
-        fontSize: 48,
-        background: 'linear-gradient(135deg, #000000, #1a1a1a, #2a2a2a)',
         width: '100%',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        color: 'white',
         padding: '60px 80px',
+        background: 'linear-gradient(135deg, #000000, #1a1a1a, #2a2a2a)',
+        color: 'white',
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
       <div
         style={{
-          fontSize: 72,
-          fontWeight: 'bold',
+          display: 'flex',
+          fontSize: 76,
+          fontWeight: 700,
+          lineHeight: 1.1,
+          textAlign: 'center',
+          color: '#ffffff',
           marginBottom: 24,
-          background: 'linear-gradient(90deg, #2fbf71, #00d4aa)',
-          backgroundClip: 'text',
-          WebkitBackgroundClip: 'text',
-          color: 'transparent',
-          textAlign: 'center',
-        }}
-      >
-        Resume
-      </div>
-      <div
-        style={{
-          fontSize: 36,
-          textAlign: 'center',
-          color: '#e0e0e0',
-          marginBottom: 16,
-          lineHeight: 1.2,
         }}
       >
         Akshay Gupta
       </div>
       <div
         style={{
-          fontSize: 24,
+          display: 'flex',
+          fontSize: 38,
+          lineHeight: 1.2,
           textAlign: 'center',
-          color: '#aaaaaa',
-          marginBottom: 40,
+          color: '#2fbf71',
+          marginBottom: 20,
         }}
       >
-        {`Senior Staff Engineer · ${getYearsOfExperience()}+ Years Experience`}
+        Senior Staff Engineer
       </div>
       <div
         style={{
-          fontSize: 20,
+          display: 'flex',
+          fontSize: 25,
+          lineHeight: 1.4,
+          textAlign: 'center',
+          color: '#d0d0d0',
+          marginBottom: 42,
+        }}
+      >
+        {`${getYearsOfExperience()}+ years building reliable web platforms and products`}
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          fontSize: 22,
           color: '#2fbf71',
           fontWeight: 500,
         }}
       >
-        akshaygupta.live/resume
+        akshaygupta.live
       </div>
     </div>,
-    {
-      ...size,
-    }
+    { ...size }
   );
 }

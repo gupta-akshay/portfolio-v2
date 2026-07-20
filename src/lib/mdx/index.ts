@@ -18,27 +18,38 @@ export function getBlogSlugs(): string[] {
     .map((file) => file.replace(/\.mdx$/, ''));
 }
 
-export const getBlogBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
-  try {
-    const { metadata: raw } = await import(`@/content/blog/${slug}.mdx`);
+export const getBlogBySlug = cache(
+  async (slug: string): Promise<BlogPost | null> => {
+    try {
+      const { metadata: raw } = await import(`@/content/blog/${slug}.mdx`);
 
-    const parsed = BlogMetadataSchema.safeParse(raw);
-    if (!parsed.success) {
-      logger.error(`Invalid metadata in ${slug}.mdx:`, parsed.error.flatten());
+      const parsed = BlogMetadataSchema.safeParse(raw);
+      if (!parsed.success) {
+        logger.error(
+          `Invalid metadata in ${slug}.mdx:`,
+          parsed.error.flatten()
+        );
+        return null;
+      }
+
+      const metadata = parsed.data;
+      if (metadata.slug !== slug) {
+        logger.error(
+          `Metadata slug "${metadata.slug}" does not match filename "${slug}.mdx"`
+        );
+        return null;
+      }
+
+      const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
+      const rawContent = fs.readFileSync(contentPath, 'utf-8');
+      const { text: readingTime } = calculateReadingTime(rawContent);
+
+      return { metadata, slug, readingTime };
+    } catch {
       return null;
     }
-
-    const metadata = parsed.data;
-
-    const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
-    const rawContent = fs.readFileSync(contentPath, 'utf-8');
-    const { text: readingTime } = calculateReadingTime(rawContent);
-
-    return { metadata, slug, readingTime };
-  } catch {
-    return null;
   }
-});
+);
 
 export const getBlogRawMarkdown = cache(
   async (slug: string): Promise<string | null> => {
@@ -64,6 +75,9 @@ export const getBlogRawMarkdown = cache(
       `title: ${JSON.stringify(metadata.title)}`,
       `description: ${JSON.stringify(metadata.excerpt ?? metadata.title)}`,
       `publishedAt: ${JSON.stringify(metadata.publishedAt)}`,
+      ...(metadata.modifiedAt
+        ? [`modifiedAt: ${JSON.stringify(metadata.modifiedAt)}`]
+        : []),
       `categories: ${JSON.stringify(metadata.categories)}`,
       `author: ${JSON.stringify(metadata.author.name)}`,
       `canonical: ${JSON.stringify(`/blog/${slug}`)}`,

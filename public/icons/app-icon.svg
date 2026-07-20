@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Akshay Gupta">
+  <rect width="512" height="512" rx="112" fill="#000" />
+  <circle cx="256" cy="256" r="184" fill="#111" stroke="#2fbf71" stroke-width="16" />
+  <text x="256" y="287" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="144" font-weight="700" text-anchor="middle">AG</text>
+</svg>

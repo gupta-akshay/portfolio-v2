@@ -140,7 +140,19 @@ FROM pg_stat_user_tables
 WHERE relname = 'jobs';
 ```
 
-`hot_update_percent` and `newpage_update_percent` are derived diagnostic ratios, not built-in PostgreSQL metrics. The counters are cumulative, so interpret them over a known observation window and alongside deployment or workload changes. Database-wide statistics, apart from the current backend count, accumulate since the last reset; `pg_stat_database.stats_reset` shows that reset time. [PostgreSQL 18 documentation: cumulative statistics](https://www.postgresql.org/docs/18/monitoring-stats.html)
+`hot_update_percent` and `newpage_update_percent` are derived diagnostic ratios, not built-in PostgreSQL metrics. The table counters are cumulative, so record their values and a timestamp at the beginning and end of the measurement interval, then compare the deltas under the same workload. This remains reliable even when you do not know when the counters were last reset.
+
+```sql
+SELECT
+  clock_timestamp() AS observed_at,
+  n_tup_upd,
+  n_tup_hot_upd,
+  n_tup_newpage_upd
+FROM pg_stat_user_tables
+WHERE relid = 'public.jobs'::regclass;
+```
+
+`pg_stat_database.stats_reset` is only a partial sanity check: it reports the most recent database-wide statistics reset, but it is not updated by a relation-specific call such as `pg_stat_reset_single_table_counters()`. Do not use it as the start time for these table counters unless you also know that no table-specific reset occurred. [PostgreSQL 18 documentation: cumulative statistics](https://www.postgresql.org/docs/18/monitoring-stats.html) and [statistics reset functions](https://www.postgresql.org/docs/18/functions-admin.html#FUNCTIONS-ADMIN-STATS)
 
 ```sql
 SELECT datname, stats_reset

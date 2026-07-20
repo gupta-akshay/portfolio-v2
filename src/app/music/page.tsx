@@ -7,17 +7,16 @@ import { getSiteUrl } from '@/lib/site-url';
 import { musicContent } from '@/lib/site-content';
 
 const siteUrl = getSiteUrl();
+const musicDescription = musicContent.paragraphs.join(' ');
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'My Music',
-  description:
-    'Listen to my latest remixes and music productions. Enjoy the beats!',
+  description: musicDescription,
   openGraph: {
     type: 'music.playlist',
     title: 'My Music | Akshay Gupta',
-    description:
-      'Listen to my latest remixes and music productions. Enjoy the beats!',
+    description: musicDescription,
     url: `${siteUrl}/music`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
         url: '/music/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Akshay Gupta Music - Listen to my latest remixes and productions',
+        alt: 'Akshay Gupta Music - Original productions and electronic remixes',
         type: 'image/png',
       },
     ],
@@ -34,8 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'My Music | Akshay Gupta',
-    description:
-      'Listen to my latest remixes and music productions. Enjoy the beats!',
+    description: musicDescription,
     creator: '@ashay_music',
     images: ['/music/opengraph-image'],
   },
@@ -49,7 +47,7 @@ export default function Music() {
     '@context': 'https://schema.org',
     '@type': 'MusicPlaylist',
     name: 'Akshay Gupta Music Collection',
-    description: 'Listen to my remixes and music productions. Enjoy the beats!',
+    description: musicDescription,
     url: `${siteUrl}/music`,
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -57,6 +55,7 @@ export default function Music() {
     },
     creator: {
       '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
       name: 'Akshay Gupta',
       url: siteUrl,
     },
