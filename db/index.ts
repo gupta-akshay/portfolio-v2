@@ -1,13 +1,7 @@
-import dotenv from 'dotenv';
+import 'server-only';
+
 import { drizzle } from 'drizzle-orm/neon-http';
+import { serverEnv } from '@/env';
 import * as schema from './schema';
 
-if (!process.env.DATABASE_URL) {
-  dotenv.config({ path: '.env.local' });
-}
-
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is not set');
-}
-
-export const db = drizzle(process.env.DATABASE_URL, { schema });
+export const db = drizzle(serverEnv.DATABASE_URL, { schema });

@@ -22,7 +22,7 @@ export default function RouteError({ error, reset }: RouteErrorProps) {
         <p className={styles.kicker}>Something broke</p>
         <h2 className={styles.title}>This page hit an error</h2>
         <p className={styles.message}>
-          {error.message || 'An unexpected error occurred while rendering.'}
+          An unexpected error occurred while rendering this page.
         </p>
         {error.digest ? (
           <p className={styles.digest}>

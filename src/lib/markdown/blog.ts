@@ -8,7 +8,11 @@ export async function generateBlogIndexMarkdown(): Promise<string> {
   const posts = await getAllBlogs();
 
   return [
-    markdownFrontmatter('Writing by Akshay Gupta', blogIntro, `${siteUrl}/blog`),
+    markdownFrontmatter(
+      'Writing by Akshay Gupta',
+      blogIntro,
+      `${siteUrl}/blog`
+    ),
     '',
     '# Writing',
     '',

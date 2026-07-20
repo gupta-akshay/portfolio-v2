@@ -7,6 +7,7 @@ This guide covers common issues and their solutions for the Portfolio V2 project
 ## 🚨 Quick Fixes
 
 ### Common Commands
+
 ```bash
 # Clear everything and start fresh
 rm -rf .next node_modules .turbo
@@ -28,11 +29,13 @@ pnpm analyze
 ### 1. Build Fails with TypeScript Errors
 
 **Error:**
+
 ```
 Type error: Property 'X' does not exist on type 'Y'
 ```
 
 **Solutions:**
+
 ```bash
 # Check TypeScript configuration
 pnpm type-check
@@ -47,11 +50,13 @@ rm -rf .next/types
 ### 2. Out of Memory During Build
 
 **Error:**
+
 ```
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 ```
 
 **Solutions:**
+
 ```bash
 # Increase Node.js memory limit
 export NODE_OPTIONS="--max-old-space-size=4096"
@@ -68,11 +73,13 @@ pnpm build
 ### 3. Module Not Found Errors
 
 **Error:**
+
 ```
 Module not found: Can't resolve '@/components/...'
 ```
 
 **Solutions:**
+
 ```bash
 # Check tsconfig.json paths
 {
@@ -93,6 +100,7 @@ pnpm dev
 ### 1. Audio Files Not Loading
 
 **Symptoms:**
+
 - Player shows loading state indefinitely
 - No audio playback
 - Console errors about CORS
@@ -100,6 +108,7 @@ pnpm dev
 **Solutions:**
 
 1. **Check S3 CORS Configuration:**
+
 ```json
 [
   {
@@ -112,24 +121,36 @@ pnpm dev
 ]
 ```
 
-2. **Verify Environment Variables:**
+2. **Verify Server-Only Environment Variables:**
+
+   Never prefix AWS credentials or signing keys with `NEXT_PUBLIC_`. Confirm that required variables exist without printing their values:
+
 ```bash
-# Check if all AWS variables are set
-echo $NEXT_PUBLIC_AWS_ACCESS_KEY_ID
-echo $NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
-echo $NEXT_PUBLIC_AWS_BUCKET_NAME
-echo $NEXT_PUBLIC_AWS_REGION
+for variable in AWS_REGION AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_BUCKET_NAME; do
+  if printenv "$variable" > /dev/null; then
+    echo "$variable is set"
+  else
+    echo "$variable is missing"
+  fi
+done
 ```
 
-3. **Test CloudFront Configuration:**
+3. **Check CloudFront Configuration:**
+
+   Configure `CLOUDFRONT_DOMAIN`, `CLOUDFRONT_KEY_PAIR_ID`, and `CLOUDFRONT_PRIVATE_KEY` as server-only variables. Check the private key without writing it to the terminal:
+
 ```bash
-# Check if CloudFront private key is properly formatted
-echo $NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY | base64 -d
+if test -n "$CLOUDFRONT_PRIVATE_KEY"; then
+  echo "CLOUDFRONT_PRIVATE_KEY is set"
+else
+  echo "CLOUDFRONT_PRIVATE_KEY is missing"
+fi
 ```
 
 ### 2. Web Audio API Not Working
 
 **Symptoms:**
+
 - No visualizations
 - Audio plays but no waveform
 - Console errors about AudioContext
@@ -137,6 +158,7 @@ echo $NEXT_PUBLIC_CLOUDFRONT_PRIVATE_KEY | base64 -d
 **Solutions:**
 
 1. **Check Browser Support:**
+
 ```javascript
 // Add to your component
 useEffect(() => {
@@ -147,6 +169,7 @@ useEffect(() => {
 ```
 
 2. **Handle User Interaction Requirement:**
+
 ```javascript
 // Ensure AudioContext is resumed after user interaction
 const handleFirstInteraction = async () => {
@@ -161,6 +184,7 @@ document.addEventListener('click', handleFirstInteraction, { once: true });
 ### 3. Audio Playback Issues on Mobile
 
 **Symptoms:**
+
 - Audio doesn't play on iOS/Android
 - Playback stops unexpectedly
 - Volume controls don't work
@@ -168,19 +192,21 @@ document.addEventListener('click', handleFirstInteraction, { once: true });
 **Solutions:**
 
 1. **Add Required Audio Attributes:**
+
 ```jsx
 <audio
   ref={audioRef}
-  preload="auto"
-  crossOrigin="anonymous"
+  preload='auto'
+  crossOrigin='anonymous'
   playsInline
-  x-webkit-airplay="allow"
-  webkit-playsinline="true"
-  x-webkit-playsinline="true"
+  x-webkit-airplay='allow'
+  webkit-playsinline='true'
+  x-webkit-playsinline='true'
 />
 ```
 
 2. **Handle iOS Audio Restrictions:**
+
 ```javascript
 // Ensure audio is muted initially on iOS
 useEffect(() => {
@@ -196,6 +222,7 @@ useEffect(() => {
 ### 1. Form Submission Fails
 
 **Error:**
+
 ```
 429 Too Many Requests
 ```
@@ -203,6 +230,7 @@ useEffect(() => {
 **Solutions:**
 
 1. **Check Rate Limiting:**
+
 ```bash
 # Verify Redis connection
 curl -X GET "https://your-redis-url/ping" \
@@ -210,6 +238,7 @@ curl -X GET "https://your-redis-url/ping" \
 ```
 
 2. **Clear Rate Limit (Development):**
+
 ```bash
 # Reset Redis rate limit key
 redis-cli DEL "rate_limit:127.0.0.1:*"
@@ -218,12 +247,14 @@ redis-cli DEL "rate_limit:127.0.0.1:*"
 ### 2. Email Not Sending
 
 **Symptoms:**
+
 - Form submits successfully but no emails received
 - Resend API errors
 
 **Solutions:**
 
 1. **Verify Resend Configuration:**
+
 ```bash
 # Test Resend API key
 curl -X POST "https://api.resend.com/emails" \
@@ -233,12 +264,15 @@ curl -X POST "https://api.resend.com/emails" \
 ```
 
 2. **Check Email Templates:**
+
 ```typescript
 // Verify merge fields are properly replaced
-console.log(replaceMergeFields({
-  messageString: userHtmlString,
-  mergeFields: { name: 'Test User' }
-}));
+console.log(
+  replaceMergeFields({
+    messageString: userHtmlString,
+    mergeFields: { name: 'Test User' },
+  })
+);
 ```
 
 ## 🎨 Styling Issues
@@ -246,6 +280,7 @@ console.log(replaceMergeFields({
 ### 1. SCSS Not Compiling
 
 **Error:**
+
 ```
 Sass error: @use rules must be written before any other rules
 ```
@@ -253,6 +288,7 @@ Sass error: @use rules must be written before any other rules
 **Solutions:**
 
 1. **Check SCSS Import Order:**
+
 ```scss
 // ✅ Correct order
 @use './variables' as *;
@@ -268,6 +304,7 @@ Sass error: @use rules must be written before any other rules
 ```
 
 2. **Update Sass Version:**
+
 ```bash
 pnpm add -D sass@latest
 ```
@@ -275,18 +312,21 @@ pnpm add -D sass@latest
 ### 2. CSS Not Loading in Production
 
 **Symptoms:**
+
 - Styles work in development but not in production
 - Missing CSS classes
 
 **Solutions:**
 
 1. **Check Build Output:**
+
 ```bash
 # Verify CSS is being generated
 ls -la .next/static/css/
 ```
 
 2. **Verify Import Paths:**
+
 ```typescript
 // Ensure proper CSS imports in layout.tsx
 import 'bootstrap/dist/css/bootstrap.css';
@@ -298,12 +338,14 @@ import './styles/globals.scss';
 ### 1. Touch Events Not Working
 
 **Symptoms:**
+
 - Swipe gestures don't work
 - Touch interactions are unresponsive
 
 **Solutions:**
 
 1. **Add Touch Event Handlers:**
+
 ```typescript
 const handleTouchStart = (e: TouchEvent) => {
   e.preventDefault(); // Prevent default behavior
@@ -315,6 +357,7 @@ element.addEventListener('touchstart', handleTouchStart, { passive: false });
 ```
 
 2. **Check CSS Touch Actions:**
+
 ```scss
 .touch-element {
   touch-action: manipulation; // Enable touch interactions
@@ -324,12 +367,14 @@ element.addEventListener('touchstart', handleTouchStart, { passive: false });
 ### 2. Viewport Issues
 
 **Symptoms:**
+
 - Layout breaks on mobile devices
 - Zoom behavior is incorrect
 
 **Solutions:**
 
 1. **Check Viewport Meta Tag:**
+
 ```typescript
 // In layout.tsx
 export const viewport = {
@@ -340,6 +385,7 @@ export const viewport = {
 ```
 
 2. **CSS Viewport Units:**
+
 ```scss
 // Use dvh instead of vh for mobile
 .full-height {
@@ -352,6 +398,7 @@ export const viewport = {
 ### 1. Slow Page Loads
 
 **Symptoms:**
+
 - Long Time to First Byte (TTFB)
 - Large bundle sizes
 - Slow image loading
@@ -359,12 +406,14 @@ export const viewport = {
 **Solutions:**
 
 1. **Analyze Bundle Size:**
+
 ```bash
 pnpm analyze
 # Check for large dependencies
 ```
 
 2. **Optimize Images:**
+
 ```typescript
 // Use next/image with proper sizing
 <Image
@@ -378,6 +427,7 @@ pnpm analyze
 ```
 
 3. **Implement Code Splitting:**
+
 ```typescript
 // Dynamic imports for heavy components
 const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
@@ -389,6 +439,7 @@ const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
 ### 2. Memory Leaks
 
 **Symptoms:**
+
 - Browser tab uses excessive memory
 - Performance degrades over time
 - Audio crackling
@@ -396,6 +447,7 @@ const AudioPlayer = dynamic(() => import('./AudioPlayer'), {
 **Solutions:**
 
 1. **Clean Up Audio Context:**
+
 ```typescript
 useEffect(() => {
   return () => {
@@ -410,11 +462,14 @@ useEffect(() => {
 ```
 
 2. **Remove Event Listeners:**
+
 ```typescript
 useEffect(() => {
-  const handleResize = () => { /* ... */ };
+  const handleResize = () => {
+    /* ... */
+  };
   window.addEventListener('resize', handleResize);
-  
+
   return () => {
     window.removeEventListener('resize', handleResize);
   };
@@ -426,6 +481,7 @@ useEffect(() => {
 ### 1. Content Security Policy Violations
 
 **Error:**
+
 ```
 Refused to load the script because it violates the following Content Security Policy directive
 ```
@@ -433,6 +489,7 @@ Refused to load the script because it violates the following Content Security Po
 **Solutions:**
 
 1. **Update CSP Headers:**
+
 ```typescript
 // next.config.mjs
 const cspHeader = `
@@ -442,6 +499,7 @@ const cspHeader = `
 ```
 
 2. **Use Nonce for Inline Scripts:**
+
 ```typescript
 // For dynamic scripts, use nonce-based CSP
 ```
@@ -449,6 +507,7 @@ const cspHeader = `
 ### 2. CORS Errors
 
 **Error:**
+
 ```
 Access to fetch at 'api-url' from origin 'localhost:3000' has been blocked by CORS policy
 ```
@@ -456,6 +515,7 @@ Access to fetch at 'api-url' from origin 'localhost:3000' has been blocked by CO
 **Solutions:**
 
 1. **Configure CORS in API Routes:**
+
 ```typescript
 // app/api/route.ts
 export async function GET(request: Request) {
@@ -474,6 +534,7 @@ export async function GET(request: Request) {
 ### 1. Hot Reload Not Working
 
 **Symptoms:**
+
 - Changes don't reflect automatically
 - Browser doesn't refresh
 - Fast Refresh fails
@@ -481,6 +542,7 @@ export async function GET(request: Request) {
 **Solutions:**
 
 1. **Check File Watcher Limits (Linux):**
+
 ```bash
 # Increase file watcher limit
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
@@ -488,6 +550,7 @@ sudo sysctl -p
 ```
 
 2. **Restart Development Server:**
+
 ```bash
 # Kill any existing processes
 pkill -f "next dev"
@@ -497,6 +560,7 @@ pnpm dev
 ### 2. Port Already in Use
 
 **Error:**
+
 ```
 Error: listen EADDRINUSE: address already in use :::3000
 ```
@@ -504,6 +568,7 @@ Error: listen EADDRINUSE: address already in use :::3000
 **Solutions:**
 
 1. **Kill Process on Port:**
+
 ```bash
 # Find and kill process
 lsof -ti:3000 | xargs kill -9
@@ -513,6 +578,7 @@ pnpm dev -- -p 3001
 ```
 
 2. **Use Different Port:**
+
 ```bash
 # Set in package.json
 {
@@ -527,6 +593,7 @@ pnpm dev -- -p 3001
 ### 1. Environment Variables Not Working
 
 **Symptoms:**
+
 - Features work locally but not in production
 - Database connections fail
 - API keys not found
@@ -536,16 +603,17 @@ pnpm dev -- -p 3001
 1. **Check Vercel Environment Variables:**
    - Go to your Vercel project dashboard
    - Navigate to Settings → Environment Variables
-   - Ensure all required variables are set:
-     - `NETLIFYL_DATABASE_URL` (Neon database connection)
-     - `RESEND_API_KEY` (Email service)
-     - `NEXT_PUBLIC_SANITY_PROJECT_ID` (CMS)
-     - All AWS variables for audio player
+   - Ensure all required server-only variables are set:
+     - `DATABASE_URL` (Neon database connection)
+     - `RESEND_API_KEY` (email service)
+     - `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_BUCKET_NAME` (music storage)
+     - `CLOUDFRONT_DOMAIN`, `CLOUDFRONT_KEY_PAIR_ID`, and `CLOUDFRONT_PRIVATE_KEY` when CloudFront signing is enabled
 
-2. **Verify Variable Names:**
+2. **Verify Variable Names and Visibility:**
    - Make sure variable names match exactly (case-sensitive)
    - Check for trailing spaces or special characters
-   - Ensure `NEXT_PUBLIC_` prefix for client-side variables
+   - Use `NEXT_PUBLIC_` only for `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_ANALYTICS`, and `NEXT_PUBLIC_CLARITY_APP_CODE`
+   - Never add `NEXT_PUBLIC_` to database credentials, API keys, AWS credentials, or private keys
 
 3. **Redeploy After Changes:**
    ```bash
@@ -557,6 +625,7 @@ pnpm dev -- -p 3001
 ### 2. Database Connection Issues
 
 **Symptoms:**
+
 - Emoji reactions not working
 - Database queries failing
 - Connection timeouts
@@ -569,10 +638,11 @@ pnpm dev -- -p 3001
    - Ensure database migrations are applied
 
 2. **Run Migrations on Vercel:**
+
    ```bash
    # Add this to package.json scripts
    "db:migrate:vercel": "drizzle-kit migrate"
-   
+
    # Or run manually in Vercel CLI
    vercel env pull .env.local
    npx drizzle-kit migrate
@@ -580,13 +650,15 @@ pnpm dev -- -p 3001
 
 3. **Test Database Connection:**
    ```bash
-   # Test locally with production database
-   VERCEL_DATABASE_URL=your_production_db_url npx drizzle-kit studio
+   # Pull the environment into the ignored local file, then open Drizzle Studio.
+   vercel env pull .env.local
+   pnpm db:studio
    ```
 
 ### 3. Build Failures
 
 **Symptoms:**
+
 - Deployment fails during build
 - TypeScript errors in production
 - Missing dependencies
@@ -599,10 +671,11 @@ pnpm dev -- -p 3001
    - Check for TypeScript compilation errors
 
 2. **Optimize Build:**
+
    ```bash
    # Test build locally
    npm run build
-   
+
    # Check bundle size
    npm run analyze
    ```
@@ -617,6 +690,7 @@ pnpm dev -- -p 3001
 ### 4. Function Timeout Issues
 
 **Symptoms:**
+
 - API routes timing out
 - Database queries taking too long
 - Cold start delays
@@ -629,6 +703,7 @@ pnpm dev -- -p 3001
    - Implement caching strategies
 
 2. **Increase Function Timeout:**
+
    ```typescript
    // In your API routes, add timeout handling
    export const maxDuration = 30; // 30 seconds
@@ -672,6 +747,7 @@ pnpm build 2>&1 | tail -20
 ### 3. Creating Bug Reports
 
 Include:
+
 - Steps to reproduce
 - Expected vs actual behavior
 - Environment details
@@ -685,6 +761,7 @@ Include:
 ### Prevention Strategies
 
 1. **Use TypeScript Strict Mode:**
+
 ```json
 // tsconfig.json
 {
@@ -696,6 +773,7 @@ Include:
 ```
 
 2. **Enable ESLint Rules:**
+
 ```json
 // .eslintrc.json
 {
@@ -704,6 +782,7 @@ Include:
 ```
 
 3. **Monitor Performance:**
+
 ```bash
 # Regular bundle analysis
 pnpm analyze
@@ -715,4 +794,4 @@ lhci autorun
 
 ---
 
-**Still having issues? Feel free to [open an issue](https://github.com/your-username/portfolio-v2/issues) with detailed information!** 🆘 
+**Still having issues? Feel free to [open an issue](https://github.com/your-username/portfolio-v2/issues) with detailed information!** 🆘

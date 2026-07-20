@@ -9,6 +9,7 @@ import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
 import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
 import { logger } from '@/app/utils/logger';
 import { rateLimit } from '@/app/utils/ratelimit';
+import { serverEnv } from '@/env';
 
 // Define a schema for input validation
 const contactSchema = z.object({
@@ -18,7 +19,7 @@ const contactSchema = z.object({
   message: z.string().min(1, { message: 'Message is required' }),
 });
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(serverEnv.RESEND_API_KEY);
 
 /**
  * Handle contact form submission
@@ -157,7 +158,6 @@ export async function POST(
     const errorResponse: ContactAPIResponse = {
       success: false,
       message: 'Error in sending mail',
-      error: e instanceof Error ? e.message : 'Unknown error',
       statusCode: 500,
     };
 

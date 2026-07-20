@@ -5,10 +5,7 @@ import {
   generateMusicMarkdown,
   generateResumeMarkdown,
 } from './pages';
-import {
-  generateBlogIndexMarkdown,
-  generateBlogPostMarkdown,
-} from './blog';
+import { generateBlogIndexMarkdown, generateBlogPostMarkdown } from './blog';
 
 export interface MarkdownDocument {
   content: string;
