@@ -135,7 +135,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     if (prefs.volume !== 0.7) {
       setVolume(prefs.volume);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Restore persisted track index once tracks are available
@@ -146,7 +146,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       restoringFromStorageRef.current = true;
       setCurrentTrackIndex(prefs.trackIndex);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasTracks]);
 
   // Persist volume + track index whenever they change
@@ -193,12 +193,16 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // handleEnded keeps calling handleNext directly so natural completions
   // are not counted as skips.
   const handleNextUser = useCallback(() => {
-    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'next' } });
+    Sentry.metrics.count('audio.track.skip', 1, {
+      attributes: { direction: 'next' },
+    });
     handleNext();
   }, [handleNext]);
 
   const handlePreviousUser = useCallback(() => {
-    Sentry.metrics.count('audio.track.skip', 1, { attributes: { direction: 'previous' } });
+    Sentry.metrics.count('audio.track.skip', 1, {
+      attributes: { direction: 'previous' },
+    });
     handlePrevious();
   }, [handlePrevious]);
 
@@ -322,7 +326,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           body: JSON.stringify({ path: tracks[currentTrackIndex].path }),
         });
         if (!urlResponse.ok) throw new Error('Failed to get audio URL');
-        const { url: newUrl } = await urlResponse.json() as { url: string };
+        const { url: newUrl } = (await urlResponse.json()) as { url: string };
 
         // If component unmounted or URL is the same, don't proceed
         if (!isMounted || newUrl === currentAudioUrl) {

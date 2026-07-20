@@ -27,7 +27,8 @@ export function useKeyboardShortcuts({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      if (INTERACTIVE_TAGS.has(target.tagName) || target.isContentEditable) return;
+      if (INTERACTIVE_TAGS.has(target.tagName) || target.isContentEditable)
+        return;
 
       switch (e.code) {
         case 'Space':
@@ -58,5 +59,13 @@ export function useKeyboardShortcuts({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [enabled, onPlayPause, onNext, onPrevious, onToggleMute, volume, onVolumeSet]);
+  }, [
+    enabled,
+    onPlayPause,
+    onNext,
+    onPrevious,
+    onToggleMute,
+    volume,
+    onVolumeSet,
+  ]);
 }

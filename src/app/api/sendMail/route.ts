@@ -97,10 +97,16 @@ export async function POST(
       }),
     ]);
 
-    Sentry.metrics.count('contact.email.sent', 1, { attributes: { status: 'success' } });
-    Sentry.metrics.distribution('api.sendmail.duration', performance.now() - start, {
-      unit: 'millisecond',
+    Sentry.metrics.count('contact.email.sent', 1, {
+      attributes: { status: 'success' },
     });
+    Sentry.metrics.distribution(
+      'api.sendmail.duration',
+      performance.now() - start,
+      {
+        unit: 'millisecond',
+      }
+    );
 
     const successResponse: ContactAPIResponse = {
       success: true,
@@ -115,11 +121,17 @@ export async function POST(
     return NextResponse.json(successResponse, { status: 200 });
   } catch (e) {
     logger.error('Error in sending mail:', e);
-    Sentry.metrics.count('contact.email.sent', 1, { attributes: { status: 'error' } });
-    Sentry.metrics.distribution('api.sendmail.duration', performance.now() - start, {
-      attributes: { error: 'true' },
-      unit: 'millisecond',
+    Sentry.metrics.count('contact.email.sent', 1, {
+      attributes: { status: 'error' },
     });
+    Sentry.metrics.distribution(
+      'api.sendmail.duration',
+      performance.now() - start,
+      {
+        attributes: { error: 'true' },
+        unit: 'millisecond',
+      }
+    );
 
     // Check for specific error types
     if (e instanceof Error) {

@@ -90,13 +90,13 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const getServerSnapshot = useCallback(
     () => defaultTheme === 'light',
-    [defaultTheme],
+    [defaultTheme]
   );
 
   const isLightMode = useSyncExternalStore(
     subscribe,
     isServer ? getServerSnapshot : getClientSnapshot,
-    getServerSnapshot,
+    getServerSnapshot
   );
 
   const toggleTheme = useCallback(() => {
@@ -115,7 +115,7 @@ export function ThemeProvider({
       toggleTheme,
       setTheme,
     }),
-    [isLightMode, toggleTheme, setTheme],
+    [isLightMode, toggleTheme, setTheme]
   );
 
   return (

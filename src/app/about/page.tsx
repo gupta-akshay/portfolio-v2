@@ -7,21 +7,22 @@ import Experience from '@/app/components/Experience';
 import GitHubCalendar from '@/app/components/GitHubCalendar/GitHubCalendarLazy';
 import { getSiteUrl } from '@/lib/site-url';
 import { aboutContent } from '@/lib/site-content';
+import { getYearsOfExperience } from '@/app/utils/helpers/format';
 
 import styles from '../styles/sections/aboutSection.module.scss';
 
 const siteUrl = getSiteUrl();
+const aboutDescription =
+  'Learn about my work as a Senior Staff Engineer at PeopleGrove, including my engineering experience, skills, and product-focused approach.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'About',
-  description:
-    'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+  description: aboutDescription,
   openGraph: {
     type: 'profile',
-    title: 'About Akshay Gupta | Full-Stack Developer',
-    description:
-      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    title: 'About Akshay Gupta | Senior Staff Engineer',
+    description: aboutDescription,
     url: `${siteUrl}/about`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
@@ -37,21 +38,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Akshay Gupta | Full-Stack Developer',
-    description:
-      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    title: 'About Akshay Gupta | Senior Staff Engineer',
+    description: aboutDescription,
     creator: '@ashay_music',
     images: ['/about/opengraph-image'],
   },
   alternates: {
     canonical: `${siteUrl}/about`,
   },
-};
-
-const calculateExperience = (): number => {
-  const startDate = new Date('2017-09-13').getTime();
-  const currentDate = new Date().getTime();
-  return Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 365));
 };
 
 const EducationAndSkills = () => (
@@ -84,16 +78,16 @@ const EducationAndSkills = () => (
 );
 
 export default function About() {
-  const yearsOfExperience = calculateExperience();
+  const yearsOfExperience = getYearsOfExperience();
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
     name: 'About Akshay Gupta',
-    description:
-      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    description: aboutDescription,
     mainEntity: {
       '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
       name: 'Akshay Gupta',
       jobTitle: 'Senior Staff Engineer',
       worksFor: {

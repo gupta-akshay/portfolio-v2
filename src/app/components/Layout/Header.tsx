@@ -90,10 +90,7 @@ const Header = () => {
       >
         <div className='scroll-bar'>
           <div className='hl-top'>
-            <div
-              className='hl-logo'
-              style={{ cursor: 'default' }}
-            >
+            <div className='hl-logo' style={{ cursor: 'default' }}>
               <div className='img'>
                 <Image
                   src='/images/header.webp'

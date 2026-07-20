@@ -64,7 +64,7 @@ const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
   if (items.length === 0) return null;
 
   return (
-    <ul className="toc-list">
+    <ul className='toc-list'>
       {items.map((item) => (
         <li key={item.id} className={`toc-item toc-level-${item.level}`}>
           <a
@@ -159,11 +159,11 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
     <div
       className={`table-of-contents ${isVisible ? 'visible' : ''} ${className}`}
     >
-      <div className="toc-content-wrapper">
-        <div className="toc-header">
+      <div className='toc-content-wrapper'>
+        <div className='toc-header'>
           <h4>Table of Contents</h4>
         </div>
-        <nav className="toc-nav" aria-label="Table of contents">
+        <nav className='toc-nav' aria-label='Table of contents'>
           <TOCList items={nestedHeadings} activeId={activeId} />
         </nav>
       </div>

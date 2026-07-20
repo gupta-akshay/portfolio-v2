@@ -49,7 +49,7 @@ function getIp(req: NextRequest): string {
 
 export function rateLimit(
   req: NextRequest,
-  { id, limit, windowMs }: Options,
+  { id, limit, windowMs }: Options
 ): RateLimitResult {
   const now = Date.now();
   sweep(now);

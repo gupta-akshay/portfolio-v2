@@ -9,7 +9,8 @@ export default function DeviconCSSLoader() {
       try {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css';
+        link.href =
+          'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css';
         link.onerror = () => {
           logger.error('Failed to load devicon CSS from CDN');
         };

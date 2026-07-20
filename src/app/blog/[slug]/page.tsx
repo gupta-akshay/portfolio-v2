@@ -33,31 +33,30 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
 
   // Import the MDX file dynamically
   let Post;
-  let metadata;
 
   try {
     const mdxModule = await import(`@/content/blog/${slug}.mdx`);
     Post = mdxModule.default;
-    metadata = mdxModule.metadata;
   } catch {
-    notFound();
-  }
-
-  if (!metadata) {
     notFound();
   }
 
   const post = await getBlogBySlug(slug);
 
-  if (process.env.NODE_ENV === 'production' && post?.metadata.draft === true) {
+  if (!post) {
     notFound();
   }
 
-  const readingTime = post?.readingTime ?? '';
+  if (process.env.NODE_ENV === 'production' && post.metadata.draft === true) {
+    notFound();
+  }
+
+  const metadata = post.metadata;
+  const readingTime = post.readingTime;
   const headings = getBlogHeadings(slug);
   const siteUrl = getSiteUrl();
-
-  const ogImageUrl = `${siteUrl}/blog/${slug}/opengraph-image`;
+  const modifiedAt = metadata.modifiedAt ?? metadata.publishedAt;
+  const ogImageUrl = `${siteUrl}/blog/${slug}/opengraph-image/og-image`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -66,19 +65,20 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
     description: metadata.excerpt || metadata.title,
     image: ogImageUrl,
     datePublished: metadata.publishedAt,
-    dateModified: metadata.publishedAt,
+    dateModified: modifiedAt,
+    keywords: metadata.categories,
+    articleSection: metadata.categories[0],
     author: {
       '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
       name: metadata.author.name,
       url: `${siteUrl}/about`,
     },
     publisher: {
-      '@type': 'Organization',
-      name: 'Akshay Gupta',
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteUrl}/icon?size=192`,
-      },
+      '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
+      name: metadata.author.name,
+      url: `${siteUrl}/about`,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -98,7 +98,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
         description={metadata.excerpt || metadata.title}
       />
       <script
-        type="application/ld+json"
+        type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div
@@ -110,7 +110,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
           overflowX: 'hidden',
         }}
       >
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+        <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <div className={styles.blogFeatureImg}>
             {metadata.coverImage && (
               <Image
@@ -119,21 +119,18 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
                 width={1792}
                 height={1024}
                 className={styles.blogImage}
-                sizes="(max-width: 991px) 100vw, 1110px"
+                sizes='(max-width: 991px) 100vw, 1110px'
                 priority
               />
             )}
           </div>
-          <div className="row justify-content-center">
-            <div className="col-lg-8">
+          <div className='row justify-content-center'>
+            <div className='col-lg-8'>
               <article className={`${styles.article} route-shell`}>
                 <div className={styles.articleTitle}>
                   <div className={styles.hashtags}>
                     {metadata.categories.map((category: string) => (
-                      <span
-                        key={category}
-                        className={styles.hashtag}
-                      >
+                      <span key={category} className={styles.hashtag}>
                         #{category}
                       </span>
                     ))}
@@ -189,6 +186,7 @@ export async function generateMetadata({
 
     const { metadata } = post;
     const description = metadata.excerpt || metadata.title;
+    const modifiedAt = metadata.modifiedAt ?? metadata.publishedAt;
 
     return {
       title: metadata.title,
@@ -202,8 +200,10 @@ export async function generateMetadata({
         siteName: 'Akshay Gupta',
         locale: 'en_US',
         publishedTime: metadata.publishedAt,
-        modifiedTime: metadata.publishedAt,
-        authors: [metadata.author.name],
+        modifiedTime: modifiedAt,
+        authors: [`${siteUrl}/about`],
+        section: metadata.categories[0],
+        tags: metadata.categories,
       },
       twitter: {
         card: 'summary_large_image',

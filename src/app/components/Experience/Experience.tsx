@@ -104,7 +104,7 @@ export default function Experience({
   };
 
   const getVisibleExperiences = (
-    companyGroup: GroupedExperience,
+    companyGroup: GroupedExperience
   ): ExperienceItem[] => {
     const isExpanded = expandedCompanies.has(companyGroup.company);
     if (isExpanded) return companyGroup.experiences;
@@ -173,7 +173,10 @@ export default function Experience({
                 {visibleExperiences.map((experience, roleIndex) => (
                   <div
                     className={`${styles.roleCard} ${roleIndex > 0 ? styles.additionalRole : ''}`}
-                    key={experience.id || `${experience.company}-${experience.position}-${roleIndex}`}
+                    key={
+                      experience.id ||
+                      `${experience.company}-${experience.position}-${roleIndex}`
+                    }
                   >
                     <div className={styles.roleHeader}>
                       <div className={styles.roleInfo}>

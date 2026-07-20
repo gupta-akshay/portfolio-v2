@@ -28,10 +28,7 @@ export default function Contact() {
                 <p>{contactContent.intro}</p>
                 <ul>
                   <li className='media'>
-                    <Icon
-                      name='map-marker-alt'
-                      fontSize={20}
-                    />
+                    <Icon name='map-marker-alt' fontSize={20} />
                     <span className='media-body'>
                       {contactContent.location}
                     </span>

@@ -1,18 +1,18 @@
 import type { Metadata } from 'next';
 import { getSiteUrl } from '@/lib/site-url';
+import { contactContent } from '@/lib/site-content';
 
 const siteUrl = getSiteUrl();
+const contactDescription = contactContent.intro;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'Contact',
-  description:
-    'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
+  description: contactDescription,
   openGraph: {
     type: 'website',
     title: 'Contact Akshay Gupta',
-    description:
-      'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
+    description: contactDescription,
     url: `${siteUrl}/contact`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
         url: '/contact/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Contact Akshay Gupta - Get in touch for collaboration opportunities',
+        alt: 'Contact Akshay Gupta - Professional inquiries and collaboration',
         type: 'image/png',
       },
     ],
@@ -29,8 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Contact Akshay Gupta',
-    description:
-      'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
+    description: contactDescription,
     creator: '@ashay_music',
     images: ['/contact/opengraph-image'],
   },
@@ -48,8 +47,7 @@ export default function ContactLayout({
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
     name: 'Contact Akshay Gupta',
-    description:
-      'Get in touch with me for collaboration opportunities, project discussions, or any questions you might have.',
+    description: contactDescription,
     url: `${siteUrl}/contact`,
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -57,17 +55,20 @@ export default function ContactLayout({
     },
     author: {
       '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
       name: 'Akshay Gupta',
       url: siteUrl,
     },
-    provider: {
-      '@type': 'Organization',
-      name: 'Akshay Gupta Portfolio',
+    mainEntity: {
+      '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
+      name: 'Akshay Gupta',
       url: siteUrl,
+      email: contactContent.emails[0],
       contactPoint: {
         '@type': 'ContactPoint',
-        email: 'contact@akshaygupta.live',
-        contactType: 'customer support',
+        email: contactContent.emails[0],
+        contactType: 'professional inquiries',
       },
     },
   };

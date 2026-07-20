@@ -26,11 +26,21 @@ $grid-half-gutter: calc(#{$grid-gutter} / 2);
 }
 
 .container {
-  @media (min-width: $bp-sm) { max-width: 540px; }
-  @media (min-width: $bp-md) { max-width: 720px; }
-  @media (min-width: $bp-lg) { max-width: 960px; }
-  @media (min-width: $bp-xl) { max-width: 1140px; }
-  @media (min-width: $bp-xxl) { max-width: 1320px; }
+  @media (min-width: $bp-sm) {
+    max-width: 540px;
+  }
+  @media (min-width: $bp-md) {
+    max-width: 720px;
+  }
+  @media (min-width: $bp-lg) {
+    max-width: 960px;
+  }
+  @media (min-width: $bp-xl) {
+    max-width: 1140px;
+  }
+  @media (min-width: $bp-xxl) {
+    max-width: 1320px;
+  }
 }
 
 // Row (flex 12-col grid)
@@ -60,10 +70,14 @@ $grid-half-gutter: calc(#{$grid-gutter} / 2);
   width: math.percentage(math.div($n, 12));
 }
 
-.col { @include col-base; }
+.col {
+  @include col-base;
+}
 
 @for $i from 1 through 12 {
-  .col-#{$i} { @include col($i); }
+  .col-#{$i} {
+    @include col($i);
+  }
 }
 
 $breakpoints: (
@@ -76,21 +90,37 @@ $breakpoints: (
 
 @each $name, $bp in $breakpoints {
   @media (min-width: $bp) {
-    .col-#{$name} { @include col-base; }
+    .col-#{$name} {
+      @include col-base;
+    }
     @for $i from 1 through 12 {
-      .col-#{$name}-#{$i} { @include col($i); }
+      .col-#{$name}-#{$i} {
+        @include col($i);
+      }
     }
   }
 }
 
 // Display utilities (responsive subset used in app)
 @mixin display-utilities($suffix: '') {
-  .d#{$suffix}-none { display: none !important; }
-  .d#{$suffix}-inline { display: inline !important; }
-  .d#{$suffix}-inline-block { display: inline-block !important; }
-  .d#{$suffix}-block { display: block !important; }
-  .d#{$suffix}-flex { display: flex !important; }
-  .d#{$suffix}-inline-flex { display: inline-flex !important; }
+  .d#{$suffix}-none {
+    display: none !important;
+  }
+  .d#{$suffix}-inline {
+    display: inline !important;
+  }
+  .d#{$suffix}-inline-block {
+    display: inline-block !important;
+  }
+  .d#{$suffix}-block {
+    display: block !important;
+  }
+  .d#{$suffix}-flex {
+    display: flex !important;
+  }
+  .d#{$suffix}-inline-flex {
+    display: inline-flex !important;
+  }
 }
 
 @include display-utilities;
@@ -102,31 +132,73 @@ $breakpoints: (
 }
 
 // Flex utilities
-.flex-row { flex-direction: row !important; }
-.flex-row-reverse { flex-direction: row-reverse !important; }
-.flex-column { flex-direction: column !important; }
-.flex-column-reverse { flex-direction: column-reverse !important; }
-.flex-wrap { flex-wrap: wrap !important; }
-.flex-nowrap { flex-wrap: nowrap !important; }
+.flex-row {
+  flex-direction: row !important;
+}
+.flex-row-reverse {
+  flex-direction: row-reverse !important;
+}
+.flex-column {
+  flex-direction: column !important;
+}
+.flex-column-reverse {
+  flex-direction: column-reverse !important;
+}
+.flex-wrap {
+  flex-wrap: wrap !important;
+}
+.flex-nowrap {
+  flex-wrap: nowrap !important;
+}
 
-.align-items-start { align-items: flex-start !important; }
-.align-items-end { align-items: flex-end !important; }
-.align-items-center { align-items: center !important; }
-.align-items-baseline { align-items: baseline !important; }
-.align-items-stretch { align-items: stretch !important; }
+.align-items-start {
+  align-items: flex-start !important;
+}
+.align-items-end {
+  align-items: flex-end !important;
+}
+.align-items-center {
+  align-items: center !important;
+}
+.align-items-baseline {
+  align-items: baseline !important;
+}
+.align-items-stretch {
+  align-items: stretch !important;
+}
 
-.justify-content-start { justify-content: flex-start !important; }
-.justify-content-end { justify-content: flex-end !important; }
-.justify-content-center { justify-content: center !important; }
-.justify-content-between { justify-content: space-between !important; }
-.justify-content-around { justify-content: space-around !important; }
-.justify-content-evenly { justify-content: space-evenly !important; }
+.justify-content-start {
+  justify-content: flex-start !important;
+}
+.justify-content-end {
+  justify-content: flex-end !important;
+}
+.justify-content-center {
+  justify-content: center !important;
+}
+.justify-content-between {
+  justify-content: space-between !important;
+}
+.justify-content-around {
+  justify-content: space-around !important;
+}
+.justify-content-evenly {
+  justify-content: space-evenly !important;
+}
 
 // Text alignment + color utilities
-.text-start { text-align: left !important; }
-.text-end { text-align: right !important; }
-.text-center { text-align: center !important; }
-.text-danger { color: #dc3545 !important; }
+.text-start {
+  text-align: left !important;
+}
+.text-end {
+  text-align: right !important;
+}
+.text-center {
+  text-align: center !important;
+}
+.text-danger {
+  color: #dc3545 !important;
+}
 
 // Spacing utilities (Bootstrap scale: 0=0, 1=.25rem, 2=.5rem, 3=1rem, 4=1.5rem, 5=3rem)
 $spacers: (
@@ -139,34 +211,86 @@ $spacers: (
 );
 
 @each $key, $value in $spacers {
-  .m-#{$key}  { margin: $value !important; }
-  .mt-#{$key} { margin-top: $value !important; }
-  .mb-#{$key} { margin-bottom: $value !important; }
-  .ms-#{$key} { margin-left: $value !important; }
-  .me-#{$key} { margin-right: $value !important; }
-  .mx-#{$key} { margin-left: $value !important; margin-right: $value !important; }
-  .my-#{$key} { margin-top: $value !important; margin-bottom: $value !important; }
+  .m-#{$key} {
+    margin: $value !important;
+  }
+  .mt-#{$key} {
+    margin-top: $value !important;
+  }
+  .mb-#{$key} {
+    margin-bottom: $value !important;
+  }
+  .ms-#{$key} {
+    margin-left: $value !important;
+  }
+  .me-#{$key} {
+    margin-right: $value !important;
+  }
+  .mx-#{$key} {
+    margin-left: $value !important;
+    margin-right: $value !important;
+  }
+  .my-#{$key} {
+    margin-top: $value !important;
+    margin-bottom: $value !important;
+  }
 
-  .p-#{$key}  { padding: $value !important; }
-  .pt-#{$key} { padding-top: $value !important; }
-  .pb-#{$key} { padding-bottom: $value !important; }
-  .ps-#{$key} { padding-left: $value !important; }
-  .pe-#{$key} { padding-right: $value !important; }
-  .px-#{$key} { padding-left: $value !important; padding-right: $value !important; }
-  .py-#{$key} { padding-top: $value !important; padding-bottom: $value !important; }
+  .p-#{$key} {
+    padding: $value !important;
+  }
+  .pt-#{$key} {
+    padding-top: $value !important;
+  }
+  .pb-#{$key} {
+    padding-bottom: $value !important;
+  }
+  .ps-#{$key} {
+    padding-left: $value !important;
+  }
+  .pe-#{$key} {
+    padding-right: $value !important;
+  }
+  .px-#{$key} {
+    padding-left: $value !important;
+    padding-right: $value !important;
+  }
+  .py-#{$key} {
+    padding-top: $value !important;
+    padding-bottom: $value !important;
+  }
 }
 
-.m-auto  { margin: auto !important; }
-.mt-auto { margin-top: auto !important; }
-.mb-auto { margin-bottom: auto !important; }
-.ms-auto { margin-left: auto !important; }
-.me-auto { margin-right: auto !important; }
-.mx-auto { margin-left: auto !important; margin-right: auto !important; }
-.my-auto { margin-top: auto !important; margin-bottom: auto !important; }
+.m-auto {
+  margin: auto !important;
+}
+.mt-auto {
+  margin-top: auto !important;
+}
+.mb-auto {
+  margin-bottom: auto !important;
+}
+.ms-auto {
+  margin-left: auto !important;
+}
+.me-auto {
+  margin-right: auto !important;
+}
+.mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.my-auto {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+}
 
 // Bootstrap 4 alias used in about page; keep it working for visual parity
-.ml-auto { margin-left: auto !important; }
-.mr-auto { margin-right: auto !important; }
+.ml-auto {
+  margin-left: auto !important;
+}
+.mr-auto {
+  margin-right: auto !important;
+}
 
 // Form control base (matches Bootstrap .form-control basics used by contact form)
 .form-control {

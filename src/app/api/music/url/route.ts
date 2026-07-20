@@ -17,7 +17,7 @@ function isAllowedPath(path: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as { path?: unknown };
+    const body = (await request.json()) as { path?: unknown };
     const { path } = body;
 
     if (!path || !isAllowedPath(path as string)) {
@@ -28,6 +28,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url });
   } catch (error) {
     logger.error('Error generating signed URL:', error);
-    return NextResponse.json({ error: 'Failed to generate URL' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to generate URL' },
+      { status: 500 }
+    );
   }
 }

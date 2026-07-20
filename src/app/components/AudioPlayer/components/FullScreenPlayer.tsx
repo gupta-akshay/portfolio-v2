@@ -1,4 +1,10 @@
-import React, { RefObject, TouchEvent, useRef, useEffect, useState } from 'react';
+import React, {
+  RefObject,
+  TouchEvent,
+  useRef,
+  useEffect,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import Icon from '@/app/components/Icon/Icon';
 import { Track } from '../types';

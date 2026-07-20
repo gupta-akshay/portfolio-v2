@@ -8,8 +8,7 @@ export const useIsMobile = () => {
   useEffect(() => {
     const checkIsMobile = () => {
       const opera = (window as Window & { opera?: string }).opera;
-      const userAgent =
-        navigator.userAgent || navigator.vendor || opera || '';
+      const userAgent = navigator.userAgent || navigator.vendor || opera || '';
       const mobileRegex =
         /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
       const isMobileDevice = mobileRegex.test(userAgent);

@@ -24,38 +24,41 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isFetched, setIsFetched] = useState(false);
 
-  const fetchReactions = useCallback(async (signal: AbortSignal) => {
-    try {
-      const fingerprint = getOrCreateFingerprint();
+  const fetchReactions = useCallback(
+    async (signal: AbortSignal) => {
+      try {
+        const fingerprint = getOrCreateFingerprint();
 
-      // Add timestamp to prevent any caching
-      const timestamp = Date.now();
-      const response = await fetch(
-        `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}&t=${timestamp}`,
-        {
-          signal,
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            Pragma: 'no-cache',
-            Expires: '0',
-          },
+        // Add timestamp to prevent any caching
+        const timestamp = Date.now();
+        const response = await fetch(
+          `/api/reactions?blogSlug=${encodeURIComponent(blogSlug)}&fingerprint=${encodeURIComponent(fingerprint)}&t=${timestamp}`,
+          {
+            signal,
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              Pragma: 'no-cache',
+              Expires: '0',
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setReactions(data.reactions || []);
+          setUserReactions(data.userReactions || []);
         }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setReactions(data.reactions || []);
-        setUserReactions(data.userReactions || []);
+      } catch (error) {
+        // Don't log AbortError as it's expected when component unmounts
+        if (error instanceof Error && error.name !== 'AbortError') {
+          logger.error('Error fetching reactions:', error);
+        }
+      } finally {
+        setIsFetched(true);
       }
-    } catch (error) {
-      // Don't log AbortError as it's expected when component unmounts
-      if (error instanceof Error && error.name !== 'AbortError') {
-        logger.error('Error fetching reactions:', error);
-      }
-    } finally {
-      setIsFetched(true);
-    }
-  }, [blogSlug]);
+    },
+    [blogSlug]
+  );
 
   const handleReaction = useCallback(
     async (emoji: string) => {

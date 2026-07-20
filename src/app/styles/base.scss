@@ -13,7 +13,7 @@
   flex-direction: column;
   gap: 10px;
   scroll-behavior: auto;
-  
+
   @include down-lg {
     top: 70px;
     right: 2px;
@@ -62,7 +62,7 @@
     vertical-align: top;
     text-transform: none;
     letter-spacing: 0.4px;
-    
+
     @include down-sm {
       font-size: 28px;
       letter-spacing: 0.2px;
@@ -164,9 +164,9 @@
   text-decoration: none;
   @include transition(ease all 0.4s);
   border-radius: 4px;
-  
+
   cursor: pointer;
-  
+
   &.px-btn-theme {
     background: $px-theme;
     color: #09140e;

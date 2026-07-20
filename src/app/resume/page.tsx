@@ -4,21 +4,21 @@ import Layout from '@/app/components/Layout';
 import ResumeActions from './ResumeActions';
 import { resumeData } from './data';
 import { getSiteUrl } from '@/lib/site-url';
+import { getYearsOfExperience } from '@/app/utils/helpers/format';
 
 import styles from '@/app/styles/sections/resumeSection.module.scss';
 
 const siteUrl = getSiteUrl();
+const resumeDescription = `Resume of Akshay Gupta — Senior Staff Engineer with ${getYearsOfExperience()}+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'Resume',
-  description:
-    'Resume of Akshay Gupta — Senior Staff Engineer with 8+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS.',
+  description: resumeDescription,
   openGraph: {
     type: 'profile',
     title: 'Resume | Akshay Gupta',
-    description:
-      'Resume of Akshay Gupta — Senior Staff Engineer with 8+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS.',
+    description: resumeDescription,
     url: `${siteUrl}/resume`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
@@ -35,8 +35,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Resume | Akshay Gupta',
-    description:
-      'Resume of Akshay Gupta — Senior Staff Engineer with 8+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS.',
+    description: resumeDescription,
     creator: '@ashay_music',
     images: ['/resume/opengraph-image'],
   },
@@ -57,6 +56,7 @@ export default function Resume() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
+    '@id': `${siteUrl}/#person`,
     name: resumeData.name,
     jobTitle: resumeData.headline,
     url: siteUrl,
@@ -76,7 +76,7 @@ export default function Resume() {
       'https://linkedin.com/in/akshayguptaujn',
       'https://twitter.com/ashay_music',
     ],
-    description: resumeData.summary,
+    description: resumeDescription,
     alumniOf: {
       '@type': 'EducationalOrganization',
       name: 'Rajiv Gandhi Proudyogiki Vishwavidyalaya',
@@ -93,7 +93,11 @@ export default function Resume() {
         id='resume'
         data-nav-tooltip='Resume'
         className='pp-section pp-scrollable section'
-        style={{ position: 'relative', minHeight: '100vh', overflowX: 'hidden' }}
+        style={{
+          position: 'relative',
+          minHeight: '100vh',
+          overflowX: 'hidden',
+        }}
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           {/* Page title + action buttons */}

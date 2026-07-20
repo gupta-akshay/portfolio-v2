@@ -82,7 +82,10 @@ export async function GET(request: NextRequest) {
     // Aggregate counts (no fingerprint) are safe to share via CDN.
     // Fingerprint-scoped responses include per-user data, so keep them private.
     if (fingerprint) {
-      response.headers.set('Cache-Control', 'private, max-age=0, must-revalidate');
+      response.headers.set(
+        'Cache-Control',
+        'private, max-age=0, must-revalidate'
+      );
     } else {
       response.headers.set(
         'Cache-Control',
@@ -90,18 +93,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'GET' },
-      unit: 'millisecond',
-    });
+    Sentry.metrics.distribution(
+      'api.reactions.duration',
+      performance.now() - start,
+      {
+        attributes: { method: 'GET' },
+        unit: 'millisecond',
+      }
+    );
 
     return response;
   } catch (error) {
     logger.error('Error fetching reactions:', error);
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'GET', error: 'true' },
-      unit: 'millisecond',
-    });
+    Sentry.metrics.distribution(
+      'api.reactions.duration',
+      performance.now() - start,
+      {
+        attributes: { method: 'GET', error: 'true' },
+        unit: 'millisecond',
+      }
+    );
     return NextResponse.json(
       { error: 'Failed to fetch reactions' },
       { status: 500 }
@@ -125,7 +136,7 @@ export async function POST(request: NextRequest) {
         {
           status: 429,
           headers: { 'Retry-After': String(limit.retryAfterSec) },
-        },
+        }
       );
     }
 
@@ -225,7 +236,11 @@ export async function POST(request: NextRequest) {
     }
 
     Sentry.metrics.count('blog.reaction.toggle', 1, {
-      attributes: { emoji, blog_slug: blogSlug, action: isRemoving ? 'removed' : 'added' },
+      attributes: {
+        emoji,
+        blog_slug: blogSlug,
+        action: isRemoving ? 'removed' : 'added',
+      },
     });
 
     // Return updated reaction counts
@@ -238,10 +253,14 @@ export async function POST(request: NextRequest) {
       .where(eq(blogReactions.blogSlug, blogSlug))
       .groupBy(blogReactions.emoji);
 
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'POST' },
-      unit: 'millisecond',
-    });
+    Sentry.metrics.distribution(
+      'api.reactions.duration',
+      performance.now() - start,
+      {
+        attributes: { method: 'POST' },
+        unit: 'millisecond',
+      }
+    );
 
     return NextResponse.json({
       success: true,
@@ -250,10 +269,14 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     logger.error('Error adding reaction:', error);
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'POST', error: 'true' },
-      unit: 'millisecond',
-    });
+    Sentry.metrics.distribution(
+      'api.reactions.duration',
+      performance.now() - start,
+      {
+        attributes: { method: 'POST', error: 'true' },
+        unit: 'millisecond',
+      }
+    );
     return NextResponse.json(
       { error: 'Failed to add reaction' },
       { status: 500 }
