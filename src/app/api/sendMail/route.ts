@@ -70,10 +70,14 @@ export async function POST(
 
     const { name, email, subject, message } = result.data;
 
-    // These land inside an HTML email body, so escape before interpolating.
+    // The envelope address must stay raw — ' and & are legal in a mailbox, and
+    // escaping them would send the confirmation to an address that cannot
+    // receive it. Only the copy interpolated into the HTML body is escaped.
+    const recipient = email.trim();
+
     const sanitizedData: ContactFormData = {
       name: escapeHtml(name.trim()),
-      email: escapeHtml(email.trim()),
+      email: escapeHtml(recipient),
       subject: escapeHtml(subject?.trim() ?? ''),
       message: escapeHtml(message.trim()),
     };
@@ -82,7 +86,7 @@ export async function POST(
     await Promise.all([
       resend.emails.send({
         from: 'Akshay Gupta <contact@akshaygupta.live>',
-        to: [sanitizedData.email],
+        to: [recipient],
         subject: 'Thank you for contacting! I will reach out to you soon!',
         html: replaceMergeFields({
           messageString: userHtmlString,

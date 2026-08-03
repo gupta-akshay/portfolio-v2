@@ -23,7 +23,13 @@ const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
       <Link
         href={blogHref}
         className={styles.cardLink}
-        onClick={startLoading}
+        onClick={(e) => {
+          // Cmd/Ctrl/shift-click opens the post elsewhere and leaves this tab
+          // on the same route, so the overlay would hang until its 5s fallback.
+          const opensElsewhere =
+            e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;
+          if (!opensElsewhere) startLoading();
+        }}
         aria-label={`Read ${metadata.title}`}
       >
         <div className={styles.cover}>

@@ -72,12 +72,17 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
 }
 
 function calculateReadingTime(content: string): { text: string } {
-  const text = content
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]*`/g, '')
-    .replace(/<[^>]*>/g, '')
-    .replace(/[<>#*_~]/g, '')
-    .trim();
+  let stripped = content.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, '');
+
+  // One pass leaves a tag behind for nested markup (`<scr<span>ipt>`), so keep
+  // going until it stops changing.
+  let previous: string;
+  do {
+    previous = stripped;
+    stripped = stripped.replace(/<[^>]*>/g, '');
+  } while (stripped !== previous);
+
+  const text = stripped.replace(/[<>#*_~]/g, '').trim();
 
   const minutes = Math.ceil(text.split(/\s+/).filter(Boolean).length / 200);
 
