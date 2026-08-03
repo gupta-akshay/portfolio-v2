@@ -106,6 +106,16 @@ a {
   @include px-hover {
     color: $px-theme-hover;
   }
+
+  // Amber is unreadable as text on paper; darken it for the light theme.
+  // Components that paint their own colour (nav, buttons, slabs) override this.
+  .theme-light & {
+    color: $px-theme-ink;
+
+    @include px-hover {
+      color: $px-ink-light;
+    }
+  }
 }
 
 // Brutalism does not glide — corners are square and state changes are instant.

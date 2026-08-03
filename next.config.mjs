@@ -24,6 +24,11 @@ const nextConfig = {
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api'],
+    // Dart Sass prepends a UTF-8 BOM whenever a stylesheet's output contains a
+    // non-ASCII character. Bundling then lands that BOM mid-chunk, where it
+    // becomes part of the next selector and silently kills that rule. The
+    // documents are already served as UTF-8, so the marker is redundant.
+    charset: false,
   },
 
   images: {

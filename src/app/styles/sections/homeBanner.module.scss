@@ -64,26 +64,33 @@ $ease-standard: linear;
   animation: heroFadeUp 0.7s $ease-standard both;
 }
 
+// Solid slab rather than a tint — amber-on-amber-tint was unreadable on paper
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 0;
-  border: 1px solid $px-theme-rgb-1;
-  background: $px-theme-rgb-2;
-  color: $px-theme;
-  font-size: 14px;
-  font-weight: 500;
+  gap: 10px;
+  padding: 8px 14px;
+  border: $bd-thin solid $px-ink;
+  background: $px-theme;
+  color: $px-black;
+  font-family: $px-font-mono;
+  font-size: 12.5px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
   margin-bottom: 28px;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
 }
 
 .badgeDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 0;
-  background: $px-theme;
+  width: 9px;
+  height: 9px;
+  background: $px-black;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .title {

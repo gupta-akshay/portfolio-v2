@@ -28,6 +28,17 @@ interface WaveformSeekerProps {
   label: string;
 }
 
+// The expanded row sits on the amber accent slab, so it needs dark bars;
+// the player bar sits on the page surface and uses the accent itself.
+const ON_ACCENT = {
+  played: '#0b0b10',
+  hover: 'rgba(11, 11, 16, 0.45)',
+  idle: 'rgba(11, 11, 16, 0.25)',
+  reflect: 'rgba(11, 11, 16, 0.35)',
+  reflectHover: 'rgba(11, 11, 16, 0.18)',
+  reflectIdle: 'rgba(11, 11, 16, 0.12)',
+};
+
 // Chunkier bars than the previous design — the waveform reads as blocks
 const VARIANTS = {
   row: { barWidth: 4, reflect: true, showTooltip: true },
@@ -83,12 +94,25 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
     const mainHeight = reflect ? height * 0.68 : height;
     const reflectionHeight = height - mainHeight;
 
-    const idleColor = isLightMode
-      ? 'rgba(11, 11, 19, 0.22)'
-      : 'rgba(255, 255, 255, 0.22)';
-    const idleReflectionColor = isLightMode
-      ? 'rgba(11, 11, 19, 0.09)'
-      : 'rgba(255, 255, 255, 0.09)';
+    const onAccent = variant === 'row';
+
+    const playedColor = onAccent ? ON_ACCENT.played : ACCENT;
+    const hoverColor = onAccent ? ON_ACCENT.hover : ACCENT_HOVER;
+    const playedReflect = onAccent ? ON_ACCENT.reflect : ACCENT_REFLECT;
+    const hoverReflect = onAccent
+      ? ON_ACCENT.reflectHover
+      : ACCENT_REFLECT_HOVER;
+
+    const idleColor = onAccent
+      ? ON_ACCENT.idle
+      : isLightMode
+        ? 'rgba(11, 11, 19, 0.22)'
+        : 'rgba(255, 255, 255, 0.22)';
+    const idleReflectionColor = onAccent
+      ? ON_ACCENT.reflectIdle
+      : isLightMode
+        ? 'rgba(11, 11, 19, 0.09)'
+        : 'rgba(255, 255, 255, 0.09)';
 
     for (let i = 0; i < barCount; i++) {
       const peak =
@@ -99,9 +123,9 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
       const isHovered = hoverRatio !== null && ratio <= hoverRatio;
 
       ctx.fillStyle = isPlayed
-        ? ACCENT
+        ? playedColor
         : isHovered
-          ? ACCENT_HOVER
+          ? hoverColor
           : idleColor;
 
       const barHeight = Math.max(2, peak * (mainHeight - 2));
@@ -109,9 +133,9 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
 
       if (reflect) {
         ctx.fillStyle = isPlayed
-          ? ACCENT_REFLECT
+          ? playedReflect
           : isHovered
-            ? ACCENT_REFLECT_HOVER
+            ? hoverReflect
             : idleReflectionColor;
         ctx.fillRect(
           x,
@@ -121,7 +145,16 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
         );
       }
     }
-  }, [trackId, peaks, barWidth, reflect, progress, hoverRatio, isLightMode]);
+  }, [
+    trackId,
+    peaks,
+    barWidth,
+    reflect,
+    variant,
+    progress,
+    hoverRatio,
+    isLightMode,
+  ]);
 
   useEffect(() => {
     draw();

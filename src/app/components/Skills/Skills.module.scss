@@ -1,49 +1,50 @@
 @use '../../styles/variables' as *;
 
-$border-subtle: $px-ink;
-
+// Track is wide enough for the longest label ("Google Cloud Platform") so no
+// chip ever wraps to a second line and rows stay a uniform height.
 .skills {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 12px;
 }
 
-// Skills chips are non-interactive, so the hover only brightens the surface —
+// Skills chips are non-interactive, so the hover only shifts the surface —
 // it never suggests the chip can be clicked.
 .skillsPill {
-  padding: 16px 18px;
-  border-radius: 0;
+  padding: 14px 16px;
   background: $px-dark;
-  border: 1px solid $border-subtle;
-  color: $px-body;
-  font-size: 15px;
-  font-weight: 500;
+  border: $bd-thin solid $px-ink;
+  color: $px-ink;
+  font-family: $px-font-mono;
+  font-size: 13px;
+  font-weight: $fw-bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  transition: box-shadow $dur $ease;
 
   &:hover {
-    border-color: $px-theme-rgb-1;
-    color: $px-white;
+    box-shadow: 3px 3px 0 var(--shadow-ink);
   }
 }
 
 .skillsPillIcon {
-  font-size: 20px;
+  font-size: 18px;
   color: $px-theme;
   flex-shrink: 0;
 }
 
 :global(body.theme-light) {
   .skillsPill {
-    background: $px-gray;
-    border-color: rgba($px-dark, 0.1);
-    color: $px-body-light;
+    background: $px-white;
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+  }
 
-    &:hover {
-      color: $px-dark;
-      border-color: $px-theme-rgb-1;
-    }
+  .skillsPillIcon {
+    color: $px-theme-ink;
   }
 }

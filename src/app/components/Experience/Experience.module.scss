@@ -64,19 +64,7 @@
   }
 
   .expandButton {
-    background: rgba(251, 191, 36, 0.1);
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    color: #fbbf24;
-
-    &:hover {
-      background: rgba(251, 191, 36, 0.2);
-      border-color: rgba(251, 191, 36, 0.5);
-    }
-
-    &.expanded {
-      background: rgba(251, 191, 36, 0.2);
-      border-color: rgba(251, 191, 36, 0.5);
-    }
+    border-color: $px-ink-light;
   }
 }
 
@@ -192,41 +180,41 @@
   }
 }
 
+// Solid amber slab — an amber tint behind amber text was unreadable on paper
 .expandButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(251, 191, 36, 0.1);
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  color: #fbbf24;
+  background: $px-theme;
+  border: $bd-thin solid $px-ink;
+  color: $px-black;
   padding: 0.5rem 1rem;
-  border-radius: 0;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-family: $px-font-mono;
+  font-size: 0.75rem;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
   white-space: nowrap;
+  transition: transform $dur $ease, box-shadow $dur $ease;
 
   &:hover {
-    background: rgba(251, 191, 36, 0.15);
-    border-color: rgba(251, 191, 36, 0.3);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: $px-theme-hover;
+    box-shadow: 3px 3px 0 var(--shadow-ink);
   }
 
-  &:focus {
-    outline: 2px solid rgba(251, 191, 36, 0.5);
-    outline-offset: 2px;
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
   }
 
   &.expanded {
-    background: rgba(251, 191, 36, 0.2);
-    border-color: rgba(251, 191, 36, 0.5);
+    background: $px-violet;
   }
 
   @include down-sm {
     padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 }
 

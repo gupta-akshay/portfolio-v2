@@ -48,6 +48,38 @@
   gap: 24px;
 }
 
+.loadMoreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.loadMore {
+  gap: 12px;
+}
+
+.loadMoreCount {
+  font-family: $px-font-mono;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border: 2px solid currentColor;
+}
+
+.postCount {
+  margin-top: 20px;
+  text-align: center;
+  font-family: $px-font-mono;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $px-body;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
 // Theme overrides
 :global(body.theme-light) {
   .singleBlog {
