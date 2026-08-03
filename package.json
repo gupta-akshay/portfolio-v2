@@ -68,14 +68,5 @@
     "sass": "^1.102.0",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "sharp": "^0.35.3",
-      "postcss": "^8.5.10",
-      "esbuild": "^0.25.0",
-      "brace-expansion@1": "^1.1.17",
-      "brace-expansion@5": "^5.0.8"
-    }
   }
 }
