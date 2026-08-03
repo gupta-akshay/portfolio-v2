@@ -346,15 +346,11 @@
 // PRINT STYLES
 // ============================================================
 @media print {
-  :global(.header-left),
-  :global(.mob-header),
-  :global(.fixed-controls),
-  :global(.sidebar-overlay) {
+  :global(.fixed-controls) {
     display: none !important;
   }
 
   :global(.main-right) {
-    left: 0 !important;
     width: 100% !important;
     position: static !important;
     height: auto !important;

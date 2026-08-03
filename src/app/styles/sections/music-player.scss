@@ -12,11 +12,9 @@
 }
 
 .music-section {
-  padding-top: 100px !important;
   padding-bottom: 0 !important;
 
   @include down-md {
-    padding-top: 100px !important;
     padding-bottom: 0 !important;
   }
 
