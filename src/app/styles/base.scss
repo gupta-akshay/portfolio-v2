@@ -24,7 +24,7 @@
   min-height: 100vh;
   background: $px-bg-1;
   .theme-light & {
-    background: $px-white;
+    background: $px-gray;
   }
 }
 
@@ -57,17 +57,22 @@
     margin-bottom: 20px;
   }
   h3 {
-    color: $px-white;
+    color: $px-ink;
     margin: 0;
-    font-weight: 700;
-    font-size: 26px;
-    letter-spacing: -0.02em;
+    font-weight: $fw-bold;
+    font-size: 30px;
+    letter-spacing: $track-display;
+    text-transform: uppercase;
+    // Heavy rule under every section heading
+    border-bottom: $bd-thick solid $px-ink;
+    padding-bottom: 10px;
 
     @include down-sm {
-      font-size: 23px;
+      font-size: 24px;
     }
     .theme-light & {
-      color: $px-dark;
+      color: $px-ink-light;
+      border-bottom-color: $px-ink-light;
     }
   }
 }
@@ -113,7 +118,7 @@
     background: transparent;
     border: 1px solid $px-white;
     @include transition(ease all 0.55s);
-    border-radius: 50%;
+    border-radius: 0;
     margin: 0 5px;
     .theme-light & {
       border-color: $px-dark;
@@ -127,88 +132,88 @@
   }
 }
 
-/* BUTTON */
+/* BUTTON — solid slab, hard shadow, mechanical press */
 .px-btn {
-  padding: 0 25px;
-  line-height: 42px;
+  padding: 14px 26px;
   position: relative;
-  display: inline-block;
-  background: none;
-  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: $px-bg-2;
+  color: $px-ink;
+  border: $bd-thick solid $px-ink;
+  box-shadow: $shadow-sm;
+  font-family: $px-font;
   font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
   text-decoration: none;
-  @include transition(ease all 0.4s);
-  border-radius: 4px;
-
   cursor: pointer;
+  transition: transform $dur $ease, box-shadow $dur $ease;
 
-  &.px-btn-theme {
-    background: $px-theme;
-    color: #09140e;
-    font-weight: 500;
-    box-shadow: 0 12px 24px rgba($px-theme, 0.3);
-    .theme-light & {
-      box-shadow: 0 10px 22px rgba($px-theme, 0.25);
-    }
-    &:not(:disabled):hover {
-      background: color.adjust($px-theme, $lightness: 5%);
-      color: #0a110d;
-      box-shadow: 0 16px 28px rgba($px-theme, 0.36);
-      .theme-light & {
-        background: color.adjust($px-theme, $lightness: 4%);
-        color: #0a110d;
-      }
-    }
+  .theme-light & {
+    background: $px-white;
+    color: $px-ink-light;
+    border-color: $px-ink-light;
   }
 
+  // The slab travels onto its own shadow instead of lifting
+  &:not(:disabled):active {
+    transform: translate($press-offset, $press-offset);
+    box-shadow: $shadow-none;
+  }
+
+  &.px-btn-theme,
   &.px-btn-regular {
     background: $px-theme;
-    color: #09140e;
-    font-weight: 500;
+    color: $px-black;
+
     &:not(:disabled):hover {
-      background: color.adjust($px-theme, $lightness: 5%);
-      color: #0a110d;
-      .theme-light & {
-        background: color.adjust($px-theme, $lightness: 4%);
-        color: #0a110d;
-      }
+      background: $px-theme-hover;
+      color: $px-black;
+    }
+
+    .theme-light & {
+      background: $px-theme;
+      color: $px-black;
+      border-color: $px-ink-light;
     }
   }
 
   &:disabled {
-    background: #ccc;
-    color: #666;
+    background: #4a4a52;
+    color: #9a9aa2;
+    border-color: #6a6a72;
     box-shadow: none;
     cursor: not-allowed;
-    border-color: #bbb;
-    box-shadow: 4px 4px $px-white;
+
     .theme-light & {
-      box-shadow: 4px 4px $px-dark;
+      background: #d4d4cc;
+      color: #7a7a72;
+      border-color: #9a9a92;
+      box-shadow: none;
     }
   }
 }
 
+// Slab panel — the workhorse container
 .route-shell {
-  background: linear-gradient(
-    180deg,
-    rgba($px-white, 0.02) 0%,
-    rgba($px-white, 0.01) 100%
-  );
-  border: 1px solid rgba($px-white, 0.08);
-  border-radius: 14px;
+  background: $px-dark;
+  border: $bd-thick solid $px-ink;
+  box-shadow: $shadow-md;
   padding: 26px 24px;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
+
   .theme-light & {
-    background: rgba($px-white, 0.86);
-    border-color: rgba($px-dark, 0.1);
-    box-shadow: 0 10px 28px rgba($px-dark, 0.07);
+    background: $px-white;
+    border-color: $px-ink-light;
   }
+
   @include down-sm {
     padding: 18px 16px;
-    border-radius: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    box-shadow: $shadow-sm;
   }
 }
 

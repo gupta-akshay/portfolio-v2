@@ -48,6 +48,38 @@
   gap: 24px;
 }
 
+.loadMoreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.loadMore {
+  gap: 12px;
+}
+
+.loadMoreCount {
+  font-family: $px-font-mono;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border: 2px solid currentColor;
+}
+
+.postCount {
+  margin-top: 20px;
+  text-align: center;
+  font-family: $px-font-mono;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $px-body;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
 // Theme overrides
 :global(body.theme-light) {
   .singleBlog {
@@ -96,7 +128,7 @@
 
     ul li::marker,
     ol li::marker {
-      color: $px-theme;
+      color: $px-theme-ink;
     }
 
     ul ul li::marker,
@@ -150,11 +182,11 @@
     margin: 0 auto;
     aspect-ratio: 1792 / 1024;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 0;
     background: rgba($px-white, 0.04);
 
     @include down-md {
-      border-radius: 8px;
+      border-radius: 0;
     }
 
     .blogImage {
@@ -167,8 +199,10 @@
   }
 }
 
+// Body copy tracks the feature image width so the column edges line up
 .article {
-  margin: 15px 0 30px;
+  max-width: 1110px;
+  margin: 15px auto 30px;
 }
 
 .articleTitle {
@@ -222,7 +256,7 @@
     .avatar {
       width: 45px;
       height: 45px;
-      border-radius: 50%;
+      border-radius: 0;
       overflow: hidden;
       object-fit: cover;
       background-position: center;
@@ -353,7 +387,7 @@
     margin: 1.75rem 0;
     padding: 1.125rem 1.25rem;
     border-left: 4px solid $px-theme;
-    border-radius: 0 8px 8px 0;
+    border-radius: 0;
     background: rgba($px-theme, 0.1);
     color: $px-white;
     font-size: 1.125rem;
@@ -413,7 +447,7 @@
     max-width: 100%;
     height: auto;
     margin: 0.5rem auto;
-    border-radius: 8px;
+    border-radius: 0;
   }
 
   hr {
@@ -432,7 +466,7 @@
     overflow-x: auto;
     font-size: 0.95em;
     border: 1px solid rgba($px-white, 0.14);
-    border-radius: 8px;
+    border-radius: 0;
 
     th,
     td {

@@ -89,15 +89,3 @@ export const experienceData: ExperienceItem[] = [
     logo: '/images/tcs.svg',
   },
 ];
-
-export const getExperienceData = (): ExperienceItem[] => {
-  return experienceData;
-};
-
-export const getExperienceByCompany = (company: string): ExperienceItem[] => {
-  return experienceData.filter((exp) => exp.company === company);
-};
-
-export const getCurrentExperience = (): ExperienceItem | undefined => {
-  return experienceData.find((exp) => !exp.endDate);
-};

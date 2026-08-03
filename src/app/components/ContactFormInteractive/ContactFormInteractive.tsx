@@ -102,7 +102,7 @@ export default function ContactFormInteractive() {
                       disabled={isSending}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <span className='warning-text text-danger'>
+                      <span className='warning-text'>
                         {field.state.meta.errors[0]}
                       </span>
                     )}
@@ -141,7 +141,7 @@ export default function ContactFormInteractive() {
                       disabled={isSending}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <span className='warning-text text-danger'>
+                      <span className='warning-text'>
                         {field.state.meta.errors[0]}
                       </span>
                     )}
@@ -175,7 +175,7 @@ export default function ContactFormInteractive() {
                       disabled={isSending}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <span className='warning-text text-danger'>
+                      <span className='warning-text'>
                         {field.state.meta.errors[0]}
                       </span>
                     )}
@@ -209,7 +209,7 @@ export default function ContactFormInteractive() {
                       disabled={isSending}
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <span className='warning-text text-danger'>
+                      <span className='warning-text'>
                         {field.state.meta.errors[0]}
                       </span>
                     )}

@@ -2,15 +2,22 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/app/context/ThemeContext';
-import { formatTime, decodePeaks, getFallbackPeaks } from '../utils';
+import { formatTime, decodePeaks } from '../utils';
 import styles from '../AudioPlayer.module.scss';
 
-const FALLBACK_PEAK_COUNT = 400;
+// Flat placeholder for a track uploaded since the last `pnpm peaks:generate`
+// run. It reads as an unanalysed strip rather than faking an envelope.
+const FALLBACK_PEAKS = new Array<number>(400).fill(0.5);
 const BAR_GAP = 1.5;
 
+// Canvas can't read Sass tokens, so the accent is mirrored here.
+// Keep in sync with $px-theme in src/app/styles/variables.scss.
+const ACCENT = '#fbbf24';
+const ACCENT_HOVER = 'rgba(251, 191, 36, 0.45)';
+const ACCENT_REFLECT = 'rgba(251, 191, 36, 0.35)';
+const ACCENT_REFLECT_HOVER = 'rgba(251, 191, 36, 0.18)';
+
 interface WaveformSeekerProps {
-  /** Stable id, used to seed the placeholder shape when peaks are unavailable */
-  trackId: string;
   /** Base64 peak data precomputed from the real audio */
   peaks: string | null;
   currentTime: number;
@@ -21,13 +28,24 @@ interface WaveformSeekerProps {
   label: string;
 }
 
+// The expanded row sits on the amber accent slab, so it needs dark bars;
+// the player bar sits on the page surface and uses the accent itself.
+const ON_ACCENT = {
+  played: '#0b0b10',
+  hover: 'rgba(11, 11, 16, 0.45)',
+  idle: 'rgba(11, 11, 16, 0.25)',
+  reflect: 'rgba(11, 11, 16, 0.35)',
+  reflectHover: 'rgba(11, 11, 16, 0.18)',
+  reflectIdle: 'rgba(11, 11, 16, 0.12)',
+};
+
+// Chunkier bars than the previous design — the waveform reads as blocks
 const VARIANTS = {
-  row: { barWidth: 3, reflect: true, showTooltip: true },
-  bar: { barWidth: 2.5, reflect: false, showTooltip: false },
+  row: { barWidth: 4, reflect: true, showTooltip: true },
+  bar: { barWidth: 3, reflect: false, showTooltip: false },
 } as const;
 
 const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
-  trackId,
   peaks,
   currentTime,
   duration,
@@ -64,9 +82,7 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
     ctx.clearRect(0, 0, width, height);
 
     const decoded = peaks ? decodePeaks(peaks) : [];
-    const amplitudes = decoded.length
-      ? decoded
-      : getFallbackPeaks(trackId, FALLBACK_PEAK_COUNT);
+    const amplitudes = decoded.length ? decoded : FALLBACK_PEAKS;
 
     const barCount = Math.floor(width / (barWidth + BAR_GAP));
     if (barCount <= 0) return;
@@ -75,12 +91,25 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
     const mainHeight = reflect ? height * 0.68 : height;
     const reflectionHeight = height - mainHeight;
 
-    const idleColor = isLightMode
-      ? 'rgba(11, 11, 19, 0.22)'
-      : 'rgba(255, 255, 255, 0.22)';
-    const idleReflectionColor = isLightMode
-      ? 'rgba(11, 11, 19, 0.09)'
-      : 'rgba(255, 255, 255, 0.09)';
+    const onAccent = variant === 'row';
+
+    const playedColor = onAccent ? ON_ACCENT.played : ACCENT;
+    const hoverColor = onAccent ? ON_ACCENT.hover : ACCENT_HOVER;
+    const playedReflect = onAccent ? ON_ACCENT.reflect : ACCENT_REFLECT;
+    const hoverReflect = onAccent
+      ? ON_ACCENT.reflectHover
+      : ACCENT_REFLECT_HOVER;
+
+    const idleColor = onAccent
+      ? ON_ACCENT.idle
+      : isLightMode
+        ? 'rgba(11, 11, 19, 0.22)'
+        : 'rgba(255, 255, 255, 0.22)';
+    const idleReflectionColor = onAccent
+      ? ON_ACCENT.reflectIdle
+      : isLightMode
+        ? 'rgba(11, 11, 19, 0.09)'
+        : 'rgba(255, 255, 255, 0.09)';
 
     for (let i = 0; i < barCount; i++) {
       const peak =
@@ -91,9 +120,9 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
       const isHovered = hoverRatio !== null && ratio <= hoverRatio;
 
       ctx.fillStyle = isPlayed
-        ? '#2fbf71'
+        ? playedColor
         : isHovered
-          ? 'rgba(47, 191, 113, 0.45)'
+          ? hoverColor
           : idleColor;
 
       const barHeight = Math.max(2, peak * (mainHeight - 2));
@@ -101,9 +130,9 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
 
       if (reflect) {
         ctx.fillStyle = isPlayed
-          ? 'rgba(47, 191, 113, 0.35)'
+          ? playedReflect
           : isHovered
-            ? 'rgba(47, 191, 113, 0.18)'
+            ? hoverReflect
             : idleReflectionColor;
         ctx.fillRect(
           x,
@@ -113,7 +142,15 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
         );
       }
     }
-  }, [trackId, peaks, barWidth, reflect, progress, hoverRatio, isLightMode]);
+  }, [
+    peaks,
+    barWidth,
+    reflect,
+    variant,
+    progress,
+    hoverRatio,
+    isLightMode,
+  ]);
 
   useEffect(() => {
     draw();

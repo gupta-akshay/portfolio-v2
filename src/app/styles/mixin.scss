@@ -242,8 +242,10 @@
 // Hover
 @mixin px-hover {
   &:hover {
-    @content;
+    // Default hover tint first, so @content can override it. Emitting it after
+    // @content silently discarded every colour the caller passed in.
     color: color.adjust($px-theme, $lightness: -8%);
+    @content;
   }
 }
 

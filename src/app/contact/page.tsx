@@ -65,6 +65,16 @@ export default function Contact() {
                       target='_blank'
                       rel='noopener noreferrer'
                     >
+                      {/* Brand marks keep their own colour; the monochrome
+                          ones inherit the theme's ink */}
+                      <span
+                        className='contact-social-icon'
+                        {...('color' in social
+                          ? { style: { color: social.color } }
+                          : {})}
+                      >
+                        <Icon name={social.icon} />
+                      </span>
                       {social.label}
                     </a>
                   ))}

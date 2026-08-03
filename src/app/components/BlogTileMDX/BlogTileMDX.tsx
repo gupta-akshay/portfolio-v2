@@ -15,7 +15,7 @@ const BlogTileMDX = memo(
   ({ blog }: { blog: BlogPost }) => {
     const { metadata, slug, readingTime } = blog;
     const router = useRouter();
-    const { startLoading } = useLoading();
+    const startLoading = useLoading();
 
     const blogHref = `/blog/${slug}`;
     const { handleMouseEnter, handleMouseLeave } = useHoverPrefetch(blogHref, {

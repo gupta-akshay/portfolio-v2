@@ -1,7 +1,7 @@
 @use '../../styles/variables' as *;
 
-$border-subtle: rgba(255, 255, 255, 0.08);
-$shadow-card-float-hover: 0 18px 36px rgba(0, 0, 0, 0.28);
+$border-subtle: $px-ink;
+$shadow-card-float-hover: 8px 8px 0 var(--shadow-ink);
 
 .card {
   display: flex;
@@ -11,7 +11,7 @@ $shadow-card-float-hover: 0 18px 36px rgba(0, 0, 0, 0.28);
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-radius: 18px;
+  border-radius: 0;
   overflow: hidden;
   background: $px-dark;
   border: 1px solid $border-subtle;
@@ -52,7 +52,7 @@ $shadow-card-float-hover: 0 18px 36px rgba(0, 0, 0, 0.28);
   color: $px-theme;
   padding: 6px 14px;
   border: 1px solid $px-theme-rgb-1;
-  border-radius: 999px;
+  border-radius: 0;
   background: $px-theme-rgb-2;
 }
 

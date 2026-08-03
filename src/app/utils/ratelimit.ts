@@ -1,5 +1,4 @@
 import type { NextRequest } from 'next/server';
-import requestIp from 'request-ip';
 
 // Per-instance in-memory rate limit. Does NOT coordinate across
 // serverless instances — sufficient for casual abuse, not DDoS.
@@ -40,11 +39,9 @@ export interface RateLimitResult {
   limit: number;
 }
 
-function getIp(req: NextRequest): string {
-  const fake = {
-    headers: Object.fromEntries(req.headers) as Record<string, string>,
-  };
-  return requestIp.getClientIp(fake) || '127.0.0.1';
+export function getClientIp(req: NextRequest): string {
+  const forwarded = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+  return forwarded || req.headers.get('x-real-ip')?.trim() || '127.0.0.1';
 }
 
 export function rateLimit(
@@ -54,7 +51,7 @@ export function rateLimit(
   const now = Date.now();
   sweep(now);
 
-  const ip = getIp(req);
+  const ip = getClientIp(req);
   const key = `${id}:${ip}`;
   const existing = store.get(key);
 

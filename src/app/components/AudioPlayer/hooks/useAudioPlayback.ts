@@ -7,9 +7,7 @@ import { logger } from '@/app/utils/logger';
  */
 export const useAudioPlayback = (
   audioRef: RefObject<HTMLAudioElement | null>,
-  tracks: Track[],
-  audioContextRef: RefObject<AudioContext | null>,
-  gainNodeRef: RefObject<GainNode | null>
+  tracks: Track[]
 ) => {
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(
     null
@@ -38,13 +36,6 @@ export const useAudioPlayback = (
       return prevIndex === 0 ? tracks.length - 1 : prevIndex - 1;
     });
   }, [tracks.length]);
-
-  // Ensure AudioContext is resumed when playing starts
-  useEffect(() => {
-    if (isPlaying && audioContextRef.current?.state === 'suspended') {
-      audioContextRef.current.resume();
-    }
-  }, [isPlaying, audioContextRef]);
 
   // Setup audio event listeners (efficiently managed with cleanup)
   useEffect(() => {
@@ -77,17 +68,13 @@ export const useAudioPlayback = (
     };
   }, [currentTrackIndex, currentTrack, audioRef, volume, isMuted]);
 
-  // Sync volume/mute state between HTML5 Audio and Web Audio API
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
-    if (gainNodeRef.current) gainNodeRef.current.gain.value = volume;
-  }, [volume, gainNodeRef, audioRef]);
+  }, [volume, audioRef]);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.muted = isMuted;
-    if (gainNodeRef.current)
-      gainNodeRef.current.gain.value = isMuted ? 0 : volume;
-  }, [isMuted, volume, gainNodeRef, audioRef]);
+  }, [isMuted, audioRef]);
 
   // Reset player state when track changes
   useEffect(() => {
@@ -108,48 +95,15 @@ export const useAudioPlayback = (
     const audio = audioRef.current;
 
     try {
-      if (audioContextRef.current?.state === 'suspended') {
-        await audioContextRef.current.resume();
-      }
-
       audio.muted = false;
       audio.volume = volume;
-      if (gainNodeRef.current) gainNodeRef.current.gain.value = volume;
 
       if (isPlaying) {
         audio.pause();
         setIsPlaying(false);
       } else {
-        if (audio.readyState < audio.HAVE_ENOUGH_DATA) {
-          audio.load();
-          await new Promise<void>((resolve, reject) => {
-            // Define event handlers separately
-            const onCanPlay = () => {
-              cleanup();
-              resolve();
-            };
-
-            const onError = (e: Event) => {
-              logger.error('Error during load:', e);
-              cleanup();
-              reject(new Error('Failed to load audio'));
-            };
-
-            const cleanup = () => {
-              audio.removeEventListener('canplay', onCanPlay);
-              audio.removeEventListener('error', onError);
-            };
-
-            audio.addEventListener('canplay', onCanPlay);
-            audio.addEventListener('error', onError);
-
-            setTimeout(() => {
-              cleanup();
-              reject(new Error('Timeout waiting for audio to be playable'));
-            }, 5000);
-          });
-        }
-
+        // play() resolves once the browser has buffered enough to start, and
+        // rejects if the source fails — no readiness handshake needed here.
         await audio.play();
         setIsPlaying(true);
       }
@@ -178,16 +132,10 @@ export const useAudioPlayback = (
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
     setIsMuted(newVolume === 0);
-    if (gainNodeRef.current) gainNodeRef.current.gain.value = newVolume;
   };
 
   const toggleMute = () => {
-    setIsMuted((prevMuted) => {
-      const newMuted = !prevMuted;
-      if (gainNodeRef.current)
-        gainNodeRef.current.gain.value = newMuted ? 0 : volume;
-      return newMuted;
-    });
+    setIsMuted((prevMuted) => !prevMuted);
   };
 
   return {

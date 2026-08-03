@@ -1,8 +1,8 @@
 @use '../variables' as *;
 
-$border-subtle: rgba(255, 255, 255, 0.08);
-$shadow-btn-theme: 0 12px 24px rgba(47, 191, 113, 0.3);
-$shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
+$border-subtle: $px-ink;
+$shadow-btn-theme: 4px 4px 0 var(--shadow-ink);
+$shadow-btn-theme-hover: 6px 6px 0 var(--shadow-ink);
 
 .contact-eyebrow {
   font-size: 13px;
@@ -57,7 +57,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
 
 .contact-card {
   padding: 24px;
-  border-radius: 16px;
+  border-radius: 0;
   background: $px-dark;
   border: 1px solid $border-subtle;
   display: flex;
@@ -77,7 +77,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
 .contact-card-icon {
   width: 42px;
   height: 42px;
-  border-radius: 12px;
+  border-radius: 0;
   background: $px-theme-rgb-2;
   color: $px-theme;
   display: flex;
@@ -120,7 +120,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
     color: $px-theme;
 
     &:hover {
-      color: #38d47f;
+      color: #ffcf4d;
     }
 
     // The secondary address is de-emphasised, matching the design
@@ -140,32 +140,48 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
   }
 }
 
+.contact-social-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+}
+
 .contact-socials {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 
   a {
-    padding: 8px 14px;
-    border-radius: 999px;
-    border: 1px solid $border-subtle;
-    font-size: 13.5px;
-    font-weight: 500;
-    color: $px-body;
-    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border: $bd-thin solid $px-ink;
+    font-family: $px-font-mono;
+    font-size: 12.5px;
+    font-weight: $fw-bold;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $px-ink;
+    transition: box-shadow $dur $ease;
 
     &:hover {
-      border-color: $px-theme;
-      color: $px-theme;
+      color: $px-black;
+      background: $px-theme;
+      box-shadow: 3px 3px 0 var(--shadow-ink);
+
+      // Amber fill behind a black brand mark would swallow it
+      .contact-social-icon {
+        color: $px-black;
+      }
     }
 
     .theme-light & {
-      border-color: rgba($px-dark, 0.12);
-      color: $px-body-light;
+      border-color: $px-ink-light;
+      color: $px-ink-light;
 
       &:hover {
-        border-color: $px-theme;
-        color: $px-theme;
+        color: $px-black;
       }
     }
   }
@@ -175,7 +191,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
 
 .contact-form {
   padding: 32px;
-  border-radius: 20px;
+  border-radius: 0;
   background: $px-dark;
   border: 1px solid $border-subtle;
 
@@ -226,7 +242,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
 .form-control {
   width: 100%;
   padding: 13px 16px;
-  border-radius: 12px;
+  border-radius: 0;
   border: 1px solid $border-subtle;
   background: $px-bg-2;
   color: $px-white;
@@ -277,7 +293,7 @@ textarea.form-control {
     justify-content: center;
     padding: 14px 28px;
     border: none;
-    border-radius: 12px;
+    border-radius: 0;
     background: $px-theme;
     color: $px-dark;
     font-weight: 600;

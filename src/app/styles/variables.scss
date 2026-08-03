@@ -1,28 +1,79 @@
-$px-theme: #2fbf71 !default; // Main theme color
-$px-theme-rgb-1: rgb(47, 191, 113, 0.3);
-$px-theme-rgb-2: rgb(47, 191, 113, 0.15);
-$px-dark: #0b0b13 !default; // Dark Bg
+// ============================================================
+// NEO-BRUTALIST DESIGN TOKENS
+// Dark-first. Thick ink borders, hard offset shadows, zero radius,
+// instant state changes, one dominant grotesk.
+// ============================================================
+
+// --- Accent -------------------------------------------------
+// $px-theme stays the accent variable name so every component that already
+// references it recolours without churn.
+$px-theme: #fbbf24 !default; // Signal amber — primary accent
+$px-theme-rgb-1: rgba(251, 191, 36, 0.3);
+$px-theme-rgb-2: rgba(251, 191, 36, 0.15);
+$px-theme-hover: #ffcf4d;
+// Amber on paper fails contrast as text, so link/label text in light mode
+// uses this darkened amber instead.
+$px-theme-ink: #7a5c0d;
+
+$px-violet: #8b5cf6; // Secondary pop — remix badges, alt states
+$px-violet-rgb-1: rgba(139, 92, 246, 0.3);
+$px-violet-rgb-2: rgba(139, 92, 246, 0.15);
+
+// --- Surfaces -----------------------------------------------
+$px-bg-1: #0b0b10 !default; // Page canvas
+$px-bg-2: #14141c !default; // Panels / inputs
+$px-bg-3: #101018 !default; // Drawers / menus
+$px-dark: #14141c !default; // Card surface
 $px-white: #fff !default;
 $px-black: #000 !default;
+$px-gray: #f4f4ef !default; // Light-mode paper
 
-$px-bg-1: #10101a !default; // Main BG
-$px-bg-2: #0e0e17 !default;
-$px-bg-3: #0c0c14 !default; // Menu
-$px-gray: #f7f7ff !default;
-$px-error: #dc3545;
+// --- Ink ----------------------------------------------------
+$px-ink: #ffffff; // Border + heading ink (dark mode)
+$px-ink-light: #0b0b10; // Border + heading ink (light mode)
+$px-body: rgba(255, 255, 255, 0.72) !default;
+$px-body-light: #3f3f46 !default;
+
+$px-error: #ef4444;
 $px-pink: #ff00c1;
 $px-pink-comp: #00ff3e;
-$px-teal: #00fff9;
+$px-teal: #8b5cf6; // Aliased to violet; legacy badge references
 $px-teal-comp: #ff0006;
 
-$px-body: rgba(255, 255, 255, 0.8) !default;
-$px-body-light: #555 !default;
-$px-font-size: 15px !default;
-$px-line-height: 1.7 !default;
-$px-font: var(--font-rubik), monospace !default;
-// $px-font-alt: var(--font-playfair), serif !default;
+// --- Brutalist structure ------------------------------------
+$bd-thick: 3px; // Primary borders — cards, buttons, panels
+$bd-thin: 2px; // Secondary borders — inputs, chips
+$radius: 0; // Sharp corners — no exceptions, including badges
 
-// Breakpoints
+// Hard offset shadows: solid, never blurred. The colour is a custom property
+// so it tracks the ink of the active theme — white on the dark canvas, black
+// on the light one. A black shadow on a near-black page would be invisible.
+$shadow-sm: 4px 4px 0 var(--shadow-ink);
+$shadow-md: 6px 6px 0 var(--shadow-ink);
+$shadow-lg: 10px 10px 0 var(--shadow-ink);
+$shadow-none: 0 0 0 var(--shadow-ink);
+
+// Mechanical press: element travels onto its own shadow
+$press-offset: 4px;
+
+// Instant, not eased — brutalism does not glide
+$dur: 0.08s;
+$ease: linear;
+
+// --- Type ---------------------------------------------------
+$px-font: var(--font-grotesk), system-ui, sans-serif !default;
+$px-font-mono: var(--font-mono), ui-monospace, monospace !default;
+$px-font-size: 16px !default;
+$px-line-height: 1.6 !default;
+
+$fw-body: 500;
+$fw-bold: 700;
+
+// Display type is uppercase with tightened tracking
+$track-display: -0.02em;
+$track-label: 0.12em;
+
+// --- Breakpoints --------------------------------------------
 $px-media-xsm: 567px !default;
 $px-media-sm: 767px !default;
 $px-media-md: 991px !default;

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
-import requestIp from 'request-ip';
 import { eq, and, count } from 'drizzle-orm';
 import * as Sentry from '@sentry/nextjs';
 import { db } from '../../../../db';
 import { blogReactions, anonymousUsers } from '../../../../db/schema';
 import { logger } from '@/app/utils/logger';
-import { rateLimit } from '@/app/utils/ratelimit';
+import { rateLimit, getClientIp } from '@/app/utils/ratelimit';
 
 // Helper function to generate user fingerprint
 function generateFingerprint(req: NextRequest): string {
@@ -153,12 +152,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const fakeRequest = {
-      headers: Object.fromEntries(request.headers), // Convert Headers into plain object
-    };
-
     // Get client IP and generate server-side fingerprint as fallback
-    const ip = requestIp.getClientIp(fakeRequest) || '127.0.0.1';
+    const ip = getClientIp(request);
     const ipHash = hashIP(ip);
     const serverFingerprint = generateFingerprint(request);
     const userAgent = request.headers.get('user-agent') || '';

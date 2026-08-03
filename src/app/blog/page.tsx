@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
-import BlogTileMDX from '@/app/components/BlogTileMDX';
+import BlogList from './BlogList';
 import LoadingIndicator from '@/app/components/LoadingIndicator';
 import { getAllBlogs } from '@/lib/mdx';
 import { getSiteUrl } from '@/lib/site-url';
@@ -88,11 +88,7 @@ async function BlogPosts() {
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className={styles.postGrid}>
-        {posts.map((post) => (
-          <BlogTileMDX key={post.slug} blog={post} />
-        ))}
-      </div>
+      <BlogList posts={posts} />
     </>
   );
 }

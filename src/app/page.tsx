@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import Icon from '@/app/components/Icon/Icon';
+import SocialBar from '@/app/components/SocialBar/SocialBar';
 import { getSiteUrl } from '@/lib/site-url';
 import { homeContent } from '@/lib/site-content';
 import { getYearsOfExperience } from '@/app/utils/helpers/format';
@@ -102,6 +103,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <SocialBar />
     </Layout>
   );
 }

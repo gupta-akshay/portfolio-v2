@@ -10,12 +10,7 @@ const nextConfig = {
   experimental: {
     optimizeServerReact: true,
     serverMinification: true,
-    optimizePackageImports: [
-      'devicon',
-      'react-hot-toast',
-      'resend',
-      'zod',
-    ],
+    optimizePackageImports: ['react-hot-toast', 'resend', 'zod'],
   },
 
   // Turbopack configuration
@@ -24,6 +19,11 @@ const nextConfig = {
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api'],
+    // Dart Sass prepends a UTF-8 BOM whenever a stylesheet's output contains a
+    // non-ASCII character. Bundling then lands that BOM mid-chunk, where it
+    // becomes part of the next selector and silently kills that rule. The
+    // documents are already served as UTF-8, so the marker is redundant.
+    charset: false,
   },
 
   images: {
@@ -44,16 +44,6 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/',
-        headers: [
-          {
-            key: 'Link',
-            value:
-              '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
-          },
-        ],
-      },
-      {
         source: '/:path*',
         headers: [
           {
@@ -61,9 +51,9 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://va.vercel-scripts.com https://vercel.live https://scripts.clarity.ms https://static.cloudflareinsights.com",
-              "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live",
+              "style-src 'self' 'unsafe-inline' https://vercel.live",
               "img-src 'self' data: blob: https://*.google.com https://*.googleapis.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live https://www.googletagmanager.com https://vercel.live https://vercel.com",
-              "font-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live https://assets.vercel.com",
+              "font-src 'self' 'unsafe-inline' https://vercel.live https://assets.vercel.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills';
@@ -67,7 +66,7 @@ export default function About() {
         url: 'https://www.peoplegrove.com',
       },
       url: siteUrl,
-      image: `${siteUrl}/images/about-me.webp`,
+      image: `${siteUrl}/images/home-banner.webp`,
       description: `Senior Staff Engineer at PeopleGrove with over ${yearsOfExperience} years of experience in web development.`,
       sameAs: [
         'https://github.com/gupta-akshay',
@@ -114,33 +113,21 @@ export default function About() {
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
           <div className={styles.eyebrow}>About</div>
 
-          <div className={`${styles.heroGrid} route-shell`}>
-            <div className={styles.heroImage}>
-              <Image
-                src='/images/about-me.webp'
-                alt='Akshay Gupta'
-                width={560}
-                height={560}
-                loading='lazy'
-                sizes='(max-width: 900px) 100vw, 45vw'
-              />
-            </div>
-            <div>
-              <h1 className={styles.heroTitle}>
-                {aboutContent.heading}
-                <span>.</span>
-              </h1>
-              <p className={styles.heroText}>
-                {aboutContent.paragraphs[0]?.replace(
-                  '{years}',
-                  String(yearsOfExperience)
-                )}
-              </p>
-              <p className={styles.heroText}>{aboutContent.paragraphs[1]}</p>
-              <Link className={styles.cta} href='/contact'>
-                Start a Conversation
-              </Link>
-            </div>
+          <div className={`${styles.hero} route-shell`}>
+            <h1 className={styles.heroTitle}>
+              {aboutContent.heading}
+              <span>.</span>
+            </h1>
+            <p className={styles.heroText}>
+              {aboutContent.paragraphs[0]?.replace(
+                '{years}',
+                String(yearsOfExperience)
+              )}
+            </p>
+            <p className={styles.heroText}>{aboutContent.paragraphs[1]}</p>
+            <Link className={styles.cta} href='/contact'>
+              Start a Conversation
+            </Link>
           </div>
 
           <div className={styles.block}>

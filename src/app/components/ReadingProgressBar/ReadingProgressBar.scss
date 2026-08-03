@@ -16,17 +16,17 @@
   .reading-progress-fill {
     height: 100%;
     // Fallback for browsers that don't support color.adjust
-    background: linear-gradient(90deg, #2fbf71 0%, #1e8a52 100%);
+    background: linear-gradient(90deg, #fbbf24 0%, #1e8a52 100%);
     background: linear-gradient(
       90deg,
       $px-theme 0%,
       color.adjust($px-theme, $lightness: -10%) 100%
     );
     transition: width 0.3s ease;
-    border-radius: 0 5px 5px 0;
+    border-radius: 0;
     box-shadow:
-      0 0 10px rgba(47, 191, 113, 0.6),
-      0 0 20px rgba(47, 191, 113, 0.3),
+      0 0 10px rgba(251, 191, 36, 0.6),
+      0 0 20px rgba(251, 191, 36, 0.3),
       0 2px 4px rgba(0, 0, 0, 0.2);
     box-shadow:
       0 0 10px rgba($px-theme, 0.6),
@@ -42,7 +42,7 @@
       width: 2px;
       height: 100%;
       background: rgba(255, 255, 255, 0.9);
-      border-radius: 0 5px 5px 0;
+      border-radius: 0;
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
     }
   }
@@ -56,15 +56,15 @@ body.theme-dark .reading-progress-bar {
 
   .reading-progress-fill {
     // Fallback for dark mode
-    background: linear-gradient(90deg, #2fbf71 0%, #1a6b42 100%);
+    background: linear-gradient(90deg, #fbbf24 0%, #1a6b42 100%);
     background: linear-gradient(
       90deg,
       $px-theme 0%,
       color.adjust($px-theme, $lightness: -15%) 100%
     );
     box-shadow:
-      0 0 12px rgba(47, 191, 113, 0.8),
-      0 0 24px rgba(47, 191, 113, 0.4),
+      0 0 12px rgba(251, 191, 36, 0.8),
+      0 0 24px rgba(251, 191, 36, 0.4),
       0 2px 6px rgba(0, 0, 0, 0.3);
     box-shadow:
       0 0 12px rgba($px-theme, 0.8),
@@ -86,15 +86,15 @@ body.theme-light .reading-progress-bar {
 
   .reading-progress-fill {
     // Fallback for light mode
-    background: linear-gradient(90deg, #2fbf71 0%, #1e8a52 100%);
+    background: linear-gradient(90deg, #fbbf24 0%, #1e8a52 100%);
     background: linear-gradient(
       90deg,
       $px-theme 0%,
       color.adjust($px-theme, $lightness: -12%) 100%
     );
     box-shadow:
-      0 0 10px rgba(47, 191, 113, 0.5),
-      0 0 20px rgba(47, 191, 113, 0.2),
+      0 0 10px rgba(251, 191, 36, 0.5),
+      0 0 20px rgba(251, 191, 36, 0.2),
       0 2px 4px rgba(0, 0, 0, 0.15);
     box-shadow:
       0 0 10px rgba($px-theme, 0.5),

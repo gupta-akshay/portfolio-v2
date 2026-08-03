@@ -37,11 +37,32 @@ const SiteNav = () => {
     handleMouseLeave: handleBlogMouseLeave,
   } = useHoverPrefetch('/blog', { delay: 100, enabled: true });
 
-  // Prevent body scroll while the mobile menu is open
+  // Freeze the page behind the mobile menu. `overflow: hidden` on the root is
+  // not enough — Chromium still scrolls it and iOS Safari ignores it outright —
+  // so the body is pinned at its current offset and restored on close.
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
+    if (!isMenuOpen) return;
+
+    const { body } = document;
+    const scrollY = window.scrollY;
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+
     return () => {
-      document.body.style.overflow = 'unset';
+      body.style.position = previous.position;
+      body.style.top = previous.top;
+      body.style.width = previous.width;
+      body.style.overflow = previous.overflow;
+      window.scrollTo({ top: scrollY, behavior: 'instant' });
     };
   }, [isMenuOpen]);
 
@@ -52,6 +73,18 @@ const SiteNav = () => {
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isMenuOpen]);
+
+  // The menu is only reachable below 820px; closing it on the way past that
+  // breakpoint stops the scroll lock outliving the menu itself.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const query = window.matchMedia('(min-width: 821px)');
+    const onChange = () => {
+      if (query.matches) setIsMenuOpen(false);
+    };
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
   }, [isMenuOpen]);
 
   const themeLabel = isLightMode
@@ -112,6 +145,16 @@ const SiteNav = () => {
           <Icon name={isMenuOpen ? 'times' : 'bars'} />
         </button>
       </div>
+
+      {isMenuOpen && (
+        <button
+          type='button'
+          className={styles.backdrop}
+          onClick={() => setIsMenuOpen(false)}
+          aria-label='Close menu'
+          tabIndex={-1}
+        />
+      )}
 
       {isMenuOpen && (
         <div className={styles.mobileMenu} id='site-nav-menu'>

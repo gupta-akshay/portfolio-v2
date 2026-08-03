@@ -76,20 +76,34 @@
   width: 100%;
 }
 
+// Bordered slab with stepped bars, matching the global loader
 .loading-spinner {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  padding: 32px 40px;
+  border: $bd-thick solid $px-ink;
+  background: $px-dark;
+  box-shadow: $shadow-md;
   color: $px-theme;
+
+  .theme-light & {
+    border-color: $px-ink-light;
+    background: $px-white;
+  }
 
   p {
     margin: 0;
-    font-size: 1rem;
-    color: $px-white;
+    font-family: $px-font-mono;
+    font-size: 13px;
+    font-weight: $fw-bold;
+    letter-spacing: $track-label;
+    text-transform: uppercase;
+    color: $px-ink;
 
     .theme-light & {
-      color: $px-dark;
+      color: $px-ink-light;
     }
   }
 }

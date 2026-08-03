@@ -10,7 +10,7 @@ import styles from './BackBtn.module.scss';
 const BackBtn = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { startLoading } = useLoading();
+  const startLoading = useLoading();
 
   const handleBack = () => {
     if (pathname.startsWith('/blog/')) {
