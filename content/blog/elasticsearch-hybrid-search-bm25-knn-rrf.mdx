@@ -1,0 +1,282 @@
+export const metadata = {
+  title: 'Hybrid Search in Elasticsearch: Combining BM25 and kNN with RRF',
+  slug: 'elasticsearch-hybrid-search-bm25-knn-rrf',
+  publishedAt: '2026-07-27',
+  categories: ['elasticsearch', 'semantic-search', 'rag', 'performance'],
+  coverImage: '/images/blog/elasticsearch-hybrid-search-bm25-knn-rrf.webp',
+  coverImageAlt:
+    'Lexical and semantic search streams merging through reciprocal rank fusion into one ranked result set',
+  author: {
+    name: 'Akshay Gupta',
+    avatar: '/images/blog-author.webp',
+  },
+  excerpt:
+    'Build hybrid Elasticsearch retrieval by generating BM25 and kNN candidates independently, then combining their ranks with Reciprocal Rank Fusion.',
+};
+
+Semantic search is good at matching meaning. Lexical search is good at matching the words a user actually typed.
+
+Those strengths overlap, but they are not identical.
+
+A search for `SAML error AADSTS50011` contains an exact identifier that lexical matching should preserve. A search for “I return to the sign-in page after authenticating” may describe the same problem without using the words in the relevant support article. Dense embeddings can help with the second query, while BM25 can be decisive for the first.
+
+In my earlier article on [embeddings and k-nearest-neighbor search](/blog/building-smart-search-how-embeddings-and-knn-make-search-feel-human), I focused on the semantic side. In the [RAG support chatbot article](/blog/building-a-rag-powered-support-chatbot-in-24-hours-of-hackathon), I combined text retrieval with vector scoring. This article takes the next step: produce lexical and semantic candidate lists independently, then fuse their ranks with Reciprocal Rank Fusion, or RRF.
+
+The examples below target the Elasticsearch 9.x retriever API documented on July 27, 2026. If you operate an 8.x cluster, check the documentation for your exact minor version before copying the request shape.
+
+## Why BM25 and kNN belong in the same retrieval pipeline
+
+Elasticsearch uses BM25 as its default text similarity. BM25 scores matches using term frequency, document length normalization, and inverse document frequency. Its configurable `k1` and `b` parameters default to `1.2` and `0.75` respectively. [The Elasticsearch similarity reference documents these defaults](https://www.elastic.co/docs/reference/elasticsearch/index-settings/similarity).
+
+That makes lexical search a natural fit for:
+
+- product names, error codes, ticket IDs, and acronyms
+- uncommon terms that carry a lot of meaning
+- queries where the exact wording matters
+
+Dense-vector kNN search works differently. A model converts the query and each document or passage into vectors, and Elasticsearch retrieves nearby indexed vectors according to the field's configured similarity. The query vector must have the same dimensions and be created by the same embedding model as the document vectors. [Elasticsearch documents these requirements in its kNN search guide](https://www.elastic.co/docs/solutions/search/vector/knn).
+
+Semantic retrieval can help when the query and relevant text express similar intent with different words. It also introduces its own failure modes. An embedding may soften the importance of a precise identifier, and two passages can be semantically close without being interchangeable for the user's task.
+
+Hybrid search is useful because neither retriever has to impersonate the other.
+
+## Why lexical-first rescoring is not the same thing
+
+A common first implementation runs a text query, then applies vector similarity through Elasticsearch's `rescore` API. That can improve ordering inside a lexical candidate set, but the candidate generation remains one-sided.
+
+Elasticsearch applies a query rescorer only to the top documents returned by the initial query, as bounded by `window_size`. The default rescore window is 10 documents. [The rescore documentation defines this behavior](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/rescore-search-results).
+
+**Inference:** a document that is absent from the initial lexical window cannot be introduced by the vector rescorer, even if it would rank highly in an independent semantic search. The vector signal can reorder the lexical candidates, but it cannot recover a semantic-only candidate outside that window.
+
+RRF starts from a different architecture:
+
+1. BM25 produces its own ranked candidate list.
+2. kNN produces its own ranked candidate list.
+3. RRF combines the lists into one result set.
+
+This gives both retrieval methods a route into the final ranking.
+
+## How Reciprocal Rank Fusion works
+
+RRF combines two or more ranked result lists without directly comparing their raw scores. For a document `d`, the fused score is:
+
+```text
+RRF(d) = Σ 1 / (rank_constant + rank_i(d))
+```
+
+The sum includes each child result list in which the document appears. A document near the top of both lists receives contributions from both. A document found by only one retriever can still enter the fused ranking.
+
+This rank-based approach matters because a BM25 score and a vector similarity score do not share a universal scale. RRF avoids pretending that `12.4` from one scoring system is directly comparable with `0.83` from another.
+
+Elasticsearch's RRF retriever exposes `rank_constant` and `rank_window_size`. The documented default for `rank_constant` is 60, and a higher value gives lower-ranked results more influence. `rank_window_size` defaults to 10, must be at least the final requested `size`, and can improve relevance at an additional performance cost when increased. [The RRF retriever reference specifies these parameters and constraints](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/rrf-retriever).
+
+RRF removes the need to calibrate heterogeneous score ranges, but it does not remove tuning. Candidate depth, filters, retriever weights, and evaluation quality still matter.
+
+## Define the lexical and vector fields
+
+Here is a minimal index for a support knowledge base:
+
+```json
+PUT support-kb
+{
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text"
+      },
+      "content": {
+        "type": "text"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "source_type": {
+        "type": "keyword"
+      },
+      "embedding": {
+        "type": "dense_vector",
+        "dims": 384,
+        "index": true,
+        "similarity": "cosine"
+      }
+    }
+  }
+}
+```
+
+The `384` dimensions are only an example. Set `dims` to the output size of your embedding model and reject vectors created by a different model or model version. Elasticsearch's `dense_vector` mapping supports up to 4096 dimensions, indexes vectors by default, and defaults to cosine similarity for non-bit vectors when `similarity` is not specified. [The dense-vector mapping reference documents these settings](https://www.elastic.co/docs/reference/elasticsearch/mapping-reference/dense-vector).
+
+I prefer to specify `index` and `similarity` explicitly anyway. The mapping then records an intentional retrieval decision instead of relying on defaults.
+
+## Run BM25 and kNN as independent retrievers
+
+The current retriever API lets an RRF retriever contain a standard lexical retriever and a kNN retriever:
+
+```jsonc
+POST support-kb/_search
+{
+  "size": 10,
+  "_source": [
+    "title",
+    "content",
+    "source_type"
+  ],
+  "retriever": {
+    "rrf": {
+      "filter": {
+        "term": {
+          "status": "published"
+        }
+      },
+      "retrievers": [
+        {
+          "standard": {
+            "query": {
+              "multi_match": {
+                "query": "cannot sign in after sso redirect",
+                "fields": [
+                  "title^3",
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "knn": {
+            "field": "embedding",
+            "query_vector": [/* vector from the same embedding model */],
+            "k": 50,
+            "num_candidates": 200
+          }
+        }
+      ],
+      "rank_window_size": 50,
+      "rank_constant": 60
+    }
+  }
+}
+```
+
+The request follows Elastic's documented pattern of placing `standard` and `knn` child retrievers inside an `rrf` retriever. [Elastic provides the same two-retriever structure in its retriever examples](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/retrievers-examples).
+
+The numbers are illustrative, not universal recommendations. Their roles are:
+
+- `size` is the number of final hits requested.
+- `k` controls how many nearest neighbors the kNN retriever returns.
+- `num_candidates` controls how many approximate vector candidates Elasticsearch considers per shard before selecting the top neighbors.
+- `rank_window_size` limits how many results from each child retriever participate in fusion.
+- `rank_constant` controls how quickly a retriever's contribution falls with rank.
+
+For the kNN retriever, `k` must not exceed `num_candidates`. Increasing `num_candidates` tends to improve the accuracy of approximate kNN search at a computational cost. The current reference also caps it at 10,000. [The kNN retriever reference documents these constraints](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/knn-retriever).
+
+Do not tune one parameter in isolation. A large `k` does not help fusion if `rank_window_size` truncates the list much earlier, and a deep fusion window is wasted if a child retriever returns too few candidates.
+
+## Apply eligibility filters consistently
+
+Access rules, tenant boundaries, language, publication state, and document lifecycle are part of retrieval correctness.
+
+The `filter` placed at the RRF level in the example applies to every child retriever. Elasticsearch also prevents combining a top-level `query` with `retriever` in the same search request. [Both behaviors are documented in the RRF retriever reference](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/rrf-retriever).
+
+Using one shared eligibility filter helps prevent a subtle error: allowing the lexical retriever and vector retriever to search different corpora. If one includes drafts or cross-tenant documents while the other does not, the fused output can be invalid even when the ranking formula is correct.
+
+For a RAG system, enforce authorization before fusion and before any passage reaches the model. Relevance is never a substitute for access control.
+
+## Start with equal influence, then earn every weight
+
+The current RRF retriever supports weights on child retrievers. [Elastic's retriever examples include weighted RRF requests](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/retrievers-examples).
+
+That does not mean a production system should immediately assign `2.0` to semantic search because it feels more sophisticated. Begin with equal influence and compare the result against a judged query set. Add weights only when the evidence supports a persistent imbalance.
+
+A useful evaluation set should contain different retrieval behaviors:
+
+- exact identifiers, codes, and names
+- paraphrased intent
+- ambiguous short queries
+- long natural-language questions
+- queries constrained by tenant, language, or publication state
+- queries with no relevant result
+
+Evaluate BM25 alone, kNN alone, and RRF on the same judgments. Elasticsearch's rank evaluation API supports metrics including precision at k, recall at k, mean reciprocal rank, discounted cumulative gain, normalized discounted cumulative gain, and expected reciprocal rank. [The rank evaluation API reference lists the supported metrics](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/search-rank-eval).
+
+Pick a metric that matches the product:
+
+- Use recall at k when the next stage reranks a candidate set and missing a relevant document is expensive.
+- Use reciprocal rank when the first relevant result should appear as early as possible.
+- Use nDCG when judgments have multiple relevance grades and ordering across the list matters.
+
+Do not claim that hybrid search improved relevance because a few hand-picked queries look better. Without explicit judgments and a consistent metric, that is an impression, not a result.
+
+## Measure retrieval cost as well as relevance
+
+Approximate kNN in Elasticsearch uses indexed vector structures for fast search. Elastic recommends keeping HNSW vector data in the node's page cache for efficient performance. [The kNN search guide discusses approximate kNN and page-cache considerations](https://www.elastic.co/docs/solutions/search/vector/knn).
+
+Hybrid retrieval runs more work than either child retriever alone, then performs fusion. The actual latency impact depends on index size, shard layout, vector dimensions, candidate counts, filters, hardware, cache state, and concurrency. There is no honest universal overhead number.
+
+Measure at least:
+
+- end-to-end search latency at representative concurrency
+- latency by query class and filter selectivity
+- timeout and error rates
+- candidate depth and final result count
+- retrieval-quality metrics on a stable judged set
+- resource use on data nodes
+
+Use production-like data distributions. A test index that fits comfortably in memory may hide the behavior that dominates a larger deployment.
+
+## A practical rollout sequence
+
+I would introduce RRF in small, observable steps:
+
+1. **Freeze the embedding contract.** Record the model, version, dimensions, and preprocessing used for indexed documents and queries.
+2. **Build judgments.** Include lexical wins, semantic wins, hard negatives, and filtered cases.
+3. **Establish two baselines.** Measure BM25 and kNN independently before measuring fusion.
+4. **Add equal-weight RRF.** Start with candidate depths that are operationally affordable, then vary one family of parameters at a time.
+5. **Test access filters.** Verify that every child retriever operates over the same eligible corpus.
+6. **Measure under load.** Compare relevance and latency together, not in separate environments.
+7. **Canary the change.** Record which result IDs moved and whether important query classes regressed.
+
+If RRF improves one group of queries and hurts another, inspect the judgments before changing weights. The problem may be tokenization, a poor embedding, stale content, an overly broad field, or a filter mismatch. Fusion cannot repair a weak source index automatically.
+
+## Common implementation mistakes
+
+### Adding raw scores together
+
+BM25 and vector similarity scores have different meanings and ranges. A fixed arithmetic blend requires score normalization and careful evaluation. RRF uses ranks instead, which is why it is a practical starting point.
+
+### Calling lexical rescoring “hybrid recall”
+
+Rescoring a lexical window uses a semantic signal, but it does not create an independent semantic candidate path. Use independent retrieval when semantic-only candidates need a chance to enter.
+
+### Tuning on anecdotes
+
+A few memorable searches are useful debugging cases, not an evaluation set. Keep held-out judgments for reporting after tuning.
+
+### Using inconsistent filters
+
+Apply eligibility rules to every retriever. This is especially important for multi-tenant search and RAG.
+
+### Expanding every window
+
+Larger `num_candidates`, `k`, and `rank_window_size` can increase work. Increase them only when measured relevance justifies the cost.
+
+## The architectural lesson
+
+Hybrid search works best when lexical and semantic retrieval remain independent long enough to contribute their own candidates.
+
+BM25 protects the value of exact language. kNN adds a path for meaning expressed with different words. RRF turns those rankings into a common decision without inventing a shared score scale.
+
+The important part is not the formula by itself. It is the discipline around it: one eligible corpus, a stable embedding contract, explicit judgments, current API behavior, and latency measured under realistic conditions.
+
+That is what turns “we added vector search” into a retrieval system you can reason about.
+
+## Sources
+
+- [Elasticsearch: RRF retriever](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/rrf-retriever)
+- [Elasticsearch: Retriever examples](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/retrievers-examples)
+- [Elasticsearch: kNN search](https://www.elastic.co/docs/solutions/search/vector/knn)
+- [Elasticsearch: kNN retriever](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/retrievers/knn-retriever)
+- [Elasticsearch: Dense vector field type](https://www.elastic.co/docs/reference/elasticsearch/mapping-reference/dense-vector)
+- [Elasticsearch: Similarity settings](https://www.elastic.co/docs/reference/elasticsearch/index-settings/similarity)
+- [Elasticsearch: Rescore search results](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/rescore-search-results)
+- [Elasticsearch: Search rank evaluation](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/search-rank-eval)
