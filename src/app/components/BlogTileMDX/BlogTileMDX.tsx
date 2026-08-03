@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useMemo, memo } from 'react';
 import { BlogPost } from '@/lib/mdx/types';
-import { formatDate } from '@/app/utils';
+import { formatDate } from '@/app/utils/helpers/format';
 import { useLoading } from '@/app/context/LoadingContext';
 import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 

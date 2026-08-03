@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Track } from '../types';
+import { Track } from '@/app/types';
 
 export const useQueueManager = (tracks: Track[]) => {
   const [queue, setQueue] = useState<Track[]>([]);

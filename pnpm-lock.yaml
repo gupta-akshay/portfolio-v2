@@ -29,9 +29,6 @@ importers:
       '@mdx-js/loader':
         specifier: ^3.1.1
         version: 3.1.1(webpack@5.109.2)
-      '@mdx-js/react':
-        specifier: ^3.1.1
-        version: 3.1.1(@types/react@19.2.18)(react@19.2.8)
       '@neondatabase/serverless':
         specifier: ^1.1.0
         version: 1.1.0
@@ -4940,6 +4937,7 @@ snapshots:
       '@types/mdx': 2.0.14
       '@types/react': 19.2.18
       react: 19.2.8
+    optional: true
 
   '@mermaid-js/parser@1.2.0':
     dependencies:

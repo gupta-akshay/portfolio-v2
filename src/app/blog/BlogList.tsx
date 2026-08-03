@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { BlogPost } from '@/lib/mdx/types';
-import BlogTileMDX from '@/app/components/BlogTileMDX';
+import BlogTileMDX from '@/app/components/BlogTileMDX/BlogTileMDX';
 
 import styles from '@/app/styles/sections/blogSection.module.scss';
 

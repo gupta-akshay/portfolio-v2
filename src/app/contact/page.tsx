@@ -3,8 +3,8 @@
 import Icon from '@/app/components/Icon/Icon';
 import { Toaster } from 'react-hot-toast';
 import Layout from '@/app/components/Layout';
-import ContactFormInteractive from '@/app/components/ContactFormInteractive';
-import MapSection from '@/app/components/MapSection';
+import ContactFormInteractive from '@/app/components/ContactFormInteractive/ContactFormInteractive';
+import MapSection from '@/app/components/MapSection/MapSection';
 import { contactContent, socialLinks } from '@/lib/site-content';
 
 export default function Contact() {

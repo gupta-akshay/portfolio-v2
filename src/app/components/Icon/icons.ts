@@ -39,7 +39,7 @@ export type IconName =
   | 'whatsapp'
   | 'x-twitter';
 
-export interface IconPath {
+interface IconPath {
   d: string;
   /** Brand colour; omit to inherit currentColor from the <svg> */
   fill?: string;

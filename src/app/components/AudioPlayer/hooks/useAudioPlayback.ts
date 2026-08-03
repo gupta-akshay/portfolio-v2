@@ -1,5 +1,5 @@
 import { useState, useEffect, RefObject, useCallback } from 'react';
-import { Track } from '../types';
+import { Track } from '@/app/types';
 import { logger } from '@/app/utils/logger';
 
 /**

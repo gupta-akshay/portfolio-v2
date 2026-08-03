@@ -8,7 +8,7 @@ import { logger } from '@/app/utils/logger';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
 
-export function getBlogSlugs(): string[] {
+function getBlogSlugs(): string[] {
   if (!fs.existsSync(CONTENT_DIR)) {
     return [];
   }
@@ -52,45 +52,6 @@ export const getBlogBySlug = cache(
   }
 );
 
-export const getBlogRawMarkdown = cache(
-  async (slug: string): Promise<string | null> => {
-    if (!/^[a-z0-9-]+$/.test(slug)) return null;
-
-    const post = await getBlogBySlug(slug);
-    if (!post) return null;
-    if (process.env.NODE_ENV === 'production' && post.metadata.draft === true) {
-      return null;
-    }
-
-    const contentPath = path.join(CONTENT_DIR, `${slug}.mdx`);
-    if (!fs.existsSync(contentPath)) return null;
-
-    const raw = fs.readFileSync(contentPath, 'utf-8');
-    const body = raw
-      .replace(/^export const metadata\s*=\s*\{[\s\S]*?^\}\s*;?\s*$/m, '')
-      .trim();
-    const { metadata } = post;
-
-    return [
-      '---',
-      `title: ${JSON.stringify(metadata.title)}`,
-      `description: ${JSON.stringify(metadata.excerpt ?? metadata.title)}`,
-      `publishedAt: ${JSON.stringify(metadata.publishedAt)}`,
-      ...(metadata.modifiedAt
-        ? [`modifiedAt: ${JSON.stringify(metadata.modifiedAt)}`]
-        : []),
-      `categories: ${JSON.stringify(metadata.categories)}`,
-      `author: ${JSON.stringify(metadata.author.name)}`,
-      `canonical: ${JSON.stringify(`/blog/${slug}`)}`,
-      '---',
-      '',
-      `# ${metadata.title}`,
-      '',
-      body,
-    ].join('\n');
-  }
-);
-
 export async function getAllBlogs(): Promise<BlogPost[]> {
   const slugs = getBlogSlugs();
   const isProd = process.env.NODE_ENV === 'production';
@@ -110,34 +71,17 @@ export async function getAllBlogs(): Promise<BlogPost[]> {
     });
 }
 
-export function calculateReadingTime(content: string): {
-  text: string;
-  minutes: number;
-  words: number;
-} {
-  let sanitized = content
+function calculateReadingTime(content: string): { text: string } {
+  const text = content
     .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]*`/g, '');
-
-  let previous: string;
-  do {
-    previous = sanitized;
-    sanitized = sanitized.replace(/<[^>]*>/g, '');
-  } while (sanitized !== previous);
-
-  const text = sanitized
-    .replace(/[<>]/g, '')
-    .replace(/[#*_~]/g, '')
+    .replace(/`[^`]*`/g, '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/[<>#*_~]/g, '')
     .trim();
 
-  const words = text.split(/\s+/).filter(Boolean).length;
-  const minutes = Math.ceil(words / 200);
+  const minutes = Math.ceil(text.split(/\s+/).filter(Boolean).length / 200);
 
-  return {
-    text: minutes <= 1 ? '1 min read' : `${minutes} min read`,
-    minutes,
-    words,
-  };
+  return { text: minutes <= 1 ? '1 min read' : `${minutes} min read` };
 }
 
 export function getBlogHeadings(slug: string): TOCHeading[] {

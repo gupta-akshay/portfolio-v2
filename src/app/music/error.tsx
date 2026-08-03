@@ -1,3 +1,3 @@
 'use client';
 
-export { default } from '@/app/components/RouteError';
+export { default } from '@/app/components/RouteError/RouteError';

@@ -7,17 +7,6 @@ import { blogReactions, anonymousUsers } from '../../../../db/schema';
 import { logger } from '@/app/utils/logger';
 import { rateLimit, getClientIp } from '@/app/utils/ratelimit';
 
-// Helper function to generate user fingerprint
-function generateFingerprint(req: NextRequest): string {
-  const userAgent = req.headers.get('user-agent') || '';
-  const acceptLanguage = req.headers.get('accept-language') || '';
-  const acceptEncoding = req.headers.get('accept-encoding') || '';
-
-  const fingerprint = `${userAgent}|${acceptLanguage}|${acceptEncoding}`;
-  return createHash('sha256').update(fingerprint).digest('hex');
-}
-
-// Helper function to hash IP address
 function hashIP(ip: string): string {
   return createHash('sha256').update(ip).digest('hex');
 }
@@ -139,27 +128,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const {
-      blogSlug,
-      emoji,
-      fingerprint: clientFingerprint,
-    } = await request.json();
+    const { blogSlug, emoji, fingerprint } = await request.json();
 
-    if (!blogSlug || !emoji) {
+    // The client always sends one: getOrCreateFingerprint() returns a UUID even
+    // when localStorage is unavailable.
+    if (!blogSlug || !emoji || !fingerprint) {
       return NextResponse.json(
-        { error: 'Blog slug and emoji are required' },
+        { error: 'Blog slug, emoji and fingerprint are required' },
         { status: 400 }
       );
     }
 
-    // Get client IP and generate server-side fingerprint as fallback
-    const ip = getClientIp(request);
-    const ipHash = hashIP(ip);
-    const serverFingerprint = generateFingerprint(request);
+    const ipHash = hashIP(getClientIp(request));
     const userAgent = request.headers.get('user-agent') || '';
-
-    // Use client fingerprint if provided, otherwise fall back to server fingerprint
-    const fingerprint = clientFingerprint || serverFingerprint || 'unknown';
 
     // Find or create anonymous user
     const user = await db

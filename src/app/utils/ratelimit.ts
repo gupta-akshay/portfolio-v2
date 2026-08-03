@@ -32,7 +32,7 @@ interface Options {
   windowMs: number;
 }
 
-export interface RateLimitResult {
+interface RateLimitResult {
   ok: boolean;
   retryAfterSec: number;
   remaining: number;

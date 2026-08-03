@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import * as Sentry from '@sentry/nextjs';
-import { AudioPlayerProps, Track } from './types';
+import { Track } from '@/app/types';
 import {
   useAudioPlayback,
   useQueueManager,
@@ -35,7 +35,7 @@ function savePrefs(trackIndex: number | null, volume: number) {
   }
 }
 
-const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
+const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
   const [currentPeaks, setCurrentPeaks] = useState<string | null>(null);

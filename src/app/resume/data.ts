@@ -1,25 +1,25 @@
 import { getYearsOfExperience } from '@/app/utils/helpers/format';
 
-export interface ResumeSkillCategory {
+interface ResumeSkillCategory {
   label: string;
   details: string;
 }
 
-export interface ResumeRole {
+interface ResumeRole {
   position: string;
   startDate: string;
   endDate: string;
   bullets: string[];
 }
 
-export interface ResumeCompany {
+interface ResumeCompany {
   company: string;
   location: string;
   summary?: string;
   roles: ResumeRole[];
 }
 
-export interface ResumeEducation {
+interface ResumeEducation {
   institution: string;
   degree: string;
   area: string;
@@ -27,7 +27,7 @@ export interface ResumeEducation {
   date: string;
 }
 
-export interface ResumeData {
+interface ResumeData {
   name: string;
   headline: string;
   location: string;

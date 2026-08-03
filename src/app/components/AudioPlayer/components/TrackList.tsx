@@ -2,7 +2,7 @@
 
 import React, { KeyboardEvent } from 'react';
 import Icon from '@/app/components/Icon/Icon';
-import { Track } from '../types';
+import { Track } from '@/app/types';
 import { formatTime } from '../utils';
 import WaveformSeeker from './WaveformSeeker';
 import styles from '../AudioPlayer.module.scss';

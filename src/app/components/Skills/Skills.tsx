@@ -1,4 +1,4 @@
-import { skillsData } from '@/app/utils';
+import { skillsData } from '@/app/utils/data/skills';
 import Icon from '@/app/components/Icon/Icon';
 
 import styles from './Skills.module.scss';

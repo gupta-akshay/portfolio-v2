@@ -1,6 +1,6 @@
 import { Fragment, ReactNode } from 'react';
 import SiteNav from './SiteNav';
-import BackBtn from '../BackBtn';
+import BackBtn from '../BackBtn/BackBtn';
 
 const Layout = ({
   children,
