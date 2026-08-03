@@ -234,6 +234,22 @@ $ease-standard: linear;
   }
 }
 
+// The badge is a long single line of tracked monospace; tighten it on narrow
+// screens so it stays on one line instead of wrapping or overflowing.
+@media (max-width: 560px) {
+  .badge {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 7px 10px;
+    gap: 8px;
+  }
+
+  .badgeDot {
+    width: 7px;
+    height: 7px;
+  }
+}
+
 :global(body.theme-light) {
   .title,
   .lead {

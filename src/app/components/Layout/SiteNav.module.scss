@@ -66,10 +66,11 @@ $nav-height: 68px;
   }
 }
 
+// Enough gap that a hovered link's border never touches the active slab's
 .desktopLinks {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 10px;
 }
 
 .link {
@@ -162,12 +163,33 @@ $nav-height: 68px;
   }
 }
 
+// Dims and blocks the frozen page behind the open menu
+.backdrop {
+  position: fixed;
+  top: $nav-height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: none;
+  padding: 0;
+  cursor: default;
+  background: rgba(11, 11, 16, 0.78);
+
+  :global(body.theme-light) & {
+    background: rgba(11, 11, 16, 0.45);
+  }
+}
+
 .mobileMenu {
   display: flex;
   flex-direction: column;
   padding: 0;
   border-top: $bd-thick solid $px-ink;
   background: $px-bg-1;
+  // The backdrop is positioned, so the menu needs a stacking position of its
+  // own to stay painted above it
+  position: relative;
+  z-index: 1;
 
   :global(body.theme-light) & {
     background: $px-gray;
