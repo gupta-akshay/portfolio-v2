@@ -37,11 +37,6 @@ const SiteNav = () => {
     handleMouseLeave: handleBlogMouseLeave,
   } = useHoverPrefetch('/blog', { delay: 100, enabled: true });
 
-  // Close the menu whenever navigation happens
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
-
   // Prevent body scroll while the mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
@@ -127,6 +122,7 @@ const SiteNav = () => {
               className={styles.mobileLink}
               data-active={activeSection === link.key || undefined}
               aria-current={activeSection === link.key ? 'page' : undefined}
+              onClick={() => setIsMenuOpen(false)}
               {...linkProps(link.key)}
             >
               {link.label}
