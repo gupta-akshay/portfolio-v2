@@ -83,8 +83,7 @@ To add a UI glyph, add an entry to `icons.ts` and extend `IconName`. To add a te
 - Per-component: CSS Modules (`.module.scss`) co-located in component directories
 - No CSS-in-JS — pure Sass throughout
 
-The design language is **neo-brutalist**: square corners, thick ink borders, hard
-unblurred offset shadows, stepped/instant transitions. When adding UI:
+The design language is **neo-brutalist**: square corners, thick ink borders, hard unblurred offset shadows, stepped/instant transitions. When adding UI:
 
 - **Offset shadows must use `var(--shadow-ink)`** (set on `body` and flipped by `.theme-light`). It resolves to white on the dark canvas and black on the light one — a hardcoded black shadow is invisible on a near-black page.
 - **Amber is not usable as text on light backgrounds** (~1.6:1). Use `$px-theme-ink` for accent-coloured *text* inside `body.theme-light`; keep `$px-theme` for fills, borders and dark-mode text.

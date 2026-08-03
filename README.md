@@ -2,24 +2,16 @@
 
 Live at [akshaygupta.live](https://akshaygupta.live)
 
-Next.js App Router portfolio with MDX blogging, a custom music player, emoji
-reactions, and a contact workflow — rebuilt in V5 around a neo-brutalist design
-language.
+Next.js App Router portfolio with MDX blogging, a custom music player, emoji reactions, and a contact workflow — rebuilt in V5 around a neo-brutalist design language.
 
 ## What's new in V5
 
-- **Neo-brutalist redesign** — signal amber accent, thick ink borders, hard
-  unblurred offset shadows, square corners, and instant (stepped) state changes
-  in place of eased transitions. Dark-first, with the light theme carried through.
-- **Fixed top navigation** replaces the former left sidebar. Below 820px it
-  collapses into a dropdown with a backdrop and a genuine scroll lock.
-- **Rebuilt music player** — a SoundCloud-style waveform seeker drawn from real,
-  precomputed peak data, a persistent bottom player bar, and a queue drawer.
-- **Precomputed waveform peaks** generated offline (see below) rather than
-  decoded in the browser.
+- **Neo-brutalist redesign** — signal amber accent, thick ink borders, hard unblurred offset shadows, square corners, and instant (stepped) state changes in place of eased transitions. Dark-first, with the light theme carried through.
+- **Fixed top navigation** replaces the former left sidebar. Below 820px it collapses into a dropdown with a backdrop and a genuine scroll lock.
+- **Rebuilt music player** — a SoundCloud-style waveform seeker drawn from real, precomputed peak data, a persistent bottom player bar, and a queue drawer.
+- **Precomputed waveform peaks** generated offline (see below) rather than decoded in the browser.
 - **Blog pagination** — ten posts at a time behind a load-more control.
-- **Zero icon-font runtime** — technology logos are inlined as SVG; the
-  `devicon` package and eight other dependencies were removed.
+- **Zero icon-font runtime** — technology logos are inlined as SVG; the `devicon` package and eight other dependencies were removed.
 
 ## Routes
 
@@ -32,28 +24,12 @@ language.
 - `/music` - Music showcase with custom player
 - `/contact` - Contact form + map section
 
-Public content routes support HTTP content negotiation for agents. Send
-`Accept: text/markdown` to the canonical URL to receive a source-backed Markdown
-representation while regular browser requests continue to receive HTML:
-
-```bash
-curl -H 'Accept: text/markdown' https://akshaygupta.live/blog
-```
-
-Because production is proxied through Cloudflare, add a Cache Rule for
-`akshaygupta.live` that bypasses cache when any `Accept` header value contains
-`text/markdown`. If a negotiated request is still blocked, inspect the matching
-Security Event and narrowly exempt only GET/HEAD Markdown requests from the
-specific WAF or bot rule that produced the 403; do not disable bot protection
-for the zone.
-
 ## Tech Stack
 
 - Next.js 16 + React 19 + TypeScript
 - Sass modules + global Sass architecture
 - Space Grotesk (display/body) + Space Mono (metadata, numerals) via `next/font`
-- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`); Mermaid is
-  rendered on the client
+- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`); Mermaid is rendered on the client
 - TanStack Form + Zod for contact validation
 - Drizzle ORM + Neon/PostgreSQL (emoji reactions)
 - AWS S3 + CloudFront signing for music delivery
@@ -77,12 +53,8 @@ Tokens live in `src/app/styles/variables.scss`.
 
 Two conventions matter when adding UI:
 
-- **Shadows use `var(--shadow-ink)`**, a custom property that resolves to white
-  on the dark theme and black on the light one. A hard black shadow is invisible
-  on a near-black canvas, so never hardcode the offset colour.
-- **Amber fails contrast as text on light backgrounds** (~1.6:1). Use
-  `$px-theme-ink` for accent-coloured text inside `body.theme-light`; keep the
-  brighter `$px-theme` for fills, borders and dark-mode text.
+- **Shadows use `var(--shadow-ink)`**, a custom property that resolves to white on the dark theme and black on the light one. A hard black shadow is invisible on a near-black canvas, so never hardcode the offset colour.
+- **Amber fails contrast as text on light backgrounds** (~1.6:1). Use `$px-theme-ink` for accent-coloured text inside `body.theme-light`; keep the brighter `$px-theme` for fills, borders and dark-mode text.
 
 ## Current Features
 
@@ -103,8 +75,7 @@ Two conventions matter when adding UI:
   - body copy width matched to the feature image
   - mermaid diagrams rendered on the client by `MermaidRenderer`, theme-aware
 - Music page with:
-  - waveform seeker driven by precomputed peaks (click to seek, drag to scrub,
-    hover for a time tooltip, keyboard-accessible via a hidden range input)
+  - waveform seeker driven by precomputed peaks (click to seek, drag to scrub, hover for a time tooltip, keyboard-accessible via a hidden range input)
   - persistent bottom player bar and slide-in queue drawer
   - S3/CloudFront signed URLs (server-side signing only)
   - playback state persisted across page loads (track, volume)
@@ -128,19 +99,11 @@ Peaks are generated offline and committed, not computed in the browser:
 pnpm peaks:generate
 ```
 
-The script lists the S3 bucket, downloads each track, decodes it with **ffmpeg**,
-and writes 400 peak buckets (quantized to one byte each) plus the exact duration
-to `src/app/data/track-peaks.json` — roughly 540 bytes per track.
+The script lists the S3 bucket, downloads each track, decodes it with **ffmpeg**, and writes 400 peak buckets (quantized to one byte each) plus the exact duration to `src/app/data/track-peaks.json` — roughly 540 bytes per track.
 
-Deriving peaks client-side would mean downloading every MP3 a second time (the
-`<audio>` element streams its own copy) and the waveform could not appear until
-the full file landed; Vercel's serverless runtime has no audio decoder. Durations
-travel with the track listing so every row shows one, while peaks are returned
-per-track by `/api/music/url`, which the player already calls on selection.
+Deriving peaks client-side would mean downloading every MP3 a second time (the `<audio>` element streams its own copy) and the waveform could not appear until the full file landed; Vercel's serverless runtime has no audio decoder. Durations travel with the track listing so every row shows one, while peaks are returned per-track by `/api/music/url`, which the player already calls on selection.
 
-Re-run the script whenever tracks are added or replaced. It requires `ffmpeg` on
-PATH and AWS credentials. A track missing from the JSON falls back to a flat
-placeholder strip, so a stale file degrades rather than breaks.
+Re-run the script whenever tracks are added or replaced. It requires `ffmpeg` on PATH and AWS credentials. A track missing from the JSON falls back to a flat placeholder strip, so a stale file degrades rather than breaks.
 
 ## Project Structure
 
@@ -192,8 +155,7 @@ SENTRY_AUTH_TOKEN=
 
 ## Local Development
 
-Requires Node v24 (`.nvmrc`) and pnpm. `pnpm peaks:generate` additionally needs
-`ffmpeg`.
+Requires Node v24 (`.nvmrc`) and pnpm. `pnpm peaks:generate` additionally needs `ffmpeg`.
 
 ```bash
 pnpm install
@@ -253,9 +215,7 @@ flowchart LR
 ```
 ````
 
-MDX builds stay fast and hermetic — no Playwright/Chromium on the build server.
-The `MermaidRenderer` client component loads `mermaid` on demand on blog pages
-and re-renders when the theme changes.
+MDX builds stay fast and hermetic — no Playwright/Chromium on the build server. The `MermaidRenderer` client component loads `mermaid` on demand on blog pages and re-renders when the theme changes.
 
 ## Observability & Security
 

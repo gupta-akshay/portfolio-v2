@@ -66,7 +66,7 @@ export default function About() {
         url: 'https://www.peoplegrove.com',
       },
       url: siteUrl,
-      image: `${siteUrl}/images/about-me.webp`,
+      image: `${siteUrl}/images/home-banner.webp`,
       description: `Senior Staff Engineer at PeopleGrove with over ${yearsOfExperience} years of experience in web development.`,
       sameAs: [
         'https://github.com/gupta-akshay',
