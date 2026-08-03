@@ -1,139 +1,120 @@
-@use 'sass:color';
 @use '../../styles/variables' as *;
-@use '../../styles/mixin' as *;
-@use '../../styles/3d-effects' as *;
 
-// THEME OVERRIDES - MUST BE GLOBAL
-:global(body.theme-light) {
-  .blogInfo {
-    background: $px-gray;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+$border-subtle: rgba(255, 255, 255, 0.08);
+$shadow-card-float-hover: 0 18px 36px rgba(0, 0, 0, 0.28);
 
-    .meta {
-      color: $px-body-light;
-    }
+.card {
+  display: flex;
+}
 
-    a {
-      color: $px-dark;
-      background-image: linear-gradient(130deg, $px-dark, $px-dark);
-    }
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: $px-dark;
+  border: 1px solid $border-subtle;
+  color: $px-white;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    color: $px-white;
+    transform: translateY(-4px);
+    border-color: $px-theme-rgb-1;
+    box-shadow: $shadow-card-float-hover;
   }
 }
 
-.blogGrid {
-  background-color: transparent;
+.cover {
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $px-bg-2, $px-bg-3);
+}
 
-  .blogImg {
-    overflow: hidden;
-    border-radius: 10px;
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1792 / 1024;
-    background: rgba($px-white, 0.04);
+.coverImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-    a {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
+.coverBadge {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: $px-theme;
+  padding: 6px 14px;
+  border: 1px solid $px-theme-rgb-1;
+  border-radius: 999px;
+  background: $px-theme-rgb-2;
+}
 
-    img,
-    .tileImage {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-      @include transition(ease all 0.35s);
-      @include scale(1);
-    }
+.body {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
 
-    .placeholderImage {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
+.category {
+  font-size: 12.5px;
+  color: $px-theme;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
 
-  .blogInfo {
-    background: $px-dark;
-    padding: 22px;
-    margin: -60px 0 0 28px;
-    position: relative;
-    border: 1px solid rgba($px-white, 0.08);
-    border-radius: 10px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: inherit;
+  text-wrap: pretty;
+}
 
-    @include down-md {
-      margin-left: 40px;
-    }
+.excerpt {
+  font-size: 14px;
+  line-height: 1.6;
+  color: $px-body;
+  margin: 0;
+  flex: 1;
+  text-wrap: pretty;
+}
 
-    @include down-sm {
-      margin-left: 25px;
-    }
+.meta {
+  font-size: 13px;
+  color: $px-body;
+  opacity: 0.7;
+}
 
-    .meta {
-      color: $px-body;
-      font-size: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+:global(body.theme-light) {
+  .cardLink {
+    background: $px-gray;
+    border-color: rgba($px-dark, 0.1);
+    color: $px-dark;
 
-      .hashtag {
-        font-size: 12px;
-        font-weight: 500;
-        color: $px-theme;
-        background: rgba($px-theme, 0.16);
-        border-radius: 99px;
-        border: none;
-        padding: 2px 8px;
-      }
-
-      .hashtagMore {
-        font-size: 12px;
-        font-weight: 500;
-        color: $px-theme;
-        background: rgba($px-theme, 0.16);
-        border-radius: 99px;
-        border: none;
-        padding: 2px 8px;
-        opacity: 0.8;
-      }
-    }
-
-    p {
-      font-size: 24px;
-      font-weight: 500;
-      padding-top: 10px;
-
-      @include down-sm {
-        font-size: 20px;
-      }
-    }
-
-    a {
-      color: $px-white;
-      text-decoration: none;
-      background-image: linear-gradient(130deg, $px-white, $px-white);
-      background-position: 0% 100%;
-      background-repeat: no-repeat;
-      background-size: 0% 1px;
-      @include transition(ease all 0.35s);
+    &:hover {
+      color: $px-dark;
+      border-color: $px-theme-rgb-1;
     }
   }
 
-  &:hover {
-    .blogImg {
-      img {
-        @include scale(1.04);
-      }
-    }
-    .blogInfo {
-      a {
-        background-size: 100% 2px;
-      }
-    }
+  .cover {
+    background: linear-gradient(135deg, #ececf5, #f7f7ff);
+  }
+
+  .excerpt,
+  .meta {
+    color: $px-body-light;
   }
 }
