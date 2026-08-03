@@ -163,7 +163,8 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
 
   useEffect(() => {
     const handleScroll = () => setIsVisible(window.scrollY > 300);
-    const handleResize = () => setIsMobile(window.innerWidth <= 1200);
+    // Matches the breakpoint that hides the rail in TableOfContents.scss
+    const handleResize = () => setIsMobile(window.innerWidth <= 1699);
 
     handleResize();
     window.addEventListener('scroll', handleScroll);
