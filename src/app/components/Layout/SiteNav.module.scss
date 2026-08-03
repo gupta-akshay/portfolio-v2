@@ -92,7 +92,7 @@ $nav-height: 68px;
     background: $px-theme;
     color: $px-black;
     border-color: $px-ink;
-    box-shadow: 3px 3px 0 $px-black;
+    box-shadow: 3px 3px 0 var(--shadow-ink);
   }
 
   :global(body.theme-light) & {
@@ -106,7 +106,6 @@ $nav-height: 68px;
     &[data-active] {
       color: $px-black;
       border-color: $px-ink-light;
-      box-shadow: 3px 3px 0 $px-ink-light;
     }
   }
 }
@@ -129,7 +128,7 @@ $nav-height: 68px;
   &:hover {
     background: $px-violet;
     color: $px-black;
-    box-shadow: 3px 3px 0 $px-black;
+    box-shadow: 3px 3px 0 var(--shadow-ink);
   }
 
   &:active {
@@ -143,7 +142,6 @@ $nav-height: 68px;
 
     &:hover {
       color: $px-black;
-      box-shadow: 3px 3px 0 $px-ink-light;
     }
   }
 }

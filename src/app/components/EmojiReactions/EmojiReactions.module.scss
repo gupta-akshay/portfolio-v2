@@ -7,7 +7,7 @@
   .emojiReactionsBar {
     background: rgba($px-white, 0.95);
     border: 1px solid rgba($px-black, 0.1);
-    box-shadow: 0 4px 20px rgba($px-black, 0.1);
+    box-shadow: 4px 4px 0 var(--shadow-ink);
   }
 
   .emojiReactionBtn {
@@ -68,7 +68,7 @@
   backdrop-filter: blur(10px);
   border-radius: 0;
   padding: 8px 16px;
-  box-shadow: 0 4px 20px rgba($px-black, 0.15);
+  box-shadow: 4px 4px 0 var(--shadow-ink);
   border: 1px solid rgba($px-white, 0.1);
   gap: 4px;
   transition: all 0.3s ease-in-out;

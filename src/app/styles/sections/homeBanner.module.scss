@@ -1,10 +1,10 @@
 @use '../variables' as *;
 
-$border-subtle: rgba(255, 255, 255, 0.08);
-$shadow-btn-theme: 0 12px 24px rgba(251, 191, 36, 0.3);
-$shadow-btn-theme-hover: 0 16px 28px rgba(251, 191, 36, 0.36);
-$shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.15);
-$ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+$border-subtle: $px-ink;
+$shadow-btn-theme: 4px 4px 0 var(--shadow-ink);
+$shadow-btn-theme-hover: 6px 6px 0 var(--shadow-ink);
+$shadow-panel: 6px 6px 0 var(--shadow-ink);
+$ease-standard: linear;
 
 @keyframes heroFadeUp {
   from {
