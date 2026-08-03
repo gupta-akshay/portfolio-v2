@@ -7,6 +7,21 @@ import { blogReactions, anonymousUsers } from '../../../../db/schema';
 import { logger } from '@/app/utils/logger';
 import { rateLimit, getClientIp } from '@/app/utils/ratelimit';
 
+function reportDuration(
+  method: 'GET' | 'POST',
+  start: number,
+  failed: boolean
+) {
+  Sentry.metrics.distribution(
+    'api.reactions.duration',
+    performance.now() - start,
+    {
+      unit: 'millisecond',
+      attributes: failed ? { method, error: 'true' } : { method },
+    }
+  );
+}
+
 function hashIP(ip: string): string {
   return createHash('sha256').update(ip).digest('hex');
 }
@@ -14,6 +29,7 @@ function hashIP(ip: string): string {
 // GET: Get reactions for a blog post
 export async function GET(request: NextRequest) {
   const start = performance.now();
+  let failed = false;
   try {
     const { searchParams } = new URL(request.url);
     const blogSlug = searchParams.get('blogSlug');
@@ -81,36 +97,23 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    Sentry.metrics.distribution(
-      'api.reactions.duration',
-      performance.now() - start,
-      {
-        attributes: { method: 'GET' },
-        unit: 'millisecond',
-      }
-    );
-
     return response;
   } catch (error) {
+    failed = true;
     logger.error('Error fetching reactions:', error);
-    Sentry.metrics.distribution(
-      'api.reactions.duration',
-      performance.now() - start,
-      {
-        attributes: { method: 'GET', error: 'true' },
-        unit: 'millisecond',
-      }
-    );
     return NextResponse.json(
       { error: 'Failed to fetch reactions' },
       { status: 500 }
     );
+  } finally {
+    reportDuration('GET', start, failed);
   }
 }
 
 // POST: Add or update a reaction
 export async function POST(request: NextRequest) {
   const start = performance.now();
+  let failed = false;
   try {
     const limit = rateLimit(request, {
       id: 'reactions',
@@ -229,33 +232,19 @@ export async function POST(request: NextRequest) {
       .where(eq(blogReactions.blogSlug, blogSlug))
       .groupBy(blogReactions.emoji);
 
-    Sentry.metrics.distribution(
-      'api.reactions.duration',
-      performance.now() - start,
-      {
-        attributes: { method: 'POST' },
-        unit: 'millisecond',
-      }
-    );
-
     return NextResponse.json({
       success: true,
       reactions,
       userReaction: isRemoving ? null : emoji,
     });
   } catch (error) {
+    failed = true;
     logger.error('Error adding reaction:', error);
-    Sentry.metrics.distribution(
-      'api.reactions.duration',
-      performance.now() - start,
-      {
-        attributes: { method: 'POST', error: 'true' },
-        unit: 'millisecond',
-      }
-    );
     return NextResponse.json(
       { error: 'Failed to add reaction' },
       { status: 500 }
     );
+  } finally {
+    reportDuration('POST', start, failed);
   }
 }
