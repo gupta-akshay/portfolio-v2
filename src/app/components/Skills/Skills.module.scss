@@ -31,9 +31,9 @@
   }
 }
 
+// Each logo carries its own brand fill — deliberately not tinted by the theme
 .skillsPillIcon {
   font-size: 18px;
-  color: $px-theme;
   flex-shrink: 0;
 }
 
@@ -44,7 +44,4 @@
     color: $px-ink-light;
   }
 
-  .skillsPillIcon {
-    color: $px-theme-ink;
-  }
 }

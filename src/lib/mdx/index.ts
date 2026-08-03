@@ -2,18 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { cache } from 'react';
 import GithubSlugger from 'github-slugger';
-import { toString } from 'mdast-util-to-string';
-import remarkGfm from 'remark-gfm';
-import remarkMdx from 'remark-mdx';
-import remarkParse from 'remark-parse';
-import { unified } from 'unified';
-import { visit } from 'unist-util-visit';
 import { BlogPost, TOCHeading } from './types';
 import { BlogMetadataSchema } from './schema';
 import { logger } from '@/app/utils/logger';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
-const mdxParser = unified().use(remarkParse).use(remarkMdx).use(remarkGfm);
 
 export function getBlogSlugs(): string[] {
   if (!fs.existsSync(CONTENT_DIR)) {
@@ -152,22 +145,36 @@ export function getBlogHeadings(slug: string): TOCHeading[] {
   if (!fs.existsSync(contentPath)) return [];
 
   const raw = fs.readFileSync(contentPath, 'utf-8');
-  const tree = mdxParser.parse(raw);
   const headings: TOCHeading[] = [];
+  // Same slugger rehype-slug uses, so these ids match the rendered anchors.
   const slugger = new GithubSlugger();
+  let inFence = false;
 
-  visit(tree, 'heading', (heading) => {
-    if (heading.depth > 4) return;
+  for (const line of raw.split('\n')) {
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
 
-    const text = toString(heading).trim();
-    if (!text) return;
+    const match = /^(#{1,4})\s+(.+?)\s*#*\s*$/.exec(line);
+    if (!match) continue;
+
+    // Unwrap links and code spans to the text the renderer prints. Emphasis
+    // markers are left alone — `*`, `_` and `~` appear literally in headings
+    // here (`SELECT *`, `dense_vector`, `~12,000`).
+    const text = match[2]!
+      .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/`/g, '')
+      .trim();
+    if (!text) continue;
 
     headings.push({
       id: slugger.slug(text),
       text,
-      level: heading.depth,
+      level: match[1]!.length,
     });
-  });
+  }
 
   return headings;
 }

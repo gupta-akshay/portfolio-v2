@@ -2,10 +2,12 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/app/context/ThemeContext';
-import { formatTime, decodePeaks, getFallbackPeaks } from '../utils';
+import { formatTime, decodePeaks } from '../utils';
 import styles from '../AudioPlayer.module.scss';
 
-const FALLBACK_PEAK_COUNT = 400;
+// Flat placeholder for a track uploaded since the last `pnpm peaks:generate`
+// run. It reads as an unanalysed strip rather than faking an envelope.
+const FALLBACK_PEAKS = new Array<number>(400).fill(0.5);
 const BAR_GAP = 1.5;
 
 // Canvas can't read Sass tokens, so the accent is mirrored here.
@@ -16,8 +18,6 @@ const ACCENT_REFLECT = 'rgba(251, 191, 36, 0.35)';
 const ACCENT_REFLECT_HOVER = 'rgba(251, 191, 36, 0.18)';
 
 interface WaveformSeekerProps {
-  /** Stable id, used to seed the placeholder shape when peaks are unavailable */
-  trackId: string;
   /** Base64 peak data precomputed from the real audio */
   peaks: string | null;
   currentTime: number;
@@ -46,7 +46,6 @@ const VARIANTS = {
 } as const;
 
 const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
-  trackId,
   peaks,
   currentTime,
   duration,
@@ -83,9 +82,7 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
     ctx.clearRect(0, 0, width, height);
 
     const decoded = peaks ? decodePeaks(peaks) : [];
-    const amplitudes = decoded.length
-      ? decoded
-      : getFallbackPeaks(trackId, FALLBACK_PEAK_COUNT);
+    const amplitudes = decoded.length ? decoded : FALLBACK_PEAKS;
 
     const barCount = Math.floor(width / (barWidth + BAR_GAP));
     if (barCount <= 0) return;
@@ -146,7 +143,6 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
       }
     }
   }, [
-    trackId,
     peaks,
     barWidth,
     reflect,

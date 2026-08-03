@@ -57,7 +57,6 @@ const PlayerBar: React.FC<PlayerBarProps> = ({
   return (
     <div className={styles.playerBar} role='region' aria-label='Player'>
       <WaveformSeeker
-        trackId={currentTrack.id}
         peaks={peaks}
         currentTime={currentTime}
         duration={duration}

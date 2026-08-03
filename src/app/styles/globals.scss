@@ -8,9 +8,6 @@
 @use './sections/contact-section' as *;
 @use './sections/music-player' as *;
 @use './sections/page-transitions' as *;
-@use './sections/scroll-animations' as *;
-@use './sections/enhanced-hover' as *;
-@use './sections/interactive-background' as *;
 @use './sections/mermaid' as *;
 
 // Reset & Base Styles
@@ -107,14 +104,16 @@ a {
     color: $px-theme-hover;
   }
 
-  // Amber is unreadable as text on paper; darken it for the light theme.
-  // Components that paint their own colour (nav, buttons, slabs) override this.
-  .theme-light & {
-    color: $px-theme-ink;
+}
 
-    @include px-hover {
-      color: $px-ink-light;
-    }
+// Amber is unreadable as text on paper, so darken it for the light theme.
+// :where() keeps this at zero specificity so any component that paints its own
+// colour — nav items, buttons, slabs — wins without needing !important.
+:where(body.theme-light) a {
+  color: $px-theme-ink;
+
+  &:hover {
+    color: $px-ink-light;
   }
 }
 

@@ -22,18 +22,3 @@ export interface ContactAPIResponse extends APIResponse {
     timestamp: Date;
   };
 }
-
-// Revalidation API types
-export interface RevalidationRequest {
-  _type: string;
-  slug?: string;
-  tags?: string[];
-}
-
-export interface RevalidationResponse extends APIResponse {
-  data?: {
-    revalidated: boolean;
-    timestamp: number;
-    tags?: string[];
-  };
-}

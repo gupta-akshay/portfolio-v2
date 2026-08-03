@@ -199,7 +199,6 @@ const TrackList: React.FC<TrackListProps> = ({
                 onClick={(e) => e.stopPropagation()}
               >
                 <WaveformSeeker
-                  trackId={track.id}
                   peaks={activePeaks}
                   currentTime={currentTime}
                   duration={duration}

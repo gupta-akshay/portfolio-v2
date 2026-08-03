@@ -4,7 +4,6 @@ import { Analytics } from '@vercel/analytics/next';
 import { spaceGrotesk, spaceMono, cookie } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
-import DeviconCSSLoader from './components/DeviconCSSLoader';
 import Metrics from './metrics';
 import { getSiteUrl } from '@/lib/site-url';
 import { getYearsOfExperience } from './utils/helpers/format';
@@ -98,7 +97,6 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <LoadingProvider>{children}</LoadingProvider>
-          <DeviconCSSLoader />
         </ThemeProvider>
         <Metrics />
         <SpeedInsights />

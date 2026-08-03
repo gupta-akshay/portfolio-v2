@@ -1,10 +1,16 @@
 import React from 'react';
 import styles from './Icon.module.scss';
 import { icons, type IconName } from './icons';
+import { techIcons, type TechIconName } from './techIcons';
+
+/** UI glyphs and technology logos share one lookup and one component. */
+type AnyIconName = IconName | TechIconName;
 
 interface IconProps {
-  name: IconName;
-  className?: string;
+  name: AnyIconName;
+  // CSS-module lookups are typed `string | undefined`, and the project runs
+  // with exactOptionalPropertyTypes, so undefined has to be allowed explicitly.
+  className?: string | undefined;
   title?: string;
   'aria-hidden'?: boolean | 'true' | 'false';
   spin?: boolean;
@@ -25,7 +31,10 @@ const Icon = ({
   width,
   fontSize,
 }: IconProps) => {
-  const icon = icons[name];
+  const icon =
+    name in icons
+      ? icons[name as IconName]
+      : techIcons[name as TechIconName];
 
   const svgHeight: number | string =
     height ?? (size ? `${parseFloat(size)}em` : '1em');
@@ -58,10 +67,14 @@ const Icon = ({
       style={style}
     >
       {title && <title>{title}</title>}
-      <path d={icon.path} />
+      {icon.paths
+        ? icon.paths.map((shape, i) => (
+            <path key={i} d={shape.d} fill={shape.fill} />
+          ))
+        : icon.path && <path d={icon.path} />}
     </svg>
   );
 };
 
 export default Icon;
-export type { IconName };
+export type { IconName, TechIconName, AnyIconName };

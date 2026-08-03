@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useCallback,
-  useMemo,
-  useSyncExternalStore,
-} from 'react';
-import { ThemeMode, ThemeContextType, ThemeProviderProps } from '@/app/types';
+import { createContext, useContext, useSyncExternalStore, ReactNode } from 'react';
+import { ThemeContextType } from '@/app/types';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
@@ -82,41 +76,29 @@ const subscribe: (listener: Listener) => () => void = isServer
   : (listener) => getThemeStore().subscribe(listener);
 const getClientSnapshot = (): boolean => getThemeStore().getSnapshot();
 
+// The site is dark until the DOM says otherwise, so both snapshots agree on the
+// server and on the first client render.
+const getServerSnapshot = (): boolean => false;
+
+const toggleTheme = (): void => {
+  const store = getThemeStore();
+  store.setIsLight(!store.getSnapshot());
+};
+
 // ---------------------------------------------------------------------------
 
-export function ThemeProvider({
-  children,
-  defaultTheme = 'dark',
-}: ThemeProviderProps) {
-  const getServerSnapshot = useCallback(
-    () => defaultTheme === 'light',
-    [defaultTheme]
-  );
-
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const isLightMode = useSyncExternalStore(
     subscribe,
     isServer ? getServerSnapshot : getClientSnapshot,
     getServerSnapshot
   );
 
-  const toggleTheme = useCallback(() => {
-    const store = getThemeStore();
-    store.setIsLight(!store.getSnapshot());
-  }, []);
-
-  const setTheme = useCallback((mode: ThemeMode) => {
-    getThemeStore().setIsLight(mode === 'light');
-  }, []);
-
-  const value = useMemo<ThemeContextType>(
-    () => ({
-      isLightMode,
-      mode: isLightMode ? 'light' : 'dark',
-      toggleTheme,
-      setTheme,
-    }),
-    [isLightMode, toggleTheme, setTheme]
-  );
+  const value: ThemeContextType = {
+    isLightMode,
+    mode: isLightMode ? 'light' : 'dark',
+    toggleTheme,
+  };
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

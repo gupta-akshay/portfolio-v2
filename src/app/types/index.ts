@@ -1,10 +1,13 @@
+import type { TechIconName } from '@/app/components/Icon/techIcons';
+
 // Core types that are actively used across the application
 
 // Skills and Experience types
 export interface Skill {
   id: string;
   name: string;
-  icon: string;
+  /** Technology logo rendered by the Icon component */
+  icon: TechIconName;
   category?: string;
   level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
@@ -18,12 +21,6 @@ export interface ExperienceItem {
   endDate?: string;
   description: string;
   logo?: string;
-}
-
-// UI State types
-export interface LoadingState {
-  isLoading: boolean;
-  message?: string;
 }
 
 // Audio Player types
@@ -47,10 +44,4 @@ export interface ThemeContextType {
   isLightMode: boolean;
   mode: ThemeMode;
   toggleTheme: () => void;
-  setTheme: (mode: ThemeMode) => void;
-}
-
-export interface ThemeProviderProps {
-  children: React.ReactNode;
-  defaultTheme?: ThemeMode;
 }

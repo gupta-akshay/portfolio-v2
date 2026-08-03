@@ -10,12 +10,7 @@ const nextConfig = {
   experimental: {
     optimizeServerReact: true,
     serverMinification: true,
-    optimizePackageImports: [
-      'devicon',
-      'react-hot-toast',
-      'resend',
-      'zod',
-    ],
+    optimizePackageImports: ['react-hot-toast', 'resend', 'zod'],
   },
 
   // Turbopack configuration
@@ -66,9 +61,9 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://www.googletagmanager.com https://va.vercel-scripts.com https://vercel.live https://scripts.clarity.ms https://static.cloudflareinsights.com",
-              "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live",
+              "style-src 'self' 'unsafe-inline' https://vercel.live",
               "img-src 'self' data: blob: https://*.google.com https://*.googleapis.com https://*.s3.amazonaws.com https://*.cloudfront.net https://*.clarity.ms https://*.bing.com https://www.google-analytics.com https://akshaygupta.live https://www.googletagmanager.com https://vercel.live https://vercel.com",
-              "font-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live https://assets.vercel.com",
+              "font-src 'self' 'unsafe-inline' https://vercel.live https://assets.vercel.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",

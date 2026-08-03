@@ -1,24 +1,15 @@
-import { getSkillsArray } from '@/app/utils';
-import { SkillsProps } from '@/app/types/components';
+import { skillsData } from '@/app/utils';
+import Icon from '@/app/components/Icon/Icon';
 
 import styles from './Skills.module.scss';
 
-export default function Skills({
-  skills,
-  showCategories = false,
-}: SkillsProps = {}) {
-  const skillsData = skills || getSkillsArray();
-
+export default function Skills() {
   return (
     <div className={styles.skills}>
       {skillsData.map((skill) => (
-        <span
-          className={styles.skillsPill}
-          data-category={showCategories ? skill.category : undefined}
-          key={skill.id}
-        >
+        <span className={styles.skillsPill} key={skill.id}>
           {skill.icon && (
-            <i className={`${skill.icon} ${styles.skillsPillIcon}`} />
+            <Icon name={skill.icon} className={styles.skillsPillIcon} />
           )}
           {skill.name}
         </span>

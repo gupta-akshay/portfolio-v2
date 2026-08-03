@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import * as Sentry from '@sentry/nextjs';
 import { AudioPlayerProps, Track } from './types';
 import {
-  useAudioContext,
   useAudioPlayback,
   useQueueManager,
   useKeyboardShortcuts,
@@ -42,7 +41,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const [currentPeaks, setCurrentPeaks] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isMetadataLoaded, setIsMetadataLoaded] = useState(false);
-  const [isPlayable, setIsPlayable] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const shouldAutoPlayRef = useRef(false);
   const playAttemptInProgressRef = useRef(false);
@@ -50,11 +48,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
-
-  const { audioContextRef, setupAudioContext, gainNodeRef } = useAudioContext(
-    audioRef,
-    false
-  );
 
   const {
     currentTrackIndex,
@@ -75,12 +68,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     seekTo,
     handleVolumeChange,
     toggleMute,
-  } = useAudioPlayback(
-    audioRef,
-    hasTracks ? tracks : [],
-    audioContextRef,
-    gainNodeRef
-  );
+  } = useAudioPlayback(audioRef, hasTracks ? tracks : []);
 
   const {
     queue,
@@ -264,208 +252,66 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     [queue, tracks, setCurrentTrackIndex, queuedTrackIds]
   );
 
-  // Reset states when track changes
+  // Swap in the signed URL for the current track. Readiness is reported by the
+  // <audio> element's own loadedmetadata / canplay / error events below, so
+  // this only has to fetch the URL and hand it over.
   useEffect(() => {
-    if (currentTrack) {
+    const track = currentTrackIndex === null ? null : tracks[currentTrackIndex];
+    if (!track) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCurrentUrl(null);
+      setCurrentPeaks(null);
+      return;
+    }
+
+    // A track restored from localStorage is queued up, not started; anything
+    // else means the listener asked for this track and expects it to play.
+    if (restoringFromStorageRef.current) {
+      shouldAutoPlayRef.current = false;
+      restoringFromStorageRef.current = false;
+    } else {
+      shouldAutoPlayRef.current = true;
+    }
+
+    let cancelled = false;
+
+    const loadTrack = async () => {
+      audioRef.current?.pause();
       setIsLoading(true);
       setIsMetadataLoaded(false);
-      setIsPlayable(false);
       setIsPlaying(false);
-      if (restoringFromStorageRef.current) {
-        shouldAutoPlayRef.current = false;
-        restoringFromStorageRef.current = false;
-      } else {
-        shouldAutoPlayRef.current = true;
-      }
-    }
-  }, [currentTrack, setIsPlaying]);
-
-  // Update track URL when current track changes
-  useEffect(() => {
-    let isMounted = true;
-    let currentAudioUrl: string | null = null;
-
-    const updateTrackUrl = async () => {
-      if (currentTrackIndex === null || !tracks[currentTrackIndex]) {
-        setCurrentUrl(null);
-        setCurrentPeaks(null);
-        return;
-      }
 
       try {
-        // Cancel any pending play operations before loading new track
-        if (audioRef.current) {
-          try {
-            playAttemptInProgressRef.current = true;
-            await audioRef.current.pause();
-          } catch (e) {
-            logger.error('Error pausing audio:', e);
-          }
-        }
-
-        const urlResponse = await fetch('/api/music/url', {
+        const response = await fetch('/api/music/url', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ path: tracks[currentTrackIndex].path }),
+          body: JSON.stringify({ path: track.path }),
         });
-        if (!urlResponse.ok) throw new Error('Failed to get audio URL');
-        const { url: newUrl, peaks } = (await urlResponse.json()) as {
+        if (!response.ok) throw new Error('Failed to get audio URL');
+
+        const { url, peaks } = (await response.json()) as {
           url: string;
           peaks?: string;
         };
+        if (cancelled) return;
 
-        if (!isMounted || newUrl === currentAudioUrl) {
-          playAttemptInProgressRef.current = false;
-          return;
-        }
-
-        currentAudioUrl = newUrl;
-        setIsLoading(true);
-        setIsMetadataLoaded(false);
-        setIsPlayable(false);
-        setIsPlaying(false);
-        setCurrentUrl(newUrl);
+        setCurrentUrl(url);
         setCurrentPeaks(peaks ?? null);
-
-        // Wait for audio element to be available
-        const audio = await new Promise<HTMLAudioElement>((resolve, reject) => {
-          const checkAudio = () => {
-            if (audioRef.current) {
-              resolve(audioRef.current);
-            } else if (attempts >= 10) {
-              reject(new Error('Audio element not found'));
-            } else {
-              attempts++;
-              setTimeout(checkAudio, 100);
-            }
-          };
-          let attempts = 0;
-          checkAudio();
-        });
-
-        audio.currentTime = 0;
-        audio.volume = volume;
-        audio.muted = false;
-
-        audio.load();
-
-        // Wait for metadata to load
-        await new Promise<void>((resolve, reject) => {
-          const onMetadataLoaded = () => {
-            cleanup();
-            resolve();
-          };
-
-          const onError = (e: Event) => {
-            logger.error('Error loading audio:', e);
-            cleanup();
-            reject(new Error('Failed to load audio'));
-          };
-
-          const cleanup = () => {
-            audio.removeEventListener('loadedmetadata', onMetadataLoaded);
-            audio.removeEventListener('error', onError);
-          };
-
-          audio.addEventListener('loadedmetadata', onMetadataLoaded);
-          audio.addEventListener('error', onError);
-
-          setTimeout(() => {
-            cleanup();
-            reject(new Error('Metadata loading timeout'));
-          }, 10000);
-        });
-
-        // Wait for audio to be playable
-        await new Promise<void>((resolve, reject) => {
-          if (audio.readyState >= 3) {
-            resolve();
-            return;
-          }
-
-          const onCanPlay = () => {
-            cleanup();
-            resolve();
-          };
-
-          const onError = (e: Event) => {
-            logger.error('Error during load:', e);
-            cleanup();
-            reject(new Error('Failed to load audio'));
-          };
-
-          const cleanup = () => {
-            audio.removeEventListener('canplaythrough', onCanPlay);
-            audio.removeEventListener('error', onError);
-          };
-
-          audio.addEventListener('canplaythrough', onCanPlay);
-          audio.addEventListener('error', onError);
-
-          setTimeout(() => {
-            cleanup();
-            reject(new Error('Timeout waiting for audio to be playable'));
-          }, 10000);
-        });
-
-        setIsMetadataLoaded(true);
-        setIsPlayable(true);
-        setIsLoading(false);
-
-        // Auto-play if needed, with safety checks
-        if (shouldAutoPlayRef.current) {
-          shouldAutoPlayRef.current = false;
-
-          setTimeout(async () => {
-            try {
-              if (audioRef.current && isMounted) {
-                const playPromise = audioRef.current.play();
-                if (playPromise !== undefined) {
-                  await playPromise;
-                  if (isMounted) {
-                    setIsPlaying(true);
-                  }
-                }
-              }
-            } catch (error) {
-              logger.error('Auto-play failed:', error);
-              if (isMounted) {
-                setIsPlaying(false);
-              }
-            } finally {
-              playAttemptInProgressRef.current = false;
-            }
-          }, 100);
-        } else {
-          playAttemptInProgressRef.current = false;
-        }
       } catch (error) {
         logger.error('Error setting up track:', error);
-        if (isMounted) {
+        if (!cancelled) {
           setIsLoading(false);
-          // Still mark as playable even if preload fails
-          setIsPlayable(true);
           setIsMetadataLoaded(true);
-          playAttemptInProgressRef.current = false;
         }
       }
     };
 
-    updateTrackUrl();
+    loadTrack();
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrackIndex, tracks]);
-
-  // Connect the Web Audio graph (gain node drives volume) once playable
-  useEffect(() => {
-    if (!audioRef.current || currentTrackIndex === null || !isPlayable) return;
-    setupAudioContext().catch((error) =>
-      logger.error('Error setting up audio context:', error)
-    );
-  }, [currentTrackIndex, isPlayable, setupAudioContext]);
 
   const handleTrackSelect = useCallback(
     (index: number) => {
@@ -508,33 +354,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       addToQueue,
     ]
   );
-
-  // Unmute + resume the AudioContext after the first user interaction
-  useEffect(() => {
-    const handleFirstInteraction = () => {
-      if (audioRef.current) {
-        audioRef.current.muted = false;
-
-        if (audioContextRef.current?.state === 'suspended') {
-          audioContextRef.current
-            .resume()
-            .catch((error) =>
-              logger.error('Failed to resume AudioContext:', error)
-            );
-        }
-      }
-    };
-
-    document.addEventListener('click', handleFirstInteraction, { once: true });
-    document.addEventListener('touchstart', handleFirstInteraction, {
-      once: true,
-    });
-
-    return () => {
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('touchstart', handleFirstInteraction);
-    };
-  }, [audioContextRef]);
 
   const triggerDownload = useCallback((url: string, track: Track) => {
     const downloadLink = document.createElement('a');
@@ -659,10 +478,16 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
     // Ensure audio is properly configured for Safari
     audio.muted = false;
-
-    setIsPlayable(true);
     setIsLoading(false);
-  }, []);
+
+    if (shouldAutoPlayRef.current) {
+      shouldAutoPlayRef.current = false;
+      audio.play().catch((error) => {
+        logger.error('Auto-play failed:', error);
+        setIsPlaying(false);
+      });
+    }
+  }, [setIsPlaying]);
 
   const handlePlay = useCallback(() => {
     setIsPlaying(true);

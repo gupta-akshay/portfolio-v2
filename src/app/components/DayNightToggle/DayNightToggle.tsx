@@ -3,16 +3,11 @@
 import Icon from '@/app/components/Icon/Icon';
 import { handleKeyDown } from '@/app/utils';
 import { useTheme } from '@/app/context/ThemeContext';
-import { DayNightToggleProps } from '@/app/types/components';
 
 import styles from './DayNightToggle.module.scss';
 
-const DayNightToggle = ({ isLight, onToggle }: DayNightToggleProps) => {
-  const { isLightMode, toggleTheme } = useTheme();
-
-  // Use props if provided, otherwise use context
-  const lightMode = isLight !== undefined ? isLight : isLightMode;
-  const toggleHandler = onToggle || toggleTheme;
+const DayNightToggle = () => {
+  const { isLightMode: lightMode, toggleTheme: toggleHandler } = useTheme();
 
   return (
     <button

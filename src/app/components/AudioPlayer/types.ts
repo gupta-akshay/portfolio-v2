@@ -10,19 +10,3 @@ export interface AudioPlayerProps {
 
 // Re-export Track for convenience
 export type { Track };
-
-// Define available waveform styles
-export type WaveformStyleType = 'wave';
-
-// Add a type for the extended canvas element with prevScaleFactor
-export interface ExtendedHTMLCanvasElement extends HTMLCanvasElement {
-  prevScaleFactor?: number;
-}
-
-// Declare global AudioContext for TypeScript
-declare global {
-  interface Window {
-    AudioContext: typeof AudioContext;
-    webkitAudioContext: typeof AudioContext;
-  }
-}

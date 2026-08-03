@@ -75,6 +75,16 @@
   width: 40px;
   height: 40px;
   position: relative;
+  color: $px-ink;
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
 
   &:hover {
     transform: scale(1.1);
