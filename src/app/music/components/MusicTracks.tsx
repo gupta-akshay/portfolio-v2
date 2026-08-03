@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import MusicLoadingIndicator from './MusicLoadingIndicator';
-import { Track } from '@/app/components/AudioPlayer/types';
+import { Track } from '@/app/types';
 import { logger } from '@/app/utils/logger';
 
-const AudioPlayer = dynamic(() => import('@/app/components/AudioPlayer'), {
+const AudioPlayer = dynamic(() => import('@/app/components/AudioPlayer/AudioPlayer'), {
   loading: () => <MusicLoadingIndicator />,
   ssr: false,
 });

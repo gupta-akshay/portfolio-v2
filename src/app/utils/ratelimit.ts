@@ -15,15 +15,9 @@ function sweep(now: number): void {
   for (const [key, bucket] of store) {
     if (bucket.resetAt <= now) store.delete(key);
   }
-  if (store.size >= MAX_KEYS) {
-    const extras = store.size - MAX_KEYS;
-    let dropped = 0;
-    for (const key of store.keys()) {
-      if (dropped >= extras) break;
-      store.delete(key);
-      dropped++;
-    }
-  }
+  // ponytail: still over the cap after expiring — drop everything rather than
+  // pick victims. Per-key LRU if the reset ever hurts a real caller.
+  if (store.size >= MAX_KEYS) store.clear();
 }
 
 interface Options {
@@ -32,7 +26,7 @@ interface Options {
   windowMs: number;
 }
 
-export interface RateLimitResult {
+interface RateLimitResult {
   ok: boolean;
   retryAfterSec: number;
   remaining: number;

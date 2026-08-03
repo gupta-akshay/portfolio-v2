@@ -16,14 +16,7 @@ const serverEnvSchema = z.object({
   SENTRY_AUTH_TOKEN: z.string().optional(),
 });
 
-const publicEnvSchema = z.object({
-  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
-  NEXT_PUBLIC_GOOGLE_ANALYTICS: z.string().optional(),
-  NEXT_PUBLIC_CLARITY_APP_CODE: z.string().optional(),
-});
-
 type ServerEnv = z.infer<typeof serverEnvSchema>;
-type PublicEnv = z.infer<typeof publicEnvSchema>;
 
 function parseServerEnv(): ServerEnv {
   if (process.env.SKIP_ENV_VALIDATION === 'true') {
@@ -39,41 +32,17 @@ function parseServerEnv(): ServerEnv {
   return result.data;
 }
 
-function parsePublicEnv(): PublicEnv {
-  const result = publicEnvSchema.safeParse({
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-    NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
-    NEXT_PUBLIC_CLARITY_APP_CODE: process.env.NEXT_PUBLIC_CLARITY_APP_CODE,
-  });
-  if (!result.success) {
-    const issues = result.error.issues
-      .map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`)
-      .join('\n  ');
-    throw new Error(`Invalid public environment variables:\n  ${issues}`);
-  }
-  return result.data;
-}
-
-// Lazy evaluation: only validated when first accessed. Client bundles that
-// import only `publicEnv` never trigger server validation.
+// Lazy evaluation: only validated when first accessed.
 let _serverEnv: ServerEnv | null = null;
-let _publicEnv: PublicEnv | null = null;
 
 export const serverEnv: ServerEnv = new Proxy({} as ServerEnv, {
   get(_, key: string) {
     if (typeof window !== 'undefined') {
       throw new Error(
-        `Attempted to read serverEnv.${key} on the client. Use publicEnv instead.`
+        `Attempted to read serverEnv.${key} on the client. Read process.env.NEXT_PUBLIC_* directly instead.`
       );
     }
     if (!_serverEnv) _serverEnv = parseServerEnv();
     return _serverEnv[key as keyof ServerEnv];
-  },
-});
-
-export const publicEnv: PublicEnv = new Proxy({} as PublicEnv, {
-  get(_, key: string) {
-    if (!_publicEnv) _publicEnv = parsePublicEnv();
-    return _publicEnv[key as keyof PublicEnv];
   },
 });

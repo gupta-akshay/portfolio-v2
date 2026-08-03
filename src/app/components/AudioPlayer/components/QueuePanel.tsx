@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Icon from '@/app/components/Icon/Icon';
-import { Track } from '../types';
+import { Track } from '@/app/types';
 import { formatTime } from '../utils';
 import styles from '../AudioPlayer.module.scss';
 

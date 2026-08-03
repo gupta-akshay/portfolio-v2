@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import BlogList from './BlogList';
-import LoadingIndicator from '@/app/components/LoadingIndicator';
+import LoadingIndicator from '@/app/components/LoadingIndicator/LoadingIndicator';
 import { getAllBlogs } from '@/lib/mdx';
 import { getSiteUrl } from '@/lib/site-url';
 import { blogIntro } from '@/lib/site-content';

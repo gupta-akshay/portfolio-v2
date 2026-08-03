@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
 import * as Sentry from '@sentry/nextjs';
 import { ContactFormData, ContactAPIResponse } from '@/app/types/api';
-import { replaceMergeFields } from '@/app/utils/apiUtils/replaceMergeFields';
+import {
+  escapeHtml,
+  replaceMergeFields,
+} from '@/app/utils/apiUtils/replaceMergeFields';
 import userHtmlString from '@/app/utils/apiUtils/userEmailHTML';
 import leadGenHtmlString from '@/app/utils/apiUtils/leadGenHTML';
 import { logger } from '@/app/utils/logger';
@@ -30,6 +32,7 @@ export async function POST(
   req: NextRequest
 ): Promise<NextResponse<ContactAPIResponse>> {
   const start = performance.now();
+  let failed = false;
   try {
     const limit = rateLimit(req, {
       id: 'sendMail',
@@ -67,19 +70,23 @@ export async function POST(
 
     const { name, email, subject, message } = result.data;
 
-    // Sanitize inputs
+    // The envelope address must stay raw — ' and & are legal in a mailbox, and
+    // escaping them would send the confirmation to an address that cannot
+    // receive it. Only the copy interpolated into the HTML body is escaped.
+    const recipient = email.trim();
+
     const sanitizedData: ContactFormData = {
-      name: sanitizeHtml(name.trim()),
-      email: sanitizeHtml(email.trim()),
-      subject: sanitizeHtml(subject?.trim() ?? ''),
-      message: sanitizeHtml(message.trim()),
+      name: escapeHtml(name.trim()),
+      email: escapeHtml(recipient),
+      subject: escapeHtml(subject?.trim() ?? ''),
+      message: escapeHtml(message.trim()),
     };
 
     // Send emails
     await Promise.all([
       resend.emails.send({
         from: 'Akshay Gupta <contact@akshaygupta.live>',
-        to: [sanitizedData.email],
+        to: [recipient],
         subject: 'Thank you for contacting! I will reach out to you soon!',
         html: replaceMergeFields({
           messageString: userHtmlString,
@@ -101,13 +108,6 @@ export async function POST(
     Sentry.metrics.count('contact.email.sent', 1, {
       attributes: { status: 'success' },
     });
-    Sentry.metrics.distribution(
-      'api.sendmail.duration',
-      performance.now() - start,
-      {
-        unit: 'millisecond',
-      }
-    );
 
     const successResponse: ContactAPIResponse = {
       success: true,
@@ -121,18 +121,11 @@ export async function POST(
 
     return NextResponse.json(successResponse, { status: 200 });
   } catch (e) {
+    failed = true;
     logger.error('Error in sending mail:', e);
     Sentry.metrics.count('contact.email.sent', 1, {
       attributes: { status: 'error' },
     });
-    Sentry.metrics.distribution(
-      'api.sendmail.duration',
-      performance.now() - start,
-      {
-        attributes: { error: 'true' },
-        unit: 'millisecond',
-      }
-    );
 
     // Check for specific error types
     if (e instanceof Error) {
@@ -162,5 +155,14 @@ export async function POST(
     };
 
     return NextResponse.json(errorResponse, { status: 500 });
+  } finally {
+    Sentry.metrics.distribution(
+      'api.sendmail.duration',
+      performance.now() - start,
+      {
+        unit: 'millisecond',
+        ...(failed && { attributes: { error: 'true' } }),
+      }
+    );
   }
 }

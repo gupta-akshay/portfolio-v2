@@ -2,10 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Icon from '@/app/components/Icon/Icon';
 import { useTheme } from '@/app/context/ThemeContext';
-import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 import styles from './SiteNav.module.scss';
 
 const LINKS = [
@@ -17,25 +16,21 @@ const LINKS = [
   { key: 'contact', label: 'Contact', href: '/contact' },
 ] as const;
 
+const sectionFor = (pathname: string) => {
+  if (pathname === '/about') return 'about';
+  if (pathname === '/resume') return 'resume';
+  if (pathname === '/contact') return 'contact';
+  if (pathname === '/blog' || pathname.startsWith('/blog/')) return 'blog';
+  if (pathname === '/music') return 'music';
+  return 'home';
+};
+
 const SiteNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isLightMode, toggleTheme } = useTheme();
 
-  const activeSection = useMemo(() => {
-    if (pathname === '/about') return 'about';
-    if (pathname === '/resume') return 'resume';
-    if (pathname === '/contact') return 'contact';
-    if (pathname === '/blog' || pathname.startsWith('/blog/')) return 'blog';
-    if (pathname === '/music') return 'music';
-    return 'home';
-  }, [pathname]);
-
-  // Hover prefetch for the blog index, which is the heaviest route
-  const {
-    handleMouseEnter: handleBlogMouseEnter,
-    handleMouseLeave: handleBlogMouseLeave,
-  } = useHoverPrefetch('/blog', { delay: 100, enabled: true });
+  const activeSection = sectionFor(pathname);
 
   // Freeze the page behind the mobile menu. `overflow: hidden` on the root is
   // not enough — Chromium still scrolls it and iOS Safari ignores it outright —
@@ -91,14 +86,6 @@ const SiteNav = () => {
     ? 'Switch to dark mode'
     : 'Switch to light mode';
 
-  const linkProps = (key: string) =>
-    key === 'blog'
-      ? {
-          onMouseEnter: handleBlogMouseEnter,
-          onMouseLeave: handleBlogMouseLeave,
-        }
-      : {};
-
   return (
     <nav className={styles.nav} role='navigation' aria-label='Main'>
       <div className={styles.inner}>
@@ -115,7 +102,6 @@ const SiteNav = () => {
               className={styles.link}
               data-active={activeSection === link.key || undefined}
               aria-current={activeSection === link.key ? 'page' : undefined}
-              {...linkProps(link.key)}
             >
               {link.label}
             </Link>
@@ -166,7 +152,6 @@ const SiteNav = () => {
               data-active={activeSection === link.key || undefined}
               aria-current={activeSection === link.key ? 'page' : undefined}
               onClick={() => setIsMenuOpen(false)}
-              {...linkProps(link.key)}
             >
               {link.label}
             </Link>

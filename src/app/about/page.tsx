@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
-import Skills from '@/app/components/Skills';
-import Experience from '@/app/components/Experience';
+import Skills from '@/app/components/Skills/Skills';
+import Experience from '@/app/components/Experience/Experience';
 import GitHubCalendar from '@/app/components/GitHubCalendar/GitHubCalendarLazy';
 import { getSiteUrl } from '@/lib/site-url';
 import { aboutContent } from '@/lib/site-content';

@@ -8,7 +8,7 @@ import {
   ReactNode,
 } from 'react';
 import { usePathname } from 'next/navigation';
-import LoadingIndicator from '@/app/components/LoadingIndicator';
+import LoadingIndicator from '@/app/components/LoadingIndicator/LoadingIndicator';
 
 const LoadingContext = createContext<() => void>(() => {});
 

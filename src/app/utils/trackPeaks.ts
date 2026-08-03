@@ -16,9 +16,6 @@ interface TrackPeaksFile {
 
 const data = peaksData as TrackPeaksFile;
 
-/** Number of peak buckets stored per track. */
-export const PEAK_RESOLUTION = data.resolution;
-
 /**
  * Waveform peaks for a track, base64-encoded.
  *

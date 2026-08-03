@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/app/context/ThemeContext';
 import { formatTime, decodePeaks } from '../utils';
 import styles from '../AudioPlayer.module.scss';
@@ -61,110 +61,101 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
   const { barWidth, reflect, showTooltip } = VARIANTS[variant];
   const progress = duration > 0 ? Math.min(1, currentTime / duration) : 0;
 
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  // Draw on every input change, and again whenever the canvas is resized
+  // (viewport changes, queue drawer, etc.)
+  useEffect(() => {
+    const draw = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    if (!width || !height) return;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      if (!width || !height) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-    }
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, width, height);
-
-    const decoded = peaks ? decodePeaks(peaks) : [];
-    const amplitudes = decoded.length ? decoded : FALLBACK_PEAKS;
-
-    const barCount = Math.floor(width / (barWidth + BAR_GAP));
-    if (barCount <= 0) return;
-
-    // Reflection mirrors the top 68% of the canvas, SoundCloud style
-    const mainHeight = reflect ? height * 0.68 : height;
-    const reflectionHeight = height - mainHeight;
-
-    const onAccent = variant === 'row';
-
-    const playedColor = onAccent ? ON_ACCENT.played : ACCENT;
-    const hoverColor = onAccent ? ON_ACCENT.hover : ACCENT_HOVER;
-    const playedReflect = onAccent ? ON_ACCENT.reflect : ACCENT_REFLECT;
-    const hoverReflect = onAccent
-      ? ON_ACCENT.reflectHover
-      : ACCENT_REFLECT_HOVER;
-
-    const idleColor = onAccent
-      ? ON_ACCENT.idle
-      : isLightMode
-        ? 'rgba(11, 11, 19, 0.22)'
-        : 'rgba(255, 255, 255, 0.22)';
-    const idleReflectionColor = onAccent
-      ? ON_ACCENT.reflectIdle
-      : isLightMode
-        ? 'rgba(11, 11, 19, 0.09)'
-        : 'rgba(255, 255, 255, 0.09)';
-
-    for (let i = 0; i < barCount; i++) {
-      const peak =
-        amplitudes[Math.floor((i * amplitudes.length) / barCount)] ?? 0.08;
-      const x = i * (barWidth + BAR_GAP);
-      const ratio = i / barCount;
-      const isPlayed = ratio <= progress;
-      const isHovered = hoverRatio !== null && ratio <= hoverRatio;
-
-      ctx.fillStyle = isPlayed
-        ? playedColor
-        : isHovered
-          ? hoverColor
-          : idleColor;
-
-      const barHeight = Math.max(2, peak * (mainHeight - 2));
-      ctx.fillRect(x, mainHeight - barHeight, barWidth, barHeight);
-
-      if (reflect) {
-        ctx.fillStyle = isPlayed
-          ? playedReflect
-          : isHovered
-            ? hoverReflect
-            : idleReflectionColor;
-        ctx.fillRect(
-          x,
-          mainHeight + 2,
-          barWidth,
-          Math.max(1, peak * (reflectionHeight - 2) * 0.8)
-        );
+      const dpr = window.devicePixelRatio || 1;
+      if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
       }
-    }
-  }, [
-    peaks,
-    barWidth,
-    reflect,
-    variant,
-    progress,
-    hoverRatio,
-    isLightMode,
-  ]);
 
-  useEffect(() => {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      const decoded = peaks ? decodePeaks(peaks) : [];
+      const amplitudes = decoded.length ? decoded : FALLBACK_PEAKS;
+
+      const barCount = Math.floor(width / (barWidth + BAR_GAP));
+      if (barCount <= 0) return;
+
+      // Reflection mirrors the top 68% of the canvas, SoundCloud style
+      const mainHeight = reflect ? height * 0.68 : height;
+      const reflectionHeight = height - mainHeight;
+
+      const onAccent = variant === 'row';
+
+      const playedColor = onAccent ? ON_ACCENT.played : ACCENT;
+      const hoverColor = onAccent ? ON_ACCENT.hover : ACCENT_HOVER;
+      const playedReflect = onAccent ? ON_ACCENT.reflect : ACCENT_REFLECT;
+      const hoverReflect = onAccent
+        ? ON_ACCENT.reflectHover
+        : ACCENT_REFLECT_HOVER;
+
+      const idleColor = onAccent
+        ? ON_ACCENT.idle
+        : isLightMode
+          ? 'rgba(11, 11, 19, 0.22)'
+          : 'rgba(255, 255, 255, 0.22)';
+      const idleReflectionColor = onAccent
+        ? ON_ACCENT.reflectIdle
+        : isLightMode
+          ? 'rgba(11, 11, 19, 0.09)'
+          : 'rgba(255, 255, 255, 0.09)';
+
+      for (let i = 0; i < barCount; i++) {
+        const peak =
+          amplitudes[Math.floor((i * amplitudes.length) / barCount)] ?? 0.08;
+        const x = i * (barWidth + BAR_GAP);
+        const ratio = i / barCount;
+        const isPlayed = ratio <= progress;
+        const isHovered = hoverRatio !== null && ratio <= hoverRatio;
+
+        ctx.fillStyle = isPlayed
+          ? playedColor
+          : isHovered
+            ? hoverColor
+            : idleColor;
+
+        const barHeight = Math.max(2, peak * (mainHeight - 2));
+        ctx.fillRect(x, mainHeight - barHeight, barWidth, barHeight);
+
+        if (reflect) {
+          ctx.fillStyle = isPlayed
+            ? playedReflect
+            : isHovered
+              ? hoverReflect
+              : idleReflectionColor;
+          ctx.fillRect(
+            x,
+            mainHeight + 2,
+            barWidth,
+            Math.max(1, peak * (reflectionHeight - 2) * 0.8)
+          );
+        }
+      }
+    };
+
     draw();
-  }, [draw]);
 
-  // Redraw when the canvas is resized (viewport changes, queue drawer, etc.)
-  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || typeof ResizeObserver === 'undefined') return;
 
     const observer = new ResizeObserver(() => draw());
     observer.observe(canvas);
     return () => observer.disconnect();
-  }, [draw]);
+  }, [peaks, barWidth, reflect, variant, isLightMode, progress, hoverRatio]);
 
   const ratioFromEvent = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;

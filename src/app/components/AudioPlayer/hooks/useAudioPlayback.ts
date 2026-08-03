@@ -1,5 +1,5 @@
-import { useState, useEffect, RefObject, useCallback } from 'react';
-import { Track } from '../types';
+import { useState, useEffect, RefObject } from 'react';
+import { Track } from '@/app/types';
 import { logger } from '@/app/utils/logger';
 
 /**
@@ -22,20 +22,20 @@ export const useAudioPlayback = (
     currentTrackIndex !== null ? tracks[currentTrackIndex] : null;
 
   // Memoized next/previous handlers to avoid unnecessary re-renders
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     setCurrentTrackIndex((prevIndex) => {
       if (prevIndex === null) return tracks.length > 0 ? 0 : null;
       return prevIndex === tracks.length - 1 ? 0 : prevIndex + 1;
     });
-  }, [tracks.length]);
+  };
 
-  const handlePrevious = useCallback(() => {
+  const handlePrevious = () => {
     setCurrentTrackIndex((prevIndex) => {
       if (prevIndex === null)
         return tracks.length > 0 ? tracks.length - 1 : null;
       return prevIndex === 0 ? tracks.length - 1 : prevIndex - 1;
     });
-  }, [tracks.length]);
+  };
 
   // Setup audio event listeners (efficiently managed with cleanup)
   useEffect(() => {
@@ -114,19 +114,16 @@ export const useAudioPlayback = (
   };
 
   /** Seek to an absolute time in seconds (waveform scrub, keyboard slider). */
-  const seekTo = useCallback(
-    (time: number) => {
-      if (!Number.isFinite(time)) return;
-      const audio = audioRef.current;
-      const upperBound =
-        audio && Number.isFinite(audio.duration) ? audio.duration : duration;
-      const clamped = Math.max(0, Math.min(time, upperBound || 0));
+  const seekTo = (time: number) => {
+    if (!Number.isFinite(time)) return;
+    const audio = audioRef.current;
+    const upperBound =
+      audio && Number.isFinite(audio.duration) ? audio.duration : duration;
+    const clamped = Math.max(0, Math.min(time, upperBound || 0));
 
-      setCurrentTime(clamped);
-      if (audio) audio.currentTime = clamped;
-    },
-    [audioRef, duration]
-  );
+    setCurrentTime(clamped);
+    if (audio) audio.currentTime = clamped;
+  };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);

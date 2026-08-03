@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import * as Sentry from '@sentry/nextjs';
-import { AudioPlayerProps, Track } from './types';
+import { Track } from '@/app/types';
 import {
   useAudioPlayback,
   useQueueManager,
@@ -35,7 +35,7 @@ function savePrefs(trackIndex: number | null, volume: number) {
   }
 }
 
-const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
+const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
   const [currentPeaks, setCurrentPeaks] = useState<string | null>(null);
@@ -46,8 +46,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const playAttemptInProgressRef = useRef(false);
   const restoringFromStorageRef = useRef(false);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
 
   const {
     currentTrackIndex,
@@ -68,7 +66,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     seekTo,
     handleVolumeChange,
     toggleMute,
-  } = useAudioPlayback(audioRef, hasTracks ? tracks : []);
+  } = useAudioPlayback(audioRef, tracks);
 
   const {
     queue,
@@ -83,13 +81,13 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     clearQueue,
     getNextTrackIndex,
     getPreviousTrackIndex,
-  } = useQueueManager(hasTracks ? tracks : []);
+  } = useQueueManager(tracks);
 
-  const showToast = useCallback((message: string) => {
+  const showToast = (message: string) => {
     setToast(message);
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     toastTimerRef.current = setTimeout(() => setToast(null), 2200);
-  }, []);
+  };
 
   useEffect(
     () => () => {
@@ -109,14 +107,14 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Restore persisted track index once tracks are available
   useEffect(() => {
-    if (!hasTracks || currentTrackIndex !== null) return;
+    if (tracks.length === 0 || currentTrackIndex !== null) return;
     const prefs = loadPrefs();
     if (prefs.trackIndex !== null && prefs.trackIndex < tracks.length) {
       restoringFromStorageRef.current = true;
       setCurrentTrackIndex(prefs.trackIndex);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasTracks]);
+  }, [tracks.length]);
 
   // Persist volume + track index whenever they change
   useEffect(() => {
@@ -126,7 +124,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Enhanced next/previous handlers that use queue management.
   // These are intentionally metric-free — handleEnded calls handleNext for
   // natural track completion, which should not register as a user skip.
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     if (currentTrackIndex !== null) {
       const nextIndex = getNextTrackIndex(currentTrackIndex);
       if (nextIndex !== null) {
@@ -135,14 +133,9 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     } else {
       baseHandleNext();
     }
-  }, [
-    currentTrackIndex,
-    getNextTrackIndex,
-    setCurrentTrackIndex,
-    baseHandleNext,
-  ]);
+  };
 
-  const handlePrevious = useCallback(() => {
+  const handlePrevious = () => {
     // Restart the current track when we're past the threshold, matching the
     // behaviour of every other music player.
     const audio = audioRef.current;
@@ -159,33 +152,27 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     } else {
       baseHandlePrevious();
     }
-  }, [
-    currentTrackIndex,
-    getPreviousTrackIndex,
-    setCurrentTrackIndex,
-    baseHandlePrevious,
-    seekTo,
-  ]);
+  };
 
   // Wrappers used only for explicit user actions (button / keyboard).
   // handleEnded keeps calling handleNext directly so natural completions
   // are not counted as skips.
-  const handleNextUser = useCallback(() => {
+  const handleNextUser = () => {
     Sentry.metrics.count('audio.track.skip', 1, {
       attributes: { direction: 'next' },
     });
     handleNext();
-  }, [handleNext]);
+  };
 
-  const handlePreviousUser = useCallback(() => {
+  const handlePreviousUser = () => {
     Sentry.metrics.count('audio.track.skip', 1, {
       attributes: { direction: 'previous' },
     });
     handlePrevious();
-  }, [handlePrevious]);
+  };
 
   // Enhanced play/pause handler with safety checks
-  const handlePlayPause = useCallback(() => {
+  const handlePlayPause = () => {
     if (playAttemptInProgressRef.current) {
       return;
     }
@@ -202,55 +189,49 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         playAttemptInProgressRef.current = false;
       }, 300);
     }
-  }, [baseHandlePlayPause]);
+  };
 
-  const handleAddToQueue = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < tracks.length) {
-        const track = tracks[index]!;
-        addToQueue(track);
-        Sentry.metrics.count('audio.queue.add', 1, {
-          attributes: { track_id: track.id, track_name: track.name },
-        });
-        showToast(`Added to queue: ${track.name || track.title}`);
-      }
-    },
-    [tracks, addToQueue, showToast]
-  );
+  const handleAddToQueue = (index: number) => {
+    if (index >= 0 && index < tracks.length) {
+      const track = tracks[index]!;
+      addToQueue(track);
+      Sentry.metrics.count('audio.queue.add', 1, {
+        attributes: { track_id: track.id, track_name: track.name },
+      });
+      showToast(`Added to queue: ${track.name || track.title}`);
+    }
+  };
 
   // Handle selecting a track from the queue
-  const handleQueueTrackSelect = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < queue.length && queue[index]) {
-        const trackIndex = tracks.findIndex(
-          (track) => track.id === queue[index]!.id
-        );
-        if (trackIndex !== -1) {
-          // Remove all tracks before this one from the queue
-          const newQueue = queue.slice(index + 1);
+  const handleQueueTrackSelect = (index: number) => {
+    if (index >= 0 && index < queue.length && queue[index]) {
+      const trackIndex = tracks.findIndex(
+        (track) => track.id === queue[index]!.id
+      );
+      if (trackIndex !== -1) {
+        // Remove all tracks before this one from the queue
+        const newQueue = queue.slice(index + 1);
 
-          const removedTrackIds = new Set<string>();
-          queue.slice(0, index + 1).forEach((track) => {
-            const stillInQueue =
-              newQueue.some((t) => t.id === track.id) ||
-              track.id === tracks[trackIndex]?.id;
-            if (!stillInQueue) {
-              removedTrackIds.add(track.id);
-            }
-          });
+        const removedTrackIds = new Set<string>();
+        queue.slice(0, index + 1).forEach((track) => {
+          const stillInQueue =
+            newQueue.some((t) => t.id === track.id) ||
+            track.id === tracks[trackIndex]?.id;
+          if (!stillInQueue) {
+            removedTrackIds.add(track.id);
+          }
+        });
 
-          setCurrentTrackIndex(trackIndex);
+        setCurrentTrackIndex(trackIndex);
 
-          queuedTrackIds.forEach((id) => {
-            if (removedTrackIds.has(id)) {
-              queuedTrackIds.delete(id);
-            }
-          });
-        }
+        queuedTrackIds.forEach((id) => {
+          if (removedTrackIds.has(id)) {
+            queuedTrackIds.delete(id);
+          }
+        });
       }
-    },
-    [queue, tracks, setCurrentTrackIndex, queuedTrackIds]
-  );
+    }
+  };
 
   // Swap in the signed URL for the current track. Readiness is reported by the
   // <audio> element's own loadedmetadata / canplay / error events below, so
@@ -313,49 +294,38 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrackIndex, tracks]);
 
-  const handleTrackSelect = useCallback(
-    (index: number) => {
-      // Selecting the track that is already loaded toggles playback instead of
-      // reloading it from scratch.
-      if (index === currentTrackIndex) {
-        handlePlayPause();
-        return;
-      }
+  const handleTrackSelect = (index: number) => {
+    // Selecting the track that is already loaded toggles playback instead of
+    // reloading it from scratch.
+    if (index === currentTrackIndex) {
+      handlePlayPause();
+      return;
+    }
 
-      const track = tracks[index];
-      if (track) {
-        Sentry.metrics.count('audio.track.play', 1, {
-          attributes: { track_id: track.id, track_name: track.name },
-        });
-      }
-      setCurrentTrackIndex(index);
+    const track = tracks[index];
+    if (track) {
+      Sentry.metrics.count('audio.track.play', 1, {
+        attributes: { track_id: track.id, track_name: track.name },
+      });
+    }
+    setCurrentTrackIndex(index);
 
-      // Add all tracks after the selected track to the queue
-      if (hasTracks && tracks.length > index + 1) {
-        const tracksToAdd = tracks.slice(index + 1);
+    // Add all tracks after the selected track to the queue
+    if (tracks.length > index + 1) {
+      const tracksToAdd = tracks.slice(index + 1);
 
-        clearQueue();
+      clearQueue();
 
-        // Use setTimeout to ensure the queue is cleared before adding new tracks
-        setTimeout(() => {
-          for (let i = 0; i < tracksToAdd.length; i++) {
-            addToQueue(tracksToAdd[i]!);
-          }
-        }, 0);
-      }
-    },
-    [
-      hasTracks,
-      tracks,
-      currentTrackIndex,
-      handlePlayPause,
-      setCurrentTrackIndex,
-      clearQueue,
-      addToQueue,
-    ]
-  );
+      // Use setTimeout to ensure the queue is cleared before adding new tracks
+      setTimeout(() => {
+        for (let i = 0; i < tracksToAdd.length; i++) {
+          addToQueue(tracksToAdd[i]!);
+        }
+      }, 0);
+    }
+  };
 
-  const triggerDownload = useCallback((url: string, track: Track) => {
+  const triggerDownload = (url: string, track: Track) => {
     const downloadLink = document.createElement('a');
     downloadLink.href = url;
     downloadLink.target = '_blank';
@@ -364,73 +334,64 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
-  }, []);
+  };
 
-  const handleDownload = useCallback(
-    async (index: number) => {
-      const track = tracks[index];
-      if (!track) return;
+  const handleDownload = async (index: number) => {
+    const track = tracks[index];
+    if (!track) return;
 
-      Sentry.metrics.count('audio.track.download', 1, {
-        attributes: { track_id: track.id, track_name: track.name },
+    Sentry.metrics.count('audio.track.download', 1, {
+      attributes: { track_id: track.id, track_name: track.name },
+    });
+
+    // The loaded track already has a signed URL; anything else needs one.
+    if (index === currentTrackIndex && currentUrl) {
+      triggerDownload(currentUrl, track);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/music/url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: track.path }),
       });
+      if (!response.ok) throw new Error('Failed to get audio URL');
+      const { url } = (await response.json()) as { url: string };
+      triggerDownload(url, track);
+    } catch (error) {
+      logger.error('Error downloading track:', error);
+      showToast('Download failed — please try again');
+    }
+  };
 
-      // The loaded track already has a signed URL; anything else needs one.
-      if (index === currentTrackIndex && currentUrl) {
-        triggerDownload(currentUrl, track);
-        return;
-      }
+  const handleShare = async (track: Track) => {
+    const link = `${window.location.origin}${window.location.pathname}#${encodeURIComponent(track.id)}`;
 
-      try {
-        const response = await fetch('/api/music/url', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ path: track.path }),
-        });
-        if (!response.ok) throw new Error('Failed to get audio URL');
-        const { url } = (await response.json()) as { url: string };
-        triggerDownload(url, track);
-      } catch (error) {
-        logger.error('Error downloading track:', error);
-        showToast('Download failed — please try again');
-      }
-    },
-    [tracks, currentTrackIndex, currentUrl, triggerDownload, showToast]
-  );
+    try {
+      await navigator.clipboard.writeText(link);
+      showToast('Link copied');
+    } catch {
+      showToast(link);
+    }
+  };
 
-  const handleShare = useCallback(
-    async (track: Track) => {
-      const link = `${window.location.origin}${window.location.pathname}#${encodeURIComponent(track.id)}`;
+  const handleVolumeSet = (v: number) => {
+    setVolume(v);
+    setIsMuted(v === 0);
+  };
 
-      try {
-        await navigator.clipboard.writeText(link);
-        showToast('Link copied');
-      } catch {
-        showToast(link);
-      }
-    },
-    [showToast]
-  );
-
-  const handleVolumeSet = useCallback(
-    (v: number) => {
-      setVolume(v);
-      setIsMuted(v === 0);
-    },
-    [setVolume, setIsMuted]
-  );
-
-  const handleToggleShuffle = useCallback(() => {
+  const handleToggleShuffle = () => {
     const next = !isShuffleActive;
     Sentry.metrics.count('audio.shuffle.toggle', 1, {
       attributes: { enabled: String(next) },
     });
     toggleShuffle();
-  }, [isShuffleActive, toggleShuffle]);
+  };
 
   // Global keyboard shortcuts (active when a track is loaded)
   useKeyboardShortcuts({
-    enabled: hasTracks && currentTrackIndex !== null,
+    enabled: tracks.length > 0 && currentTrackIndex !== null,
     onPlayPause: handlePlayPause,
     onNext: handleNextUser,
     onPrevious: handlePreviousUser,
@@ -441,7 +402,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
   // Deep link: /music#<track id> selects that track without autoplaying
   useEffect(() => {
-    if (!hasTracks || currentTrackIndex !== null) return;
+    if (tracks.length === 0 || currentTrackIndex !== null) return;
 
     const hash = window.location.hash.slice(1);
     if (!hash) return;
@@ -461,18 +422,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       setCurrentTrackIndex(index);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasTracks]);
+  }, [tracks.length]);
 
-  const handleLoadedMetadata = useCallback(
-    (e: React.SyntheticEvent<HTMLAudioElement>) => {
-      const audio = e.target as HTMLAudioElement;
-      setDuration(audio.duration);
-      setIsMetadataLoaded(true);
-    },
-    [setDuration]
-  );
+  const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+    const audio = e.target as HTMLAudioElement;
+    setDuration(audio.duration);
+    setIsMetadataLoaded(true);
+  };
 
-  const handleCanPlay = useCallback(() => {
+  const handleCanPlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -487,32 +445,32 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         setIsPlaying(false);
       });
     }
-  }, [setIsPlaying]);
+  };
 
-  const handlePlay = useCallback(() => {
+  const handlePlay = () => {
     setIsPlaying(true);
-  }, [setIsPlaying]);
+  };
 
-  const handlePause = useCallback(() => {
+  const handlePause = () => {
     setIsPlaying(false);
-  }, [setIsPlaying]);
+  };
 
-  const handleEnded = useCallback(() => {
+  const handleEnded = () => {
     shouldAutoPlayRef.current = true;
     handleNext();
-  }, [handleNext]);
+  };
 
-  const handleError = useCallback(() => {
+  const handleError = () => {
     setIsLoading(false);
-  }, []);
+  };
 
-  const handleWaiting = useCallback(() => {
+  const handleWaiting = () => {
     setIsLoading(true);
-  }, []);
+  };
 
-  const handlePlaying = useCallback(() => {
+  const handlePlaying = () => {
     setIsLoading(false);
-  }, []);
+  };
 
   return (
     <div className={styles.player} data-has-bar={!!currentTrack || undefined}>
