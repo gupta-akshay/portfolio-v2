@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAudioUrl } from '@/app/utils/aws';
+import { getTrackPeaks } from '@/app/utils/trackPeaks';
 import { logger } from '@/app/utils/logger';
 
 const ALLOWED_PREFIX = 'tracks/';
@@ -25,7 +26,9 @@ export async function POST(request: NextRequest) {
     }
 
     const url = await getAudioUrl(path as string);
-    return NextResponse.json({ url });
+    // Peaks ride along with the signed URL so the waveform is ready the moment
+    // a track is selected, without a second round trip.
+    return NextResponse.json({ url, peaks: getTrackPeaks(path as string) });
   } catch (error) {
     logger.error('Error generating signed URL:', error);
     return NextResponse.json(
