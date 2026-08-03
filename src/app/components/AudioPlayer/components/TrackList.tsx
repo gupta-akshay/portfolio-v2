@@ -88,7 +88,9 @@ const TrackList: React.FC<TrackListProps> = ({
         const isQueued = queuedTrackIds.has(track.id);
         const label = trackLabel(track);
         const meta = trackMeta(track);
-        const isRemix = /remix|flip|edit|mix/i.test(track.type ?? '');
+        // Originals get the accent badge; every other kind (remix, mashup,
+        // cover, flip, edit …) shares the teal treatment.
+        const isOriginal = /^original$/i.test((track.type ?? '').trim());
         // Live duration wins once the audio is loaded; otherwise fall back to
         // the value precomputed by the peaks script.
         const rowDuration =
@@ -129,7 +131,7 @@ const TrackList: React.FC<TrackListProps> = ({
                   {track.type && track.type.trim().length > 0 && (
                     <span
                       className={styles.trackBadge}
-                      data-tone={isRemix ? 'remix' : 'original'}
+                      data-tone={isOriginal ? 'original' : 'remix'}
                     >
                       {track.type}
                     </span>

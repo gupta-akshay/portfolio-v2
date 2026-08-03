@@ -36,8 +36,11 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
 .player {
   position: relative;
+
   // Clear the fixed player bar so the last row is never trapped behind it
-  padding-bottom: 140px;
+  &[data-has-bar] {
+    padding-bottom: 140px;
+  }
 }
 
 /* ---------------------------------------------------------------- track list */

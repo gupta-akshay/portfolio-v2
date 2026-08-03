@@ -681,7 +681,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   }, []);
 
   return (
-    <div className={styles.player}>
+    <div className={styles.player} data-has-bar={!!currentTrack || undefined}>
       {/* Always render the audio element, but with empty src if no track */}
       <audio
         ref={audioRef}
