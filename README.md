@@ -1,15 +1,32 @@
-# Personal Portfolio Website V2 🚀
+# Personal Portfolio Website V5 🚀
 
 Live at [akshaygupta.live](https://akshaygupta.live)
 
-Modern portfolio built with Next.js App Router, MDX blogging, a custom music showcase, reactions, and a contact workflow.
+Next.js App Router portfolio with MDX blogging, a custom music player, emoji
+reactions, and a contact workflow — rebuilt in V5 around a neo-brutalist design
+language.
+
+## What's new in V5
+
+- **Neo-brutalist redesign** — signal amber accent, thick ink borders, hard
+  unblurred offset shadows, square corners, and instant (stepped) state changes
+  in place of eased transitions. Dark-first, with the light theme carried through.
+- **Fixed top navigation** replaces the former left sidebar. Below 820px it
+  collapses into a dropdown with a backdrop and a genuine scroll lock.
+- **Rebuilt music player** — a SoundCloud-style waveform seeker drawn from real,
+  precomputed peak data, a persistent bottom player bar, and a queue drawer.
+- **Precomputed waveform peaks** generated offline (see below) rather than
+  decoded in the browser.
+- **Blog pagination** — ten posts at a time behind a load-more control.
+- **Zero icon-font runtime** — technology logos are inlined as SVG; the
+  `devicon` package and eight other dependencies were removed.
 
 ## Routes
 
 - `/` - Home
 - `/about` - About, skills, experience, and GitHub contribution calendar
 - `/resume` - Print-ready resume with full CV content (summary, skills, experience, education)
-- `/blog` - Blog index from MDX content
+- `/blog` - Paginated blog index from MDX content
 - `/blog/[slug]` - Individual blog post pages
 - `/feed.xml` - RSS feed of all published blog posts
 - `/music` - Music showcase with custom player
@@ -34,14 +51,38 @@ for the zone.
 
 - Next.js 16 + React 19 + TypeScript
 - Sass modules + global Sass architecture
-- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`, `rehype-mermaid`)
+- Space Grotesk (display/body) + Space Mono (metadata, numerals) via `next/font`
+- MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`); Mermaid is
+  rendered on the client
 - TanStack Form + Zod for contact validation
 - Drizzle ORM + Neon/PostgreSQL (emoji reactions)
 - AWS S3 + CloudFront signing for music delivery
 - Resend for email sending
 - Sentry + Vercel Analytics + Vercel Speed Insights
 - Google Analytics + Microsoft Clarity
-- Inline SVG icons via a local `Icon` component (no external icon runtime)
+- Inline SVG icons via a local `Icon` component (no icon font, no icon runtime)
+
+## Design System
+
+Tokens live in `src/app/styles/variables.scss`.
+
+| Token                       | Value                    | Role                                  |
+| --------------------------- | ------------------------ | ------------------------------------- |
+| `$px-theme`                 | `#fbbf24`                | Signal amber — primary accent         |
+| `$px-theme-ink`             | `#7a5c0d`                | Accent **as text on light backgrounds** |
+| `$px-violet`                | `#8b5cf6`                | Secondary pop (remix badges, toggles) |
+| `$px-ink` / `$px-ink-light` | `#ffffff` / `#0b0b10`    | Borders and headings per theme        |
+| `$bd-thick` / `$bd-thin`    | `3px` / `2px`            | Border weights                        |
+| `$shadow-sm/md/lg`          | `4/6/10px` hard offset   | Unblurred offset shadows              |
+
+Two conventions matter when adding UI:
+
+- **Shadows use `var(--shadow-ink)`**, a custom property that resolves to white
+  on the dark theme and black on the light one. A hard black shadow is invisible
+  on a near-black canvas, so never hardcode the offset colour.
+- **Amber fails contrast as text on light backgrounds** (~1.6:1). Use
+  `$px-theme-ink` for accent-coloured text inside `body.theme-light`; keep the
+  brighter `$px-theme` for fills, borders and dark-mode text.
 
 ## Current Features
 
@@ -54,38 +95,64 @@ for the zone.
   - table of contents (server-extracted headings, no DOM polling)
   - reading progress bar
   - reading time
-  - social sharing
+  - social sharing (custom component; no third-party share SDK)
   - emoji reactions backed by PostgreSQL
   - RSS feed at `/feed.xml`
   - draft support (`draft: true` hides posts in production)
-  - mermaid diagrams rendered on the client via `mermaid` (ssr-safe; `rehype-mermaid` with the `pre-mermaid` strategy emits `<pre class="mermaid">` that the `MermaidRenderer` component hydrates into SVG), with theme-aware styling for dark/light modes
+  - pagination on the index — ten posts per page
+  - body copy width matched to the feature image
+  - mermaid diagrams rendered on the client by `MermaidRenderer`, theme-aware
 - Music page with:
-  - custom audio player
-  - queue controls
-  - waveform/visualizer hooks
+  - waveform seeker driven by precomputed peaks (click to seek, drag to scrub,
+    hover for a time tooltip, keyboard-accessible via a hidden range input)
+  - persistent bottom player bar and slide-in queue drawer
   - S3/CloudFront signed URLs (server-side signing only)
   - playback state persisted across page loads (track, volume)
   - keyboard shortcuts: Space (play/pause), M (mute), ←/→ (prev/next), ↑/↓ (volume)
+  - previous restarts the current track when more than 3s in
 - Resume page (`/resume`) with:
-  - structured single-column layout matching site dark/green theme
-  - bullet-point experience sourced from CV YAML (`data.ts`)
+  - single 880px document column
+  - bullet-point experience sourced from CV data
   - `@media print` styles: hides nav/controls, forces readable colors, avoids page breaks inside atomic blocks
-  - Print button + Download Resume PDF action
+  - Download Resume PDF action
 - Contact page with:
   - validated form submission
   - email API route (`/api/sendMail`)
   - rate-limited UX feedback
 
-> Note: Legacy easter-egg features were removed.
+## Music Waveforms
+
+Peaks are generated offline and committed, not computed in the browser:
+
+```bash
+pnpm peaks:generate
+```
+
+The script lists the S3 bucket, downloads each track, decodes it with **ffmpeg**,
+and writes 400 peak buckets (quantized to one byte each) plus the exact duration
+to `src/app/data/track-peaks.json` — roughly 540 bytes per track.
+
+Deriving peaks client-side would mean downloading every MP3 a second time (the
+`<audio>` element streams its own copy) and the waveform could not appear until
+the full file landed; Vercel's serverless runtime has no audio decoder. Durations
+travel with the track listing so every row shows one, while peaks are returned
+per-track by `/api/music/url`, which the player already calls on selection.
+
+Re-run the script whenever tracks are added or replaced. It requires `ffmpeg` on
+PATH and AWS credentials. A track missing from the JSON falls back to a flat
+placeholder strip, so a stale file degrades rather than breaks.
 
 ## Project Structure
 
 ```text
 src/app/                  # App Router pages, layouts, API routes, styles
+src/app/components/Icon/  # Inline SVG icon system (icons.ts + techIcons.ts)
+src/app/data/             # Generated track-peaks.json
 src/lib/mdx/              # MDX loaders, parsing helpers, types
 content/blog/             # Blog posts (.mdx)
 db/                       # Drizzle schema + db client
 migrations/               # SQL migrations generated by Drizzle
+scripts/                  # Offline tooling (peaks generation, image conversion)
 public/                   # Static assets
 ```
 
@@ -125,7 +192,8 @@ SENTRY_AUTH_TOKEN=
 
 ## Local Development
 
-Requires Node v24 (`.nvmrc`) and pnpm.
+Requires Node v24 (`.nvmrc`) and pnpm. `pnpm peaks:generate` additionally needs
+`ffmpeg`.
 
 ```bash
 pnpm install
@@ -137,16 +205,18 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command                   | Description                 |
-| ------------------------- | --------------------------- |
-| `pnpm dev`                | Start Next.js dev server    |
-| `pnpm build`              | Production build            |
-| `pnpm start`              | Run production server       |
-| `pnpm lint`               | Run ESLint                  |
-| `pnpm db:generate`        | Generate Drizzle migrations |
-| `pnpm db:migrate`         | Apply migrations            |
-| `pnpm db:studio`          | Open Drizzle Studio         |
-| `ANALYZE=true pnpm build` | Build with bundle analyzer  |
+| Command                   | Description                                  |
+| ------------------------- | -------------------------------------------- |
+| `pnpm dev`                | Start Next.js dev server                     |
+| `pnpm build`              | Production build                             |
+| `pnpm start`              | Run production server                        |
+| `pnpm lint`               | Run ESLint                                   |
+| `pnpm peaks:generate`     | Regenerate music waveform peaks from S3       |
+| `pnpm images:to-webp`     | Convert images in `public/` to WebP           |
+| `pnpm db:generate`        | Generate Drizzle migrations                  |
+| `pnpm db:migrate`         | Apply migrations                             |
+| `pnpm db:studio`          | Open Drizzle Studio                          |
+| `ANALYZE=true pnpm build` | Build with bundle analyzer                   |
 
 ## Blog Authoring (MDX)
 
@@ -174,7 +244,7 @@ Metadata is validated at build time via Zod (`src/lib/mdx/schema.ts`). A missing
 
 ### Mermaid diagrams
 
-Fence a code block with `mermaid` and it will be rendered to inline SVG at build time:
+Fence a code block with `mermaid`:
 
 ````md
 ```mermaid
@@ -183,7 +253,9 @@ flowchart LR
 ```
 ````
 
-`rehype-mermaid` is configured with the `pre-mermaid` strategy, so MDX builds stay fast and hermetic — no Playwright/Chromium on the build server. The `MermaidRenderer` client component loads `mermaid` on demand on blog pages and re-renders when the theme changes.
+MDX builds stay fast and hermetic — no Playwright/Chromium on the build server.
+The `MermaidRenderer` client component loads `mermaid` on demand on blog pages
+and re-renders when the theme changes.
 
 ## Observability & Security
 

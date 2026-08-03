@@ -265,8 +265,8 @@ $ease-standard: linear;
     color: $px-dark;
 
     &:hover {
-      border-color: $px-theme;
-      color: $px-theme;
+      border-color: $px-theme-ink;
+      color: $px-theme-ink;
     }
   }
 
@@ -274,7 +274,7 @@ $ease-standard: linear;
     color: $px-body-light;
 
     &:hover {
-      color: $px-theme;
+      color: $px-theme-ink;
     }
   }
 

@@ -19,12 +19,13 @@
 
   .githubLink {
     background: rgba(251, 191, 36, 0.1);
-    color: #fbbf24;
+    color: $px-theme-ink;
     border: 1px solid rgba(251, 191, 36, 0.3);
 
     &:hover {
       background: rgba(251, 191, 36, 0.2);
       border-color: rgba(251, 191, 36, 0.5);
+      color: $px-theme-ink;
     }
   }
 
@@ -46,7 +47,7 @@
   .retryButton {
     background: rgba(251, 191, 36, 0.1);
     border: 1px solid rgba(251, 191, 36, 0.3);
-    color: #fbbf24;
+    color: $px-theme-ink;
 
     &:hover {
       background: rgba(251, 191, 36, 0.2);
@@ -116,7 +117,7 @@
 
   // Custom styling for the GitHub calendar
   :global(.react-github-calendar) {
-    font-family: var(--font-rubik), monospace;
+    font-family: $px-font;
 
     svg {
       border-radius: 0;
