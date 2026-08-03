@@ -16,7 +16,10 @@ pnpm db:studio        # Open Drizzle Studio UI
 ANALYZE=true pnpm build  # Build with bundle analyzer
 ```
 
-There are no test scripts in this project. Package manager is **pnpm**; Node **v24** (`.nvmrc`).
+`pnpm test` runs the handful of `*.test.ts` files on Node's built-in test runner
+(`node --test`) — there is no test framework, and only non-obvious logic has a
+check (currently the contact form's HTML escaping). Package manager is **pnpm**;
+Node **v24** (`.nvmrc`).
 
 ## Architecture
 
@@ -55,7 +58,7 @@ public/               # Static assets
 
 ### Cross-cutting infra
 
-- **Env validation**: `src/env.ts` exports `serverEnv` / `publicEnv` zod-validated proxies (lazy — validated on first access). Import these instead of reading `process.env` directly. Reading `serverEnv.*` on the client throws. `SKIP_ENV_VALIDATION=true` bypasses (for Docker build stages). `src/lib/site-url.ts` `getSiteUrl()` is the canonical origin for metadata/feeds/sharing.
+- **Env validation**: `src/env.ts` exports a `serverEnv` zod-validated proxy (lazy — validated on first access). Import it instead of reading `process.env` on the server; reading `serverEnv.*` on the client throws. `NEXT_PUBLIC_*` vars are read as `process.env.NEXT_PUBLIC_…` literals at their use site, because that is the only form Next inlines into the client bundle. `SKIP_ENV_VALIDATION=true` bypasses (for Docker build stages). `src/lib/site-url.ts` `getSiteUrl()` is the canonical origin for metadata/feeds/sharing.
 - **Path aliases** (`tsconfig.json`): `@/*` → `src/*`, `@/content/*` → `content/*`.
 - **`exactOptionalPropertyTypes` is on.** Passing an explicitly `undefined` value to an optional prop is an error — either omit the key with a conditional spread (`...(x !== undefined && { x })`) or widen the prop to `string | undefined`.
 - **Error monitoring**: Sentry via `@sentry/nextjs`. Config in `sentry.{server,edge}.config.ts`, `src/instrumentation*.ts`, and `withSentryConfig` in `next.config.mjs` (tunnelRoute `/monitoring`). Use `src/app/utils/logger.ts` for logging.
