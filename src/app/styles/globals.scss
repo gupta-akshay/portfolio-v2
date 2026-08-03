@@ -77,10 +77,11 @@ body {
   }
 }
 
-// Links
+// Links. Nav items, cards, pills and buttons are all anchors, so the default is
+// undecorated; long-form prose opts back in where colour alone is not enough.
 a {
   color: $px-theme;
-  text-decoration: underline;
+  text-decoration: none;
   transition: color 0.2s ease-in-out;
 
   @include px-hover {

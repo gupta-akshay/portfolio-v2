@@ -390,8 +390,11 @@
     }
   }
 
+  // Prose links stay underlined: inside body copy colour alone is not a
+  // reliable affordance, and the surrounding text gives it no other context.
   a {
     color: $px-theme;
+    text-decoration: underline;
     text-underline-offset: 0.2em;
 
     @include px-hover {
