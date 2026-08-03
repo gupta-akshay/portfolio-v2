@@ -42,6 +42,16 @@ export const contactContent = {
   emails: ['contact@akshaygupta.live', 'akshaygupta.live@gmail.com'],
 };
 
+export const socialLinks = [
+  { label: 'GitHub', url: 'https://github.com/gupta-akshay' },
+  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/akshayguptaujn' },
+  { label: 'Medium', url: 'https://medium.com/@akshaygupta.live' },
+  { label: 'Dev.to', url: 'https://dev.to/akshay_gupta' },
+  { label: 'Instagram', url: 'https://www.instagram.com/dja_shay' },
+  { label: 'Facebook', url: 'https://www.facebook.com/deejay.ashay' },
+  { label: 'SoundCloud', url: 'https://soundcloud.com/dj_ashay' },
+];
+
 export const musicContent = {
   paragraphs: [
     'Music is a creative practice that complements my engineering work. This collection includes original productions and remixes across electronic and melodic styles.',

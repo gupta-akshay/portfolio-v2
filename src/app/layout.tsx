@@ -85,8 +85,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
-      <body className={`${rubik.variable} ${cookie.variable}`}>
+    // themeInitScript adds `theme-light` to <html>/<body> before hydration to
+    // avoid a flash of the wrong theme, so React must tolerate the difference.
+    <html lang='en' suppressHydrationWarning>
+      <body
+        className={`${rubik.variable} ${cookie.variable}`}
+        suppressHydrationWarning
+      >
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <a href='#main-content' className='skip-link'>
           Skip to main content

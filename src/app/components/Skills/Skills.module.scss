@@ -1,37 +1,49 @@
 @use '../../styles/variables' as *;
-@use '../../styles/mixin' as *;
 
-// Light theme overrides
-:global(body.theme-light) {
-  .skillsPill {
-    color: $px-dark;
-    background: $px-gray;
+$border-subtle: rgba(255, 255, 255, 0.08);
+
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+// Skills chips are non-interactive, so the hover only brightens the surface —
+// it never suggests the chip can be clicked.
+.skillsPill {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: $px-dark;
+  border: 1px solid $border-subtle;
+  color: $px-body;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-color: $px-theme-rgb-1;
+    color: $px-white;
   }
 }
 
-.skills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-// Skills pills are non-interactive, so no hover effects
-// Per portfolio guidelines: "under no circumstances should an element
-// indicate interactivity while not actually being interactive"
-.skillsPill {
-  padding: 12px 20px;
-  border-radius: 5px;
-  box-shadow:
-    $px-theme-rgb-1 0px 1px 2px 0px,
-    $px-theme-rgb-2 0px 2px 6px 2px;
-  background: $px-dark;
-  color: $px-white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
 .skillsPillIcon {
-  font-size: 24px;
+  font-size: 20px;
+  color: $px-theme;
+  flex-shrink: 0;
+}
+
+:global(body.theme-light) {
+  .skillsPill {
+    background: $px-gray;
+    border-color: rgba($px-dark, 0.1);
+    color: $px-body-light;
+
+    &:hover {
+      color: $px-dark;
+      border-color: $px-theme-rgb-1;
+    }
+  }
 }

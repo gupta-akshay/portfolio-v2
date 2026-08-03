@@ -1,147 +1,177 @@
-@use 'sass:color';
 @use '../variables' as *;
-@use '../mixin' as *;
-@use '../3d-effects' as *;
 
-// 🌞 Light theme overrides
-:global(body.theme-light) {
-  .aboutText h4 {
-    color: $px-dark;
-  }
+$border-subtle: rgba(255, 255, 255, 0.08);
+$card-bg: $px-dark;
+$shadow-btn-theme: 0 12px 24px rgba(47, 191, 113, 0.3);
+$shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
+$shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.15);
 
-  .aboutText p {
-    color: $px-body-light;
-  }
+.eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $px-theme;
+  margin-bottom: 12px;
+}
 
-  .educationBox {
-    background: $px-gray;
-  }
+.heroGrid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 56px;
+  align-items: center;
+  margin-bottom: 88px;
+}
 
-  .educationBox p {
-    color: $px-body-light;
-  }
+.heroImage {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: $shadow-panel;
+  align-self: stretch;
 
-  .educationBox h6 {
-    color: $px-dark;
-  }
-
-  .educationBox li + li {
-    border-top: 1px solid rgba($px-dark, 0.05);
-  }
-
-  .skillsBox h3 {
-    color: $px-dark;
-  }
-
-  .skillsBox p {
-    color: $px-body-light;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 }
 
-.aboutSection {
-  .aboutImg {
-    img {
-      @include up-md {
-        max-width: inherit;
-        float: right;
-      }
-    }
-
-    @include down-md {
-      text-align: center;
-    }
-  }
-
-  .aboutInfo {
-    @include up-lg {
-      padding-left: 50px;
-    }
-
-    .aboutText {
-      h4 {
-        color: $px-white;
-        margin-bottom: 25px;
-      }
-
-      p {
-        color: $px-body;
-      }
-    }
-
-    .btnBar {
-      padding-top: 35px;
-
-      .pxBtn {
-        min-width: 150px;
-        text-align: center;
-
-        + .pxBtn {
-          margin-left: 22px;
-        }
-      }
-    }
-  }
-}
-
-.educationBox {
-  margin: 0;
-  padding: 0;
-  background: $px-dark;
-  list-style: none;
-
-  @include down-md {
-    margin-bottom: 10px;
-  }
-
-  p {
-    margin: 0;
-    color: $px-body;
-  }
-
-  h6 {
-    color: $px-white;
-    margin: 5px 0;
-  }
+.heroTitle {
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: $px-white;
+  margin: 0 0 20px;
+  text-wrap: pretty;
 
   span {
-    background: $px-theme;
-    color: #000000;
-    font-size: 11px;
-    padding: 1px 8px;
-    display: inline-block;
-    vertical-align: top;
-    letter-spacing: 1px;
-    margin-left: -24px;
-    position: relative;
-    margin-bottom: 9px;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      border-top: 5px solid color.adjust($px-theme, $lightness: -25%);
-      border-left: 5px solid transparent;
-    }
-  }
-
-  li {
-    padding: 20px;
-
-    + li {
-      border-top: 1px solid rgba($px-white, 0.05);
-    }
+    color: $px-theme;
   }
 }
 
-.skillsBox {
-  h3 {
-    color: $px-white;
-    margin: 0 0 15px;
+.heroText {
+  font-size: 17px;
+  line-height: 1.75;
+  color: $px-body;
+  margin: 0 0 16px;
+  text-wrap: pretty;
+
+  &:last-of-type {
+    margin-bottom: 28px;
+  }
+}
+
+.cta {
+  display: inline-flex;
+  padding: 13px 26px;
+  border-radius: 12px;
+  background: $px-theme;
+  color: $px-dark;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: $shadow-btn-theme;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    color: $px-dark;
+    box-shadow: $shadow-btn-theme-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.sectionHeading {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: $px-white;
+  margin: 0 0 28px;
+}
+
+.sectionIntro {
+  font-size: 16px;
+  line-height: 1.75;
+  color: $px-body;
+  margin: -16px 0 28px;
+  max-width: 720px;
+  text-wrap: pretty;
+}
+
+.block {
+  margin-bottom: 88px;
+}
+
+.educationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.educationCard {
+  padding: 24px;
+  border-radius: 16px;
+  background: $card-bg;
+  border: 1px solid $border-subtle;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    border-color: $px-theme-rgb-1;
+    transform: translateY(-2px);
+  }
+}
+
+.educationDates {
+  display: block;
+  font-size: 13px;
+  color: $px-theme;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.educationTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: $px-white;
+  margin: 0 0 4px;
+}
+
+.educationInstitution {
+  font-size: 14px;
+  color: $px-body;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-bottom: 64px;
   }
 
-  p {
-    padding-bottom: 10px;
-    color: $px-body;
+  .block {
+    margin-bottom: 64px;
+  }
+}
+
+:global(body.theme-light) {
+  .heroTitle,
+  .sectionHeading,
+  .educationTitle {
+    color: $px-dark;
+  }
+
+  .heroText,
+  .sectionIntro,
+  .educationInstitution {
+    color: $px-body-light;
+  }
+
+  .educationCard {
+    background: $px-gray;
+    border-color: rgba($px-dark, 0.1);
   }
 }

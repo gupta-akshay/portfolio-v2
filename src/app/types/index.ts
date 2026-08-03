@@ -32,7 +32,8 @@ export interface Track {
   title: string;
   artist: string;
   path: string;
-  duration?: string;
+  /** Exact length in seconds, precomputed by scripts/generate-track-peaks.mjs */
+  duration?: number;
   originalArtist?: string;
   name?: string;
   type?: string;

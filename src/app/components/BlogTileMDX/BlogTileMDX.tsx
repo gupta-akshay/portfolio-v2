@@ -11,8 +11,6 @@ import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 
 import styles from '../BlogTile/BlogTile.module.scss';
 
-const MAX_VISIBLE_CATEGORIES = 3;
-
 const BlogTileMDX = memo(
   ({ blog }: { blog: BlogPost }) => {
     const { metadata, slug, readingTime } = blog;
@@ -30,14 +28,7 @@ const BlogTileMDX = memo(
       [metadata.publishedAt]
     );
 
-    const visibleCategories = metadata.categories.slice(
-      0,
-      MAX_VISIBLE_CATEGORIES
-    );
-    const remainingCount = Math.max(
-      0,
-      metadata.categories.length - MAX_VISIBLE_CATEGORIES
-    );
+    const primaryCategory = metadata.categories[0];
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
@@ -46,70 +37,49 @@ const BlogTileMDX = memo(
     };
 
     return (
-      <div className='col-md-6 m-15px-tb'>
-        <article className={styles.blogGrid}>
-          <div className={styles.blogImg}>
-            <Link
-              href={blogHref}
-              prefetch={false}
-              aria-label={`Read more about ${metadata.title}`}
-              onClick={handleClick}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              {metadata.coverImage ? (
-                <Image
-                  src={metadata.coverImage}
-                  alt={metadata.coverImageAlt || metadata.title}
-                  width={1792}
-                  height={1024}
-                  className={styles.tileImage}
-                  sizes='(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 540px'
-                />
-              ) : (
-                <div
-                  className={styles.placeholderImage}
-                  style={{
-                    background:
-                      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    fontSize: '1.5rem',
-                  }}
-                >
-                  {metadata.title.charAt(0)}
-                </div>
-              )}
-            </Link>
+      <article className={styles.card}>
+        <Link
+          href={blogHref}
+          prefetch={false}
+          className={styles.cardLink}
+          onClick={handleClick}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          aria-label={`Read ${metadata.title}`}
+        >
+          <div className={styles.cover}>
+            {metadata.coverImage ? (
+              <Image
+                src={metadata.coverImage}
+                alt={metadata.coverImageAlt || metadata.title}
+                width={1792}
+                height={1024}
+                className={styles.coverImage}
+                sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px'
+              />
+            ) : (
+              primaryCategory && (
+                <span className={styles.coverBadge}>{primaryCategory}</span>
+              )
+            )}
           </div>
-          <div className={styles.blogInfo}>
-            <div className={styles.meta} aria-label='Post metadata'>
+
+          <div className={styles.body}>
+            {primaryCategory && (
+              <div className={styles.category}>{primaryCategory}</div>
+            )}
+            <h2 className={styles.title}>{metadata.title}</h2>
+            {metadata.excerpt && (
+              <p className={styles.excerpt}>{metadata.excerpt}</p>
+            )}
+            <div className={styles.meta}>
               <time dateTime={metadata.publishedAt}>{formattedDate}</time>
-              <span aria-hidden='true'>|</span>
-              <span className={styles.readingTime}>{readingTime}</span>
-              <span aria-hidden='true'>|</span>
-              {visibleCategories.map((category) => (
-                <span key={category} className={styles.hashtag}>
-                  #{category}
-                </span>
-              ))}
-              {remainingCount > 0 && (
-                <span className={styles.hashtagMore}>+{remainingCount}</span>
-              )}
+              <span aria-hidden='true'> · </span>
+              <span>{readingTime}</span>
             </div>
-            <h2 className={styles.blogTitle}>
-              <Link
-                href={blogHref}
-                prefetch={false}
-                onClick={handleClick}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                {metadata.title}
-              </Link>
-            </h2>
           </div>
-        </article>
-      </div>
+        </Link>
+      </article>
     );
   },
   (prevProps, nextProps) => {

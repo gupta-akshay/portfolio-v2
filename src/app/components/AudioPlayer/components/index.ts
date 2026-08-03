@@ -1,9 +1,5 @@
 export { default as TrackList } from './TrackList';
-export { default as PlayerControls } from './PlayerControls';
-export { default as NowPlaying } from './NowPlaying';
-export { default as Waveform } from './Waveform';
-export { default as EmptyPlayer } from './EmptyPlayer';
-export { default as MiniPlayer } from './MiniPlayer';
-export { default as FullScreenPlayer } from './FullScreenPlayer';
-export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as WaveformSeeker } from './WaveformSeeker';
+export { default as PlayerBar } from './PlayerBar';
 export { default as QueuePanel } from './QueuePanel';
+export { default as Toast } from './Toast';

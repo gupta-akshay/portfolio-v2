@@ -48,35 +48,6 @@ export const metadata: Metadata = {
   },
 };
 
-const EducationAndSkills = () => (
-  <>
-    <div className='separator' />
-    <div className='title'>
-      <h3>My Background & What I&apos;m Good At</h3>
-    </div>
-    <div className='row'>
-      <div className='col-lg-4 m-15px-tb'>
-        <ul className={styles.educationBox}>
-          {aboutContent.education.map((item) => (
-            <li key={item.qualification}>
-              <span>{item.dates}</span>
-              <h6>{item.qualification}</h6>
-              <p>{item.institution}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className='col-lg-7 ml-auto m-15px-tb'>
-        <div className={styles.skillsBox}>
-          <h3>What I Can Do</h3>
-          <p>{aboutContent.skillsIntro}</p>
-          <Skills />
-        </div>
-      </div>
-    </div>
-  </>
-);
-
 export default function About() {
   const yearsOfExperience = getYearsOfExperience();
 
@@ -141,46 +112,65 @@ export default function About() {
         }}
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <div className='row align-items-center justify-content-center'>
-            <div className='col-lg-6 m-15px-tb d-none d-sm-block'>
-              <div className={styles.aboutImg}>
-                <Image
-                  src='/images/about-me.webp'
-                  alt='about-image'
-                  width={560}
-                  height={560}
-                  loading='lazy'
-                  style={{ objectFit: 'cover', width: '100%' }}
-                />
-              </div>
+          <div className={styles.eyebrow}>About</div>
+
+          <div className={`${styles.heroGrid} route-shell`}>
+            <div className={styles.heroImage}>
+              <Image
+                src='/images/about-me.webp'
+                alt='Akshay Gupta'
+                width={560}
+                height={560}
+                loading='lazy'
+                sizes='(max-width: 900px) 100vw, 45vw'
+              />
             </div>
-            <div className='col-lg-6 m-15px-tb'>
-              <div className={`${styles.aboutInfo} route-shell`}>
-                <div className='title' style={{ marginBottom: '24px' }}>
-                  <h3>About</h3>
-                </div>
-                <div className={styles.aboutText}>
-                  <h4>{aboutContent.heading}</h4>
-                  <p>
-                    {aboutContent.paragraphs[0]?.replace(
-                      '{years}',
-                      String(yearsOfExperience)
-                    )}
-                  </p>
-                  <p>{aboutContent.paragraphs[1]}</p>
-                </div>
-                <div className={styles.btnBar}>
-                  <Link className='px-btn px-btn-regular' href='/contact'>
-                    <span>Start a Conversation</span>
-                  </Link>
-                </div>
-              </div>
+            <div>
+              <h1 className={styles.heroTitle}>
+                {aboutContent.heading}
+                <span>.</span>
+              </h1>
+              <p className={styles.heroText}>
+                {aboutContent.paragraphs[0]?.replace(
+                  '{years}',
+                  String(yearsOfExperience)
+                )}
+              </p>
+              <p className={styles.heroText}>{aboutContent.paragraphs[1]}</p>
+              <Link className={styles.cta} href='/contact'>
+                Start a Conversation
+              </Link>
             </div>
           </div>
-          <EducationAndSkills />
-          <div className='separator' />
-          <Experience />
-          <div className='separator' />
+
+          <div className={styles.block}>
+            <h2 className={styles.sectionHeading}>What I work with</h2>
+            <p className={styles.sectionIntro}>{aboutContent.skillsIntro}</p>
+            <Skills />
+          </div>
+
+          {/* Experience renders its own section heading */}
+          <div className={styles.block}>
+            <Experience />
+          </div>
+
+          <div className={styles.block}>
+            <h2 className={styles.sectionHeading}>Education</h2>
+            <ul className={styles.educationGrid}>
+              {aboutContent.education.map((item) => (
+                <li key={item.qualification} className={styles.educationCard}>
+                  <span className={styles.educationDates}>{item.dates}</span>
+                  <h3 className={styles.educationTitle}>
+                    {item.qualification}
+                  </h3>
+                  <p className={styles.educationInstitution}>
+                    {item.institution}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <GitHubCalendar username='gupta-akshay' />
         </div>
       </section>

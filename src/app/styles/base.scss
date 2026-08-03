@@ -21,22 +21,25 @@
 }
 
 .pp-section {
-  height: 100vh;
+  min-height: 100vh;
   background: $px-bg-1;
   .theme-light & {
     background: $px-white;
   }
 }
 
+// 128px top clears the 64px fixed nav and leaves the design's breathing room
 .section {
-  padding: 88px 0;
+  padding: 128px 0 96px;
   @include down-sm {
-    padding: 74px 0 54px;
+    padding: 104px 0 64px;
   }
 }
 
+// Sections used to be individually scrolling panes next to a fixed sidebar;
+// with the top nav the document scrolls normally.
 .pp-scrollable {
-  overflow: auto;
+  overflow: visible;
 }
 
 .media {
@@ -46,6 +49,8 @@
 }
 
 /* TITLE */
+// Section headings for components that carry their own title (Experience,
+// GitHub calendar). Matches the per-page section headings in the redesign.
 .title {
   margin-bottom: 28px;
   @include down-sm {
@@ -54,43 +59,15 @@
   h3 {
     color: $px-white;
     margin: 0;
-    position: relative;
-    z-index: 1;
-    font-weight: 600;
-    font-size: 34px;
-    display: inline-block;
-    vertical-align: top;
-    text-transform: none;
-    letter-spacing: 0.4px;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.02em;
 
     @include down-sm {
-      font-size: 28px;
-      letter-spacing: 0.2px;
+      font-size: 23px;
     }
     .theme-light & {
       color: $px-dark;
-    }
-    &:after {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      position: absolute;
-      bottom: -7px;
-      left: 56px;
-      right: 0;
-      z-index: -1;
-      background: $px-theme;
-    }
-    &:before {
-      content: '';
-      position: absolute;
-      height: 1px;
-      bottom: -5px;
-      left: 0;
-      right: 0;
-      width: 60px;
-      background: $px-theme;
     }
   }
 }

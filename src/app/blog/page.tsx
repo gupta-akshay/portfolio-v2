@@ -7,6 +7,8 @@ import { getAllBlogs } from '@/lib/mdx';
 import { getSiteUrl } from '@/lib/site-url';
 import { blogIntro } from '@/lib/site-content';
 
+import styles from '@/app/styles/sections/blogSection.module.scss';
+
 const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
@@ -86,7 +88,7 @@ async function BlogPosts() {
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className='row'>
+      <div className={styles.postGrid}>
         {posts.map((post) => (
           <BlogTileMDX key={post.slug} blog={post} />
         ))}
@@ -109,11 +111,12 @@ export default function Blog() {
         }}
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <div className='title'>
-            <h3>Writing</h3>
-          </div>
-          <div className='route-shell mb-4'>
-            <p className='section-intro'>{blogIntro}</p>
+          <div className={styles.eyebrow}>Blog</div>
+          <h1 className={styles.heading}>
+            Writing<span>.</span>
+          </h1>
+          <div className='route-shell'>
+            <p className={styles.intro}>{blogIntro}</p>
           </div>
           <Suspense fallback={<LoadingIndicator />}>
             <BlogPosts />

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "NODE_OPTIONS='--max-old-space-size=8192' eslint . --ext .js,.jsx,.ts,.tsx",
     "images:to-webp": "node scripts/convert-images-to-webp.mjs",
+    "peaks:generate": "node --env-file-if-exists=.env.local scripts/generate-track-peaks.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"

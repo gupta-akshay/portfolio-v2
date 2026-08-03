@@ -8,6 +8,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getSignedUrl as getCloudfrontSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { Track } from '@/app/types';
+import { getTrackDuration } from '@/app/utils/trackPeaks';
 import { serverEnv } from '@/env';
 import { logger } from '@/app/utils/logger';
 
@@ -76,15 +77,21 @@ export async function getAudioFilesList(): Promise<Track[]> {
         const metadata = parseTrackMetadata(item.Key || '');
         const title = formatTrackTitle(metadata);
 
+        const key = item.Key || '';
+        const duration = getTrackDuration(key);
+
         return {
-          id: item.Key || '',
+          id: key,
           title: title,
           artist: metadata.artist,
-          path: item.Key || '',
+          path: key,
           year: metadata.year,
           originalArtist: metadata.originalArtist,
           name: metadata.name,
           type: metadata.type,
+          // Peaks themselves are sent per-track by /api/music/url; only the
+          // cheap duration travels with the listing so every row can show it.
+          ...(duration !== undefined && { duration }),
         };
       })
       .sort((a, b) => b.year - a.year);
