@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Track } from '@/app/types';
 
 export const useQueueManager = (tracks: Track[]) => {
@@ -8,7 +8,7 @@ export const useQueueManager = (tracks: Track[]) => {
   const [isQueueVisible, setIsQueueVisible] = useState(false);
 
   // Add a track to the queue
-  const addToQueue = useCallback((track: Track) => {
+  const addToQueue = (track: Track) => {
     setQueue((prevQueue) => [...prevQueue, track]);
     setQueuedTrackIds((prevIds) => {
       if (prevIds.has(track.id)) return prevIds;
@@ -16,10 +16,10 @@ export const useQueueManager = (tracks: Track[]) => {
       newIds.add(track.id);
       return newIds;
     });
-  }, []);
+  };
 
   // Remove a track from the queue
-  const removeFromQueue = useCallback((index: number) => {
+  const removeFromQueue = (index: number) => {
     setQueue((prevQueue) => {
       if (index < 0 || index >= prevQueue.length) return prevQueue;
 
@@ -40,10 +40,10 @@ export const useQueueManager = (tracks: Track[]) => {
 
       return newQueue;
     });
-  }, []);
+  };
 
   // Reorder the queue (for drag and drop)
-  const reorderQueue = useCallback((fromIndex: number, toIndex: number) => {
+  const reorderQueue = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex) return;
 
     setQueue((prevQueue) => {
@@ -54,10 +54,10 @@ export const useQueueManager = (tracks: Track[]) => {
       }
       return newQueue;
     });
-  }, []);
+  };
 
   // Toggle shuffle mode
-  const toggleShuffle = useCallback(() => {
+  const toggleShuffle = () => {
     setIsShuffleActive((prev) => {
       const newShuffleState = !prev;
 
@@ -81,59 +81,53 @@ export const useQueueManager = (tracks: Track[]) => {
 
       return newShuffleState;
     });
-  }, []);
+  };
 
   // Toggle queue visibility
-  const toggleQueueVisibility = useCallback(() => {
+  const toggleQueueVisibility = () => {
     setIsQueueVisible((prev) => !prev);
-  }, []);
+  };
 
   // Clear the queue
-  const clearQueue = useCallback(() => {
+  const clearQueue = () => {
     setQueue([]);
     setQueuedTrackIds(new Set());
-  }, []);
+  };
 
   // Get the next track index
-  const getNextTrackIndex = useCallback(
-    (currentIndex: number | null) => {
-      if (tracks.length === 0) return null;
+  const getNextTrackIndex = (currentIndex: number | null) => {
+    if (tracks.length === 0) return null;
 
-      if (currentIndex === null) return 0;
+    if (currentIndex === null) return 0;
 
-      if (queue.length > 0) {
-        const nextTrack = queue[0];
-        if (!nextTrack) return Math.min(currentIndex + 1, tracks.length - 1);
+    if (queue.length > 0) {
+      const nextTrack = queue[0];
+      if (!nextTrack) return Math.min(currentIndex + 1, tracks.length - 1);
 
-        setQueue((prevQueue) => prevQueue.slice(1));
+      setQueue((prevQueue) => prevQueue.slice(1));
 
-        setQueuedTrackIds((prevIds) => {
-          if (queue.slice(1).some((track) => track.id === nextTrack.id))
-            return prevIds;
-          const newIds = new Set(prevIds);
-          newIds.delete(nextTrack.id);
-          return newIds;
-        });
+      setQueuedTrackIds((prevIds) => {
+        if (queue.slice(1).some((track) => track.id === nextTrack.id))
+          return prevIds;
+        const newIds = new Set(prevIds);
+        newIds.delete(nextTrack.id);
+        return newIds;
+      });
 
-        const idx = tracks.findIndex((track) => track.id === nextTrack.id);
-        return idx !== -1 ? idx : currentIndex;
-      }
+      const idx = tracks.findIndex((track) => track.id === nextTrack.id);
+      return idx !== -1 ? idx : currentIndex;
+    }
 
-      return Math.min(currentIndex + 1, tracks.length - 1);
-    },
-    [tracks, queue]
-  );
+    return Math.min(currentIndex + 1, tracks.length - 1);
+  };
 
   // Get the previous track index
-  const getPreviousTrackIndex = useCallback(
-    (currentIndex: number | null) => {
-      if (tracks.length === 0) return null;
-      return currentIndex === null
-        ? tracks.length - 1
-        : Math.max(currentIndex - 1, 0);
-    },
-    [tracks.length]
-  );
+  const getPreviousTrackIndex = (currentIndex: number | null) => {
+    if (tracks.length === 0) return null;
+    return currentIndex === null
+      ? tracks.length - 1
+      : Math.max(currentIndex - 1, 0);
+  };
 
   return {
     queue,

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TOCHeading } from '@/lib/mdx/types';
 
 import '../../../app/components/TableOfContents/TableOfContents.scss';
@@ -99,32 +99,6 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
 
   const nestedHeadings = buildNestedTOC(headings);
 
-  const setupObserver = useCallback(() => {
-    if (headings.length < minHeadings) return null;
-
-    const headingElements = headings
-      .map((heading) => document.getElementById(heading.id))
-      .filter((element): element is HTMLElement => element !== null);
-    if (headingElements.length === 0) return null;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-80px 0px -80% 0px' }
-    );
-
-    headingElements.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return observer;
-  }, [headings, minHeadings]);
-
   useEffect(() => {
     if (headings.length < minHeadings) return;
 
@@ -133,14 +107,28 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
     // Headings are server-rendered so they exist immediately, but give the
     // browser one frame to paint before observing.
     const frameId = requestAnimationFrame(() => {
-      observer = setupObserver();
+      const headingElements = headings
+        .map((heading) => document.getElementById(heading.id))
+        .filter((element): element is HTMLElement => element !== null);
+      if (headingElements.length === 0) return;
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) setActiveId(entry.target.id);
+          });
+        },
+        { rootMargin: '-80px 0px -80% 0px' }
+      );
+
+      headingElements.forEach((el) => observer!.observe(el));
     });
 
     return () => {
       cancelAnimationFrame(frameId);
       observer?.disconnect();
     };
-  }, [setupObserver, headings, minHeadings]);
+  }, [headings, minHeadings]);
 
   useEffect(() => {
     if (!activeId || isMobile) return;

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Icon from '@/app/components/Icon/Icon';
 import { useTheme } from '@/app/context/ThemeContext';
 import styles from './SiteNav.module.scss';
@@ -16,19 +16,21 @@ const LINKS = [
   { key: 'contact', label: 'Contact', href: '/contact' },
 ] as const;
 
+const sectionFor = (pathname: string) => {
+  if (pathname === '/about') return 'about';
+  if (pathname === '/resume') return 'resume';
+  if (pathname === '/contact') return 'contact';
+  if (pathname === '/blog' || pathname.startsWith('/blog/')) return 'blog';
+  if (pathname === '/music') return 'music';
+  return 'home';
+};
+
 const SiteNav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isLightMode, toggleTheme } = useTheme();
 
-  const activeSection = useMemo(() => {
-    if (pathname === '/about') return 'about';
-    if (pathname === '/resume') return 'resume';
-    if (pathname === '/contact') return 'contact';
-    if (pathname === '/blog' || pathname.startsWith('/blog/')) return 'blog';
-    if (pathname === '/music') return 'music';
-    return 'home';
-  }, [pathname]);
+  const activeSection = sectionFor(pathname);
 
   // Freeze the page behind the mobile menu. `overflow: hidden` on the root is
   // not enough — Chromium still scrolls it and iOS Safari ignores it outright —
