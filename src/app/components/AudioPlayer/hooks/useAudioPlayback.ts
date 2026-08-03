@@ -8,10 +8,6 @@ import { logger } from '@/app/utils/logger';
 export const useAudioPlayback = (
   audioRef: RefObject<HTMLAudioElement | null>,
   tracks: Track[],
-  animationRef: RefObject<number | null>,
-  miniAnimationRef: RefObject<number | null>,
-  drawWaveform: () => void,
-  drawMiniVisualizer: () => void,
   audioContextRef: RefObject<AudioContext | null>,
   gainNodeRef: RefObject<GainNode | null>
 ) => {
@@ -42,31 +38,6 @@ export const useAudioPlayback = (
       return prevIndex === 0 ? tracks.length - 1 : prevIndex - 1;
     });
   }, [tracks.length]);
-
-  // Update slider fill styles efficiently
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      const progressBars = document.querySelectorAll(
-        '.progressBar'
-      ) as NodeListOf<HTMLElement>;
-      const volumeSliders = document.querySelectorAll(
-        '.volumeSlider'
-      ) as NodeListOf<HTMLElement>;
-
-      if (progressBars.length > 0 && duration > 0) {
-        const fillPercentage = (currentTime / duration) * 100;
-        progressBars.forEach((bar) =>
-          bar.style.setProperty('--seek-fill', `${fillPercentage}%`)
-        );
-      }
-
-      if (volumeSliders.length > 0) {
-        volumeSliders.forEach((slider) =>
-          slider.style.setProperty('--volume-fill', `${volume * 100}%`)
-        );
-      }
-    });
-  }, [currentTime, duration, volume]);
 
   // Ensure AudioContext is resumed when playing starts
   useEffect(() => {
@@ -128,16 +99,6 @@ export const useAudioPlayback = (
     }
   }, [currentTrackIndex, audioRef]);
 
-  const startVisualizations = () => {
-    const animate = (callback: () => void, ref: RefObject<number | null>) => {
-      callback();
-      ref.current = requestAnimationFrame(() => animate(callback, ref));
-    };
-
-    animate(drawWaveform, animationRef);
-    animate(drawMiniVisualizer, miniAnimationRef);
-  };
-
   const handlePlayPause = async () => {
     if (!audioRef.current || !currentTrack) {
       logger.warn('Audio element or current track is missing');
@@ -191,7 +152,6 @@ export const useAudioPlayback = (
 
         await audio.play();
         setIsPlaying(true);
-        startVisualizations();
       }
     } catch (error) {
       logger.error('Error playing audio:', error);
@@ -199,11 +159,20 @@ export const useAudioPlayback = (
     }
   };
 
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTime = parseFloat(e.target.value);
-    setCurrentTime(newTime);
-    if (audioRef.current) audioRef.current.currentTime = newTime;
-  };
+  /** Seek to an absolute time in seconds (waveform scrub, keyboard slider). */
+  const seekTo = useCallback(
+    (time: number) => {
+      if (!Number.isFinite(time)) return;
+      const audio = audioRef.current;
+      const upperBound =
+        audio && Number.isFinite(audio.duration) ? audio.duration : duration;
+      const clamped = Math.max(0, Math.min(time, upperBound || 0));
+
+      setCurrentTime(clamped);
+      if (audio) audio.currentTime = clamped;
+    },
+    [audioRef, duration]
+  );
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
@@ -238,7 +207,7 @@ export const useAudioPlayback = (
     handlePlayPause,
     handleNext,
     handlePrevious,
-    handleTimeChange,
+    seekTo,
     handleVolumeChange,
     toggleMute,
   };

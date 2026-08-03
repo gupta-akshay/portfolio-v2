@@ -1,128 +1,222 @@
+'use client';
+
 import React, { KeyboardEvent } from 'react';
 import Icon from '@/app/components/Icon/Icon';
 import { Track } from '../types';
+import { formatTime } from '../utils';
+import WaveformSeeker from './WaveformSeeker';
+import styles from '../AudioPlayer.module.scss';
 
 interface TrackListProps {
   tracks: Track[];
   currentTrackIndex: number | null;
-  onTrackSelect: (index: number) => void;
-  onAddToQueue: (index: number) => void;
+  isPlaying: boolean;
+  currentTime: number;
+  duration: number;
+  /** Base64 peaks for the active track, delivered with its signed URL */
+  activePeaks: string | null;
   queuedTrackIds: Set<string>;
+  onTrackSelect: (index: number) => void;
+  onPlayPause: () => void;
+  onAddToQueue: (index: number) => void;
+  onShare: (track: Track) => void;
+  onDownload: (index: number) => void;
+  onSeek: (time: number) => void;
 }
 
-// We can remove the parsing function since we now have the metadata directly in the Track object
+const trackLabel = (track: Track) => track.name || track.title;
+
+/** Meta line under the title — built only from metadata the S3 listing provides */
+const trackMeta = (track: Track) =>
+  [track.originalArtist, track.artist, track.year]
+    .filter((part) => part !== undefined && String(part).trim().length > 0)
+    .join(' · ');
 
 const TrackList: React.FC<TrackListProps> = ({
   tracks,
   currentTrackIndex,
-  onTrackSelect,
-  onAddToQueue,
+  isPlaying,
+  currentTime,
+  duration,
+  activePeaks,
   queuedTrackIds,
+  onTrackSelect,
+  onPlayPause,
+  onAddToQueue,
+  onShare,
+  onDownload,
+  onSeek,
 }) => {
-  // Handle keyboard navigation
+  const focusTrack = (index: number) => {
+    const el = document.querySelector<HTMLElement>(
+      `[data-track-index="${index}"]`
+    );
+    el?.focus();
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLLIElement>, index: number) => {
     switch (e.key) {
       case 'Enter':
-      case ' ': // Space
+      case ' ':
         e.preventDefault();
         onTrackSelect(index);
         break;
       case 'ArrowUp':
         e.preventDefault();
-        if (index > 0) {
-          const prevTrack = document.querySelector(
-            `[data-track-index="${index - 1}"]`
-          ) as HTMLElement;
-          prevTrack?.focus();
-        }
+        if (index > 0) focusTrack(index - 1);
         break;
       case 'ArrowDown':
         e.preventDefault();
-        if (index < tracks.length - 1) {
-          const nextTrack = document.querySelector(
-            `[data-track-index="${index + 1}"]`
-          ) as HTMLElement;
-          nextTrack?.focus();
-        }
+        if (index < tracks.length - 1) focusTrack(index + 1);
         break;
       case 'Home':
         e.preventDefault();
-        const firstTrack = document.querySelector(
-          '[data-track-index="0"]'
-        ) as HTMLElement;
-        firstTrack?.focus();
+        focusTrack(0);
         break;
       case 'End':
         e.preventDefault();
-        const lastTrack = document.querySelector(
-          `[data-track-index="${tracks.length - 1}"]`
-        ) as HTMLElement;
-        lastTrack?.focus();
+        focusTrack(tracks.length - 1);
         break;
     }
   };
 
   return (
-    <div className='trackList'>
-      {/* <h4 id='playlist-heading'>Playlist</h4> */}
-      <ul
-        role='listbox'
-        aria-labelledby='playlist-heading'
-        tabIndex={0}
-        className='track-list-container'
-      >
-        {tracks.map((track, index) => {
-          const isQueued = queuedTrackIds.has(track.id);
+    <ul role='listbox' aria-label='Track list' className={styles.trackList}>
+      {tracks.map((track, index) => {
+        const isActive = currentTrackIndex === index;
+        const isPlayingThis = isActive && isPlaying;
+        const isQueued = queuedTrackIds.has(track.id);
+        const label = trackLabel(track);
+        const meta = trackMeta(track);
+        const isRemix = /remix|flip|edit|mix/i.test(track.type ?? '');
+        // Live duration wins once the audio is loaded; otherwise fall back to
+        // the value precomputed by the peaks script.
+        const rowDuration =
+          isActive && duration > 0 ? duration : track.duration;
 
-          return (
-            <li
-              key={track.id}
-              className={`trackItem ${currentTrackIndex === index ? 'active' : ''}`}
-              onClick={() => onTrackSelect(index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              role='option'
-              aria-selected={currentTrackIndex === index}
-              tabIndex={0}
-              data-track-index={index}
-            >
-              <div className='trackInfo'>
-                <span className='trackTitle'>{track.name || track.title}</span>
-                <div className='trackTags'>
-                  {track.originalArtist && (
-                    <span className='trackTag originalArtistTag'>
-                      {track.originalArtist}
+        return (
+          <li
+            key={track.id}
+            className={styles.trackRow}
+            data-active={isActive || undefined}
+            data-track-index={index}
+            role='option'
+            aria-selected={isActive}
+            tabIndex={0}
+            onClick={() => onTrackSelect(index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+          >
+            <div className={styles.trackRowMain}>
+              <button
+                type='button'
+                className={styles.trackPlayButton}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (isActive) {
+                    onPlayPause();
+                  } else {
+                    onTrackSelect(index);
+                  }
+                }}
+                aria-label={`${isPlayingThis ? 'Pause' : 'Play'} ${label}`}
+              >
+                <Icon name={isPlayingThis ? 'pause' : 'play'} />
+              </button>
+
+              <div className={styles.trackInfo}>
+                <div className={styles.trackTitleRow}>
+                  <span className={styles.trackTitle}>{label}</span>
+                  {track.type && track.type.trim().length > 0 && (
+                    <span
+                      className={styles.trackBadge}
+                      data-tone={isRemix ? 'remix' : 'original'}
+                    >
+                      {track.type}
                     </span>
                   )}
-                  {track.type && (
-                    <span className='trackTag typeTag'>{track.type}</span>
-                  )}
-                  <span className='trackTag artistTag'>{track.artist}</span>
                 </div>
+                {meta && <div className={styles.trackMeta}>{meta}</div>}
               </div>
 
-              <div className='trackActions'>
-                {isQueued && (
-                  <span className='inQueueIndicator' title='In queue'>
-                    <Icon name='list' />
-                  </span>
-                )}
+              {isPlayingThis && (
+                <div className={styles.equalizer} aria-hidden='true'>
+                  <span />
+                  <span />
+                  <span />
+                </div>
+              )}
+
+              <div className={styles.trackActions}>
                 <button
-                  className='addToQueueButton'
+                  type='button'
+                  className={styles.trackActionButton}
+                  data-queued={isQueued || undefined}
                   onClick={(e) => {
                     e.stopPropagation();
                     onAddToQueue(index);
                   }}
-                  aria-label={`Add ${track.name || track.title} to queue`}
                   title='Add to queue'
+                  aria-label={`Add ${label} to queue`}
                 >
                   <Icon name='plus' />
                 </button>
+                <button
+                  type='button'
+                  className={`${styles.trackActionButton} ${styles.hideOnMobile}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onShare(track);
+                  }}
+                  title='Copy share link'
+                  aria-label={`Copy share link for ${label}`}
+                >
+                  <Icon name='share-nodes' />
+                </button>
+                <button
+                  type='button'
+                  className={styles.trackActionButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDownload(index);
+                  }}
+                  title='Download'
+                  aria-label={`Download ${label}`}
+                >
+                  <Icon name='download' />
+                </button>
               </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+
+              <span className={styles.trackDuration}>
+                {rowDuration ? formatTime(rowDuration) : '--:--'}
+              </span>
+            </div>
+
+            {isActive && (
+              <div
+                className={styles.trackSeeker}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <WaveformSeeker
+                  trackId={track.id}
+                  peaks={activePeaks}
+                  currentTime={currentTime}
+                  duration={duration}
+                  onSeek={onSeek}
+                  variant='row'
+                  label={`Seek within ${label}`}
+                />
+                <div className={styles.trackSeekerTimes}>
+                  <span className={styles.trackSeekerElapsed}>
+                    {formatTime(currentTime)}
+                  </span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   );
 };
 

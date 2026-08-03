@@ -1,10 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Icon from '@/app/components/Icon/Icon';
 import { Track } from '../types';
+import { formatTime } from '../utils';
+import styles from '../AudioPlayer.module.scss';
 
 interface QueuePanelProps {
   isVisible: boolean;
-  currentTrack: Track | null;
   queueTracks: Track[];
   onClose: () => void;
   onTrackSelect: (index: number) => void;
@@ -14,154 +17,103 @@ interface QueuePanelProps {
 
 const QueuePanel: React.FC<QueuePanelProps> = ({
   isVisible,
-  currentTrack,
   queueTracks,
   onClose,
   onTrackSelect,
   onRemoveFromQueue,
   onReorderQueue,
 }) => {
-  // Drag and drop functionality
-  const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
-
-  const handleDragStart = (index: number) => {
-    setDraggedIndex(index);
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index) return;
-
-    const draggedItem = document.querySelector(
-      `[data-queue-index="${draggedIndex}"]`
-    );
-    const targetItem = document.querySelector(`[data-queue-index="${index}"]`);
-
-    if (draggedItem && targetItem) {
-      targetItem.classList.add('drag-over');
-    }
-  };
-
-  const handleDragLeave = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    const targetItem = document.querySelector(`[data-queue-index="${index}"]`);
-    if (targetItem) {
-      targetItem.classList.remove('drag-over');
-    }
-  };
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const handleDrop = (e: React.DragEvent, index: number) => {
     e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index) return;
-
-    onReorderQueue(draggedIndex, index);
+    if (draggedIndex !== null && draggedIndex !== index) {
+      onReorderQueue(draggedIndex, index);
+    }
     setDraggedIndex(null);
-
-    // Remove drag-over class from all items
-    document.querySelectorAll('.drag-over').forEach((item) => {
-      item.classList.remove('drag-over');
-    });
-  };
-
-  const handleDragEnd = () => {
-    setDraggedIndex(null);
-    // Remove drag-over class from all items
-    document.querySelectorAll('.drag-over').forEach((item) => {
-      item.classList.remove('drag-over');
-    });
+    setDragOverIndex(null);
   };
 
   return (
-    <div className={`queuePanel ${isVisible ? 'visible' : ''}`}>
-      <div className='queueHeader'>
-        <h3>
-          <Icon name='list' className='queueIcon' />
-          Now Playing Queue
-        </h3>
+    <aside
+      className={styles.queuePanel}
+      data-visible={isVisible || undefined}
+      aria-label='Playback queue'
+      inert={!isVisible}
+    >
+      <div className={styles.queueHeader}>
+        <h2 className={styles.queueTitle}>Up next</h2>
         <button
-          className='closeQueueButton'
+          type='button'
+          className={styles.queueClose}
           onClick={onClose}
-          aria-label='Close queue panel'
+          aria-label='Close queue'
         >
           <Icon name='times' />
         </button>
       </div>
 
-      <div className='queueContent'>
-        {currentTrack && (
-          <div className='nowPlayingInQueue'>
-            <h4>Now Playing</h4>
-            <div className='queueTrackItem nowPlayingItem'>
-              <div className='queueTrackInfo'>
-                <Icon name='music' className='nowPlayingIcon' />
-                <div className='queueTrackDetails'>
-                  <span className='queueTrackTitle'>
-                    {currentTrack.name || currentTrack.title}
-                  </span>
-                  <span className='queueTrackArtist'>
-                    {currentTrack.artist}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+      <div className={styles.queueBody}>
+        {queueTracks.length > 0 ? (
+          queueTracks.map((track, index) => {
+            const label = track.name || track.title;
+            const duration = track.duration;
 
-        <div className='upNextSection'>
-          <h4>Up Next</h4>
-          {queueTracks.length > 0 ? (
-            <ul className='queueTrackList'>
-              {queueTracks.map((track, index) => (
-                <li
-                  key={`queue-${track.id}-${index}`}
-                  className='queueTrackItem'
-                  data-queue-index={index}
-                  draggable
-                  onDragStart={() => handleDragStart(index)}
-                  onDragOver={(e) => handleDragOver(e, index)}
-                  onDragLeave={(e) => handleDragLeave(e, index)}
-                  onDrop={(e) => handleDrop(e, index)}
-                  onDragEnd={handleDragEnd}
+            return (
+              <div
+                key={`queue-${track.id}-${index}`}
+                className={styles.queueRow}
+                data-dragover={dragOverIndex === index || undefined}
+                draggable
+                onDragStart={() => setDraggedIndex(index)}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOverIndex(index);
+                }}
+                onDragLeave={() => setDragOverIndex(null)}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragEnd={() => {
+                  setDraggedIndex(null);
+                  setDragOverIndex(null);
+                }}
+              >
+                <button
+                  type='button'
+                  className={styles.queueRowButton}
+                  onClick={() => onTrackSelect(index)}
+                  title='Drag to reorder'
                 >
-                  <div className='queueDragHandle'>
-                    <Icon name='grip-vertical' />
-                  </div>
-                  <div
-                    className='queueTrackInfo'
-                    onClick={() => onTrackSelect(index)}
-                  >
-                    <div className='queueTrackDetails'>
-                      <span className='queueTrackTitle'>
-                        {track.name || track.title}
-                      </span>
-                      <span className='queueTrackArtist'>{track.artist}</span>
-                    </div>
-                  </div>
-                  <button
-                    className='removeFromQueueButton'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRemoveFromQueue(index);
-                    }}
-                    aria-label={`Remove ${track.name || track.title} from queue`}
-                  >
-                    <Icon name='times' />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className='emptyQueue'>
-              <p>No tracks in queue</p>
-              <p className='emptyQueueSubtext'>
-                Add tracks to your queue by clicking the &quot;Add to
-                Queue&quot; button on any track.
-              </p>
-            </div>
-          )}
-        </div>
+                  <span className={styles.queueIndex}>{index + 1}</span>
+                  <span className={styles.queueRowInfo}>
+                    <span className={styles.queueRowTitle}>{label}</span>
+                    <span className={styles.queueRowMeta}>
+                      {track.artist}
+                      {duration ? ` · ${formatTime(duration)}` : ''}
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type='button'
+                  className={styles.queueRemove}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveFromQueue(index);
+                  }}
+                  aria-label={`Remove ${label} from queue`}
+                >
+                  <Icon name='times' />
+                </button>
+              </div>
+            );
+          })
+        ) : (
+          <p className={styles.queueEmpty}>
+            Queue is empty — tracks play in list order.
+          </p>
+        )}
       </div>
-    </div>
+    </aside>
   );
 };
 

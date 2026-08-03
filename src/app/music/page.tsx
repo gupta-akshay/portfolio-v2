@@ -81,10 +81,11 @@ export default function Music() {
         }}
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <div className='title'>
-            <h3>Music</h3>
-          </div>
-          <div className='music-description route-shell mb-4'>
+          <div className='music-eyebrow'>Music</div>
+          <h1 className='music-heading'>
+            My Music<span>.</span>
+          </h1>
+          <div className='music-description route-shell'>
             {musicContent.paragraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}

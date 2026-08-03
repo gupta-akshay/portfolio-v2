@@ -1,25 +1,21 @@
 'use client';
 
-import {
-  useRef,
-  useEffect,
-  useState,
-  RefObject,
-  useCallback,
-  useMemo,
-} from 'react';
-import { AudioPlayerProps } from './types';
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import * as Sentry from '@sentry/nextjs';
+import { AudioPlayerProps, Track } from './types';
 import {
   useAudioContext,
   useAudioPlayback,
-  useVisualizer,
   useQueueManager,
   useKeyboardShortcuts,
 } from './hooks';
+import { TrackList, PlayerBar, QueuePanel, Toast } from './components';
 import { logger } from '@/app/utils/logger';
-import * as Sentry from '@sentry/nextjs';
+import styles from './AudioPlayer.module.scss';
 
 const PREFS_KEY = 'audioPlayerPrefs';
+/** Pressing previous past this point restarts the track instead of going back */
+const RESTART_THRESHOLD_SECONDS = 3;
 
 function loadPrefs(): { trackIndex: number | null; volume: number } {
   try {
@@ -38,49 +34,25 @@ function savePrefs(trackIndex: number | null, volume: number) {
     // localStorage unavailable (private browsing etc.)
   }
 }
-import {
-  TrackList,
-  PlayerControls,
-  NowPlaying,
-  Waveform,
-  EmptyPlayer,
-  MiniPlayer,
-  FullScreenPlayer,
-  QueuePanel,
-} from './components';
-import { useIsMobile } from '@/app/hooks/useIsMobile';
 
 const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const miniCanvasRef = useRef<HTMLCanvasElement>(null);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+  const [currentPeaks, setCurrentPeaks] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isMetadataLoaded, setIsMetadataLoaded] = useState(false);
   const [isPlayable, setIsPlayable] = useState(false);
-  const [isFullScreenVisible, setIsFullScreenVisible] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const shouldAutoPlayRef = useRef(false);
   const playAttemptInProgressRef = useRef(false);
   const restoringFromStorageRef = useRef(false);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Memoize derived values
   const hasTracks = useMemo(() => tracks && tracks.length > 0, [tracks]);
-  const isMobile = useIsMobile();
 
-  // Custom hooks - all called unconditionally
-  const {
-    audioContextRef,
-    analyserRef,
-    animationRef,
-    miniAnimationRef,
-    setupAudioContext,
-    gainNodeRef,
-  } = useAudioContext(audioRef, false);
-
-  const { drawWaveform, drawMiniVisualizer } = useVisualizer(
-    analyserRef,
-    canvasRef,
-    miniCanvasRef
+  const { audioContextRef, setupAudioContext, gainNodeRef } = useAudioContext(
+    audioRef,
+    false
   );
 
   const {
@@ -99,21 +71,16 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     handlePlayPause: baseHandlePlayPause,
     handleNext: baseHandleNext,
     handlePrevious: baseHandlePrevious,
-    handleTimeChange,
+    seekTo,
     handleVolumeChange,
     toggleMute,
   } = useAudioPlayback(
     audioRef,
     hasTracks ? tracks : [],
-    animationRef,
-    miniAnimationRef,
-    drawWaveform,
-    drawMiniVisualizer,
     audioContextRef,
     gainNodeRef
   );
 
-  // Queue management hook
   const {
     queue,
     queuedTrackIds,
@@ -128,6 +95,19 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     getNextTrackIndex,
     getPreviousTrackIndex,
   } = useQueueManager(hasTracks ? tracks : []);
+
+  const showToast = useCallback((message: string) => {
+    setToast(message);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToast(null), 2200);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    },
+    []
+  );
 
   // Restore persisted volume on mount
   useEffect(() => {
@@ -174,6 +154,14 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   ]);
 
   const handlePrevious = useCallback(() => {
+    // Restart the current track when we're past the threshold, matching the
+    // behaviour of every other music player.
+    const audio = audioRef.current;
+    if (audio && audio.currentTime > RESTART_THRESHOLD_SECONDS) {
+      seekTo(0);
+      return;
+    }
+
     if (currentTrackIndex !== null) {
       const prevIndex = getPreviousTrackIndex(currentTrackIndex);
       if (prevIndex !== null) {
@@ -187,6 +175,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     getPreviousTrackIndex,
     setCurrentTrackIndex,
     baseHandlePrevious,
+    seekTo,
   ]);
 
   // Wrappers used only for explicit user actions (button / keyboard).
@@ -209,7 +198,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
   // Enhanced play/pause handler with safety checks
   const handlePlayPause = useCallback(() => {
     if (playAttemptInProgressRef.current) {
-      // console.log('Play attempt already in progress, ignoring request');
       return;
     }
 
@@ -227,7 +215,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     }
   }, [baseHandlePlayPause]);
 
-  // Add track to queue handler
   const handleAddToQueue = useCallback(
     (index: number) => {
       if (index >= 0 && index < tracks.length) {
@@ -236,16 +223,16 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         Sentry.metrics.count('audio.queue.add', 1, {
           attributes: { track_id: track.id, track_name: track.name },
         });
+        showToast(`Added to queue: ${track.name || track.title}`);
       }
     },
-    [tracks, addToQueue]
+    [tracks, addToQueue, showToast]
   );
 
   // Handle selecting a track from the queue
   const handleQueueTrackSelect = useCallback(
     (index: number) => {
       if (index >= 0 && index < queue.length && queue[index]) {
-        // Find the track in the main tracks array
         const trackIndex = tracks.findIndex(
           (track) => track.id === queue[index]!.id
         );
@@ -253,10 +240,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           // Remove all tracks before this one from the queue
           const newQueue = queue.slice(index + 1);
 
-          // Update queue
           const removedTrackIds = new Set<string>();
           queue.slice(0, index + 1).forEach((track) => {
-            // Check if this track appears elsewhere in the remaining queue
             const stillInQueue =
               newQueue.some((t) => t.id === track.id) ||
               track.id === tracks[trackIndex]?.id;
@@ -265,10 +250,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
             }
           });
 
-          // Update queue state
           setCurrentTrackIndex(trackIndex);
 
-          // Update queuedTrackIds
           queuedTrackIds.forEach((id) => {
             if (removedTrackIds.has(id)) {
               queuedTrackIds.delete(id);
@@ -305,6 +288,7 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     const updateTrackUrl = async () => {
       if (currentTrackIndex === null || !tracks[currentTrackIndex]) {
         setCurrentUrl(null);
+        setCurrentPeaks(null);
         return;
       }
 
@@ -312,7 +296,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         // Cancel any pending play operations before loading new track
         if (audioRef.current) {
           try {
-            // Set flag to prevent new play attempts during transition
             playAttemptInProgressRef.current = true;
             await audioRef.current.pause();
           } catch (e) {
@@ -326,21 +309,23 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           body: JSON.stringify({ path: tracks[currentTrackIndex].path }),
         });
         if (!urlResponse.ok) throw new Error('Failed to get audio URL');
-        const { url: newUrl } = (await urlResponse.json()) as { url: string };
+        const { url: newUrl, peaks } = (await urlResponse.json()) as {
+          url: string;
+          peaks?: string;
+        };
 
-        // If component unmounted or URL is the same, don't proceed
         if (!isMounted || newUrl === currentAudioUrl) {
           playAttemptInProgressRef.current = false;
           return;
         }
 
-        // Update state and URL
         currentAudioUrl = newUrl;
         setIsLoading(true);
         setIsMetadataLoaded(false);
         setIsPlayable(false);
         setIsPlaying(false);
         setCurrentUrl(newUrl);
+        setCurrentPeaks(peaks ?? null);
 
         // Wait for audio element to be available
         const audio = await new Promise<HTMLAudioElement>((resolve, reject) => {
@@ -358,12 +343,10 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           checkAudio();
         });
 
-        // Reset audio element state
         audio.currentTime = 0;
         audio.volume = volume;
         audio.muted = false;
 
-        // Force load the audio
         audio.load();
 
         // Wait for metadata to load
@@ -387,7 +370,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           audio.addEventListener('loadedmetadata', onMetadataLoaded);
           audio.addEventListener('error', onError);
 
-          // Set timeout for metadata loading
           setTimeout(() => {
             cleanup();
             reject(new Error('Metadata loading timeout'));
@@ -420,7 +402,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
           audio.addEventListener('canplaythrough', onCanPlay);
           audio.addEventListener('error', onError);
 
-          // Set timeout
           setTimeout(() => {
             cleanup();
             reject(new Error('Timeout waiting for audio to be playable'));
@@ -435,7 +416,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         if (shouldAutoPlayRef.current) {
           shouldAutoPlayRef.current = false;
 
-          // Small delay to ensure everything is ready
           setTimeout(async () => {
             try {
               if (audioRef.current && isMounted) {
@@ -478,77 +458,23 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrackIndex, tracks]);
 
-  // Set up audio context and analyzer when track starts playing
+  // Connect the Web Audio graph (gain node drives volume) once playable
   useEffect(() => {
     if (!audioRef.current || currentTrackIndex === null || !isPlayable) return;
-
-    const animationFrameIds = {
-      main: null as number | null,
-      mini: null as number | null,
-    };
-
-    const startVisualizations = async () => {
-      try {
-        // Setup audio context and nodes
-        await setupAudioContext();
-
-        if (!isPlaying) return;
-
-        // Start animation frames
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-        if (miniAnimationRef.current) {
-          cancelAnimationFrame(miniAnimationRef.current);
-        }
-
-        const animateWaveform = () => {
-          drawWaveform();
-          animationFrameIds.main = requestAnimationFrame(animateWaveform);
-          animationRef.current = animationFrameIds.main;
-        };
-
-        const animateMiniVisualizer = () => {
-          drawMiniVisualizer();
-          animationFrameIds.mini = requestAnimationFrame(animateMiniVisualizer);
-          miniAnimationRef.current = animationFrameIds.mini;
-        };
-
-        // Start both animations
-        animationFrameIds.main = requestAnimationFrame(animateWaveform);
-        animationRef.current = animationFrameIds.main;
-
-        animationFrameIds.mini = requestAnimationFrame(animateMiniVisualizer);
-        miniAnimationRef.current = animationFrameIds.mini;
-      } catch (error) {
-        logger.error('Error starting visualizations:', error);
-      }
-    };
-
-    startVisualizations();
-
-    return () => {
-      if (animationFrameIds.main) {
-        cancelAnimationFrame(animationFrameIds.main);
-        animationRef.current = null;
-      }
-      if (animationFrameIds.mini) {
-        cancelAnimationFrame(animationFrameIds.mini);
-        miniAnimationRef.current = null;
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentTrackIndex,
-    isPlaying,
-    isPlayable,
-    setupAudioContext,
-    drawWaveform,
-    drawMiniVisualizer,
-  ]);
+    setupAudioContext().catch((error) =>
+      logger.error('Error setting up audio context:', error)
+    );
+  }, [currentTrackIndex, isPlayable, setupAudioContext]);
 
   const handleTrackSelect = useCallback(
     (index: number) => {
+      // Selecting the track that is already loaded toggles playback instead of
+      // reloading it from scratch.
+      if (index === currentTrackIndex) {
+        handlePlayPause();
+        return;
+      }
+
       const track = tracks[index];
       if (track) {
         Sentry.metrics.count('audio.track.play', 1, {
@@ -559,13 +485,10 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
 
       // Add all tracks after the selected track to the queue
       if (hasTracks && tracks.length > index + 1) {
-        // Get all tracks after the selected one
         const tracksToAdd = tracks.slice(index + 1);
 
-        // Clear the existing queue
         clearQueue();
 
-        // Add all subsequent tracks to the queue
         // Use setTimeout to ensure the queue is cleared before adding new tracks
         setTimeout(() => {
           for (let i = 0; i < tracksToAdd.length; i++) {
@@ -574,30 +497,26 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         }, 0);
       }
     },
-    [hasTracks, tracks, setCurrentTrackIndex, clearQueue, addToQueue]
+    [
+      hasTracks,
+      tracks,
+      currentTrackIndex,
+      handlePlayPause,
+      setCurrentTrackIndex,
+      clearQueue,
+      addToQueue,
+    ]
   );
 
-  const handleExpandPlayer = useCallback(() => {
-    setIsFullScreenVisible(true);
-  }, []);
-
-  const handleCloseFullScreen = useCallback(() => {
-    setIsFullScreenVisible(false);
-  }, []);
-
-  // Add unmute effect after user interaction
+  // Unmute + resume the AudioContext after the first user interaction
   useEffect(() => {
     const handleFirstInteraction = () => {
       if (audioRef.current) {
         audioRef.current.muted = false;
 
-        // Also try to resume AudioContext if it exists
         if (audioContextRef.current?.state === 'suspended') {
           audioContextRef.current
             .resume()
-            .then(() => {
-              // console.log('AudioContext resumed successfully')
-            })
             .catch((error) =>
               logger.error('Failed to resume AudioContext:', error)
             );
@@ -605,7 +524,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
       }
     };
 
-    // Add both click and touch handlers
     document.addEventListener('click', handleFirstInteraction, { once: true });
     document.addEventListener('touchstart', handleFirstInteraction, {
       once: true,
@@ -617,27 +535,62 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     };
   }, [audioContextRef]);
 
-  const handleDownload = useCallback(() => {
-    if (!currentUrl || !currentTrack) return;
-
-    Sentry.metrics.count('audio.track.download', 1, {
-      attributes: { track_id: currentTrack.id, track_name: currentTrack.name },
-    });
-
-    // Create a temporary anchor element
+  const triggerDownload = useCallback((url: string, track: Track) => {
     const downloadLink = document.createElement('a');
-    downloadLink.href = currentUrl;
+    downloadLink.href = url;
     downloadLink.target = '_blank';
+    downloadLink.download = `${track.title || track.name || 'track'}.mp3`;
 
-    // Set the download attribute with the track title
-    const fileName = `${currentTrack.title || currentTrack.name || 'track'}.mp3`;
-    downloadLink.download = fileName;
-
-    // Append to the document, click it, and remove it
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
-  }, [currentUrl, currentTrack]);
+  }, []);
+
+  const handleDownload = useCallback(
+    async (index: number) => {
+      const track = tracks[index];
+      if (!track) return;
+
+      Sentry.metrics.count('audio.track.download', 1, {
+        attributes: { track_id: track.id, track_name: track.name },
+      });
+
+      // The loaded track already has a signed URL; anything else needs one.
+      if (index === currentTrackIndex && currentUrl) {
+        triggerDownload(currentUrl, track);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/music/url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: track.path }),
+        });
+        if (!response.ok) throw new Error('Failed to get audio URL');
+        const { url } = (await response.json()) as { url: string };
+        triggerDownload(url, track);
+      } catch (error) {
+        logger.error('Error downloading track:', error);
+        showToast('Download failed — please try again');
+      }
+    },
+    [tracks, currentTrackIndex, currentUrl, triggerDownload, showToast]
+  );
+
+  const handleShare = useCallback(
+    async (track: Track) => {
+      const link = `${window.location.origin}${window.location.pathname}#${encodeURIComponent(track.id)}`;
+
+      try {
+        await navigator.clipboard.writeText(link);
+        showToast('Link copied');
+      } catch {
+        showToast(link);
+      }
+    },
+    [showToast]
+  );
 
   const handleVolumeSet = useCallback(
     (v: number) => {
@@ -666,7 +619,22 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     onVolumeSet: handleVolumeSet,
   });
 
-  // Memoize audio event handlers
+  // Deep link: /music#<track id> selects that track without autoplaying
+  useEffect(() => {
+    if (!hasTracks || currentTrackIndex !== null) return;
+
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+
+    const decoded = decodeURIComponent(hash);
+    const index = tracks.findIndex((track) => track.id === decoded);
+    if (index !== -1) {
+      restoringFromStorageRef.current = true;
+      setCurrentTrackIndex(index);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasTracks]);
+
   const handleLoadedMetadata = useCallback(
     (e: React.SyntheticEvent<HTMLAudioElement>) => {
       const audio = e.target as HTMLAudioElement;
@@ -681,8 +649,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     if (!audio) return;
 
     // Ensure audio is properly configured for Safari
-    // Use the current volume state directly from the audio element
-    // This avoids recreating this callback when volume changes
     audio.muted = false;
 
     setIsPlayable(true);
@@ -714,178 +680,8 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     setIsLoading(false);
   }, []);
 
-  // Memoize component props
-  const trackListProps = useMemo(
-    () => ({
-      tracks,
-      currentTrackIndex,
-      onTrackSelect: handleTrackSelect,
-      onAddToQueue: handleAddToQueue,
-      queuedTrackIds,
-    }),
-    [
-      tracks,
-      currentTrackIndex,
-      handleTrackSelect,
-      handleAddToQueue,
-      queuedTrackIds,
-    ]
-  );
-
-  const nowPlayingProps = useMemo(
-    () =>
-      currentTrack
-        ? {
-            currentTrack,
-            isPlaying: isPlaying && !isLoading,
-            miniCanvasRef,
-          }
-        : null,
-    [currentTrack, isPlaying, isLoading, miniCanvasRef]
-  );
-
-  const playerControlsProps = useMemo(
-    () => ({
-      isPlaying,
-      currentTime,
-      duration,
-      volume,
-      isMuted,
-      isLoading,
-      isShuffleActive,
-      onPlayPause: handlePlayPause,
-      onPrevious: handlePreviousUser,
-      onNext: handleNextUser,
-      onTimeChange: handleTimeChange,
-      onVolumeChange: handleVolumeChange,
-      onToggleMute: toggleMute,
-      onToggleShuffle: handleToggleShuffle,
-      onDownload: handleDownload,
-      canDownload: !!currentTrack,
-      onToggleQueue: toggleQueueVisibility,
-      isQueueVisible,
-    }),
-    [
-      isPlaying,
-      currentTime,
-      duration,
-      volume,
-      isMuted,
-      isLoading,
-      isShuffleActive,
-      handlePlayPause,
-      handlePreviousUser,
-      handleNextUser,
-      handleTimeChange,
-      handleVolumeChange,
-      toggleMute,
-      handleToggleShuffle,
-      handleDownload,
-      currentTrack,
-      toggleQueueVisibility,
-      isQueueVisible,
-    ]
-  );
-
-  const miniPlayerProps = useMemo(
-    () =>
-      currentTrack
-        ? {
-            currentTrack,
-            isPlaying,
-            isLoading: isLoading || !isMetadataLoaded,
-            miniCanvasRef: miniCanvasRef as RefObject<HTMLCanvasElement>,
-            onPlayPause: handlePlayPause,
-            onExpand: handleExpandPlayer,
-          }
-        : null,
-    [
-      currentTrack,
-      isPlaying,
-      isLoading,
-      isMetadataLoaded,
-      miniCanvasRef,
-      handlePlayPause,
-      handleExpandPlayer,
-    ]
-  );
-
-  const fullScreenPlayerProps = useMemo(
-    () =>
-      currentTrack
-        ? {
-            isVisible: isFullScreenVisible,
-            currentTrack,
-            isPlaying,
-            currentTime,
-            duration,
-            volume,
-            isMuted,
-            isLoading,
-            isShuffleActive,
-            canvasRef: canvasRef as RefObject<HTMLCanvasElement>,
-            onClose: handleCloseFullScreen,
-            onPlayPause: handlePlayPause,
-            onPrevious: handlePreviousUser,
-            onNext: handleNextUser,
-            onTimeChange: handleTimeChange,
-            onVolumeChange: handleVolumeChange,
-            onToggleMute: toggleMute,
-            onToggleShuffle: handleToggleShuffle,
-            onDownload: handleDownload,
-            canDownload: !!currentTrack,
-            isQueueVisible,
-            onToggleQueue: toggleQueueVisibility,
-          }
-        : null,
-    [
-      isFullScreenVisible,
-      currentTrack,
-      isPlaying,
-      currentTime,
-      duration,
-      volume,
-      isMuted,
-      isLoading,
-      isShuffleActive,
-      canvasRef,
-      handleCloseFullScreen,
-      handlePlayPause,
-      handlePreviousUser,
-      handleNextUser,
-      handleTimeChange,
-      handleVolumeChange,
-      toggleMute,
-      handleToggleShuffle,
-      handleDownload,
-      isQueueVisible,
-      toggleQueueVisibility,
-    ]
-  );
-
-  const queuePanelProps = useMemo(
-    () => ({
-      isVisible: isQueueVisible,
-      currentTrack: currentTrack ?? null,
-      queueTracks: queue,
-      onClose: toggleQueueVisibility,
-      onTrackSelect: handleQueueTrackSelect,
-      onRemoveFromQueue: removeFromQueue,
-      onReorderQueue: reorderQueue,
-    }),
-    [
-      isQueueVisible,
-      currentTrack,
-      queue,
-      toggleQueueVisibility,
-      handleQueueTrackSelect,
-      removeFromQueue,
-      reorderQueue,
-    ]
-  );
-
   return (
-    <div className='cloudinaryAudioPlayer'>
+    <div className={styles.player}>
       {/* Always render the audio element, but with empty src if no track */}
       <audio
         ref={audioRef}
@@ -896,7 +692,6 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         x-webkit-airplay='allow'
         webkit-playsinline='true'
         x-webkit-playsinline='true'
-        onLoadStart={() => {}}
         onLoadedMetadata={handleLoadedMetadata}
         onCanPlay={handleCanPlay}
         onPlay={handlePlay}
@@ -907,35 +702,55 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         onPlaying={handlePlaying}
       />
 
-      <TrackList {...trackListProps} />
+      <TrackList
+        tracks={tracks}
+        currentTrackIndex={currentTrackIndex}
+        isPlaying={isPlaying && !isLoading}
+        currentTime={currentTime}
+        duration={duration}
+        activePeaks={currentPeaks}
+        queuedTrackIds={queuedTrackIds}
+        onTrackSelect={handleTrackSelect}
+        onPlayPause={handlePlayPause}
+        onAddToQueue={handleAddToQueue}
+        onShare={handleShare}
+        onDownload={handleDownload}
+        onSeek={seekTo}
+      />
 
-      {currentTrack ? (
-        <div className='playerControls'>
-          {nowPlayingProps && <NowPlaying {...nowPlayingProps} />}
-
-          <div className='playerWrapper'>
-            <div className='waveformContainer'>
-              <Waveform canvasRef={canvasRef} />
-            </div>
-
-            <PlayerControls {...playerControlsProps} />
-          </div>
-        </div>
-      ) : (
-        <div className='playerControls'>
-          <EmptyPlayer />
-        </div>
+      {currentTrack && (
+        <PlayerBar
+          currentTrack={currentTrack}
+          peaks={currentPeaks}
+          isPlaying={isPlaying}
+          isLoading={isLoading || !isMetadataLoaded}
+          currentTime={currentTime}
+          duration={duration}
+          volume={volume}
+          isMuted={isMuted}
+          isShuffleActive={isShuffleActive}
+          isQueueVisible={isQueueVisible}
+          onSeek={seekTo}
+          onPlayPause={handlePlayPause}
+          onPrevious={handlePreviousUser}
+          onNext={handleNextUser}
+          onToggleShuffle={handleToggleShuffle}
+          onToggleQueue={toggleQueueVisibility}
+          onToggleMute={toggleMute}
+          onVolumeChange={handleVolumeChange}
+        />
       )}
 
-      {/* Mobile Mini Player */}
-      {miniPlayerProps && isMobile && <MiniPlayer {...miniPlayerProps} />}
+      <QueuePanel
+        isVisible={isQueueVisible}
+        queueTracks={queue}
+        onClose={toggleQueueVisibility}
+        onTrackSelect={handleQueueTrackSelect}
+        onRemoveFromQueue={removeFromQueue}
+        onReorderQueue={reorderQueue}
+      />
 
-      {/* Mobile Full Screen Player */}
-      {fullScreenPlayerProps && isMobile && (
-        <FullScreenPlayer {...fullScreenPlayerProps} />
-      )}
-
-      <QueuePanel {...queuePanelProps} />
+      <Toast message={toast} />
     </div>
   );
 };
