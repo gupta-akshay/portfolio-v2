@@ -8,9 +8,6 @@
 @use './sections/contact-section' as *;
 @use './sections/music-player' as *;
 @use './sections/page-transitions' as *;
-@use './sections/scroll-animations' as *;
-@use './sections/enhanced-hover' as *;
-@use './sections/interactive-background' as *;
 @use './sections/mermaid' as *;
 
 // Reset & Base Styles
@@ -38,7 +35,7 @@
 
   &::-webkit-scrollbar-thumb {
     background-color: $px-theme;
-    border-radius: 4px;
+    border-radius: 0;
     border: 2px solid transparent;
     background-clip: padding-box;
 
@@ -67,30 +64,70 @@ body {
   font-family: $px-font;
   line-height: $px-line-height;
   font-size: $px-font-size;
-  font-weight: 400;
+  font-weight: $fw-body;
   background: $px-bg-1;
-  transition: background-color 0.3s ease-in-out;
+  // Offset shadows are drawn in the theme's ink so they stay visible
+  --shadow-ink: #{$px-ink};
 
   &.theme-light {
-    background: $px-white;
+    background: $px-gray;
     color: $px-body-light;
+    --shadow-ink: #{$px-ink-light};
   }
 }
 
-// Links
+// Display type is heavy, tight and set in the grotesk
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $px-font;
+  font-weight: $fw-bold;
+  letter-spacing: $track-display;
+  line-height: 1.05;
+  color: $px-ink;
+
+  .theme-light & {
+    color: $px-ink-light;
+  }
+}
+
+// Links. Nav items, cards, pills and buttons are all anchors, so the default is
+// undecorated; long-form prose opts back in where colour alone is not enough.
 a {
   color: $px-theme;
-  text-decoration: underline;
-  transition: color 0.2s ease-in-out;
+  text-decoration: none;
 
   @include px-hover {
-    color: color.adjust($px-theme, $lightness: -8%);
+    color: $px-theme-hover;
+  }
+
+}
+
+// Amber is unreadable as text on paper, so darken it for the light theme.
+// :where() keeps this at zero specificity so any component that paints its own
+// colour — nav items, buttons, slabs — wins without needing !important.
+:where(body.theme-light) a {
+  color: $px-theme-ink;
+
+  &:hover {
+    color: $px-ink-light;
   }
 }
 
-// Add focus styles for keyboard navigation
+// Brutalism does not glide — corners are square and state changes are instant.
+// Anything that genuinely needs motion opts back in explicitly.
+*,
+*::before,
+*::after {
+  border-radius: 0;
+}
+
+// Chunky, unmistakable focus ring
 :focus-visible {
-  outline: 3px solid $px-theme;
+  outline: $bd-thick solid $px-theme;
   outline-offset: 2px;
 }
 
@@ -163,7 +200,7 @@ pre[class*='language-'] {
   padding: 1em;
   margin: 1.5rem 0;
   overflow: auto;
-  border-radius: 0.3em;
+  border-radius: 0;
 
   // Keyboard accessibility
   &[tabindex='0'] {
@@ -184,7 +221,7 @@ pre[class*='language-'] {
 // Inline code
 :not(pre) > code[class*='language-'] {
   padding: 0.1em;
-  border-radius: 0.3em;
+  border-radius: 0;
   white-space: normal;
 }
 
@@ -193,7 +230,7 @@ pre[class*='language-'] {
   background: rgba($px-theme, 0.15);
   color: $px-theme;
   padding: 0.2em 0.4em;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 0.9em;
   font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 
@@ -317,4 +354,3 @@ pre[class*='language-'] {
   color: rgb(156, 163, 175);
   content: attr(line);
 }
-

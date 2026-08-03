@@ -7,7 +7,7 @@
   .socialShareBar {
     background: rgba($px-white, 0.95);
     border: 1px solid rgba($px-black, 0.1);
-    box-shadow: 0 4px 20px rgba($px-black, 0.1);
+    box-shadow: 4px 4px 0 var(--shadow-ink);
   }
 
   .socialShareTitle {
@@ -34,9 +34,9 @@
   flex-direction: column;
   background: rgba($px-bg-1, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 50px;
+  border-radius: 0;
   padding: 16px 8px;
-  box-shadow: 0 4px 20px rgba($px-black, 0.15);
+  box-shadow: 4px 4px 0 var(--shadow-ink);
   border: 1px solid rgba($px-white, 0.1);
   gap: 8px;
   transition: all 0.3s ease-in-out;
@@ -47,7 +47,7 @@
   @include responsive-3d-effects;
 
   &::before {
-    border-radius: 50px;
+    border-radius: 0;
   }
 }
 
@@ -69,12 +69,22 @@
   justify-content: center;
   background: none;
   border: none;
-  border-radius: 50%;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 40px;
   height: 40px;
   position: relative;
+  color: $px-ink;
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
 
   &:hover {
     transform: scale(1.1);
@@ -114,7 +124,7 @@
       rgba($px-theme, 0.05),
       rgba($px-theme, 0.02)
     );
-    border-radius: inherit;
+    border-radius: 0;
     z-index: -1;
   }
 
@@ -127,7 +137,7 @@
   &.copied {
     background: rgba(46, 191, 113, 0.2);
     border-color: rgba(46, 191, 113, 0.5);
-    color: #2fbf71;
+    color: #fbbf24;
     box-shadow: 0 2px 8px rgba(46, 191, 113, 0.3);
 
     &::before {

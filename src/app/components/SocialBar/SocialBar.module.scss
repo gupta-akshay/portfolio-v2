@@ -1,0 +1,78 @@
+@use '../../styles/variables' as *;
+
+// Floating slab, pinned near the bottom of the viewport and centred
+.bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: $px-dark;
+  border: $bd-thick solid $px-ink;
+  box-shadow: $shadow-md;
+
+  :global(body.theme-light) & {
+    background: $px-white;
+    border-color: $px-ink-light;
+  }
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  color: $px-ink;
+  // Hairline dividers between cells rather than gaps
+  border-right: $bd-thin solid $px-ink;
+  transition: background $dur $ease;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background: $px-theme;
+
+    // Amber fill would swallow a dark brand mark
+    .icon {
+      color: $px-black;
+    }
+  }
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+    border-right-color: $px-ink-light;
+  }
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 17px;
+}
+
+@media (max-width: 640px) {
+  .bar {
+    bottom: 16px;
+  }
+
+  .link {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon {
+    font-size: 15px;
+  }
+}
+
+@media print {
+  .bar {
+    display: none;
+  }
+}

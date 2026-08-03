@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TOCHeading } from '@/lib/mdx/types';
 
 import '../../../app/components/TableOfContents/TableOfContents.scss';
@@ -64,7 +64,7 @@ const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
   if (items.length === 0) return null;
 
   return (
-    <ul className="toc-list">
+    <ul className='toc-list'>
       {items.map((item) => (
         <li key={item.id} className={`toc-item toc-level-${item.level}`}>
           <a
@@ -95,32 +95,9 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
   const [activeId, setActiveId] = useState<string>('');
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const tocNavRef = useRef<HTMLElement>(null);
 
   const nestedHeadings = buildNestedTOC(headings);
-
-  const setupObserver = useCallback(() => {
-    if (headings.length < minHeadings) return null;
-
-    const headingElements = headings.map((h) => document.getElementById(h.id));
-    if (headingElements.some((el) => el === null)) return null;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: '-80px 0px -80% 0px' }
-    );
-
-    headingElements.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return observer;
-  }, [headings, minHeadings]);
 
   useEffect(() => {
     if (headings.length < minHeadings) return;
@@ -130,14 +107,59 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
     // Headings are server-rendered so they exist immediately, but give the
     // browser one frame to paint before observing.
     const frameId = requestAnimationFrame(() => {
-      observer = setupObserver();
+      const headingElements = headings
+        .map((heading) => document.getElementById(heading.id))
+        .filter((element): element is HTMLElement => element !== null);
+      if (headingElements.length === 0) return;
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) setActiveId(entry.target.id);
+          });
+        },
+        { rootMargin: '-80px 0px -80% 0px' }
+      );
+
+      headingElements.forEach((el) => observer!.observe(el));
     });
 
     return () => {
       cancelAnimationFrame(frameId);
       observer?.disconnect();
     };
-  }, [setupObserver, headings, minHeadings]);
+  }, [headings, minHeadings]);
+
+  useEffect(() => {
+    if (!activeId || isMobile) return;
+
+    const nav = tocNavRef.current;
+    const activeLink = nav?.querySelector<HTMLElement>(
+      '.toc-link[aria-current="location"]'
+    );
+
+    if (!nav || !activeLink) return;
+
+    const navRect = nav.getBoundingClientRect();
+    const activeLinkRect = activeLink.getBoundingClientRect();
+    const scrollPadding = 8;
+    let scrollDelta = 0;
+
+    if (activeLinkRect.top < navRect.top + scrollPadding) {
+      scrollDelta = activeLinkRect.top - navRect.top - scrollPadding;
+    } else if (activeLinkRect.bottom > navRect.bottom - scrollPadding) {
+      scrollDelta = activeLinkRect.bottom - navRect.bottom + scrollPadding;
+    }
+
+    if (scrollDelta !== 0) {
+      nav.scrollBy({
+        top: scrollDelta,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+      });
+    }
+  }, [activeId, isMobile]);
 
   useEffect(() => {
     const handleScroll = () => setIsVisible(window.scrollY > 300);
@@ -159,11 +181,11 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
     <div
       className={`table-of-contents ${isVisible ? 'visible' : ''} ${className}`}
     >
-      <div className="toc-content-wrapper">
-        <div className="toc-header">
+      <div className='toc-content-wrapper'>
+        <div className='toc-header'>
           <h4>Table of Contents</h4>
         </div>
-        <nav className="toc-nav" aria-label="Table of contents">
+        <nav ref={tocNavRef} className='toc-nav' aria-label='Table of contents'>
           <TOCList items={nestedHeadings} activeId={activeId} />
         </nav>
       </div>

@@ -14,6 +14,9 @@ export async function GET() {
     });
   } catch (error) {
     logger.error('Error fetching tracks:', error);
-    return NextResponse.json({ error: 'Failed to fetch tracks' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch tracks' },
+      { status: 500 }
+    );
   }
 }

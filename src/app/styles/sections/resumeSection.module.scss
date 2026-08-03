@@ -1,339 +1,262 @@
-@use 'sass:color';
 @use '../variables' as *;
-@use '../mixin' as *;
 
-// Light theme overrides
-:global(body.theme-light) {
-  .resumeSectionTitle {
-    color: $px-dark;
-  }
+$border-subtle: $px-ink;
+$shadow-btn-theme: 4px 4px 0 var(--shadow-ink);
+$shadow-btn-theme-hover: 6px 6px 0 var(--shadow-ink);
 
-  .resumeName {
-    color: $px-dark;
-  }
-
-  .resumeHeadline {
-    color: $px-theme;
-  }
-
-  .resumeContact {
-    a,
-    span {
-      color: $px-body-light;
-    }
-  }
-
-  .resumeSummaryText {
-    color: $px-body-light;
-  }
-
-  .skillDetails {
-    color: $px-body-light;
-  }
-
-  .companyBlock {
-    border-bottom-color: rgba($px-dark, 0.08);
-  }
-
-  .companyName {
-    color: $px-dark;
-  }
-
-  .companyLocation {
-    color: rgba($px-dark, 0.5);
-  }
-
-  .companySummary {
-    color: rgba($px-dark, 0.55);
-  }
-
-  .roleTitle {
-    color: $px-dark;
-  }
-
-  .bulletList li {
-    color: $px-body-light;
-  }
-
-  .eduInstitution {
-    color: $px-dark;
-  }
-
-  .eduDegree {
-    color: $px-body-light;
-  }
-
-  .eduLocation {
-    color: rgba($px-dark, 0.5);
-  }
-}
-
-// Page header row: title + action buttons
+// The resume reads as a single document column
 .resumePageHeader {
+  max-width: 880px;
+  margin: 0 auto 48px;
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-  gap: 16px;
-
-  @include down-sm {
-    flex-direction: column;
-  }
-}
-
-.resumeActions {
-  display: flex;
-  gap: 12px;
+  // Download action sits beside the identity block, vertically centred against it
   align-items: center;
-  flex-wrap: wrap;
-  padding-top: 8px;
+  gap: 24px;
+  flex-wrap: nowrap;
 
-  a,
-  button {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+  // Only stack once there genuinely isn't room
+  @media (max-width: 640px) {
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 }
 
-// Contact header card
+.resumeEyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $px-theme;
+  margin-bottom: 12px;
+}
+
 .resumeContactHeader {
-  margin-bottom: 40px;
+  min-width: 0;
 }
 
 .resumeName {
-  color: $px-white;
-  font-size: 2.2rem;
+  font-size: clamp(34px, 4vw, 48px);
   font-weight: 700;
-  margin: 0 0 4px;
   letter-spacing: -0.02em;
-
-  @include down-sm {
-    font-size: 1.8rem;
-  }
+  color: $px-white;
+  margin: 0 0 8px;
 }
 
 .resumeHeadline {
-  color: $px-theme;
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin: 0 0 14px;
+  font-size: 17px;
+  color: $px-body;
+  margin: 0 0 8px;
 }
 
 .resumeContact {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 20px;
-  font-size: 0.9rem;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: $px-body;
 
-  a {
+  // Separate the entries with the design's middle dots
+  > * + *::before {
+    content: '·';
+    margin-right: 8px;
     color: $px-body;
-    text-decoration: none;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: $px-theme;
-    }
   }
 
-  span {
-    color: $px-body;
+  a {
+    color: $px-theme;
+
+    &:hover {
+      color: #ffcf4d;
+    }
   }
 }
 
-// Section block
+.resumeActions {
+  flex-shrink: 0;
+
+  .px-btn,
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 0;
+    background: $px-theme;
+    color: $px-dark;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: $shadow-btn-theme;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      color: $px-dark;
+      box-shadow: $shadow-btn-theme-hover;
+      transform: translateY(-2px);
+    }
+  }
+}
+
 .resumeSection {
-  margin-bottom: 44px;
+  max-width: 880px;
+  margin: 0 auto 56px;
 }
 
 .resumeSectionTitle {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: $px-white;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding-bottom: 10px;
-  margin: 0 0 24px;
-  border-bottom: 2px solid $px-theme;
+  margin: 0 0 20px;
 }
 
-// Summary
 .resumeSummaryText {
-  color: $px-body;
+  font-size: 16px;
   line-height: 1.75;
+  color: $px-body;
   margin: 0;
-  font-size: 0.95rem;
+  padding: 24px;
+  border-radius: 0;
+  background: $px-dark;
+  border: 1px solid $border-subtle;
+  text-wrap: pretty;
 }
 
-// Skills: definition list as two-column grid
-.skillsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin: 0;
+/* ------------------------------------------------------------------ skills */
 
-  @include up-sm {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 32px;
-  }
+.skillsGrid {
+  margin: 0;
+  font-size: 15px;
 }
 
 .skillRow {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-  line-height: 1.5;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px 20px;
+  margin-bottom: 10px;
 }
 
 .skillLabel {
   color: $px-theme;
   font-weight: 600;
-  font-size: 0.85rem;
-  white-space: nowrap;
-  min-width: 100px;
-  flex-shrink: 0;
-
-  &::after {
-    content: ':';
-  }
+  margin: 0;
 }
 
 .skillDetails {
   color: $px-body;
-  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0;
 }
 
-// Experience
-.companyBlock {
-  margin-bottom: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid rgba($px-white, 0.06);
+/* -------------------------------------------------------------- experience */
 
-  &:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
+.companyBlock {
+  margin: 24px 0 40px;
 }
 
 .companyHeaderRow {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 4px;
 }
 
 .companyName {
+  font-size: 19px;
+  font-weight: 600;
   color: $px-white;
-  font-size: 1.15rem;
-  font-weight: 700;
   margin: 0;
 }
 
 .companyLocation {
-  color: rgba($px-white, 0.45);
-  font-size: 0.85rem;
+  font-size: 14px;
+  color: $px-body;
 }
 
 .companySummary {
-  color: rgba($px-white, 0.5);
-  font-size: 0.85rem;
+  font-size: 14px;
+  color: $px-body;
+  margin: 6px 0 0;
   font-style: italic;
-  margin: 4px 0 8px;
 }
 
 .roleBlock {
-  padding: 14px 0 14px 18px;
-  border-left: 2px solid rgba($px-theme, 0.35);
-  margin: 14px 0 0;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  margin-top: 22px;
+  padding-left: 18px;
+  border-left: #{$bd-thick} solid #{$px-theme};
 }
 
 .roleHeaderRow {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 4px;
   margin-bottom: 10px;
 }
 
 .roleTitle {
-  color: $px-white;
-  font-size: 0.97rem;
+  font-size: 16px;
   font-weight: 600;
+  color: $px-white;
   margin: 0;
 }
 
 .roleDates {
+  font-size: 13px;
   color: $px-theme;
-  font-size: 0.82rem;
-  font-weight: 500;
-  white-space: nowrap;
+  font-weight: 600;
 }
 
 .bulletList {
   margin: 0;
-  padding-left: 1.3rem;
-  list-style: disc outside;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 
   li {
+    font-size: 15px;
+    line-height: 1.65;
     color: $px-body;
-    font-size: 0.9rem;
-    line-height: 1.68;
-    margin-bottom: 7px;
+    text-wrap: pretty;
 
     &::marker {
       color: $px-theme;
     }
-
-    &:last-child {
-      margin-bottom: 0;
-    }
   }
 }
 
-// Education
-.eduBlock {
-  margin-bottom: 20px;
+/* --------------------------------------------------------------- education */
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+.eduBlock {
+  margin-bottom: 24px;
 }
 
 .eduHeaderRow {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 4px;
 }
 
 .eduInstitution {
-  color: $px-white;
-  font-size: 1rem;
+  font-size: 17px;
   font-weight: 600;
+  color: $px-white;
   margin: 0;
 }
 
 .eduDate {
+  font-size: 13px;
   color: $px-theme;
-  font-size: 0.85rem;
-  white-space: nowrap;
+  font-weight: 600;
 }
 
 .eduDegree {
+  font-size: 15px;
   color: $px-body;
-  font-size: 0.9rem;
-  margin: 2px 0;
+  margin: 6px 0 0;
 }
 
 .eduLocation {
@@ -342,19 +265,54 @@
   margin: 0;
 }
 
+@media (max-width: 640px) {
+  .skillRow {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+/* ---------------------------------------------------------- theme overrides */
+
+:global(body.theme-light) {
+  .resumeName,
+  .resumeSectionTitle,
+  .companyName,
+  .roleTitle,
+  .eduInstitution {
+    color: $px-dark;
+  }
+
+  .resumeHeadline,
+  .resumeContact,
+  .resumeSummaryText,
+  .skillDetails,
+  .companyLocation,
+  .companySummary,
+  .eduDegree,
+  .bulletList li {
+    color: $px-body-light;
+  }
+
+  .resumeSummaryText {
+    background: $px-gray;
+    border-color: rgba($px-dark, 0.1);
+  }
+
+  .eduLocation {
+    color: rgba($px-dark, 0.55);
+  }
+}
+
 // ============================================================
 // PRINT STYLES
 // ============================================================
 @media print {
-  :global(.header-left),
-  :global(.mob-header),
-  :global(.fixed-controls),
-  :global(.sidebar-overlay) {
+  :global(.fixed-controls) {
     display: none !important;
   }
 
   :global(.main-right) {
-    left: 0 !important;
     width: 100% !important;
     position: static !important;
     height: auto !important;
@@ -364,6 +322,7 @@
     background: #fff !important;
     min-height: unset !important;
     overflow: visible !important;
+    padding-top: 0 !important;
   }
 
   :global(.pp-scrollable) {
@@ -386,6 +345,10 @@
     margin-bottom: 16px;
   }
 
+  .resumeEyebrow {
+    color: #8a6a12 !important;
+  }
+
   .resumeName,
   .companyName,
   .roleTitle,
@@ -397,7 +360,7 @@
   .skillLabel,
   .roleDates,
   .eduDate {
-    color: #1a7a45 !important;
+    color: #8a6a12 !important;
   }
 
   .resumeSummaryText,
@@ -410,6 +373,11 @@
     color: #333 !important;
   }
 
+  .resumeSummaryText {
+    background: transparent !important;
+    border-color: #ddd !important;
+  }
+
   .resumeContact {
     a,
     span {
@@ -419,7 +387,7 @@
 
   .resumeSectionTitle {
     color: #000 !important;
-    border-bottom-color: #1a7a45 !important;
+    page-break-after: avoid;
   }
 
   .companyBlock {
@@ -427,20 +395,16 @@
   }
 
   .roleBlock {
-    border-left-color: #1a7a45 !important;
+    border-left-color: #8a6a12 !important;
   }
 
   .bulletList li::marker {
-    color: #1a7a45 !important;
+    color: #8a6a12 !important;
   }
 
   .companyBlock,
   .roleBlock,
   .eduBlock {
     page-break-inside: avoid;
-  }
-
-  .resumeSectionTitle {
-    page-break-after: avoid;
   }
 }

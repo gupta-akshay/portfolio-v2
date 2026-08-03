@@ -33,11 +33,11 @@ export const logger = {
       Sentry.captureMessage(
         args
           .map((a) =>
-            a instanceof Error ? a.message : typeof a === 'string' ? a : '',
+            a instanceof Error ? a.message : typeof a === 'string' ? a : ''
           )
           .filter(Boolean)
           .join(' ') || 'warning',
-        { level: 'warning', extra: { args } },
+        { level: 'warning', extra: { args } }
       );
     } else if (typeof console !== 'undefined') {
       console.warn(...args);

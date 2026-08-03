@@ -42,6 +42,43 @@ export const contactContent = {
   emails: ['contact@akshaygupta.live', 'akshaygupta.live@gmail.com'],
 };
 
+// `color` is the brand mark's colour. GitHub, Medium and Dev.to are black
+// wordmarks by design — they would vanish on the dark canvas, so they are left
+// without one and follow the theme's ink instead.
+export const socialLinks = [
+  { label: 'GitHub', url: 'https://github.com/gupta-akshay', icon: 'github' },
+  {
+    label: 'LinkedIn',
+    url: 'https://www.linkedin.com/in/akshayguptaujn',
+    icon: 'linkedin',
+    color: '#0a66c2',
+  },
+  {
+    label: 'Medium',
+    url: 'https://medium.com/@akshaygupta.live',
+    icon: 'medium',
+  },
+  { label: 'Dev.to', url: 'https://dev.to/akshay_gupta', icon: 'dev' },
+  {
+    label: 'Instagram',
+    url: 'https://www.instagram.com/dja_shay',
+    icon: 'instagram',
+    color: '#e4405f',
+  },
+  {
+    label: 'Facebook',
+    url: 'https://www.facebook.com/deejay.ashay',
+    icon: 'facebook',
+    color: '#1877f2',
+  },
+  {
+    label: 'SoundCloud',
+    url: 'https://soundcloud.com/dj_ashay',
+    icon: 'soundcloud',
+    color: '#ff5500',
+  },
+] as const;
+
 export const musicContent = {
   paragraphs: [
     'Music is a creative practice that complements my engineering work. This collection includes original productions and remixes across electronic and melodic styles.',

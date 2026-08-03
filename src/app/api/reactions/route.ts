@@ -1,24 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
-import requestIp from 'request-ip';
 import { eq, and, count } from 'drizzle-orm';
 import * as Sentry from '@sentry/nextjs';
 import { db } from '../../../../db';
 import { blogReactions, anonymousUsers } from '../../../../db/schema';
 import { logger } from '@/app/utils/logger';
-import { rateLimit } from '@/app/utils/ratelimit';
+import { rateLimit, getClientIp } from '@/app/utils/ratelimit';
 
-// Helper function to generate user fingerprint
-function generateFingerprint(req: NextRequest): string {
-  const userAgent = req.headers.get('user-agent') || '';
-  const acceptLanguage = req.headers.get('accept-language') || '';
-  const acceptEncoding = req.headers.get('accept-encoding') || '';
-
-  const fingerprint = `${userAgent}|${acceptLanguage}|${acceptEncoding}`;
-  return createHash('sha256').update(fingerprint).digest('hex');
+function reportDuration(
+  method: 'GET' | 'POST',
+  start: number,
+  failed: boolean
+) {
+  Sentry.metrics.distribution(
+    'api.reactions.duration',
+    performance.now() - start,
+    {
+      unit: 'millisecond',
+      attributes: failed ? { method, error: 'true' } : { method },
+    }
+  );
 }
 
-// Helper function to hash IP address
 function hashIP(ip: string): string {
   return createHash('sha256').update(ip).digest('hex');
 }
@@ -26,6 +29,7 @@ function hashIP(ip: string): string {
 // GET: Get reactions for a blog post
 export async function GET(request: NextRequest) {
   const start = performance.now();
+  let failed = false;
   try {
     const { searchParams } = new URL(request.url);
     const blogSlug = searchParams.get('blogSlug');
@@ -82,7 +86,10 @@ export async function GET(request: NextRequest) {
     // Aggregate counts (no fingerprint) are safe to share via CDN.
     // Fingerprint-scoped responses include per-user data, so keep them private.
     if (fingerprint) {
-      response.headers.set('Cache-Control', 'private, max-age=0, must-revalidate');
+      response.headers.set(
+        'Cache-Control',
+        'private, max-age=0, must-revalidate'
+      );
     } else {
       response.headers.set(
         'Cache-Control',
@@ -90,28 +97,23 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'GET' },
-      unit: 'millisecond',
-    });
-
     return response;
   } catch (error) {
+    failed = true;
     logger.error('Error fetching reactions:', error);
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'GET', error: 'true' },
-      unit: 'millisecond',
-    });
     return NextResponse.json(
       { error: 'Failed to fetch reactions' },
       { status: 500 }
     );
+  } finally {
+    reportDuration('GET', start, failed);
   }
 }
 
 // POST: Add or update a reaction
 export async function POST(request: NextRequest) {
   const start = performance.now();
+  let failed = false;
   try {
     const limit = rateLimit(request, {
       id: 'reactions',
@@ -125,35 +127,23 @@ export async function POST(request: NextRequest) {
         {
           status: 429,
           headers: { 'Retry-After': String(limit.retryAfterSec) },
-        },
+        }
       );
     }
 
-    const {
-      blogSlug,
-      emoji,
-      fingerprint: clientFingerprint,
-    } = await request.json();
+    const { blogSlug, emoji, fingerprint } = await request.json();
 
-    if (!blogSlug || !emoji) {
+    // The client always sends one: getOrCreateFingerprint() returns a UUID even
+    // when localStorage is unavailable.
+    if (!blogSlug || !emoji || !fingerprint) {
       return NextResponse.json(
-        { error: 'Blog slug and emoji are required' },
+        { error: 'Blog slug, emoji and fingerprint are required' },
         { status: 400 }
       );
     }
 
-    const fakeRequest = {
-      headers: Object.fromEntries(request.headers), // Convert Headers into plain object
-    };
-
-    // Get client IP and generate server-side fingerprint as fallback
-    const ip = requestIp.getClientIp(fakeRequest) || '127.0.0.1';
-    const ipHash = hashIP(ip);
-    const serverFingerprint = generateFingerprint(request);
+    const ipHash = hashIP(getClientIp(request));
     const userAgent = request.headers.get('user-agent') || '';
-
-    // Use client fingerprint if provided, otherwise fall back to server fingerprint
-    const fingerprint = clientFingerprint || serverFingerprint || 'unknown';
 
     // Find or create anonymous user
     const user = await db
@@ -225,7 +215,11 @@ export async function POST(request: NextRequest) {
     }
 
     Sentry.metrics.count('blog.reaction.toggle', 1, {
-      attributes: { emoji, blog_slug: blogSlug, action: isRemoving ? 'removed' : 'added' },
+      attributes: {
+        emoji,
+        blog_slug: blogSlug,
+        action: isRemoving ? 'removed' : 'added',
+      },
     });
 
     // Return updated reaction counts
@@ -238,25 +232,19 @@ export async function POST(request: NextRequest) {
       .where(eq(blogReactions.blogSlug, blogSlug))
       .groupBy(blogReactions.emoji);
 
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'POST' },
-      unit: 'millisecond',
-    });
-
     return NextResponse.json({
       success: true,
       reactions,
       userReaction: isRemoving ? null : emoji,
     });
   } catch (error) {
+    failed = true;
     logger.error('Error adding reaction:', error);
-    Sentry.metrics.distribution('api.reactions.duration', performance.now() - start, {
-      attributes: { method: 'POST', error: 'true' },
-      unit: 'millisecond',
-    });
     return NextResponse.json(
       { error: 'Failed to add reaction' },
       { status: 500 }
     );
+  } finally {
+    reportDuration('POST', start, failed);
   }
 }

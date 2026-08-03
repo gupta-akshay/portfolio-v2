@@ -1,14 +1,11 @@
-import { ImageResponse } from 'next/og';
-import { getBlogBySlug, getBlogSlugs } from '@/lib/mdx';
+import { getAllBlogs, getBlogBySlug } from '@/lib/mdx';
+import { OG_SIZE, renderOg } from '@/lib/og';
 
 // Force Node.js runtime since getBlogBySlug uses fs to read MDX files
 export const runtime = 'nodejs';
 
 export const contentType = 'image/png';
-export const size = {
-  width: 1200,
-  height: 630,
-};
+export const size = OG_SIZE;
 
 export default async function Image({
   params,
@@ -16,112 +13,27 @@ export default async function Image({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-
-  if (!slug) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            fontSize: 48,
-            background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-          }}
-        >
-          Invalid Blog Post
-        </div>
-      ),
-      { ...size }
-    );
-  }
-
-  const post = await getBlogBySlug(slug);
+  const post = slug ? await getBlogBySlug(slug) : null;
 
   if (!post) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            fontSize: 48,
-            background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-          }}
-        >
-          Blog Post Not Found
-        </div>
-      ),
-      { ...size }
-    );
+    return renderOg({
+      title: 'Blog Post Not Found',
+      footer: 'akshaygupta.live/blog',
+    });
   }
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          fontSize: 48,
-          background: 'linear-gradient(135deg, #000000, #1a1a1a, #2a2a2a)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          justifyContent: 'flex-end',
-          color: 'white',
-          padding: '60px 80px',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}
-      >
-        <div
-          style={{
-            fontSize: 56,
-            fontWeight: 'bold',
-            marginBottom: 30,
-            maxWidth: '85%',
-            lineHeight: 1.1,
-            color: '#ffffff',
-          }}
-        >
-          {post.metadata.title}
-        </div>
-        <div
-          style={{
-            fontSize: 28,
-            color: '#e0e0e0',
-            marginBottom: 20,
-            fontWeight: 500,
-          }}
-        >
-          By {post.metadata.author.name}
-        </div>
-        <div
-          style={{
-            fontSize: 24,
-            color: '#2fbf71',
-            fontWeight: 500,
-          }}
-        >
-          akshaygupta.live
-        </div>
-      </div>
-    ),
-    {
-      ...size,
-    }
-  );
+  return renderOg({
+    title: post.metadata.title,
+    plainTitle: true,
+    subtitle: `By ${post.metadata.author.name}`,
+    footer: 'akshaygupta.live',
+    align: 'bottom-left',
+  });
 }
 
 export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const posts = await getAllBlogs();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateImageMetadata({
@@ -130,23 +42,12 @@ export async function generateImageMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const post = slug ? await getBlogBySlug(slug) : null;
 
-  if (!slug) {
-    return [
-      {
-        contentType: 'image/png',
-        size: { width: 1200, height: 630 },
-        id: 'og-image',
-        alt: 'Blog Post',
-      },
-    ];
-  }
-
-  const post = await getBlogBySlug(slug);
   return [
     {
       contentType: 'image/png',
-      size: { width: 1200, height: 630 },
+      size: OG_SIZE,
       id: 'og-image',
       alt: post?.metadata.title || 'Blog Post',
     },

@@ -1,0 +1,818 @@
+@use '../../styles/variables' as *;
+
+@keyframes eqBar {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.player {
+  position: relative;
+
+  &[data-has-bar] {
+    padding-bottom: 170px;
+  }
+}
+
+/* ---------------------------------------------------------------- track list */
+
+.trackList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trackRow {
+  border: $bd-thick solid $px-ink;
+  background: $px-dark;
+  cursor: pointer;
+  transition: transform $dur $ease, box-shadow $dur $ease;
+
+  &:hover {
+    box-shadow: $shadow-sm;
+    transform: translate(-2px, -2px);
+  }
+
+  &[data-active] {
+    background: $px-theme;
+    box-shadow: $shadow-md;
+    transform: translate(-3px, -3px);
+  }
+
+  :global(body.theme-light) & {
+    background: $px-white;
+    border-color: $px-ink-light;
+
+    &[data-active] {
+      background: $px-theme;
+    }
+  }
+}
+
+.trackRowMain {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+}
+
+// Square slab, not a circle
+.trackPlayButton {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: $bd-thin solid $px-ink;
+  background: transparent;
+  color: $px-ink;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+
+  &:hover {
+    background: $px-violet;
+    color: $px-black;
+  }
+
+  .trackRow[data-active] & {
+    background: $px-black;
+    color: $px-theme;
+    border-color: $px-black;
+  }
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+  }
+}
+
+.trackInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.trackTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trackTitle {
+  font-size: 16px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-display;
+  text-transform: uppercase;
+  color: $px-ink;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .trackRow[data-active] & {
+    color: $px-black;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+  }
+}
+
+// Square badge with a hard border
+.trackBadge {
+  flex-shrink: 0;
+  font-family: $px-font-mono;
+  font-size: 10px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: $bd-thin solid $px-ink;
+  color: $px-ink;
+
+  &[data-tone='remix'] {
+    background: $px-violet;
+    color: $px-black;
+  }
+
+  &[data-tone='original'] {
+    background: $px-ink;
+    color: $px-black;
+  }
+
+  .trackRow[data-active] & {
+    border-color: $px-black;
+    color: $px-black;
+  }
+
+  .trackRow[data-active] &[data-tone='original'] {
+    background: $px-black;
+    color: $px-theme;
+  }
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+  }
+}
+
+.trackMeta {
+  font-family: $px-font-mono;
+  font-size: 12px;
+  color: $px-body;
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .trackRow[data-active] & {
+    color: rgba(0, 0, 0, 0.75);
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
+.equalizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  margin-right: 4px;
+  flex-shrink: 0;
+
+  span {
+    width: 4px;
+    height: 100%;
+    background: $px-black;
+    transform-origin: bottom;
+    // Stepped, not smooth — the bars snap between positions
+    animation: eqBar 0.9s steps(4, end) infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.25s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.5s;
+    }
+  }
+}
+
+.trackActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.trackActionButton {
+  background: transparent;
+  border: $bd-thin solid transparent;
+  color: $px-body;
+  cursor: pointer;
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+
+  &:hover {
+    border-color: $px-ink;
+    color: $px-ink;
+  }
+
+  &[data-queued] {
+    color: $px-violet;
+  }
+
+  .trackRow[data-active] & {
+    color: rgba(0, 0, 0, 0.75);
+
+    &:hover {
+      border-color: $px-black;
+      color: $px-black;
+    }
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+
+    &:hover {
+      border-color: $px-ink-light;
+      color: $px-ink-light;
+    }
+  }
+}
+
+.trackDuration {
+  font-family: $px-font-mono;
+  font-size: 13px;
+  font-weight: $fw-bold;
+  color: $px-body;
+  font-variant-numeric: tabular-nums;
+  width: 46px;
+  text-align: right;
+  flex-shrink: 0;
+
+  .trackRow[data-active] & {
+    color: $px-black;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
+.trackSeeker {
+  padding: 0 18px 16px;
+  cursor: default;
+}
+
+.trackSeekerTimes {
+  display: flex;
+  justify-content: space-between;
+  font-family: $px-font-mono;
+  font-size: 12px;
+  font-weight: $fw-bold;
+  color: rgba(0, 0, 0, 0.7);
+  font-variant-numeric: tabular-nums;
+  margin-top: 8px;
+}
+
+.trackSeekerElapsed {
+  color: $px-black;
+}
+
+/* ------------------------------------------------------------ waveform seeker */
+
+.seeker {
+  position: relative;
+  border: $bd-thin solid $px-black;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.seekerCanvas {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+  touch-action: none;
+
+  .seeker[data-variant='row'] & {
+    height: 96px;
+  }
+
+  .seeker[data-variant='bar'] & {
+    height: 44px;
+  }
+}
+
+.seekerTooltip {
+  position: absolute;
+  top: -30px;
+  transform: translateX(-50%);
+  padding: 3px 8px;
+  background: $px-ink;
+  color: $px-bg-1;
+  border: $bd-thin solid $px-black;
+  font-family: $px-font-mono;
+  font-size: 11px;
+  font-weight: $fw-bold;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+// Keyboard/screen-reader accessible equivalent of the canvas scrubber
+.seekerSlider {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+
+  &:focus-visible {
+    position: static;
+    width: 100%;
+    height: auto;
+    margin: 6px 0 0;
+    clip: auto;
+    accent-color: $px-theme;
+  }
+}
+
+/* ----------------------------------------------------------------- player bar */
+
+.playerBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  // Solid, not glass
+  background: $px-bg-2;
+  border-top: $bd-thick solid $px-ink;
+  animation: slideUp 0.2s steps(5, end);
+
+  :global(body.theme-light) & {
+    background: $px-white;
+    border-top-color: $px-ink-light;
+  }
+}
+
+.playerBarInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.playerBarTrack {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.playerBarTitle {
+  font-size: 15px;
+  font-weight: $fw-bold;
+  text-transform: uppercase;
+  letter-spacing: $track-display;
+  color: $px-ink;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+  }
+}
+
+.playerBarMeta {
+  font-family: $px-font-mono;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  color: $px-body;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
+.playerBarElapsed {
+  color: $px-theme;
+  font-weight: $fw-bold;
+  font-variant-numeric: tabular-nums;
+}
+
+.playerBarTotal {
+  font-variant-numeric: tabular-nums;
+}
+
+.playerBarControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.playerBarSecondary {
+  background: transparent;
+  border: $bd-thin solid $px-ink;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  color: $px-ink;
+  font-size: 16px;
+
+  &:hover {
+    background: $px-violet;
+    color: $px-black;
+  }
+
+  &[data-on] {
+    background: $px-violet;
+    color: $px-black;
+    box-shadow: 3px 3px 0 var(--shadow-ink);
+  }
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+
+    &:hover,
+    &[data-on] {
+      color: $px-black;
+    }
+  }
+}
+
+.playerBarSkip {
+  background: transparent;
+  border: $bd-thin solid transparent;
+  color: $px-ink;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+
+  &:hover {
+    border-color: $px-ink;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+
+    &:hover {
+      border-color: $px-ink-light;
+    }
+  }
+}
+
+// The one loud control — square amber slab
+.playerBarPlay {
+  width: 52px;
+  height: 52px;
+  border: $bd-thick solid $px-ink;
+  background: $px-theme;
+  color: $px-black;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  box-shadow: $shadow-sm;
+  transition: transform $dur $ease, box-shadow $dur $ease;
+
+  &:hover {
+    background: $px-theme-hover;
+  }
+
+  &:active {
+    transform: translate($press-offset, $press-offset);
+    box-shadow: $shadow-none;
+  }
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
+}
+
+.playerBarVolume {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  input[type='range'] {
+    width: 90px;
+    accent-color: $px-theme;
+    cursor: pointer;
+  }
+}
+
+.playerBarMute {
+  background: transparent;
+  border: $bd-thin solid transparent;
+  color: $px-body;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+
+  &:hover {
+    border-color: $px-ink;
+    color: $px-ink;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+
+    &:hover {
+      border-color: $px-ink-light;
+      color: $px-ink-light;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- queue panel */
+
+.queuePanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 92vw);
+  z-index: 250;
+  background: $px-bg-3;
+  border-left: $bd-thick solid $px-ink;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.15s steps(4, end), visibility 0.15s steps(4, end);
+
+  &[data-visible] {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  :global(body.theme-light) & {
+    background: $px-white;
+    border-left-color: $px-ink-light;
+  }
+}
+
+.queueHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: $bd-thick solid $px-ink;
+  background: $px-theme;
+
+  :global(body.theme-light) & {
+    border-bottom-color: $px-ink-light;
+  }
+}
+
+.queueTitle {
+  font-size: 17px;
+  font-weight: $fw-bold;
+  text-transform: uppercase;
+  letter-spacing: $track-display;
+  color: $px-black;
+  margin: 0;
+
+  :global(body.theme-light) & {
+    color: $px-black;
+  }
+}
+
+.queueClose {
+  background: transparent;
+  border: $bd-thin solid $px-black;
+  color: $px-black;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+
+  &:hover {
+    background: $px-black;
+    color: $px-theme;
+  }
+}
+
+.queueBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.queueRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: $bd-thin solid $px-ink;
+
+  &:hover {
+    box-shadow: 3px 3px 0 var(--shadow-ink);
+  }
+
+  &[data-dragover] {
+    background: $px-violet;
+  }
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
+}
+
+.queueRowButton {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+
+.queueIndex {
+  font-family: $px-font-mono;
+  font-size: 12px;
+  font-weight: $fw-bold;
+  color: $px-theme;
+  width: 22px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.queueRowInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.queueRowTitle {
+  font-size: 14px;
+  font-weight: $fw-bold;
+  text-transform: uppercase;
+  color: $px-ink;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+  }
+}
+
+.queueRowMeta {
+  font-family: $px-font-mono;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: $px-body;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
+.queueRemove {
+  background: transparent;
+  border: none;
+  color: $px-body;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+
+  &:hover {
+    background: $px-error;
+    color: $px-white;
+  }
+}
+
+.queueEmpty {
+  padding: 24px 14px;
+  font-family: $px-font-mono;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: $px-body;
+  text-align: center;
+  border: $bd-thin dashed $px-body;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+    border-color: $px-body-light;
+  }
+}
+
+/* ---------------------------------------------------------------------- toast */
+
+.toastRegion {
+  position: fixed;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 12px 20px;
+  background: $px-theme;
+  color: $px-black;
+  border: $bd-thick solid $px-ink;
+  box-shadow: $shadow-sm;
+  font-family: $px-font-mono;
+  font-size: 13px;
+  font-weight: $fw-bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
+}
+
+/* ----------------------------------------------------------------- responsive */
+
+@media (max-width: 640px) {
+  .hideOnMobile {
+    display: none;
+  }
+
+  .playerBarVolume {
+    display: none;
+  }
+
+  .trackRowMain {
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .playerBarInner {
+    padding: 10px 14px 14px;
+    gap: 12px;
+  }
+}
+
+/* -------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .equalizer span,
+  .playerBar {
+    animation: none;
+  }
+
+  .queuePanel {
+    transition: none;
+  }
+}

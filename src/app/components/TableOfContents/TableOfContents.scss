@@ -9,15 +9,14 @@
   transform: translateY(-50%);
   width: 250px;
   max-height: 60vh;
-  border-radius: 12px;
+  border-radius: 0;
   padding: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 4px 0 var(--shadow-ink);
   z-index: 100;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-  overflow-y: auto;
-  scroll-behavior: auto;
+  overflow: hidden;
 
   // Add full glassmorphism effects manually (preserving position: fixed)
   backdrop-filter: blur(15px);
@@ -27,10 +26,13 @@
   // Inner wrapper that covers entire scrollable content
   .toc-content-wrapper {
     background: rgba($px-bg-1, 0.9);
-    border-radius: 12px;
+    border-radius: 0;
     padding: 1rem;
     min-height: 100%;
+    max-height: 60vh;
     position: relative;
+    display: flex;
+    flex-direction: column;
 
     // Glassmorphism gradient overlay
     &::before {
@@ -45,7 +47,7 @@
         rgba(255, 255, 255, 0.1),
         rgba(255, 255, 255, 0.05)
       );
-      border-radius: 12px;
+      border-radius: 0;
       z-index: -1;
       pointer-events: none;
     }
@@ -55,7 +57,7 @@
     .toc-content-wrapper {
       background: rgba($px-white, 0.9);
       border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      box-shadow: 4px 4px 0 var(--shadow-ink);
 
       &::before {
         background: linear-gradient(
@@ -67,7 +69,7 @@
     }
 
     border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 4px 0 var(--shadow-ink);
   }
 
   &.visible {
@@ -76,6 +78,7 @@
   }
 
   .toc-header {
+    flex-shrink: 0;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -97,6 +100,10 @@
   }
 
   .toc-nav {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
     .toc-list {
       list-style: none;
       padding: 0;
@@ -115,7 +122,7 @@
           transition: all 0.2s ease;
           border-left: 2px solid transparent;
           padding-left: 0.5rem;
-          border-radius: 4px;
+          border-radius: 0;
           margin: 1px 0;
           position: relative;
 
@@ -142,7 +149,7 @@
                 rgba($px-theme, 0.02),
                 rgba($px-theme, 0.01)
               );
-              border-radius: inherit;
+              border-radius: 0;
               z-index: -1;
             }
           }
@@ -167,7 +174,7 @@
                 rgba($px-theme, 0.05),
                 rgba($px-theme, 0.02)
               );
-              border-radius: inherit;
+              border-radius: 0;
               z-index: -1;
             }
           }
@@ -226,7 +233,7 @@
     margin: 2rem 0;
     padding: 1rem;
     background: $px-bg-2;
-    border-radius: 8px;
+    border-radius: 0;
     border: 1px solid rgba(255, 255, 255, 0.1);
 
     .theme-light & {
@@ -261,7 +268,7 @@
           padding: 0.5rem;
           color: $px-body;
           text-decoration: none;
-          border-radius: 4px;
+          border-radius: 0;
           transition: background-color 0.2s ease;
 
           .theme-light & {

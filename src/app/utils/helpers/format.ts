@@ -2,7 +2,6 @@
  * Date formatting utilities
  */
 
-
 const CAREER_START = new Date('2017-09-01');
 
 export const getYearsOfExperience = (): number => {

@@ -3,7 +3,6 @@
 import styles from './MapSection.module.scss';
 
 export default function MapSection() {
-
   return (
     <div className='col-12'>
       <div className={styles.googleMap}>

@@ -1,7 +1,6 @@
 import { Fragment, ReactNode } from 'react';
-import Header from './Header';
-import DayNightToggle from '../DayNightToggle';
-import BackBtn from '../BackBtn';
+import SiteNav from './SiteNav';
+import BackBtn from '../BackBtn/BackBtn';
 
 const Layout = ({
   children,
@@ -12,7 +11,7 @@ const Layout = ({
 }) => {
   return (
     <Fragment>
-      <Header />
+      <SiteNav />
       <main
         id='main-content'
         className='main-right pp-main-section'
@@ -20,10 +19,11 @@ const Layout = ({
       >
         {children}
       </main>
-      <div className='fixed-controls' role='group' aria-label='Page controls'>
-        <DayNightToggle />
-        {isBlog && <BackBtn />}
-      </div>
+      {isBlog && (
+        <div className='fixed-controls' role='group' aria-label='Page controls'>
+          <BackBtn />
+        </div>
+      )}
     </Fragment>
   );
 };

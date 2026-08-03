@@ -1,6 +1,6 @@
 export const metadata = {
     title: 'Why PostgreSQL Index-Only Scans Still Hit the Heap',
-    slug: 'postgresql-index-only-scans-visibility-map-heap-fetches',
+    slug: 'postgres-index-only-scans-visibility-map-heap-fetches',
     publishedAt: '2026-07-18',
     categories: ['postgres', 'database', 'performance'],
     coverImage: '/images/blog/postgresql-index-only-scans-visibility-map-heap-fetches.webp',
@@ -95,7 +95,7 @@ Start with the query plan, then work outward. Do not tune autovacuum from a sing
 
 Use `EXPLAIN` with runtime and buffer information:
 
-```
+```sql
 EXPLAIN (ANALYZE, BUFFERS)
 SELECT customer_id, total_amount, status
 FROM orders

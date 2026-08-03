@@ -1,0 +1,260 @@
+@use '../../styles/variables' as *;
+
+$nav-height: 68px;
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  // Solid, not glass — brutalism doesn't blur
+  background: $px-bg-1;
+  border-bottom: $bd-thick solid $px-ink;
+
+  :global(body.theme-light) & {
+    background: $px-gray;
+    border-bottom-color: $px-ink-light;
+  }
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: $nav-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: $fw-bold;
+  font-size: 18px;
+  letter-spacing: $track-display;
+  text-transform: uppercase;
+  color: $px-ink;
+
+  &:hover {
+    color: $px-theme;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+
+    &:hover {
+      color: $px-ink-light;
+    }
+  }
+}
+
+// Solid amber block instead of a glowing dot
+.brandDot {
+  width: 14px;
+  height: 14px;
+  background: $px-theme;
+  border: $bd-thin solid $px-ink;
+  display: inline-block;
+  flex-shrink: 0;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
+}
+
+// Enough gap that a hovered link's border never touches the active slab's
+.desktopLinks {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.link {
+  padding: 9px 14px;
+  font-family: $px-font-mono;
+  font-size: 13px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
+  color: $px-body;
+  border: $bd-thin solid transparent;
+
+  &:hover {
+    color: $px-ink;
+    border-color: $px-ink;
+  }
+
+  // Active is a filled amber slab, not a tint
+  &[data-active] {
+    background: $px-theme;
+    color: $px-black;
+    border-color: $px-ink;
+    box-shadow: 3px 3px 0 var(--shadow-ink);
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+
+    &:hover {
+      color: $px-ink-light;
+      border-color: $px-ink-light;
+    }
+
+    &[data-active] {
+      color: $px-black;
+      border-color: $px-ink-light;
+    }
+  }
+}
+
+.themeToggle {
+  margin-left: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: $bd-thin solid $px-ink;
+  background: transparent;
+  color: $px-ink;
+  cursor: pointer;
+  font-size: 15px;
+  transition: transform $dur $ease, box-shadow $dur $ease;
+
+  &:hover {
+    background: $px-violet;
+    color: $px-black;
+    box-shadow: 3px 3px 0 var(--shadow-ink);
+  }
+
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+
+    &:hover {
+      color: $px-black;
+    }
+  }
+}
+
+.burger {
+  display: none;
+  background: transparent;
+  border: $bd-thin solid $px-ink;
+  color: $px-ink;
+  cursor: pointer;
+  padding: 8px 10px;
+  font-size: 20px;
+  line-height: 0;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+  }
+}
+
+// Dims and blocks the frozen page behind the open menu
+.backdrop {
+  position: fixed;
+  top: $nav-height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: none;
+  padding: 0;
+  cursor: default;
+  background: rgba(11, 11, 16, 0.78);
+
+  :global(body.theme-light) & {
+    background: rgba(11, 11, 16, 0.45);
+  }
+}
+
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-top: $bd-thick solid $px-ink;
+  background: $px-bg-1;
+  // The backdrop is positioned, so the menu needs a stacking position of its
+  // own to stay painted above it
+  position: relative;
+  z-index: 1;
+
+  :global(body.theme-light) & {
+    background: $px-gray;
+    border-top-color: $px-ink-light;
+  }
+}
+
+.mobileLink {
+  padding: 16px 24px;
+  font-family: $px-font-mono;
+  font-size: 15px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
+  color: $px-body;
+  border-bottom: $bd-thin solid rgba(255, 255, 255, 0.15);
+
+  &[data-active] {
+    background: $px-theme;
+    color: $px-black;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+    border-bottom-color: rgba(11, 11, 16, 0.15);
+
+    &[data-active] {
+      color: $px-black;
+    }
+  }
+}
+
+.mobileThemeToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  font-family: $px-font-mono;
+  font-size: 15px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
+  color: $px-body;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
+@media (max-width: 820px) {
+  .desktopLinks {
+    display: none;
+  }
+
+  .burger {
+    display: block;
+  }
+}
+
+@media print {
+  .nav {
+    display: none;
+  }
+}

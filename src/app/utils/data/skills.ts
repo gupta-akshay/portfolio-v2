@@ -4,103 +4,85 @@ export const skillsData: Skill[] = [
   {
     id: 'javascript',
     name: 'Javascript',
-    icon: 'devicon-javascript-plain',
+    icon: 'javascript',
     category: 'programming',
   },
   {
     id: 'typescript',
     name: 'TypeScript',
-    icon: 'devicon-typescript-plain',
+    icon: 'typescript',
     category: 'programming',
   },
   {
     id: 'react',
     name: 'React',
-    icon: 'devicon-react-original',
+    icon: 'react',
     category: 'frontend',
   },
   {
     id: 'nextjs',
     name: 'Next.js',
-    icon: 'devicon-nextjs-plain',
+    icon: 'nextjs',
     category: 'frontend',
   },
   {
     id: 'node.js',
     name: 'Node.js',
-    icon: 'devicon-nodejs-plain',
+    icon: 'nodejs',
     category: 'backend',
   },
   {
     id: 'postgresql',
     name: 'PostgreSQL',
-    icon: 'devicon-postgresql-plain',
+    icon: 'postgresql',
     category: 'database',
   },
   {
     id: 'elasticsearch',
     name: 'ElasticSearch',
-    icon: 'devicon-elasticsearch-plain',
+    icon: 'elasticsearch',
     category: 'database',
   },
   {
     id: 'redis',
     name: 'Redis',
-    icon: 'devicon-redis-plain',
+    icon: 'redis',
     category: 'database',
   },
   {
     id: 'firestore',
     name: 'Firestore',
-    icon: 'devicon-firebase-plain',
+    icon: 'firebase',
     category: 'database',
   },
   {
     id: 'bigquery',
     name: 'BigQuery',
-    icon: 'devicon-googlecloud-plain',
+    icon: 'googlecloud',
     category: 'database',
   },
   {
     id: 'rabbitMQ',
     name: 'RabbitMQ',
-    icon: 'devicon-rabbitmq-original',
+    icon: 'rabbitmq',
     category: 'infrastructure',
   },
   {
     id: 'gcp',
     name: 'Google Cloud Platform',
-    icon: 'devicon-googlecloud-plain',
+    icon: 'googlecloud',
     category: 'cloud',
   },
   {
     id: 'aws',
     name: 'Amazon Web Services',
-    icon: 'devicon-amazonwebservices-plain-wordmark',
+    icon: 'aws',
     category: 'cloud',
   },
   {
     id: 'docker',
     name: 'Docker',
-    icon: 'devicon-docker-plain',
+    icon: 'docker',
     category: 'infrastructure',
   },
 ];
-
-export const getSkillsArray = (): Skill[] => {
-  return skillsData;
-};
-
-export const getSkillsByCategory = (category: string): Skill[] => {
-  return skillsData.filter((skill) => skill.category === category);
-};
-
-export const getSkillCategories = (): string[] => {
-  return Array.from(
-    new Set(
-      skillsData
-        .map((skill) => skill.category)
-        .filter((category): category is string => Boolean(category))
-    )
-  );
-};

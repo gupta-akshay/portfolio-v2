@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import MusicLoadingIndicator from './MusicLoadingIndicator';
-import { Track } from '@/app/components/AudioPlayer/types';
+import { Track } from '@/app/types';
 import { logger } from '@/app/utils/logger';
 
-const AudioPlayer = dynamic(() => import('@/app/components/AudioPlayer'), {
+const AudioPlayer = dynamic(() => import('@/app/components/AudioPlayer/AudioPlayer'), {
   loading: () => <MusicLoadingIndicator />,
   ssr: false,
 });
@@ -19,7 +19,9 @@ function MusicTracks() {
   useEffect(() => {
     const fetchTracks = async () => {
       try {
-        const response = await fetch('/api/music/tracks', { cache: 'no-store' });
+        const response = await fetch('/api/music/tracks', {
+          cache: 'no-store',
+        });
         if (!response.ok) throw new Error('Failed to fetch tracks');
         const tracksList: Track[] = await response.json();
         setTracks(tracksList);
@@ -35,7 +37,7 @@ function MusicTracks() {
   }, []);
 
   if (error) {
-    return <div className='text-red-500'>{error}</div>;
+    return <div className='warning-text'>{error}</div>;
   }
 
   if (isLoading) {

@@ -1,5 +1,4 @@
 import type { NextRequest } from 'next/server';
-import requestIp from 'request-ip';
 
 // Per-instance in-memory rate limit. Does NOT coordinate across
 // serverless instances — sufficient for casual abuse, not DDoS.
@@ -16,15 +15,9 @@ function sweep(now: number): void {
   for (const [key, bucket] of store) {
     if (bucket.resetAt <= now) store.delete(key);
   }
-  if (store.size >= MAX_KEYS) {
-    const extras = store.size - MAX_KEYS;
-    let dropped = 0;
-    for (const key of store.keys()) {
-      if (dropped >= extras) break;
-      store.delete(key);
-      dropped++;
-    }
-  }
+  // ponytail: still over the cap after expiring — drop everything rather than
+  // pick victims. Per-key LRU if the reset ever hurts a real caller.
+  if (store.size >= MAX_KEYS) store.clear();
 }
 
 interface Options {
@@ -33,28 +26,26 @@ interface Options {
   windowMs: number;
 }
 
-export interface RateLimitResult {
+interface RateLimitResult {
   ok: boolean;
   retryAfterSec: number;
   remaining: number;
   limit: number;
 }
 
-function getIp(req: NextRequest): string {
-  const fake = {
-    headers: Object.fromEntries(req.headers) as Record<string, string>,
-  };
-  return requestIp.getClientIp(fake) || '127.0.0.1';
+export function getClientIp(req: NextRequest): string {
+  const forwarded = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+  return forwarded || req.headers.get('x-real-ip')?.trim() || '127.0.0.1';
 }
 
 export function rateLimit(
   req: NextRequest,
-  { id, limit, windowMs }: Options,
+  { id, limit, windowMs }: Options
 ): RateLimitResult {
   const now = Date.now();
   sweep(now);
 
-  const ip = getIp(req);
+  const ip = getClientIp(req);
   const key = `${id}:${ip}`;
   const existing = store.get(key);
 

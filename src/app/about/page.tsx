@@ -1,27 +1,27 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
-import Skills from '@/app/components/Skills';
-import Experience from '@/app/components/Experience';
+import Skills from '@/app/components/Skills/Skills';
+import Experience from '@/app/components/Experience/Experience';
 import GitHubCalendar from '@/app/components/GitHubCalendar/GitHubCalendarLazy';
 import { getSiteUrl } from '@/lib/site-url';
 import { aboutContent } from '@/lib/site-content';
+import { getYearsOfExperience } from '@/app/utils/helpers/format';
 
 import styles from '../styles/sections/aboutSection.module.scss';
 
 const siteUrl = getSiteUrl();
+const aboutDescription =
+  'Learn about my work as a Senior Staff Engineer at PeopleGrove, including my engineering experience, skills, and product-focused approach.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'About',
-  description:
-    'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+  description: aboutDescription,
   openGraph: {
     type: 'profile',
-    title: 'About Akshay Gupta | Full-Stack Developer',
-    description:
-      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    title: 'About Akshay Gupta | Senior Staff Engineer',
+    description: aboutDescription,
     url: `${siteUrl}/about`,
     siteName: 'Akshay Gupta',
     locale: 'en_US',
@@ -37,9 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Akshay Gupta | Full-Stack Developer',
-    description:
-      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    title: 'About Akshay Gupta | Senior Staff Engineer',
+    description: aboutDescription,
     creator: '@ashay_music',
     images: ['/about/opengraph-image'],
   },
@@ -48,52 +47,17 @@ export const metadata: Metadata = {
   },
 };
 
-const calculateExperience = (): number => {
-  const startDate = new Date('2017-09-13').getTime();
-  const currentDate = new Date().getTime();
-  return Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 365));
-};
-
-const EducationAndSkills = () => (
-  <>
-    <div className='separator' />
-    <div className='title'>
-      <h3>My Background & What I&apos;m Good At</h3>
-    </div>
-    <div className='row'>
-      <div className='col-lg-4 m-15px-tb'>
-        <ul className={styles.educationBox}>
-          {aboutContent.education.map((item) => (
-            <li key={item.qualification}>
-              <span>{item.dates}</span>
-              <h6>{item.qualification}</h6>
-              <p>{item.institution}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className='col-lg-7 ml-auto m-15px-tb'>
-        <div className={styles.skillsBox}>
-          <h3>What I Can Do</h3>
-          <p>{aboutContent.skillsIntro}</p>
-          <Skills />
-        </div>
-      </div>
-    </div>
-  </>
-);
-
 export default function About() {
-  const yearsOfExperience = calculateExperience();
+  const yearsOfExperience = getYearsOfExperience();
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
     name: 'About Akshay Gupta',
-    description:
-      'Learn about my journey as a Senior Staff Engineer at PeopleGrove, my skills, experience, and what drives me in web development.',
+    description: aboutDescription,
     mainEntity: {
       '@type': 'Person',
+      '@id': `${siteUrl}/#person`,
       name: 'Akshay Gupta',
       jobTitle: 'Senior Staff Engineer',
       worksFor: {
@@ -102,7 +66,7 @@ export default function About() {
         url: 'https://www.peoplegrove.com',
       },
       url: siteUrl,
-      image: `${siteUrl}/images/about-me.webp`,
+      image: `${siteUrl}/images/home-banner.webp`,
       description: `Senior Staff Engineer at PeopleGrove with over ${yearsOfExperience} years of experience in web development.`,
       sameAs: [
         'https://github.com/gupta-akshay',
@@ -147,46 +111,53 @@ export default function About() {
         }}
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          <div className='row align-items-center justify-content-center'>
-            <div className='col-lg-6 m-15px-tb d-none d-sm-block'>
-              <div className={styles.aboutImg}>
-                <Image
-                  src='/images/about-me.webp'
-                  alt='about-image'
-                  width={560}
-                  height={560}
-                  loading='lazy'
-                  style={{ objectFit: 'cover', width: '100%' }}
-                />
-              </div>
-            </div>
-            <div className='col-lg-6 m-15px-tb'>
-              <div className={`${styles.aboutInfo} route-shell`}>
-                <div className='title' style={{ marginBottom: '24px' }}>
-                  <h3>About</h3>
-                </div>
-                <div className={styles.aboutText}>
-                  <h4>{aboutContent.heading}</h4>
-                  <p>
-                    {aboutContent.paragraphs[0]?.replace(
-                      '{years}',
-                      String(yearsOfExperience)
-                    )}
-                  </p>
-                  <p>{aboutContent.paragraphs[1]}</p>
-                </div>
-                <div className={styles.btnBar}>
-                  <Link className='px-btn px-btn-regular' href='/contact'>
-                    <span>Start a Conversation</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
+          <div className={styles.eyebrow}>About</div>
+
+          <div className={`${styles.hero} route-shell`}>
+            <h1 className={styles.heroTitle}>
+              {aboutContent.heading}
+              <span>.</span>
+            </h1>
+            <p className={styles.heroText}>
+              {aboutContent.paragraphs[0]?.replace(
+                '{years}',
+                String(yearsOfExperience)
+              )}
+            </p>
+            <p className={styles.heroText}>{aboutContent.paragraphs[1]}</p>
+            <Link className={styles.cta} href='/contact'>
+              Start a Conversation
+            </Link>
           </div>
-          <EducationAndSkills />
-          <div className='separator' />
-          <Experience />
-          <div className='separator' />
+
+          <div className={styles.block}>
+            <h2 className={styles.sectionHeading}>What I work with</h2>
+            <p className={styles.sectionIntro}>{aboutContent.skillsIntro}</p>
+            <Skills />
+          </div>
+
+          {/* Experience renders its own section heading */}
+          <div className={styles.block}>
+            <Experience />
+          </div>
+
+          <div className={styles.block}>
+            <h2 className={styles.sectionHeading}>Education</h2>
+            <ul className={styles.educationGrid}>
+              {aboutContent.education.map((item) => (
+                <li key={item.qualification} className={styles.educationCard}>
+                  <span className={styles.educationDates}>{item.dates}</span>
+                  <h3 className={styles.educationTitle}>
+                    {item.qualification}
+                  </h3>
+                  <p className={styles.educationInstitution}>
+                    {item.institution}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <GitHubCalendar username='gupta-akshay' />
         </div>
       </section>

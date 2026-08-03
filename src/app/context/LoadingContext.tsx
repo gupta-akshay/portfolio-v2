@@ -4,113 +4,34 @@ import {
   createContext,
   useContext,
   useState,
-  ReactNode,
   useEffect,
-  useRef,
-  useMemo,
-  useCallback,
+  ReactNode,
 } from 'react';
 import { usePathname } from 'next/navigation';
-import LoadingIndicator from '@/app/components/LoadingIndicator';
-import { LoadingState } from '@/app/types';
+import LoadingIndicator from '@/app/components/LoadingIndicator/LoadingIndicator';
 
-interface LoadingContextType extends LoadingState {
-  startLoading: (message?: string) => void;
-  stopLoading: () => void;
-  setLoadingMessage: (message: string) => void;
-}
+const LoadingContext = createContext<() => void>(() => {});
 
-interface LoadingProviderProps {
-  children: ReactNode;
-  autoStopTimeout?: number;
-  showOverlay?: boolean;
-}
-
-const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
-
-export function LoadingProvider({
-  children,
-  autoStopTimeout = 5000,
-  showOverlay = true,
-}: LoadingProviderProps) {
-  const [loadingState, setLoadingState] = useState<LoadingState>({
-    isLoading: false,
-  });
+export function LoadingProvider({ children }: { children: ReactNode }) {
+  // The route we started navigating away from. Once the pathname differs the
+  // navigation has landed, so the overlay clears itself without an effect.
+  const [pendingFrom, setPendingFrom] = useState<string | null>(null);
   const pathname = usePathname();
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isLoading = pendingFrom !== null && pendingFrom === pathname;
 
-  // Stop loading when pathname changes (navigation completes)
+  // Fallback for a navigation that never lands, so the overlay can't strand
+  // the page behind it.
   useEffect(() => {
-    if (loadingState.isLoading) {
-      const stopLoading = () => {
-        setLoadingState((prev) => ({ ...prev, isLoading: false }));
-      };
-      stopLoading();
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-    }
-  }, [pathname, loadingState.isLoading]);
-
-  // Clean up timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Memoize functions to prevent unnecessary re-renders
-  const startLoading = useCallback(
-    (message?: string) => {
-      setLoadingState({ isLoading: true, ...(message && { message }) });
-
-      // Set a timeout to automatically stop loading
-      // This is a fallback in case navigation fails or takes too long
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        setLoadingState({ isLoading: false });
-        timeoutRef.current = null;
-      }, autoStopTimeout);
-    },
-    [autoStopTimeout]
-  );
-
-  const stopLoading = useCallback(() => {
-    setLoadingState({ isLoading: false });
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-  }, []);
-
-  const setLoadingMessage = useCallback((message: string) => {
-    setLoadingState((prev) => ({ ...prev, message }));
-  }, []);
-
-  // Memoize context value to prevent unnecessary re-renders
-  const contextValue = useMemo(
-    (): LoadingContextType => ({
-      ...loadingState,
-      startLoading,
-      stopLoading,
-      setLoadingMessage,
-    }),
-    [loadingState, startLoading, stopLoading, setLoadingMessage]
-  );
+    if (!isLoading) return;
+    const timer = setTimeout(() => setPendingFrom(null), 5000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   return (
-    <LoadingContext.Provider value={contextValue}>
-      {loadingState.isLoading && showOverlay && (
+    <LoadingContext.Provider value={() => setPendingFrom(pathname)}>
+      {isLoading && (
         <div className='global-loading-overlay'>
-          <LoadingIndicator
-            {...(loadingState.message && { text: loadingState.message })}
-          />
+          <LoadingIndicator />
         </div>
       )}
       {children}
@@ -118,10 +39,6 @@ export function LoadingProvider({
   );
 }
 
-export function useLoading(): LoadingContextType {
-  const context = useContext(LoadingContext);
-  if (context === undefined) {
-    throw new Error('useLoading must be used within a LoadingProvider');
-  }
-  return context;
+export function useLoading(): () => void {
+  return useContext(LoadingContext);
 }

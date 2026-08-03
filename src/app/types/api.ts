@@ -1,14 +1,3 @@
-// Base API types
-export interface APIResponse<T = unknown> {
-  data?: T;
-  message: string;
-  success: boolean;
-  error?: string;
-  errors?: Record<string, string[]>;
-  statusCode?: number;
-}
-
-// Contact API types
 export interface ContactFormData {
   name: string;
   email: string;
@@ -16,24 +5,13 @@ export interface ContactFormData {
   message: string;
 }
 
-export interface ContactAPIResponse extends APIResponse {
+export interface ContactAPIResponse {
+  message: string;
+  success: boolean;
+  errors?: Record<string, string[]>;
+  statusCode?: number;
   data?: {
     emailSent: boolean;
     timestamp: Date;
-  };
-}
-
-// Revalidation API types
-export interface RevalidationRequest {
-  _type: string;
-  slug?: string;
-  tags?: string[];
-}
-
-export interface RevalidationResponse extends APIResponse {
-  data?: {
-    revalidated: boolean;
-    timestamp: number;
-    tags?: string[];
   };
 }

@@ -1,156 +1,333 @@
 @use '../variables' as *;
-@use '../mixin' as *;
-@use '../3d-effects' as *;
 
-.contact-info {
+$border-subtle: $px-ink;
+$shadow-btn-theme: 4px 4px 0 var(--shadow-ink);
+$shadow-btn-theme-hover: 6px 6px 0 var(--shadow-ink);
+
+.contact-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $px-theme;
+  margin-bottom: 12px;
+}
+
+.contact-heading {
+  font-size: clamp(34px, 4vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: $px-white;
+  margin: 0 0 16px;
+
+  span {
+    color: $px-theme;
+  }
+
+  .theme-light & {
+    color: $px-dark;
+  }
+}
+
+.contact-intro {
+  font-size: 17px;
+  line-height: 1.75;
+  color: $px-body;
+  margin: 0 0 48px;
+  max-width: 600px;
+  text-wrap: pretty;
+
+  .theme-light & {
+    color: $px-body-light;
+  }
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.contact-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-card {
+  padding: 24px;
+  border-radius: 0;
   background: $px-dark;
-  padding: 30px;
-  border-radius: 8px;
-  
-  // Add 3D effects
-  @include floating-3d(3px, 0.1);
-  @include stacking-cards(1, 4px);
-  @include responsive-3d-effects;
-  
+  border: 1px solid $border-subtle;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &.contact-card-block {
+    display: block;
+  }
+
   .theme-light & {
     background: $px-gray;
+    border-color: rgba($px-dark, 0.1);
   }
-  @include down-md {
-    margin-bottom: 20px;
+}
+
+.contact-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 0;
+  background: $px-theme-rgb-2;
+  color: $px-theme;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.contact-card-label {
+  font-size: 13px;
+  color: $px-body;
+  margin-bottom: 2px;
+
+  .contact-card-block & {
+    margin-bottom: 12px;
   }
-  h4 {
-    font-size: 28px;
-    color: $px-white;
-    font-weight: 500;
-    margin-bottom: 20px;
-    .theme-light & {
-      color: $px-dark;
-    }
+
+  .theme-light & {
+    color: $px-body-light;
   }
-  p {
-    font-size: 16px;
-    color: $px-body;
-    .theme-light & {
-      color: $px-body-light;
-    }
+}
+
+.contact-card-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: $px-white;
+
+  .theme-light & {
+    color: $px-dark;
   }
-  ul {
-    margin: 0;
-    padding: 10px 0 0;
-    list-style: none;
-  }
-  li {
-    font-size: 18px;
-    font-weight: 500;
-    color: $px-white;
-    line-height: 1.3;
-    position: relative;
-    .theme-light & {
-      color: $px-dark;
+}
+
+.contact-emails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  a {
+    color: $px-theme;
+
+    &:hover {
+      color: #ffcf4d;
     }
-    svg {
-      width: 30px;
-      text-align: center;
-      color: $px-theme;
-      font-size: 22px;
-    }
-    span {
-      padding-left: 10px;
-    }
-    + li {
-      padding-top: 20px;
+
+    // The secondary address is de-emphasised, matching the design
+    & + a {
+      font-weight: 400;
+      font-size: 14px;
+      color: $px-body;
+
+      &:hover {
+        color: $px-theme;
+      }
+
+      .theme-light & {
+        color: $px-body-light;
+      }
     }
   }
 }
+
+.contact-social-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+}
+
+.contact-socials {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border: $bd-thin solid $px-ink;
+    font-family: $px-font-mono;
+    font-size: 12.5px;
+    font-weight: $fw-bold;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $px-ink;
+    transition: box-shadow $dur $ease;
+
+    &:hover {
+      color: $px-black;
+      background: $px-theme;
+      box-shadow: 3px 3px 0 var(--shadow-ink);
+
+      // Amber fill behind a black brand mark would swallow it
+      .contact-social-icon {
+        color: $px-black;
+      }
+    }
+
+    .theme-light & {
+      border-color: $px-ink-light;
+      color: $px-ink-light;
+
+      &:hover {
+        color: $px-black;
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------- form */
 
 .contact-form {
+  padding: 32px;
+  border-radius: 0;
   background: $px-dark;
-  padding: 30px;
-  border-radius: 8px;
-  
-  // Add 3D effects
-  @include floating-3d(3px, 0.1);
-  @include stacking-cards(1, 4px);
-  @include responsive-3d-effects;
-  
+  border: 1px solid $border-subtle;
+
   .theme-light & {
     background: $px-gray;
+    border-color: rgba($px-dark, 0.1);
   }
-  @include down-md {
-    margin-bottom: 20px;
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
   }
-  h4 {
-    font-weight: 500;
-    color: $px-white;
-    font-size: 22px;
-    margin-bottom: 20px;
-    .theme-light & {
-      color: $px-dark;
-    }
+
+  // The grid owns the column widths now, so drop the shim's percentage widths
+  // and gutter padding — otherwise .col-md-6 is 50% of an already-half column.
+  .row > [class*='col-'] {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+    padding: 0;
   }
+
+  // Subject and message span the full width of the two-column row
+  .col-md-12 {
+    grid-column: 1 / -1;
+  }
+
   .form-group {
-    margin-bottom: 1rem;
-    .warning-text {
-      animation: fade_in_show 0.1s;
-    }
-  }
-
-  .form-label {
-    display: block;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: rgba($px-white, 0.85);
-    margin-bottom: 0.35rem;
-
-    .theme-light & {
-      color: rgba($px-dark, 0.75);
-    }
-  }
-  .form-control {
-    height: calc(2em + 0.75rem + 2px);
-    &.invalid {
-      border-color: $px-error !important;
-    }
-  }
-  .form-control,
-  .form-control:focus {
-    color: $px-white;
-    background: none;
-    border: 1px solid rgba($px-white, 0.3);
-    border-radius: 2px;
-    box-shadow: none;
-    
-    // Add subtle 3D effects
-    @include floating-3d(1px, 0.03);
-    @include responsive-3d-effects;
-    
-    .theme-light & {
-      color: $px-dark;
-      border: 1px solid rgba($px-dark, 0.3);
-      background: $px-white;
-    }
-  }
-  .form-control::placeholder {
-    color: rgba($px-white, 0.3);
-    .theme-light & {
-      color: rgba($px-dark, 0.3);
-    }
-  }
-  textarea.form-control {
-    height: auto;
-    resize: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 0;
   }
 }
 
-@keyframes fade_in_show {
-  0% {
-    opacity: 0;
-    transform: scale(0);
+.form-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: $px-body;
+  margin: 0;
+
+  .theme-light & {
+    color: $px-body-light;
+  }
+}
+
+.form-control {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 0;
+  border: 1px solid $border-subtle;
+  background: $px-bg-2;
+  color: $px-white;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.35);
   }
 
-  100% {
-    opacity: 1;
-    transform: scale(1);
+  &:focus {
+    border-color: $px-theme;
+  }
+
+  // :user-invalid only matches after the visitor has interacted with the
+  // field, so an untouched empty form is not painted red on load.
+  &:user-invalid {
+    border-color: $px-error;
+  }
+
+  .theme-light & {
+    background: $px-white;
+    border-color: rgba($px-dark, 0.12);
+    color: $px-dark;
+
+    &::placeholder {
+      color: rgba($px-dark, 0.35);
+    }
+  }
+}
+
+textarea.form-control {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.warning-text {
+  font-size: 13px;
+  color: $px-error;
+}
+
+.send {
+  margin-top: 4px;
+
+  .px-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 0;
+    background: $px-theme;
+    color: $px-dark;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: $shadow-btn-theme;
+    transition: all 0.2s ease-in-out;
+
+    &:hover:not(:disabled) {
+      box-shadow: $shadow-btn-theme-hover;
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .contact-form {
+    padding: 24px;
+
+    .row {
+      grid-template-columns: 1fr;
+    }
   }
 }

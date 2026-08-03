@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { getExperienceData } from '@/app/utils/data/experience';
-import { ExperienceProps } from '@/app/types/components';
+import { experienceData } from '@/app/utils/data/experience';
 import { ExperienceItem } from '@/app/types';
 import { formatDateRange } from '@/app/utils/helpers/format';
 
@@ -17,16 +16,12 @@ interface GroupedExperience {
   totalDuration: string;
 }
 
-export default function Experience({
-  experiences,
-  showLogos = true,
-}: ExperienceProps = {}) {
-  const experienceData = experiences || getExperienceData();
+export default function Experience() {
   const [expandedCompanies, setExpandedCompanies] = useState<Set<string>>(
     new Set()
   );
 
-  if (!experienceData || experienceData.length === 0) {
+  if (experienceData.length === 0) {
     return null;
   }
 
@@ -104,7 +99,7 @@ export default function Experience({
   };
 
   const getVisibleExperiences = (
-    companyGroup: GroupedExperience,
+    companyGroup: GroupedExperience
   ): ExperienceItem[] => {
     const isExpanded = expandedCompanies.has(companyGroup.company);
     if (isExpanded) return companyGroup.experiences;
@@ -126,17 +121,15 @@ export default function Experience({
           return (
             <div className={styles.companyCard} key={companyGroup.company}>
               <div className={styles.companyHeader}>
-                {showLogos && (
-                  <div className={styles.companyLogo}>
-                    <Image
-                      src={companyGroup.logo}
-                      alt={`${companyGroup.company} Logo`}
-                      loading='lazy'
-                      width={80}
-                      height={80}
-                    />
-                  </div>
-                )}
+                <div className={styles.companyLogo}>
+                  <Image
+                    src={companyGroup.logo}
+                    alt={`${companyGroup.company} Logo`}
+                    loading='lazy'
+                    width={80}
+                    height={80}
+                  />
+                </div>
                 <div className={styles.companyInfo}>
                   <h4>{companyGroup.company}</h4>
                   <p className={styles.companyLocation}>
@@ -173,7 +166,10 @@ export default function Experience({
                 {visibleExperiences.map((experience, roleIndex) => (
                   <div
                     className={`${styles.roleCard} ${roleIndex > 0 ? styles.additionalRole : ''}`}
-                    key={experience.id || `${experience.company}-${experience.position}-${roleIndex}`}
+                    key={
+                      experience.id ||
+                      `${experience.company}-${experience.position}-${roleIndex}`
+                    }
                   >
                     <div className={styles.roleHeader}>
                       <div className={styles.roleInfo}>

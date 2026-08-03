@@ -1,22 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import {
-  TwitterShareButton,
-  FacebookShareButton,
-  LinkedinShareButton,
-  WhatsappShareButton,
-  EmailShareButton,
-  XIcon,
-  FacebookIcon,
-  LinkedinIcon,
-  WhatsappIcon,
-  EmailIcon,
-} from 'react-share';
-import { SocialShareProps } from '@/app/types/components';
+import Link from 'next/link';
+import Icon, { type IconName } from '@/app/components/Icon/Icon';
 import { logger } from '@/app/utils/logger';
 
 import styles from './SocialShare.module.scss';
+
+interface SocialShareProps {
+  url: string;
+  title: string;
+  description?: string;
+}
 
 export default function SocialShare({
   url,
@@ -34,11 +29,8 @@ export default function SocialShare({
   }, []);
 
   useEffect(() => {
-    // Cleanup timeout on unmount
     return () => {
-      if (copyTimeoutRef.current) {
-        clearTimeout(copyTimeoutRef.current);
-      }
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
     };
   }, []);
 
@@ -47,12 +39,7 @@ export default function SocialShare({
       await navigator.clipboard.writeText(url);
       setCopied(true);
 
-      // Clear any existing timeout
-      if (copyTimeoutRef.current) {
-        clearTimeout(copyTimeoutRef.current);
-      }
-
-      // Reset copied state after 2 seconds
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
       copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       logger.error('Failed to copy link', error);
@@ -61,63 +48,53 @@ export default function SocialShare({
 
   if (!isVisible) return null;
 
-  const shareConfig = {
-    url,
-    title,
-    quote: description || title,
-    hashtag: '#blog #tech #development',
-  };
+  const summary = description || title;
+  const targets: { name: IconName; label: string; href: string }[] = [
+    {
+      name: 'x-twitter',
+      label: 'Share on X',
+      href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}&hashtags=blog,tech,development`,
+    },
+    {
+      name: 'facebook',
+      label: 'Share on Facebook',
+      href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    },
+    {
+      name: 'linkedin',
+      label: 'Share on LinkedIn',
+      href: `https://linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(summary)}`,
+    },
+    {
+      name: 'whatsapp',
+      label: 'Share on WhatsApp',
+      href: `https://api.whatsapp.com/send?text=${encodeURIComponent(`${title} - ${url}`)}`,
+    },
+    {
+      name: 'envelope',
+      label: 'Share by email',
+      href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`Check out this article: ${title} ${url}`)}`,
+    },
+  ];
 
   return (
     <div className={styles.socialShareContainer}>
       <div className={styles.socialShareBar}>
         <div className={styles.socialShareTitle}>Share</div>
 
-        <div className={styles.socialShareBtn}>
-          <TwitterShareButton
-            url={shareConfig.url}
-            title={shareConfig.title}
-            hashtags={['blog', 'tech', 'development']}
+        {targets.map(({ name, label, href }) => (
+          <Link
+            key={name}
+            className={styles.socialShareBtn}
+            href={href}
+            target='_blank'
+            rel='noopener noreferrer'
+            title={label}
+            aria-label={label}
           >
-            <XIcon size={32} round />
-          </TwitterShareButton>
-        </div>
-
-        <div className={styles.socialShareBtn}>
-          <FacebookShareButton url={shareConfig.url}>
-            <FacebookIcon size={32} round />
-          </FacebookShareButton>
-        </div>
-
-        <div className={styles.socialShareBtn}>
-          <LinkedinShareButton
-            url={shareConfig.url}
-            title={shareConfig.title}
-            summary={shareConfig.quote}
-          >
-            <LinkedinIcon size={32} round />
-          </LinkedinShareButton>
-        </div>
-
-        <div className={styles.socialShareBtn}>
-          <WhatsappShareButton
-            url={shareConfig.url}
-            title={shareConfig.title}
-            separator=' - '
-          >
-            <WhatsappIcon size={32} round />
-          </WhatsappShareButton>
-        </div>
-
-        <div className={styles.socialShareBtn}>
-          <EmailShareButton
-            url={shareConfig.url}
-            subject={shareConfig.title}
-            body={`Check out this article: ${shareConfig.title}`}
-          >
-            <EmailIcon size={32} round />
-          </EmailShareButton>
-        </div>
+            <Icon name={name} />
+          </Link>
+        ))}
 
         <button
           onClick={handleCopyLink}

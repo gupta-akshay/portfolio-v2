@@ -9,6 +9,8 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    // node --test strips types and resolves the real .ts path
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",

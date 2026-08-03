@@ -1,152 +1,292 @@
 @use '../variables' as *;
-@use '../mixin' as *;
-@use '../3d-effects' as *;
 
-// Light theme overrides
-:global(body.theme-light) {
-  .homeBanner::after {
-    background: $px-gray;
+$border-subtle: $px-ink;
+$shadow-btn-theme: 4px 4px 0 var(--shadow-ink);
+$shadow-btn-theme-hover: 6px 6px 0 var(--shadow-ink);
+$shadow-panel: 6px 6px 0 var(--shadow-ink);
+$ease-standard: linear;
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  .typeBox {
-    h6 {
-      color: $px-dark;
-    }
+@keyframes heroGlow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
 
-    h1 {
-      color: $px-dark;
-    }
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 24px 64px;
+  box-sizing: border-box;
+}
 
-    .lead {
-      color: $px-dark;
-    }
+.glow {
+  position: absolute;
+  top: -200px;
+  right: -150px;
+  width: 600px;
+  height: 600px;
+  border-radius: 0;
+  background: radial-gradient(circle, $px-theme-rgb-2 0%, transparent 65%);
+  animation: heroGlow 8s ease-in-out infinite;
+  pointer-events: none;
+}
 
-    .desc {
-      color: $px-dark;
+.grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: center;
+  position: relative;
+}
+
+.copy {
+  animation: heroFadeUp 0.7s $ease-standard both;
+}
+
+// Solid slab rather than a tint — amber-on-amber-tint was unreadable on paper
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: $bd-thin solid $px-ink;
+  background: $px-theme;
+  color: $px-black;
+  font-family: $px-font-mono;
+  font-size: 12.5px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
+}
+
+.badgeDot {
+  width: 9px;
+  height: 9px;
+  background: $px-black;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: clamp(44px, 6vw, 72px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: $px-white;
+  margin: 0 0 24px;
+
+  span {
+    color: $px-theme;
+  }
+}
+
+.lead {
+  font-size: 20px;
+  font-weight: 500;
+  color: $px-white;
+  margin: 0 0 16px;
+  max-width: 520px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.desc {
+  font-size: 17px;
+  line-height: 1.75;
+  color: $px-body;
+  margin: 0 0 36px;
+  max-width: 520px;
+  text-wrap: pretty;
+
+  a {
+    color: $px-theme;
+
+    &:hover {
+      color: #ffcf4d;
     }
   }
 }
 
-.homeBanner {
-  overflow: hidden;
-  position: relative;
+.actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-  @include perspective-container;
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 28px;
+  border-radius: 0;
+  background: $px-theme;
+  color: $px-dark;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: $shadow-btn-theme;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background: #ffcf4d;
+    color: $px-dark;
+    box-shadow: $shadow-btn-theme-hover;
+    transform: translateY(-2px);
+  }
+}
+
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 28px;
+  border-radius: 0;
+  border: 1px solid $border-subtle;
+  color: $px-white;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-color: $px-theme;
+    color: $px-theme;
+    transform: translateY(-2px);
+  }
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 8px;
+  color: $px-body;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: $px-theme;
+  }
+}
+
+.media {
+  animation: heroFadeUp 0.7s 0.15s $ease-standard both;
+}
+
+.mediaFrame {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  border: 1px solid $border-subtle;
+  box-shadow: $shadow-panel;
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
 
   &::after {
     content: '';
     position: absolute;
-    right: -25vh;
-    top: -30vh;
-    width: 90vh;
-    height: 90vh;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at center,
-      rgba($px-theme, 0.22) 0%,
-      rgba($px-bg-2, 0.86) 65%,
-      rgba($px-bg-1, 0.96) 100%
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent 60%,
+      rgba(11, 11, 19, 0.55) 100%
     );
-    z-index: 0;
-    transition: background-color 0.2s ease-in-out;
-    transform: translateZ(-2px) scale(1.02);
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
 
-  .container {
-    position: relative;
-    z-index: 1;
+  .media {
+    max-width: 420px;
+  }
+}
+
+// The badge is a long single line of tracked monospace; tighten it on narrow
+// screens so it stays on one line instead of wrapping or overflowing.
+@media (max-width: 560px) {
+  .badge {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 7px 10px;
+    gap: 8px;
   }
 
-  .fullScreen {
-    min-height: 100vh;
+  .badgeDot {
+    width: 7px;
+    height: 7px;
+  }
+}
 
-    @include up-sm {
-      padding-top: 100px;
-      padding-bottom: 100px;
+:global(body.theme-light) {
+  .title,
+  .lead {
+    color: $px-dark;
+  }
+
+  .desc {
+    color: $px-body-light;
+  }
+
+  .secondaryBtn {
+    border-color: rgba($px-dark, 0.12);
+    color: $px-dark;
+
+    &:hover {
+      border-color: $px-theme-ink;
+      color: $px-theme-ink;
     }
   }
 
-  .hbImg {
-    img {
-      border-radius: 50%;
+  .textLink {
+    color: $px-body-light;
 
-      @include down-sm {
-        height: 400px;
-        width: 400px;
-      }
-
-      @include up-md {
-        max-width: 120%;
-      }
+    &:hover {
+      color: $px-theme-ink;
     }
   }
 
-  .typeBox {
-    padding-top: 40px;
-    padding-bottom: 40px;
+  .mediaFrame {
+    border-color: rgba($px-dark, 0.1);
+  }
+}
 
-    h6 {
-      color: rgba($px-white, 0.86);
-      font-size: 17px;
-      font-weight: 500;
-      letter-spacing: 0.6px;
-      margin: 0 0 20px;
-
-      @include down-sm {
-        font-size: 18px;
-        margin: 0 0 10px;
-      }
-    }
-
-    h1 {
-      font-size: 58px;
-      font-weight: 700;
-      line-height: 1;
-      margin: 0 0 20px;
-      color: $px-white;
-
-      @include down-lg {
-        font-size: 52px;
-      }
-
-      @include down-sm {
-        font-size: 45px;
-        margin-bottom: 15px;
-      }
-    }
-
-    .lead {
-      color: $px-white;
-      font-weight: 500;
-      font-size: 20px;
-      margin-bottom: 18px;
-
-      @include down-sm {
-        font-size: 16px;
-        margin-bottom: 15px;
-      }
-    }
-
-    .desc {
-      max-width: 560px;
-      font-size: 17px;
-      line-height: 1.75;
-      color: $px-body;
-
-      @include down-sm {
-        font-size: 16px;
-      }
-    }
-
-    .btnBar {
-      padding-top: 15px;
-    }
-
-    h6,
-    h1,
-    .lead,
-    .desc {
-      transition: color 0.2s ease-in-out;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .copy,
+  .media,
+  .glow {
+    animation: none;
   }
 }

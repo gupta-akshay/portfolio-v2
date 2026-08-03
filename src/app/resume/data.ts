@@ -1,23 +1,25 @@
-export interface ResumeSkillCategory {
+import { getYearsOfExperience } from '@/app/utils/helpers/format';
+
+interface ResumeSkillCategory {
   label: string;
   details: string;
 }
 
-export interface ResumeRole {
+interface ResumeRole {
   position: string;
   startDate: string;
   endDate: string;
   bullets: string[];
 }
 
-export interface ResumeCompany {
+interface ResumeCompany {
   company: string;
   location: string;
   summary?: string;
   roles: ResumeRole[];
 }
 
-export interface ResumeEducation {
+interface ResumeEducation {
   institution: string;
   degree: string;
   area: string;
@@ -25,7 +27,7 @@ export interface ResumeEducation {
   date: string;
 }
 
-export interface ResumeData {
+interface ResumeData {
   name: string;
   headline: string;
   location: string;
@@ -43,8 +45,7 @@ export const resumeData: ResumeData = {
   location: 'Mumbai, India',
   email: 'akshaygupta.live@gmail.com',
   website: 'https://akshaygupta.live',
-  summary:
-    'Senior Staff Engineer with 8+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS. Expert in PostgreSQL performance tuning, distributed messaging, zero-downtime migrations, and cloud cost optimization, with a track record of owning platform-level architecture and leading engineering delivery across high-growth SaaS products.',
+  summary: `Senior Staff Engineer with ${getYearsOfExperience()}+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS. Expert in PostgreSQL performance tuning, distributed messaging, zero-downtime migrations, and cloud cost optimization, with a track record of owning platform-level architecture and leading engineering delivery across high-growth SaaS products.`,
   skills: [
     { label: 'Languages', details: 'TypeScript, JavaScript, Python, Go' },
     { label: 'Backend', details: 'Node.js, Express.js, Sails.js, REST APIs' },
@@ -105,7 +106,7 @@ export const resumeData: ResumeData = {
           bullets: [
             'Optimized legacy REST APIs through PostgreSQL query tuning, Redis caching, and RabbitMQ-based async processing, cutting response times from ~20 seconds to under 50 milliseconds.',
             'Built a high-volume newsletter service on Google Pub/Sub and SendGrid, delivering personalized content to over 1 million users monthly.',
-            'Migrated the legacy Angular.js frontend to React, improving page load times by 25% and modernizing the platform\'s UI architecture.',
+            "Migrated the legacy Angular.js frontend to React, improving page load times by 25% and modernizing the platform's UI architecture.",
             'Implemented React code-splitting to raise the Lighthouse performance score above 90, improving load times and retention.',
             'Built a weighted-factor bulk matching tool for mentor-mentee pairings, increasing platform engagement and contributing to 15% revenue growth.',
             'Developed a feature-flag management system enabling agile rollouts and reducing rollback incidents by 90%.',

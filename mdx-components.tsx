@@ -2,87 +2,18 @@ import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
 import { ComponentPropsWithoutRef } from 'react';
 
-// Code element - just pass through, styling handled by Prism CSS
-function CodeBlock({
-  children,
-  className,
-  ...props
-}: ComponentPropsWithoutRef<'code'>) {
-  return (
-    <code className={className} {...props}>
-      {children}
-    </code>
-  );
-}
-
-// Pre block wrapper for code blocks with accessibility
-function Pre({
-  children,
-  className,
-  ...props
-}: ComponentPropsWithoutRef<'pre'>) {
-  // Check if this contains a code block (has language class)
-  const hasLanguageClass = className?.includes('language-');
+// Code blocks get keyboard-scrollable region semantics; plain <pre> is left as is.
+function Pre({ className, ...props }: ComponentPropsWithoutRef<'pre'>) {
+  if (!className?.includes('language-')) return <pre {...props} />;
 
   return (
     <pre
       className={className}
-      tabIndex={hasLanguageClass ? 0 : undefined}
-      role={hasLanguageClass ? 'region' : undefined}
-      aria-label={hasLanguageClass ? 'Code snippet' : undefined}
+      tabIndex={0}
+      role='region'
+      aria-label='Code snippet'
       {...props}
-    >
-      {children}
-    </pre>
-  );
-}
-
-// Custom heading components with IDs for TOC linking
-function H1({
-  children,
-  id,
-  ...props
-}: ComponentPropsWithoutRef<'h1'> & { id?: string }) {
-  return (
-    <h1 id={id} {...props}>
-      {children}
-    </h1>
-  );
-}
-
-function H2({
-  children,
-  id,
-  ...props
-}: ComponentPropsWithoutRef<'h2'> & { id?: string }) {
-  return (
-    <h2 id={id} {...props}>
-      {children}
-    </h2>
-  );
-}
-
-function H3({
-  children,
-  id,
-  ...props
-}: ComponentPropsWithoutRef<'h3'> & { id?: string }) {
-  return (
-    <h3 id={id} {...props}>
-      {children}
-    </h3>
-  );
-}
-
-function H4({
-  children,
-  id,
-  ...props
-}: ComponentPropsWithoutRef<'h4'> & { id?: string }) {
-  return (
-    <h4 id={id} {...props}>
-      {children}
-    </h4>
+    />
   );
 }
 
@@ -136,28 +67,15 @@ function CustomImage({
       alt={alt || ''}
       loading="lazy"
       decoding="async"
-      style={{
-        maxWidth: '100%',
-        height: 'auto',
-        borderRadius: '0.5rem',
-      }}
+      style={{ maxWidth: '100%', height: 'auto' }}
       {...props}
     />
   );
 }
 
 const components: MDXComponents = {
-  // Headings with IDs for TOC
-  h1: H1,
-  h2: H2,
-  h3: H3,
-  h4: H4,
-  // Code blocks
-  code: CodeBlock,
   pre: Pre,
-  // Links
   a: CustomLink,
-  // Images
   img: CustomImage,
 };
 
