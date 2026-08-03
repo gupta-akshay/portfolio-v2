@@ -100,23 +100,21 @@ export default function Resume() {
         }}
       >
         <div className='container' style={{ position: 'relative', zIndex: 10 }}>
-          {/* Page title + action buttons */}
-          <div className={styles.resumePageHeader}>
-            <div className='title'>
-              <h3>Resume</h3>
+          {/* Page header: identity on the left, download action on the right */}
+          <div className={`${styles.resumePageHeader} route-shell`}>
+            <div className={styles.resumeContactHeader}>
+              <div className={styles.resumeEyebrow}>Resume</div>
+              <h1 className={styles.resumeName}>{resumeData.name}</h1>
+              <p className={styles.resumeHeadline}>{resumeData.headline}</p>
+              <div className={styles.resumeContact}>
+                <span>{resumeData.location}</span>
+                <a href={`mailto:${resumeData.email}`}>{resumeData.email}</a>
+                <Link href='/'>
+                  {resumeData.website.replace('https://', '')}
+                </Link>
+              </div>
             </div>
             <ResumeActions />
-          </div>
-
-          {/* Contact header */}
-          <div className={`${styles.resumeContactHeader} route-shell`}>
-            <h1 className={styles.resumeName}>{resumeData.name}</h1>
-            <p className={styles.resumeHeadline}>{resumeData.headline}</p>
-            <div className={styles.resumeContact}>
-              <span>{resumeData.location}</span>
-              <a href={`mailto:${resumeData.email}`}>{resumeData.email}</a>
-              <Link href='/'>{resumeData.website.replace('https://', '')}</Link>
-            </div>
           </div>
 
           {/* Summary */}
