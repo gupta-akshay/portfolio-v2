@@ -2,26 +2,19 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useMemo, memo } from 'react';
 import { BlogPost } from '@/lib/mdx/types';
 import { formatDate } from '@/app/utils/helpers/format';
 import { useLoading } from '@/app/context/LoadingContext';
-import { useHoverPrefetch } from '@/app/hooks/useHoverPrefetch';
 
 import styles from '../BlogTile/BlogTile.module.scss';
 
 const BlogTileMDX = memo(
   ({ blog }: { blog: BlogPost }) => {
     const { metadata, slug, readingTime } = blog;
-    const router = useRouter();
     const startLoading = useLoading();
 
     const blogHref = `/blog/${slug}`;
-    const { handleMouseEnter, handleMouseLeave } = useHoverPrefetch(blogHref, {
-      delay: 150,
-      enabled: true,
-    });
 
     const formattedDate = useMemo(
       () => formatDate(metadata.publishedAt),
@@ -30,21 +23,12 @@ const BlogTileMDX = memo(
 
     const primaryCategory = metadata.categories[0];
 
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      e.preventDefault();
-      startLoading();
-      router.push(blogHref);
-    };
-
     return (
       <article className={styles.card}>
         <Link
           href={blogHref}
-          prefetch={false}
           className={styles.cardLink}
-          onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          onClick={startLoading}
           aria-label={`Read ${metadata.title}`}
         >
           <div className={styles.cover}>
