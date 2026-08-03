@@ -259,7 +259,9 @@ $shadow-btn-theme-hover: 6px 6px 0 var(--shadow-ink);
     border-color: $px-theme;
   }
 
-  &.invalid {
+  // :user-invalid only matches after the visitor has interacted with the
+  // field, so an untouched empty form is not painted red on load.
+  &:user-invalid {
     border-color: $px-error;
   }
 
