@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import * as Sentry from '@sentry/nextjs';
 import { AudioPlayerProps, Track } from './types';
 import {
@@ -626,7 +627,15 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
     const hash = window.location.hash.slice(1);
     if (!hash) return;
 
-    const decoded = decodeURIComponent(hash);
+    // A hand-edited or truncated fragment (`#%`, `#%ZZ`) makes decodeURIComponent
+    // throw; an unusable deep link should be ignored, not break the player.
+    let decoded: string;
+    try {
+      decoded = decodeURIComponent(hash);
+    } catch {
+      return;
+    }
+
     const index = tracks.findIndex((track) => track.id === decoded);
     if (index !== -1) {
       restoringFromStorageRef.current = true;
@@ -718,39 +727,47 @@ const AudioPlayer = ({ tracks }: AudioPlayerProps) => {
         onSeek={seekTo}
       />
 
-      {currentTrack && (
-        <PlayerBar
-          currentTrack={currentTrack}
-          peaks={currentPeaks}
-          isPlaying={isPlaying}
-          isLoading={isLoading || !isMetadataLoaded}
-          currentTime={currentTime}
-          duration={duration}
-          volume={volume}
-          isMuted={isMuted}
-          isShuffleActive={isShuffleActive}
-          isQueueVisible={isQueueVisible}
-          onSeek={seekTo}
-          onPlayPause={handlePlayPause}
-          onPrevious={handlePreviousUser}
-          onNext={handleNextUser}
-          onToggleShuffle={handleToggleShuffle}
-          onToggleQueue={toggleQueueVisibility}
-          onToggleMute={toggleMute}
-          onVolumeChange={handleVolumeChange}
-        />
+      {/* The bar, queue and toast are viewport-level overlays. Portalling them
+          to <body> keeps them out of any ancestor stacking context — otherwise
+          a positioned parent traps them beneath the fixed site nav. */}
+      {createPortal(
+        <>
+          {currentTrack && (
+            <PlayerBar
+              currentTrack={currentTrack}
+              peaks={currentPeaks}
+              isPlaying={isPlaying}
+              isLoading={isLoading || !isMetadataLoaded}
+              currentTime={currentTime}
+              duration={duration}
+              volume={volume}
+              isMuted={isMuted}
+              isShuffleActive={isShuffleActive}
+              isQueueVisible={isQueueVisible}
+              onSeek={seekTo}
+              onPlayPause={handlePlayPause}
+              onPrevious={handlePreviousUser}
+              onNext={handleNextUser}
+              onToggleShuffle={handleToggleShuffle}
+              onToggleQueue={toggleQueueVisibility}
+              onToggleMute={toggleMute}
+              onVolumeChange={handleVolumeChange}
+            />
+          )}
+
+          <QueuePanel
+            isVisible={isQueueVisible}
+            queueTracks={queue}
+            onClose={toggleQueueVisibility}
+            onTrackSelect={handleQueueTrackSelect}
+            onRemoveFromQueue={removeFromQueue}
+            onReorderQueue={reorderQueue}
+          />
+
+          <Toast message={toast} />
+        </>,
+        document.body
       )}
-
-      <QueuePanel
-        isVisible={isQueueVisible}
-        queueTracks={queue}
-        onClose={toggleQueueVisibility}
-        onTrackSelect={handleQueueTrackSelect}
-        onRemoveFromQueue={removeFromQueue}
-        onReorderQueue={reorderQueue}
-      />
-
-      <Toast message={toast} />
     </div>
   );
 };

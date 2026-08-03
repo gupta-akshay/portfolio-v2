@@ -190,6 +190,15 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
     gap: 18px;
   }
 
+  // The grid owns the column widths now, so drop the shim's percentage widths
+  // and gutter padding — otherwise .col-md-6 is 50% of an already-half column.
+  .row > [class*='col-'] {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+    padding: 0;
+  }
+
   // Subject and message span the full width of the two-column row
   .col-md-12 {
     grid-column: 1 / -1;

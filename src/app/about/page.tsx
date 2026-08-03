@@ -149,8 +149,8 @@ export default function About() {
             <Skills />
           </div>
 
+          {/* Experience renders its own section heading */}
           <div className={styles.block}>
-            <h2 className={styles.sectionHeading}>Experience</h2>
             <Experience />
           </div>
 

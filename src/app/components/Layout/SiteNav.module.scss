@@ -10,8 +10,9 @@ $nav-height: 64px;
   right: 0;
   z-index: 100;
   background: rgba(14, 14, 23, 0.72);
+  // Only the unprefixed property — the build adds prefixes from browserslist.
+  // Declaring -webkit- by hand makes Lightning CSS drop the standard one.
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid $border-subtle;
 }
 
@@ -116,7 +117,6 @@ $nav-height: 64px;
   border-top: 1px solid $border-subtle;
   background: rgba(12, 12, 20, 0.95);
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
 .mobileLink {

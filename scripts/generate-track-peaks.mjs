@@ -13,7 +13,7 @@
  * Usage: pnpm peaks:generate   (requires ffmpeg and AWS credentials)
  */
 
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
@@ -149,6 +149,16 @@ function computePeaks(samples) {
   return Buffer.from(quantized).toString('base64');
 }
 
+/** Previously generated peaks, used as a fallback when a track fails this run. */
+async function readExistingPeaks() {
+  try {
+    const raw = await readFile(OUTPUT_PATH, 'utf8');
+    return JSON.parse(raw).tracks ?? {};
+  } catch {
+    return {};
+  }
+}
+
 async function processTrack(key, index, total) {
   const tempFile = join(
     tmpdir(),
@@ -207,22 +217,46 @@ async function main() {
     Array.from({ length: Math.min(CONCURRENCY, keys.length) }, worker)
   );
 
-  entries.sort(([a], [b]) => a.localeCompare(b));
+  const generated = new Map(entries);
+
+  // A transient S3 or ffmpeg failure must not wipe good data, so anything that
+  // failed this run keeps whatever was generated previously. Keys absent from
+  // the bucket still drop out — the listing stays authoritative.
+  const previous = await readExistingPeaks();
+  let retained = 0;
+
+  const tracks = {};
+  for (const key of keys) {
+    const entry = generated.get(key) ?? previous[key];
+    if (!entry) continue;
+    if (!generated.has(key)) retained++;
+    tracks[key] = entry;
+  }
 
   const output = {
     version: 1,
     resolution: RESOLUTION,
     generatedAt: new Date().toISOString(),
-    tracks: Object.fromEntries(entries),
+    tracks,
   };
 
   await mkdir(dirname(OUTPUT_PATH), { recursive: true });
   await writeFile(OUTPUT_PATH, `${JSON.stringify(output, null, 2)}\n`);
 
-  console.log(`\nWrote ${entries.length} track(s) to ${OUTPUT_PATH}`);
+  console.log(
+    `\nWrote ${Object.keys(tracks).length} track(s) to ${OUTPUT_PATH}` +
+      (retained ? ` (${retained} kept from the previous run)` : '')
+  );
+
   if (failures.length > 0) {
     console.error(`${failures.length} track(s) failed:`);
     failures.forEach((key) => console.error(`  - ${key}`));
+    const missing = failures.filter((key) => !tracks[key]);
+    if (missing.length > 0) {
+      console.error(
+        `${missing.length} of those have no previous data and are absent from the output.`
+      );
+    }
     process.exit(1);
   }
 }
