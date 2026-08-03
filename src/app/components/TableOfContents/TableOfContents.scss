@@ -210,8 +210,11 @@
   }
 }
 
-// Mobile responsiveness
-@media (max-width: 1200px) {
+// The rail is 250px wide sitting 2rem off the edge, so it only clears the
+// centred 1110px article column at 1110 + 2 * (282 + 16) = 1706px and up.
+// Narrower than that it would sit on top of the text, so hide it.
+// Keep in sync with the isMobile check in blog/[slug]/TableOfContentsMDX.tsx.
+@media (max-width: 1699px) {
   .table-of-contents {
     display: none;
   }
@@ -224,80 +227,3 @@
   }
 }
 
-// Alternative mobile TOC (could be implemented later)
-.mobile-toc {
-  display: none;
-
-  @media (max-width: 1200px) {
-    display: block;
-    margin: 2rem 0;
-    padding: 1rem;
-    background: $px-bg-2;
-    border-radius: 0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    .theme-light & {
-      background: $px-gray;
-      border-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .toc-header {
-      margin-bottom: 1rem;
-
-      h4 {
-        margin: 0;
-        font-size: 1.1rem;
-        color: $px-white;
-
-        .theme-light & {
-          color: $px-dark;
-        }
-      }
-    }
-
-    .toc-nav .toc-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      .toc-item {
-        margin-bottom: 0.5rem;
-
-        .toc-link {
-          display: block;
-          padding: 0.5rem;
-          color: $px-body;
-          text-decoration: none;
-          border-radius: 0;
-          transition: background-color 0.2s ease;
-
-          .theme-light & {
-            color: $px-body-light;
-          }
-
-          &:hover {
-            background-color: $px-theme-rgb-2;
-            color: $px-theme;
-          }
-
-          &.active {
-            background-color: $px-theme;
-            color: $px-white;
-          }
-        }
-
-        &.toc-level-2 .toc-link {
-          margin-left: 1rem;
-        }
-
-        &.toc-level-3 .toc-link {
-          margin-left: 2rem;
-        }
-
-        &.toc-level-4 .toc-link {
-          margin-left: 3rem;
-        }
-      }
-    }
-  }
-}

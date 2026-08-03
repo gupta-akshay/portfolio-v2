@@ -19,10 +19,12 @@
   }
 }
 
+// Flush against the viewport edge: the article column is a centred 1110px, so
+// anything with a left offset eats into the text before the gutter runs out.
 .socialShareContainer {
   position: fixed;
   top: 50%;
-  left: 320px;
+  left: 0;
   transform: translateY(-50%);
   z-index: 1000;
   animation: slideInLeft 0.3s ease-out;
@@ -179,10 +181,13 @@
 }
 
 // Media Queries
-@media (max-width: $px-media-lg) {
+// The vertical rail is ~58px wide, so it only clears the 1110px column once the
+// gutter can hold it plus a gap: 1110 + 2 * (58 + 16) = 1258. Below that, drop
+// to the horizontal bar along the bottom.
+@media (max-width: 1259px) {
   .socialShareContainer {
     top: auto;
-    left: 65%;
+    left: 50%;
     bottom: 120px;
     transform: translateX(-50%);
     animation: slideInBottom 0.3s ease-out;
