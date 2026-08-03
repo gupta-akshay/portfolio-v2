@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
-import { rubik, cookie } from './fonts';
+import { spaceGrotesk, spaceMono, cookie } from './fonts';
 import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
 import DeviconCSSLoader from './components/DeviconCSSLoader';
@@ -89,7 +89,7 @@ export default function RootLayout({
     // avoid a flash of the wrong theme, so React must tolerate the difference.
     <html lang='en' suppressHydrationWarning>
       <body
-        className={`${rubik.variable} ${cookie.variable}`}
+        className={`${spaceGrotesk.variable} ${spaceMono.variable} ${cookie.variable}`}
         suppressHydrationWarning
       >
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />

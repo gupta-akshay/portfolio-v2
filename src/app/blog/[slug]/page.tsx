@@ -124,42 +124,38 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
               />
             )}
           </div>
-          <div className='row justify-content-center'>
-            <div className='col-lg-8'>
-              <article className={`${styles.article} route-shell`}>
-                <div className={styles.articleTitle}>
-                  <div className={styles.hashtags}>
-                    {metadata.categories.map((category: string) => (
-                      <span key={category} className={styles.hashtag}>
-                        #{category}
-                      </span>
-                    ))}
-                  </div>
-                  <h2>{metadata.title}</h2>
-                  <div className={styles.media}>
-                    <div className={styles.avatar}>
-                      <Image
-                        src={metadata.author.avatar}
-                        alt={metadata.author.name}
-                        width={45}
-                        height={45}
-                        style={{ borderRadius: '50%', objectFit: 'cover' }}
-                      />
-                    </div>
-                    <div className={styles.mediaBody}>
-                      <label>{metadata.author.name}</label>
-                      <span>
-                        {formatDate(metadata.publishedAt)} • {readingTime}
-                      </span>
-                    </div>
-                  </div>
+          <article className={`${styles.article} route-shell`}>
+            <div className={styles.articleTitle}>
+              <div className={styles.hashtags}>
+                {metadata.categories.map((category: string) => (
+                  <span key={category} className={styles.hashtag}>
+                    #{category}
+                  </span>
+                ))}
+              </div>
+              <h2>{metadata.title}</h2>
+              <div className={styles.media}>
+                <div className={styles.avatar}>
+                  <Image
+                    src={metadata.author.avatar}
+                    alt={metadata.author.name}
+                    width={45}
+                    height={45}
+                    style={{ objectFit: 'cover' }}
+                  />
                 </div>
-                <div className={styles.articleContent}>
-                  <Post />
+                <div className={styles.mediaBody}>
+                  <label>{metadata.author.name}</label>
+                  <span>
+                    {formatDate(metadata.publishedAt)} • {readingTime}
+                  </span>
                 </div>
-              </article>
+              </div>
             </div>
-          </div>
+            <div className={styles.articleContent}>
+              <Post />
+            </div>
+          </article>
         </div>
         <EmojiReactions blogSlug={slug} />
       </div>

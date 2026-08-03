@@ -8,6 +8,13 @@ import styles from '../AudioPlayer.module.scss';
 const FALLBACK_PEAK_COUNT = 400;
 const BAR_GAP = 1.5;
 
+// Canvas can't read Sass tokens, so the accent is mirrored here.
+// Keep in sync with $px-theme in src/app/styles/variables.scss.
+const ACCENT = '#fbbf24';
+const ACCENT_HOVER = 'rgba(251, 191, 36, 0.45)';
+const ACCENT_REFLECT = 'rgba(251, 191, 36, 0.35)';
+const ACCENT_REFLECT_HOVER = 'rgba(251, 191, 36, 0.18)';
+
 interface WaveformSeekerProps {
   /** Stable id, used to seed the placeholder shape when peaks are unavailable */
   trackId: string;
@@ -21,9 +28,10 @@ interface WaveformSeekerProps {
   label: string;
 }
 
+// Chunkier bars than the previous design — the waveform reads as blocks
 const VARIANTS = {
-  row: { barWidth: 3, reflect: true, showTooltip: true },
-  bar: { barWidth: 2.5, reflect: false, showTooltip: false },
+  row: { barWidth: 4, reflect: true, showTooltip: true },
+  bar: { barWidth: 3, reflect: false, showTooltip: false },
 } as const;
 
 const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
@@ -91,9 +99,9 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
       const isHovered = hoverRatio !== null && ratio <= hoverRatio;
 
       ctx.fillStyle = isPlayed
-        ? '#2fbf71'
+        ? ACCENT
         : isHovered
-          ? 'rgba(47, 191, 113, 0.45)'
+          ? ACCENT_HOVER
           : idleColor;
 
       const barHeight = Math.max(2, peak * (mainHeight - 2));
@@ -101,9 +109,9 @@ const WaveformSeeker: React.FC<WaveformSeekerProps> = ({
 
       if (reflect) {
         ctx.fillStyle = isPlayed
-          ? 'rgba(47, 191, 113, 0.35)'
+          ? ACCENT_REFLECT
           : isHovered
-            ? 'rgba(47, 191, 113, 0.18)'
+            ? ACCENT_REFLECT_HOVER
             : idleReflectionColor;
         ctx.fillRect(
           x,

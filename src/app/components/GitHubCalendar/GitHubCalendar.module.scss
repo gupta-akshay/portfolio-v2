@@ -18,13 +18,13 @@
   }
 
   .githubLink {
-    background: rgba(47, 191, 113, 0.1);
-    color: #2fbf71;
-    border: 1px solid rgba(47, 191, 113, 0.3);
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
 
     &:hover {
-      background: rgba(47, 191, 113, 0.2);
-      border-color: rgba(47, 191, 113, 0.5);
+      background: rgba(251, 191, 36, 0.2);
+      border-color: rgba(251, 191, 36, 0.5);
     }
   }
 
@@ -44,31 +44,31 @@
   }
 
   .retryButton {
-    background: rgba(47, 191, 113, 0.1);
-    border: 1px solid rgba(47, 191, 113, 0.3);
-    color: #2fbf71;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
 
     &:hover {
-      background: rgba(47, 191, 113, 0.2);
-      border-color: rgba(47, 191, 113, 0.5);
+      background: rgba(251, 191, 36, 0.2);
+      border-color: rgba(251, 191, 36, 0.5);
     }
   }
 }
 
 .calendarContainer {
-  background: rgba(47, 191, 113, 0.05);
+  background: rgba(251, 191, 36, 0.05);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(47, 191, 113, 0.2);
-  border-radius: 16px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 0;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 8px 32px rgba(47, 191, 113, 0.1);
+  box-shadow: 0 8px 32px rgba(251, 191, 36, 0.1);
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-    border-color: rgba(47, 191, 113, 0.2);
+    border-color: rgba(251, 191, 36, 0.2);
   }
 
   @include down-md {
@@ -79,7 +79,7 @@
 .calendarHeader {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(47, 191, 113, 0.2);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.2);
 }
 
 .headerInfo {
@@ -119,8 +119,8 @@
     font-family: var(--font-rubik), monospace;
 
     svg {
-      border-radius: 8px;
-      background: rgba(47, 191, 113, 0.02);
+      border-radius: 0;
+      background: rgba(251, 191, 36, 0.02);
       padding: 1rem;
 
       @include down-sm {
@@ -133,7 +133,7 @@
       transition: all 0.2s ease;
 
       &:hover {
-        stroke: rgba(47, 191, 113, 0.3);
+        stroke: rgba(251, 191, 36, 0.3);
         stroke-width: 1;
       }
     }
@@ -169,33 +169,33 @@
   text-align: center;
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(47, 191, 113, 0.2);
+  border-top: 1px solid rgba(251, 191, 36, 0.2);
 }
 
 .githubLink {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #2fbf71;
+  color: #fbbf24;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: rgba(47, 191, 113, 0.1);
-  border: 1px solid rgba(47, 191, 113, 0.3);
+  border-radius: 0;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
 
   &:hover {
-    background: rgba(47, 191, 113, 0.15);
-    border-color: rgba(47, 191, 113, 0.3);
+    background: rgba(251, 191, 36, 0.15);
+    border-color: rgba(251, 191, 36, 0.3);
     transform: translateY(-1px);
     text-decoration: none;
-    color: #2fbf71;
+    color: #fbbf24;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:focus {
-    outline: 2px solid rgba(47, 191, 113, 0.5);
+    outline: 2px solid rgba(251, 191, 36, 0.5);
     outline-offset: 2px;
   }
 
@@ -220,9 +220,9 @@
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  background: rgba(47, 191, 113, 0.05);
-  border-radius: 16px;
-  border: 1px solid rgba(47, 191, 113, 0.2);
+  background: rgba(251, 191, 36, 0.05);
+  border-radius: 0;
+  border: 1px solid rgba(251, 191, 36, 0.2);
 
   p {
     margin-top: 1rem;
@@ -238,9 +238,9 @@
 .loadingSpinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(47, 191, 113, 0.2);
-  border-top: 3px solid #2fbf71;
-  border-radius: 50%;
+  border: 3px solid rgba(251, 191, 36, 0.2);
+  border-top: 3px solid #fbbf24;
+  border-radius: 0;
   animation: spin 1s linear infinite;
 }
 
@@ -252,7 +252,7 @@
   padding: 2rem;
   background: rgba(220, 53, 69, 0.1);
   border: 1px solid rgba(220, 53, 69, 0.3);
-  border-radius: 16px;
+  border-radius: 0;
   color: #dc3545;
   text-align: center;
   gap: 1rem;
@@ -268,25 +268,25 @@
 }
 
 .retryButton {
-  background: rgba(47, 191, 113, 0.1);
-  border: 1px solid rgba(47, 191, 113, 0.3);
-  color: #2fbf71;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 0;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background: rgba(47, 191, 113, 0.15);
-    border-color: rgba(47, 191, 113, 0.3);
+    background: rgba(251, 191, 36, 0.15);
+    border-color: rgba(251, 191, 36, 0.3);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:focus {
-    outline: 2px solid rgba(47, 191, 113, 0.5);
+    outline: 2px solid rgba(251, 191, 36, 0.5);
     outline-offset: 2px;
   }
 

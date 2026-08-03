@@ -30,7 +30,7 @@ export default async function Image() {
           fontSize: 72,
           fontWeight: 'bold',
           marginBottom: 24,
-          background: 'linear-gradient(90deg, #2fbf71, #00d4aa)',
+          background: 'linear-gradient(90deg, #fbbf24, #8b5cf6)',
           backgroundClip: 'text',
           WebkitBackgroundClip: 'text',
           color: 'transparent',
@@ -63,7 +63,7 @@ export default async function Image() {
       <div
         style={{
           fontSize: 20,
-          color: '#2fbf71',
+          color: '#fbbf24',
           fontWeight: 500,
         }}
       >

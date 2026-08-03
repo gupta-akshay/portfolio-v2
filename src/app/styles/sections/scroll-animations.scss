@@ -141,7 +141,7 @@
       right: -5px;
       bottom: -5px;
       background: linear-gradient(45deg, rgba($px-theme, 0.1), transparent);
-      border-radius: inherit;
+      border-radius: 0;
       z-index: -1;
       animation: magnetic-glow 2s ease-in-out infinite;
     }

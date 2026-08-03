@@ -57,7 +57,7 @@
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-  border-radius: 50px;
+  border-radius: 0;
   animation: slideIn 0.3s ease-out;
   scroll-behavior: auto;
 }
@@ -66,7 +66,7 @@
   display: flex;
   background: rgba($px-bg-1, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 50px;
+  border-radius: 0;
   padding: 8px 16px;
   box-shadow: 0 4px 20px rgba($px-black, 0.15);
   border: 1px solid rgba($px-white, 0.1);
@@ -78,7 +78,7 @@
   @include responsive-3d-effects;
 
   &::before {
-    border-radius: 50px;
+    border-radius: 0;
   }
 }
 
@@ -88,7 +88,7 @@
   align-items: center;
   background: none;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 8px 4px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -117,7 +117,7 @@
         rgba($px-white, 0.05),
         rgba($px-white, 0.02)
       );
-      border-radius: inherit;
+      border-radius: 0;
       z-index: -1;
     }
   }
@@ -144,7 +144,7 @@
         rgba($px-theme, 0.05),
         rgba($px-theme, 0.02)
       );
-      border-radius: inherit;
+      border-radius: 0;
       z-index: -1;
     }
   }

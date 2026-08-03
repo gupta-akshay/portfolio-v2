@@ -1,7 +1,6 @@
 @use '../../styles/variables' as *;
 
-$border-subtle: rgba(255, 255, 255, 0.08);
-$nav-height: 64px;
+$nav-height: 68px;
 
 .nav {
   position: fixed;
@@ -9,11 +8,14 @@ $nav-height: 64px;
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(14, 14, 23, 0.72);
-  // Only the unprefixed property — the build adds prefixes from browserslist.
-  // Declaring -webkit- by hand makes Lightning CSS drop the standard one.
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid $border-subtle;
+  // Solid, not glass — brutalism doesn't blur
+  background: $px-bg-1;
+  border-bottom: $bd-thick solid $px-ink;
+
+  :global(body.theme-light) & {
+    background: $px-gray;
+    border-bottom-color: $px-ink-light;
+  }
 }
 
 .inner {
@@ -31,120 +33,194 @@ $nav-height: 64px;
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
+  font-weight: $fw-bold;
   font-size: 18px;
-  letter-spacing: -0.02em;
-  color: $px-white;
+  letter-spacing: $track-display;
+  text-transform: uppercase;
+  color: $px-ink;
 
   &:hover {
-    color: $px-white;
+    color: $px-theme;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-ink-light;
+
+    &:hover {
+      color: $px-ink-light;
+    }
   }
 }
 
+// Solid amber block instead of a glowing dot
 .brandDot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
+  width: 14px;
+  height: 14px;
   background: $px-theme;
-  box-shadow: 0 0 12px $px-theme-rgb-1;
+  border: $bd-thin solid $px-ink;
   display: inline-block;
   flex-shrink: 0;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
 }
 
 .desktopLinks {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .link {
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
+  padding: 9px 14px;
+  font-family: $px-font-mono;
+  font-size: 13px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
   color: $px-body;
-  transition: all 0.2s ease-in-out;
+  border: $bd-thin solid transparent;
 
   &:hover {
-    color: $px-white;
-    background: rgba(255, 255, 255, 0.06);
+    color: $px-ink;
+    border-color: $px-ink;
   }
 
+  // Active is a filled amber slab, not a tint
   &[data-active] {
-    color: $px-theme;
-    background: $px-theme-rgb-2;
+    background: $px-theme;
+    color: $px-black;
+    border-color: $px-ink;
+    box-shadow: 3px 3px 0 $px-black;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+
+    &:hover {
+      color: $px-ink-light;
+      border-color: $px-ink-light;
+    }
+
+    &[data-active] {
+      color: $px-black;
+      border-color: $px-ink-light;
+      box-shadow: 3px 3px 0 $px-ink-light;
+    }
   }
 }
 
 .themeToggle {
-  margin-left: 12px;
+  margin-left: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
-  border-radius: 50%;
-  border: 1px solid $border-subtle;
-  background: none;
-  color: $px-body;
+  border: $bd-thin solid $px-ink;
+  background: transparent;
+  color: $px-ink;
   cursor: pointer;
   font-size: 15px;
-  transition: all 0.2s ease-in-out;
+  transition: transform $dur $ease, box-shadow $dur $ease;
 
   &:hover {
-    border-color: $px-theme;
-    color: $px-theme;
+    background: $px-violet;
+    color: $px-black;
+    box-shadow: 3px 3px 0 $px-black;
+  }
+
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+
+    &:hover {
+      color: $px-black;
+      box-shadow: 3px 3px 0 $px-ink-light;
+    }
   }
 }
 
 .burger {
   display: none;
-  background: none;
-  border: none;
-  color: $px-white;
+  background: transparent;
+  border: $bd-thin solid $px-ink;
+  color: $px-ink;
   cursor: pointer;
-  padding: 8px;
-  font-size: 22px;
+  padding: 8px 10px;
+  font-size: 20px;
   line-height: 0;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+  }
 }
 
 .mobileMenu {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 12px 24px 20px;
-  border-top: 1px solid $border-subtle;
-  background: rgba(12, 12, 20, 0.95);
-  backdrop-filter: blur(14px);
+  padding: 0;
+  border-top: $bd-thick solid $px-ink;
+  background: $px-bg-1;
+
+  :global(body.theme-light) & {
+    background: $px-gray;
+    border-top-color: $px-ink-light;
+  }
 }
 
 .mobileLink {
-  padding: 12px 8px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
+  padding: 16px 24px;
+  font-family: $px-font-mono;
+  font-size: 15px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
   color: $px-body;
+  border-bottom: $bd-thin solid rgba(255, 255, 255, 0.15);
 
   &[data-active] {
-    color: $px-theme;
+    background: $px-theme;
+    color: $px-black;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+    border-bottom-color: rgba(11, 11, 16, 0.15);
+
+    &[data-active] {
+      color: $px-black;
+    }
   }
 }
 
 .mobileThemeToggle {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 8px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
+  gap: 12px;
+  padding: 16px 24px;
+  font-family: $px-font-mono;
+  font-size: 15px;
+  font-weight: $fw-bold;
+  letter-spacing: $track-label;
+  text-transform: uppercase;
   color: $px-body;
-  background: none;
+  background: transparent;
   border: none;
   cursor: pointer;
-  font-family: inherit;
   text-align: left;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
 }
 
 @media (max-width: 820px) {
@@ -154,53 +230,6 @@ $nav-height: 64px;
 
   .burger {
     display: block;
-  }
-}
-
-:global(body.theme-light) {
-  .nav {
-    background: rgba(255, 255, 255, 0.8);
-    border-bottom-color: rgba($px-dark, 0.1);
-  }
-
-  .brand,
-  .burger {
-    color: $px-dark;
-
-    &:hover {
-      color: $px-dark;
-    }
-  }
-
-  .link,
-  .themeToggle,
-  .mobileLink,
-  .mobileThemeToggle {
-    color: $px-body-light;
-  }
-
-  .link:hover {
-    color: $px-dark;
-    background: rgba($px-dark, 0.05);
-  }
-
-  .link[data-active],
-  .mobileLink[data-active] {
-    color: $px-theme;
-  }
-
-  .themeToggle {
-    border-color: rgba($px-dark, 0.12);
-
-    &:hover {
-      border-color: $px-theme;
-      color: $px-theme;
-    }
-  }
-
-  .mobileMenu {
-    background: rgba(255, 255, 255, 0.97);
-    border-top-color: rgba($px-dark, 0.1);
   }
 }
 

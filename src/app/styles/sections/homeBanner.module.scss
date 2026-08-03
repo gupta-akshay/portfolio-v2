@@ -1,8 +1,8 @@
 @use '../variables' as *;
 
 $border-subtle: rgba(255, 255, 255, 0.08);
-$shadow-btn-theme: 0 12px 24px rgba(47, 191, 113, 0.3);
-$shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
+$shadow-btn-theme: 0 12px 24px rgba(251, 191, 36, 0.3);
+$shadow-btn-theme-hover: 0 16px 28px rgba(251, 191, 36, 0.36);
 $shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.15);
 $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -43,7 +43,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   right: -150px;
   width: 600px;
   height: 600px;
-  border-radius: 50%;
+  border-radius: 0;
   background: radial-gradient(circle, $px-theme-rgb-2 0%, transparent 65%);
   animation: heroGlow 8s ease-in-out infinite;
   pointer-events: none;
@@ -69,7 +69,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid $px-theme-rgb-1;
   background: $px-theme-rgb-2;
   color: $px-theme;
@@ -81,7 +81,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 .badgeDot {
   width: 7px;
   height: 7px;
-  border-radius: 50%;
+  border-radius: 0;
   background: $px-theme;
   display: inline-block;
 }
@@ -121,7 +121,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
     color: $px-theme;
 
     &:hover {
-      color: #38d47f;
+      color: #ffcf4d;
     }
   }
 }
@@ -137,7 +137,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   padding: 14px 28px;
-  border-radius: 12px;
+  border-radius: 0;
   background: $px-theme;
   color: $px-dark;
   font-weight: 600;
@@ -146,7 +146,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background: #38d47f;
+    background: #ffcf4d;
     color: $px-dark;
     box-shadow: $shadow-btn-theme-hover;
     transform: translateY(-2px);
@@ -157,7 +157,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   padding: 14px 28px;
-  border-radius: 12px;
+  border-radius: 0;
   border: 1px solid $border-subtle;
   color: $px-white;
   font-weight: 600;
@@ -192,7 +192,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
 .mediaFrame {
   position: relative;
-  border-radius: 24px;
+  border-radius: 0;
   overflow: hidden;
   border: 1px solid $border-subtle;
   box-shadow: $shadow-panel;

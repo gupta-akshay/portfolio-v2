@@ -1,8 +1,8 @@
 @use '../../styles/variables' as *;
 
 $border-subtle: rgba(255, 255, 255, 0.08);
-$shadow-btn-theme: 0 12px 24px rgba(47, 191, 113, 0.3);
-$shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
+$shadow-btn-theme: 0 12px 24px rgba(251, 191, 36, 0.3);
+$shadow-btn-theme-hover: 0 16px 28px rgba(251, 191, 36, 0.36);
 $shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.15);
 $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -55,7 +55,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .trackRow {
-  border-radius: 16px;
+  border-radius: 0;
   border: 1px solid $border-subtle;
   background: transparent;
   transition: all 0.25s ease-in-out;
@@ -88,7 +88,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   height: 40px;
   flex-shrink: 0;
   border: none;
-  border-radius: 50%;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.08);
   color: $px-white;
   cursor: pointer;
@@ -140,7 +140,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: 0;
 
   &[data-tone='remix'] {
     color: $px-teal;
@@ -173,7 +173,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   span {
     width: 3px;
     height: 100%;
-    border-radius: 2px;
+    border-radius: 0;
     background: $px-theme;
     transform-origin: bottom;
     animation: eqBar 0.9s ease-in-out infinite;
@@ -201,7 +201,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   color: $px-body;
   cursor: pointer;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   font-size: 16px;
@@ -271,7 +271,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   top: -26px;
   transform: translateX(-50%);
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: 0;
   background: $px-dark;
   border: 1px solid $border-subtle;
   font-size: 11.5px;
@@ -373,7 +373,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   color: $px-body;
@@ -396,7 +396,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   color: $px-white;
   cursor: pointer;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   font-size: 20px;
@@ -410,7 +410,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 .playerBarPlay {
   width: 46px;
   height: 46px;
-  border-radius: 50%;
+  border-radius: 0;
   border: none;
   background: $px-theme;
   color: $px-dark;
@@ -524,7 +524,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   gap: 4px;
-  border-radius: 10px;
+  border-radius: 0;
   transition: background 0.2s ease-in-out;
 
   &:hover {
@@ -620,7 +620,7 @@ $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
 .toast {
   padding: 10px 20px;
-  border-radius: 999px;
+  border-radius: 0;
   background: $px-theme;
   color: $px-dark;
   font-size: 14px;

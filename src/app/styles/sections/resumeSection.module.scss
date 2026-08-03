@@ -1,8 +1,8 @@
 @use '../variables' as *;
 
 $border-subtle: rgba(255, 255, 255, 0.08);
-$shadow-btn-theme: 0 12px 24px rgba(47, 191, 113, 0.3);
-$shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
+$shadow-btn-theme: 0 12px 24px rgba(251, 191, 36, 0.3);
+$shadow-btn-theme-hover: 0 16px 28px rgba(251, 191, 36, 0.36);
 
 // The resume reads as a single document column
 .resumePageHeader {
@@ -61,7 +61,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
     color: $px-theme;
 
     &:hover {
-      color: #38d47f;
+      color: #ffcf4d;
     }
   }
 }
@@ -75,7 +75,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
     align-items: center;
     gap: 8px;
     padding: 12px 22px;
-    border-radius: 12px;
+    border-radius: 0;
     background: $px-theme;
     color: $px-dark;
     font-weight: 600;
@@ -110,7 +110,7 @@ $shadow-btn-theme-hover: 0 16px 28px rgba(47, 191, 113, 0.36);
   color: $px-body;
   margin: 0;
   padding: 24px;
-  border-radius: 16px;
+  border-radius: 0;
   background: $px-dark;
   border: 1px solid $border-subtle;
   text-wrap: pretty;

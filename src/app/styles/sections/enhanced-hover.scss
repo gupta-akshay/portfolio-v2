@@ -32,7 +32,7 @@
     );
     opacity: 0;
     transition: opacity 0.3s ease;
-    border-radius: inherit;
+    border-radius: 0;
     z-index: -1;
   }
 
@@ -61,7 +61,7 @@
     );
     opacity: 0;
     transition: opacity 0.3s ease;
-    border-radius: inherit;
+    border-radius: 0;
     z-index: -1;
     pointer-events: none;
   }
@@ -107,7 +107,7 @@
     opacity: 0;
     filter: blur(5px);
     transition: opacity 0.3s ease;
-    border-radius: inherit;
+    border-radius: 0;
     z-index: -1;
     animation: glow-rotate 4s linear infinite;
   }
@@ -140,7 +140,7 @@
 
   .ripple {
     position: absolute;
-    border-radius: 50%;
+    border-radius: 0;
     pointer-events: none;
     transform: scale(0);
     animation: ripple-animation 0.6s ease-out;
@@ -170,7 +170,7 @@
     right: -2px;
     bottom: -2px;
     background: inherit;
-    border-radius: inherit;
+    border-radius: 0;
     z-index: -1;
     filter: blur(10px);
     opacity: 0;
@@ -185,11 +185,11 @@
 // Morphing hover effects
 .morph-hover {
   position: relative;
-  border-radius: 8px;
+  border-radius: 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   &:hover {
-    border-radius: 20px;
+    border-radius: 0;
     transform: scale(1.05) rotate(2deg);
 
     &::before {
@@ -205,7 +205,7 @@
         rgba($px-theme, 0.2),
         transparent
       );
-      border-radius: inherit;
+      border-radius: 0;
       z-index: -1;
       animation: morph-glow 1s ease-in-out;
     }
@@ -250,7 +250,7 @@
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
-    border-radius: inherit;
+    border-radius: 0;
   }
 
   &:hover::before {
@@ -312,7 +312,7 @@
       background: $px-theme;
       opacity: 0.1;
       filter: blur(3px);
-      border-radius: inherit;
+      border-radius: 0;
       z-index: -1;
     }
   }
