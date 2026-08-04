@@ -1,8 +1,5 @@
-@use 'sass:math';
-@use 'sass:color';
 @use './variables' as *;
 @use './mixin' as *;
-@use './3d-effects' as *;
 
 .fixed-controls {
   position: fixed;
@@ -77,61 +74,6 @@
   }
 }
 
-/* SEPARATOR */
-.separator {
-  padding-top: 80px;
-  padding-bottom: 80px;
-  position: relative;
-  &:after {
-    content: '';
-    height: 1px;
-    background: $px-white;
-    opacity: 0.1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    .theme-light & {
-      background-color: $px-dark;
-    }
-  }
-  @include down-md {
-    padding-top: 80px;
-    padding-bottom: 80px;
-  }
-  @include down-sm {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-}
-
-/* SLIDER PAGINATION */
-.owl-dots {
-  text-align: center;
-  .owl-dot {
-    display: inline-block;
-    vertical-align: top;
-    width: 10px;
-    height: 10px;
-    background: transparent;
-    border: 1px solid $px-white;
-    @include transition(ease all 0.55s);
-    border-radius: 0;
-    margin: 0 5px;
-    .theme-light & {
-      border-color: $px-dark;
-    }
-    &.active {
-      background: $px-white;
-      .theme-light & {
-        background: $px-dark;
-      }
-    }
-  }
-}
-
 /* BUTTON — solid slab, hard shadow, mechanical press */
 .px-btn {
   padding: 14px 26px;
@@ -150,7 +92,9 @@
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transition: transform $dur $ease, box-shadow $dur $ease;
+  transition:
+    transform $dur $ease,
+    box-shadow $dur $ease;
 
   .theme-light & {
     background: $px-white;
@@ -214,76 +158,5 @@
     padding: 18px 16px;
     margin-bottom: 24px;
     box-shadow: $shadow-sm;
-  }
-}
-
-.section-intro {
-  margin-bottom: 6px;
-  width: 100%;
-  max-width: 100%;
-  color: $px-body;
-  font-size: 16px;
-  line-height: 1.7;
-  .theme-light & {
-    color: #3f3f46;
-  }
-}
-
-/* PARTICLES */
-.particles {
-  position: absolute;
-  inset: 0;
-  opacity: 0.3;
-  .theme-light & {
-    opacity: 0.3;
-    filter: invert(1);
-  }
-}
-
-/* GLITCH EFFECT */
-.glitch {
-  position: relative;
-  animation: glitch-skew 1s infinite linear alternate-reverse;
-  &::before {
-    @include glitchCopy;
-    left: 2px;
-    text-shadow: -2px 0 $px-pink-comp;
-    clip: rect(44px, 450px, 50px, 0);
-    animation: glitch-anim 5s infinite linear alternate-reverse;
-    .theme-light & {
-      text-shadow: -2px 0 $px-pink;
-    }
-  }
-  &::after {
-    @include glitchCopy;
-    left: -2px;
-    text-shadow:
-      -2px 0 $px-teal-comp,
-      2px 2px $px-pink-comp;
-    animation: glitch-anim 1s infinite linear alternate-reverse;
-    .theme-light & {
-      text-shadow:
-        -2px 0 $px-teal,
-        2px 2px $px-pink;
-    }
-  }
-}
-
-@keyframes glitch-anim {
-  $steps: 20;
-  @for $i from 0 through $steps {
-    #{math.percentage($i*math.div(1, $steps))} {
-      clip: rect(math.random(100) * 1px, 9999px, math.random(100) * 1px, 0);
-      transform: skew((math.random(100) * 0.01) * 1deg);
-    }
-  }
-}
-
-@keyframes glitch-skew {
-  $steps: 10;
-  @for $i from 0 through $steps {
-    #{math.percentage($i*math.div(1, $steps))} {
-      transform: skew((math.random(10) - 5) + deg);
-    }
   }
 }
