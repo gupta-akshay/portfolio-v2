@@ -85,7 +85,11 @@ export default function RootLayout({
   return (
     // themeInitScript adds `theme-light` to <html>/<body> before hydration to
     // avoid a flash of the wrong theme, so React must tolerate the difference.
-    <html lang='en' suppressHydrationWarning>
+    <html
+      lang='en'
+      data-scroll-behavior='smooth'
+      suppressHydrationWarning
+    >
       <body
         className={`${spaceGrotesk.variable} ${spaceMono.variable} ${cookie.variable}`}
         suppressHydrationWarning

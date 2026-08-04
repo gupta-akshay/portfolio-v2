@@ -120,7 +120,7 @@ const SingleBlogPage = async ({ params }: SingleBlogPageProps) => {
                 height={1024}
                 className={styles.blogImage}
                 sizes='(max-width: 991px) 100vw, 1110px'
-                priority
+                loading='eager'
               />
             )}
           </div>

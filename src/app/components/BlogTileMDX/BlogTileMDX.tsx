@@ -7,7 +7,13 @@ import { formatDate } from '@/app/utils/helpers/format';
 
 import styles from '../BlogTile/BlogTile.module.scss';
 
-const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
+const BlogTileMDX = ({
+  blog,
+  eager = false,
+}: {
+  blog: BlogPost;
+  eager?: boolean;
+}) => {
   const { metadata, slug, readingTime } = blog;
 
   const blogHref = `/blog/${slug}`;
@@ -45,6 +51,7 @@ const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
               height={1024}
               className={styles.coverImage}
               sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px'
+              loading={eager ? 'eager' : 'lazy'}
             />
           ) : (
             primaryCategory && (
