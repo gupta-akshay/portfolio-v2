@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import Skills from '@/app/components/Skills/Skills';
@@ -7,6 +6,7 @@ import GitHubCalendar from '@/app/components/GitHubCalendar/GitHubCalendarLazy';
 import { getSiteUrl } from '@/lib/site-url';
 import { aboutContent } from '@/lib/site-content';
 import { getYearsOfExperience } from '@/app/utils/helpers/format';
+import { createPageMetadata } from '@/lib/metadata';
 
 import styles from '../styles/sections/aboutSection.module.scss';
 
@@ -14,38 +14,14 @@ const siteUrl = getSiteUrl();
 const aboutDescription =
   'Learn about my work as a Senior Staff Engineer at PeopleGrove, including my engineering experience, skills, and product-focused approach.';
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+export const metadata = createPageMetadata({
   title: 'About',
   description: aboutDescription,
-  openGraph: {
-    type: 'profile',
-    title: 'About Akshay Gupta | Senior Staff Engineer',
-    description: aboutDescription,
-    url: `${siteUrl}/about`,
-    siteName: 'Akshay Gupta',
-    locale: 'en_US',
-    images: [
-      {
-        url: '/about/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'About Akshay Gupta - My Journey, Skills & Experience',
-        type: 'image/png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'About Akshay Gupta | Senior Staff Engineer',
-    description: aboutDescription,
-    creator: '@ashay_music',
-    images: ['/about/opengraph-image'],
-  },
-  alternates: {
-    canonical: `${siteUrl}/about`,
-  },
-};
+  socialTitle: 'About Akshay Gupta | Senior Staff Engineer',
+  path: '/about',
+  imageAlt: 'About Akshay Gupta - My Journey, Skills & Experience',
+  type: 'profile',
+});
 
 export default function About() {
   const yearsOfExperience = getYearsOfExperience();

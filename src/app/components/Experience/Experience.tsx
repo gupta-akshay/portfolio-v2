@@ -3,108 +3,22 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { experienceData } from '@/app/utils/data/experience';
-import { ExperienceItem } from '@/app/types';
 import { formatDateRange } from '@/app/utils/helpers/format';
 
 import styles from './Experience.module.scss';
-
-interface GroupedExperience {
-  company: string;
-  logo: string;
-  location: string;
-  experiences: ExperienceItem[];
-  totalDuration: string;
-}
 
 export default function Experience() {
   const [expandedCompanies, setExpandedCompanies] = useState<Set<string>>(
     new Set()
   );
 
-  if (experienceData.length === 0) {
-    return null;
-  }
-
-  // Group experiences by company
-  const groupedExperiences: GroupedExperience[] = experienceData.reduce(
-    (acc, experience) => {
-      const existingGroup = acc.find(
-        (group) => group.company === experience.company
-      );
-
-      if (existingGroup) {
-        existingGroup.experiences.push(experience);
-      } else {
-        acc.push({
-          company: experience.company,
-          logo: experience.logo || '/images/default-company.webp',
-          location: experience.location,
-          experiences: [experience],
-          totalDuration: (() => {
-            const companyExperiences = experienceData.filter(
-              (exp) => exp.company === experience.company
-            );
-            const earliestStart =
-              companyExperiences.sort(
-                (a, b) =>
-                  new Date(a.startDate).getTime() -
-                  new Date(b.startDate).getTime()
-              )[0]?.startDate || experience.startDate;
-
-            // Check if any experience is ongoing (no end date)
-            const hasOngoingExperience = companyExperiences.some(
-              (exp) => !exp.endDate
-            );
-
-            if (hasOngoingExperience) {
-              // If any role is ongoing, show "Present" as end date
-              return formatDateRange(earliestStart, undefined);
-            } else {
-              // If all roles are completed, find the latest end date
-              const latestEndDate = companyExperiences
-                .filter((exp) => exp.endDate) // Only completed experiences
-                .sort(
-                  (a, b) =>
-                    new Date(b.endDate!).getTime() -
-                    new Date(a.endDate!).getTime()
-                )[0]?.endDate;
-
-              return formatDateRange(earliestStart, latestEndDate);
-            }
-          })(),
-        });
-      }
-
-      return acc;
-    },
-    [] as GroupedExperience[]
-  );
-
-  // Sort experiences within each group by date (newest first)
-  groupedExperiences.forEach((group) => {
-    group.experiences.sort(
-      (a, b) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    );
-  });
-
-  const toggleCompanyExpansion = (companyName: string) => {
-    const newExpanded = new Set(expandedCompanies);
-    if (newExpanded.has(companyName)) {
-      newExpanded.delete(companyName);
-    } else {
-      newExpanded.add(companyName);
-    }
-    setExpandedCompanies(newExpanded);
-  };
-
-  const getVisibleExperiences = (
-    companyGroup: GroupedExperience
-  ): ExperienceItem[] => {
-    const isExpanded = expandedCompanies.has(companyGroup.company);
-    if (isExpanded) return companyGroup.experiences;
-    const first = companyGroup.experiences[0];
-    return first ? [first] : [];
+  const toggleCompany = (company: string) => {
+    setExpandedCompanies((current) => {
+      const next = new Set(current);
+      if (next.has(company)) next.delete(company);
+      else next.add(company);
+      return next;
+    });
   };
 
   return (
@@ -113,43 +27,42 @@ export default function Experience() {
         <h3>Experience</h3>
       </div>
       <div className={styles.experienceContainer}>
-        {groupedExperiences.map((companyGroup) => {
-          const hasMultipleRoles = companyGroup.experiences.length > 1;
-          const isExpanded = expandedCompanies.has(companyGroup.company);
-          const visibleExperiences = getVisibleExperiences(companyGroup);
+        {experienceData.map((company) => {
+          const hasMultipleRoles = company.roles.length > 1;
+          const isExpanded = expandedCompanies.has(company.company);
+          const visibleRoles = isExpanded
+            ? company.roles
+            : company.roles.slice(0, 1);
 
           return (
-            <div className={styles.companyCard} key={companyGroup.company}>
+            <div className={styles.companyCard} key={company.company}>
               <div className={styles.companyHeader}>
                 <div className={styles.companyLogo}>
                   <Image
-                    src={companyGroup.logo}
-                    alt={`${companyGroup.company} Logo`}
+                    src={company.logo}
+                    alt={`${company.company} Logo`}
                     loading='lazy'
                     width={80}
                     height={80}
                   />
                 </div>
                 <div className={styles.companyInfo}>
-                  <h4>{companyGroup.company}</h4>
-                  <p className={styles.companyLocation}>
-                    {companyGroup.location}
-                  </p>
+                  <h4>{company.company}</h4>
+                  <p className={styles.companyLocation}>{company.location}</p>
                   <span className={styles.companyDuration}>
-                    {companyGroup.totalDuration}
+                    {formatDateRange(company.startDate, company.endDate)}
                   </span>
                   {hasMultipleRoles && (
                     <div className={styles.roleCount}>
-                      {companyGroup.experiences.length} role
-                      {companyGroup.experiences.length > 1 ? 's' : ''}
+                      {company.roles.length} roles
                     </div>
                   )}
                 </div>
                 {hasMultipleRoles && (
                   <button
                     className={`${styles.expandButton} ${isExpanded ? styles.expanded : ''}`}
-                    onClick={() => toggleCompanyExpansion(companyGroup.company)}
-                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${companyGroup.company} roles`}
+                    onClick={() => toggleCompany(company.company)}
+                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${company.company} roles`}
                   >
                     <span className={styles.expandIcon}>
                       {isExpanded ? '−' : '+'}
@@ -157,34 +70,28 @@ export default function Experience() {
                     <span className={styles.expandText}>
                       {isExpanded
                         ? 'Show Less'
-                        : `Show ${companyGroup.experiences.length - 1} More`}
+                        : `Show ${company.roles.length - 1} More`}
                     </span>
                   </button>
                 )}
               </div>
               <div className={styles.rolesContainer}>
-                {visibleExperiences.map((experience, roleIndex) => (
+                {visibleRoles.map((role, roleIndex) => (
                   <div
                     className={`${styles.roleCard} ${roleIndex > 0 ? styles.additionalRole : ''}`}
-                    key={
-                      experience.id ||
-                      `${experience.company}-${experience.position}-${roleIndex}`
-                    }
+                    key={role.id}
                   >
                     <div className={styles.roleHeader}>
                       <div className={styles.roleInfo}>
-                        <h5>{experience.position}</h5>
+                        <h5>{role.position}</h5>
                         <span className={styles.roleDuration}>
-                          {formatDateRange(
-                            experience.startDate,
-                            experience.endDate
-                          )}
+                          {formatDateRange(role.startDate, role.endDate)}
                         </span>
                       </div>
                       <div className={styles.roleType}>Full Time</div>
                     </div>
                     <div className={styles.roleDescription}>
-                      <p>{experience.description}</p>
+                      <p>{role.description}</p>
                     </div>
                   </div>
                 ))}

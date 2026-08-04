@@ -1,9 +1,6 @@
 import { z } from 'zod';
 
 const serverEnvSchema = z.object({
-  NODE_ENV: z
-    .enum(['development', 'production', 'test'])
-    .default('development'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required'),
   AWS_REGION: z.string().default('ap-south-1'),
@@ -13,7 +10,6 @@ const serverEnvSchema = z.object({
   CLOUDFRONT_DOMAIN: z.string().optional(),
   CLOUDFRONT_KEY_PAIR_ID: z.string().optional(),
   CLOUDFRONT_PRIVATE_KEY: z.string().optional(),
-  SENTRY_AUTH_TOKEN: z.string().optional(),
 });
 
 type ServerEnv = z.infer<typeof serverEnvSchema>;

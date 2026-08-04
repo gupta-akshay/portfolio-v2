@@ -34,4 +34,3 @@ export { default as SocialShare } from './app/components/SocialShare/SocialShare
 
 // Providers — previews and generated designs wrap in these.
 export { ThemeProvider } from './app/context/ThemeContext';
-export { LoadingProvider } from './app/context/LoadingContext';

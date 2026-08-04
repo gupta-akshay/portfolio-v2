@@ -37,37 +37,6 @@ export const useAudioPlayback = (
     });
   };
 
-  // Setup audio event listeners (efficiently managed with cleanup)
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || currentTrackIndex === null || !currentTrack) return;
-
-    const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
-    const setPlaying = () => setIsPlaying(true);
-    const setPaused = () => setIsPlaying(false);
-
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('play', setPlaying);
-    audio.addEventListener('pause', setPaused);
-    audio.addEventListener('waiting', setPaused);
-    audio.addEventListener('playing', setPlaying);
-
-    audio.volume = volume;
-    audio.muted = isMuted;
-    setIsPlaying(!audio.paused);
-
-    return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('play', setPlaying);
-      audio.removeEventListener('pause', setPaused);
-      audio.removeEventListener('waiting', setPaused);
-      audio.removeEventListener('playing', setPlaying);
-    };
-  }, [currentTrackIndex, currentTrack, audioRef, volume, isMuted]);
-
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume, audioRef]);
@@ -100,12 +69,10 @@ export const useAudioPlayback = (
 
       if (isPlaying) {
         audio.pause();
-        setIsPlaying(false);
       } else {
         // play() resolves once the browser has buffered enough to start, and
         // rejects if the source fails — no readiness handshake needed here.
         await audio.play();
-        setIsPlaying(true);
       }
     } catch (error) {
       logger.error('Error playing audio:', error);

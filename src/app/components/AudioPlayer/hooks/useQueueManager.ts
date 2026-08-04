@@ -3,19 +3,13 @@ import { Track } from '@/app/types';
 
 export const useQueueManager = (tracks: Track[]) => {
   const [queue, setQueue] = useState<Track[]>([]);
-  const [queuedTrackIds, setQueuedTrackIds] = useState(new Set<string>());
   const [isShuffleActive, setIsShuffleActive] = useState(false);
   const [isQueueVisible, setIsQueueVisible] = useState(false);
+  const queuedTrackIds = new Set(queue.map((track) => track.id));
 
   // Add a track to the queue
   const addToQueue = (track: Track) => {
     setQueue((prevQueue) => [...prevQueue, track]);
-    setQueuedTrackIds((prevIds) => {
-      if (prevIds.has(track.id)) return prevIds;
-      const newIds = new Set(prevIds);
-      newIds.add(track.id);
-      return newIds;
-    });
   };
 
   // Remove a track from the queue
@@ -23,22 +17,7 @@ export const useQueueManager = (tracks: Track[]) => {
     setQueue((prevQueue) => {
       if (index < 0 || index >= prevQueue.length) return prevQueue;
 
-      const newQueue = prevQueue
-        .slice(0, index)
-        .concat(prevQueue.slice(index + 1));
-      const removedTrack = prevQueue[index];
-
-      if (removedTrack) {
-        setQueuedTrackIds((prevIds) => {
-          if (newQueue.some((track) => track.id === removedTrack.id))
-            return prevIds;
-          const newIds = new Set(prevIds);
-          newIds.delete(removedTrack.id);
-          return newIds;
-        });
-      }
-
-      return newQueue;
+      return prevQueue.slice(0, index).concat(prevQueue.slice(index + 1));
     });
   };
 
@@ -91,7 +70,10 @@ export const useQueueManager = (tracks: Track[]) => {
   // Clear the queue
   const clearQueue = () => {
     setQueue([]);
-    setQueuedTrackIds(new Set());
+  };
+
+  const advanceQueue = (count: number) => {
+    setQueue((current) => current.slice(count));
   };
 
   // Get the next track index
@@ -105,14 +87,6 @@ export const useQueueManager = (tracks: Track[]) => {
       if (!nextTrack) return Math.min(currentIndex + 1, tracks.length - 1);
 
       setQueue((prevQueue) => prevQueue.slice(1));
-
-      setQueuedTrackIds((prevIds) => {
-        if (queue.slice(1).some((track) => track.id === nextTrack.id))
-          return prevIds;
-        const newIds = new Set(prevIds);
-        newIds.delete(nextTrack.id);
-        return newIds;
-      });
 
       const idx = tracks.findIndex((track) => track.id === nextTrack.id);
       return idx !== -1 ? idx : currentIndex;
@@ -140,9 +114,8 @@ export const useQueueManager = (tracks: Track[]) => {
     toggleShuffle,
     toggleQueueVisibility,
     clearQueue,
+    advanceQueue,
     getNextTrackIndex,
     getPreviousTrackIndex,
   };
 };
-
-export default useQueueManager;

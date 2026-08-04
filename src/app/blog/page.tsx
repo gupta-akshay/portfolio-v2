@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import BlogList from './BlogList';
@@ -6,43 +5,19 @@ import LoadingIndicator from '@/app/components/LoadingIndicator/LoadingIndicator
 import { getAllBlogs } from '@/lib/mdx';
 import { getSiteUrl } from '@/lib/site-url';
 import { blogIntro } from '@/lib/site-content';
+import { createPageMetadata } from '@/lib/metadata';
 
 import styles from '@/app/styles/sections/blogSection.module.scss';
 
 const siteUrl = getSiteUrl();
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+export const metadata = createPageMetadata({
   title: 'Blog',
   description: blogIntro,
-  openGraph: {
-    type: 'website',
-    title: 'Blog | Akshay Gupta',
-    description: blogIntro,
-    url: `${siteUrl}/blog`,
-    siteName: 'Akshay Gupta',
-    locale: 'en_US',
-    images: [
-      {
-        url: '/blog/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'Akshay Gupta Blog - Engineering, Architecture, and Performance',
-        type: 'image/png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Blog | Akshay Gupta',
-    description: blogIntro,
-    images: ['/blog/opengraph-image'],
-    creator: '@ashay_music',
-  },
-  alternates: {
-    canonical: `${siteUrl}/blog`,
-  },
-};
+  socialTitle: 'Blog | Akshay Gupta',
+  path: '/blog',
+  imageAlt: 'Akshay Gupta Blog - Engineering, Architecture, and Performance',
+});
 
 async function BlogPosts() {
   const posts = await getAllBlogs();

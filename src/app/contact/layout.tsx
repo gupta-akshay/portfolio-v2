@@ -1,42 +1,17 @@
-import type { Metadata } from 'next';
 import { getSiteUrl } from '@/lib/site-url';
 import { contactContent } from '@/lib/site-content';
+import { createPageMetadata } from '@/lib/metadata';
 
 const siteUrl = getSiteUrl();
 const contactDescription = contactContent.intro;
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+export const metadata = createPageMetadata({
   title: 'Contact',
   description: contactDescription,
-  openGraph: {
-    type: 'website',
-    title: 'Contact Akshay Gupta',
-    description: contactDescription,
-    url: `${siteUrl}/contact`,
-    siteName: 'Akshay Gupta',
-    locale: 'en_US',
-    images: [
-      {
-        url: '/contact/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'Contact Akshay Gupta - Professional inquiries and collaboration',
-        type: 'image/png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Contact Akshay Gupta',
-    description: contactDescription,
-    creator: '@ashay_music',
-    images: ['/contact/opengraph-image'],
-  },
-  alternates: {
-    canonical: `${siteUrl}/contact`,
-  },
-};
+  socialTitle: 'Contact Akshay Gupta',
+  path: '/contact',
+  imageAlt: 'Contact Akshay Gupta - Professional inquiries and collaboration',
+});
 
 export default function ContactLayout({
   children,

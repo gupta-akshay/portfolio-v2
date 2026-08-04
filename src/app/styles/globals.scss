@@ -1,5 +1,4 @@
 @use 'sass:color';
-@use 'sass:math';
 @use './variables' as *;
 @use './mixin' as *;
 @use './bootstrap-shim';
@@ -7,7 +6,6 @@
 @use './sections/header' as *;
 @use './sections/contact-section' as *;
 @use './sections/music-player' as *;
-@use './sections/page-transitions' as *;
 @use './sections/mermaid' as *;
 
 // Reset & Base Styles
@@ -48,6 +46,8 @@
 // Document Setup
 html {
   font-size: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -103,7 +103,6 @@ a {
   @include px-hover {
     color: $px-theme-hover;
   }
-
 }
 
 // Amber is unreadable as text on paper, so darken it for the light theme.
@@ -142,13 +141,6 @@ textarea,
     outline: 3px solid $px-theme !important;
     outline-offset: 2px !important;
   }
-}
-
-// Component wrappers
-.internal-link-wrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
 }
 
 // Accessibility: Skip to main content link

@@ -1,6 +1,5 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixin' as *;
-@use '../../styles/3d-effects' as *;
 
 .table-of-contents {
   position: fixed;
@@ -213,7 +212,6 @@
 // The rail is 250px wide sitting 2rem off the edge, so it only clears the
 // centred 1110px article column at 1110 + 2 * (282 + 16) = 1706px and up.
 // Narrower than that it would sit on top of the text, so hide it.
-// Keep in sync with the isMobile check in blog/[slug]/TableOfContentsMDX.tsx.
 @media (max-width: 1699px) {
   .table-of-contents {
     display: none;
@@ -226,4 +224,3 @@
     transition: none;
   }
 }
-

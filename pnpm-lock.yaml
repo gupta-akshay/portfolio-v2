@@ -83,9 +83,6 @@ importers:
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1
-      remark-mdx:
-        specifier: ^3.1.1
-        version: 3.1.1
       resend:
         specifier: ^6.18.1
         version: 6.18.1
@@ -120,15 +117,9 @@ importers:
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.5)
-      import-in-the-middle:
-        specifier: ^3.3.3
-        version: 3.3.3
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
-      require-in-the-middle:
-        specifier: ^8.0.1
-        version: 8.0.1
       sass:
         specifier: ^1.102.0
         version: 1.102.0

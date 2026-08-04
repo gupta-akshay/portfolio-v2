@@ -16,8 +16,6 @@ $px-theme-hover: #ffcf4d;
 $px-theme-ink: #7a5c0d;
 
 $px-violet: #8b5cf6; // Secondary pop — remix badges, alt states
-$px-violet-rgb-1: rgba(139, 92, 246, 0.3);
-$px-violet-rgb-2: rgba(139, 92, 246, 0.15);
 
 // --- Surfaces -----------------------------------------------
 $px-bg-1: #0b0b10 !default; // Page canvas
@@ -35,22 +33,16 @@ $px-body: rgba(255, 255, 255, 0.72) !default;
 $px-body-light: #3f3f46 !default;
 
 $px-error: #ef4444;
-$px-pink: #ff00c1;
-$px-pink-comp: #00ff3e;
-$px-teal: #8b5cf6; // Aliased to violet; legacy badge references
-$px-teal-comp: #ff0006;
 
 // --- Brutalist structure ------------------------------------
 $bd-thick: 3px; // Primary borders — cards, buttons, panels
 $bd-thin: 2px; // Secondary borders — inputs, chips
-$radius: 0; // Sharp corners — no exceptions, including badges
 
 // Hard offset shadows: solid, never blurred. The colour is a custom property
 // so it tracks the ink of the active theme — white on the dark canvas, black
 // on the light one. A black shadow on a near-black page would be invisible.
 $shadow-sm: 4px 4px 0 var(--shadow-ink);
 $shadow-md: 6px 6px 0 var(--shadow-ink);
-$shadow-lg: 10px 10px 0 var(--shadow-ink);
 $shadow-none: 0 0 0 var(--shadow-ink);
 
 // Mechanical press: element travels onto its own shadow
@@ -74,7 +66,6 @@ $track-display: -0.02em;
 $track-label: 0.12em;
 
 // --- Breakpoints --------------------------------------------
-$px-media-xsm: 567px !default;
 $px-media-sm: 767px !default;
 $px-media-md: 991px !default;
 $px-media-lg: 1200px !default;

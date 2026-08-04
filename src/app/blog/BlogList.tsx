@@ -85,8 +85,8 @@ function PostGrid({ posts }: { posts: BlogPost[] }) {
   return (
     <>
       <div className={styles.postGrid}>
-        {visible.map((post) => (
-          <BlogTileMDX key={post.slug} blog={post} />
+        {visible.map((post, index) => (
+          <BlogTileMDX key={post.slug} blog={post} eager={index === 0} />
         ))}
       </div>
 

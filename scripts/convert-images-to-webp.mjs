@@ -2,12 +2,9 @@
 // Convert every .jpg / .jpeg / .png / .avif under public/images/ to .webp.
 // Keeps the originals so a subsequent git step can remove them deliberately.
 
-import { readdir, stat, unlink } from 'node:fs/promises';
+import { glob, stat, unlink } from 'node:fs/promises';
 import { join, extname, dirname, basename } from 'node:path';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const sharp = require('sharp');
+import sharp from 'sharp';
 
 const ROOT = join(process.cwd(), 'public', 'images');
 const EXTS = new Set(['.jpg', '.jpeg', '.png', '.avif']);
@@ -18,14 +15,6 @@ const QUALITY = {
   photo: 85,
   ui: 90,
 };
-
-async function* walk(dir) {
-  for (const entry of await readdir(dir, { withFileTypes: true })) {
-    const p = join(dir, entry.name);
-    if (entry.isDirectory()) yield* walk(p);
-    else yield p;
-  }
-}
 
 function isUiAsset(file) {
   const name = basename(file).toLowerCase();
@@ -46,7 +35,8 @@ let skipped = 0;
 let bytesBefore = 0;
 let bytesAfter = 0;
 
-for await (const file of walk(ROOT)) {
+for await (const relativePath of glob('**/*', { cwd: ROOT })) {
+  const file = join(ROOT, relativePath);
   const ext = extname(file).toLowerCase();
   if (!EXTS.has(ext)) continue;
 
@@ -89,5 +79,7 @@ console.log(
     `(${(((bytesAfter - bytesBefore) / bytesBefore) * 100).toFixed(1)}% change)`
 );
 if (!DELETE_ORIGINALS) {
-  console.log(`Re-run with --delete to remove the ${skipped} original file(s).`);
+  console.log(
+    `Re-run with --delete to remove the ${skipped} original file(s).`
+  );
 }
