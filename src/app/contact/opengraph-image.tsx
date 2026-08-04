@@ -5,7 +5,7 @@ export const alt =
 export const size = OG_SIZE;
 export const contentType = 'image/png';
 
-export default function Image() {
+export default async function Image() {
   return renderOg({
     title: 'Get in Touch',
     subtitle: "Let's collaborate on your next project",

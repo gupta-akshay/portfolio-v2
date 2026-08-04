@@ -16,6 +16,12 @@ const nextConfig = {
   // Turbopack configuration
   turbopack: {},
 
+  // The OG card reads its Space Grotesk / Space Mono TTFs off disk at render
+  // time (src/lib/og.tsx), so they have to travel with the serverless bundle.
+  outputFileTracingIncludes: {
+    '/**/opengraph-image': ['./src/lib/fonts/**'],
+  },
+
   sassOptions: {
     quietDeps: true,
     silenceDeprecations: ['legacy-js-api'],

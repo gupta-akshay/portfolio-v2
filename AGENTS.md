@@ -64,7 +64,7 @@ public/               # Static assets
 - **Error monitoring**: Sentry via `@sentry/nextjs`. Config in `sentry.{server,edge}.config.ts`, `src/instrumentation*.ts`, and `withSentryConfig` in `next.config.mjs` (tunnelRoute `/monitoring`). Use `src/app/utils/logger.ts` for logging.
 - **Security headers / CSP**: defined in `next.config.mjs` `headers()`. Adding a new external script/style/image/connect origin requires updating the matching CSP directive there or the browser blocks it. The separate, stricter `images.contentSecurityPolicy` guards SVGs passing through the image optimizer (`dangerouslyAllowSVG: true`) — do not loosen it.
 - **Rate limiting**: `src/app/utils/ratelimit.ts` — per-instance in-memory only (not coordinated across serverless instances); guards casual abuse, not DDoS. Used by API routes.
-- **SEO/feeds**: `src/app/sitemap.ts`, `robots.ts`, `manifest.ts`, `feed.xml/route.ts`, and per-route `opengraph-image.tsx` generate metadata/OG images dynamically.
+- **SEO/feeds**: `src/app/sitemap.ts`, `robots.ts`, `manifest.ts`, `feed.xml/route.ts`, and per-route `opengraph-image.tsx` generate metadata/OG images dynamically. Every route renders the same card through `src/lib/og.tsx` — routes pass copy, never layout. Satori cannot read the `next/font` woff2s, so the card loads its own static TTFs from `src/lib/fonts/` with `readFileSync`; `fetch(new URL(…, import.meta.url))` (the pattern in the Next docs) is **not implemented by Turbopack** and fails the build. `outputFileTracingIncludes` in `next.config.mjs` ships that directory with the serverless bundle.
 
 ### Icons
 

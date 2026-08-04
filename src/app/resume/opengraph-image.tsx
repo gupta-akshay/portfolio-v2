@@ -5,7 +5,7 @@ export const alt = 'Resume — Akshay Gupta, Senior Staff Engineer';
 export const size = OG_SIZE;
 export const contentType = 'image/png';
 
-export default function Image() {
+export default async function Image() {
   return renderOg({
     title: 'Resume',
     subtitle: 'Akshay Gupta',
