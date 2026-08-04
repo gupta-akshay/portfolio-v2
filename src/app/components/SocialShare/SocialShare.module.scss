@@ -211,24 +211,11 @@
   }
 }
 
+// On phones the floating bar overlaps the article and competes with the
+// player bar for the same bottom strip; the OS share sheet covers this.
 @media (max-width: $px-media-sm) {
   .socialShareContainer {
-    bottom: 80px;
-  }
-
-  .socialShareBar {
-    padding: 6px 12px;
-    gap: 2px;
-  }
-
-  .socialShareBtn {
-    width: 32px;
-    height: 32px;
-  }
-
-  .socialShareTitle {
-    font-size: 11px;
-    margin-right: 6px;
+    display: none;
   }
 }
 

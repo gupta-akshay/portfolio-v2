@@ -18,6 +18,19 @@ const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
 
   const primaryCategory = metadata.categories[0];
 
+  // Cards sit in a near-fixed-width grid, so a character budget approximates
+  // "as many tags as fit on one line" without measuring the DOM.
+  // ponytail: char budget, swap for a ResizeObserver if the tile stops being
+  // a fixed-width grid cell.
+  const shownTags: string[] = [];
+  let budget = 26;
+  for (const category of metadata.categories) {
+    if (shownTags.length && category.length > budget) break;
+    shownTags.push(category);
+    budget -= category.length + 2;
+  }
+  const overflowTags = metadata.categories.length - shownTags.length;
+
   return (
     <article className={styles.card}>
       <Link
@@ -50,9 +63,19 @@ const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
         </div>
 
         <div className={styles.body}>
-          {primaryCategory && (
-            <div className={styles.category}>{primaryCategory}</div>
-          )}
+          <div
+            className={styles.tagRow}
+            title={metadata.categories.join(', ')}
+          >
+            {shownTags.map((category) => (
+              <span key={category} className={styles.tag}>
+                {category}
+              </span>
+            ))}
+            {overflowTags > 0 && (
+              <span className={styles.tagMore}>+{overflowTags}</span>
+            )}
+          </div>
           <h2 className={styles.title}>{metadata.title}</h2>
           {metadata.excerpt && (
             <p className={styles.excerpt}>{metadata.excerpt}</p>
