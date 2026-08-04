@@ -24,10 +24,8 @@ export default async function Image({
 
   return renderOg({
     title: post.metadata.title,
-    plainTitle: true,
     subtitle: `By ${post.metadata.author.name}`,
-    footer: 'akshaygupta.live',
-    align: 'bottom-left',
+    footer: 'akshaygupta.live/blog',
   });
 }
 

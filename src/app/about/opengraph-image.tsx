@@ -4,7 +4,7 @@ export const alt = 'About Akshay Gupta - My Journey, Skills & Experience';
 export const size = OG_SIZE;
 export const contentType = 'image/png';
 
-export default function Image() {
+export default async function Image() {
   return renderOg({
     title: 'About Me',
     subtitle: 'My Journey, Skills & Experience',
