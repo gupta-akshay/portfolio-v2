@@ -18,6 +18,10 @@ const nextConfig = {
 
   // The OG card reads its Space Grotesk / Space Mono TTFs off disk at render
   // time (src/lib/og.tsx), so they have to travel with the serverless bundle.
+  // nft already picks them up on its own — this glob is the pin that keeps a
+  // refactor of that path from silently dropping them, since the failure would
+  // only ever show up as an ENOENT in production. Verified to cover all seven
+  // handlers, `/blog/[slug]/opengraph-image/[__metadata_id__]` included.
   outputFileTracingIncludes: {
     '/**/opengraph-image': ['./src/lib/fonts/**'],
   },
