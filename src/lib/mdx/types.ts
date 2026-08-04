@@ -1,5 +1,3 @@
-export type { BlogMetadata } from './schema';
-
 export interface TOCHeading {
   id: string;
   text: string;

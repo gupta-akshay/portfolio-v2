@@ -43,14 +43,4 @@ export const logger = {
       console.warn(...args);
     }
   },
-  info(...args: unknown[]): void {
-    if (!isProd && typeof console !== 'undefined') {
-      console.info(...args);
-    }
-  },
-  debug(...args: unknown[]): void {
-    if (!isProd && typeof console !== 'undefined') {
-      console.debug(...args);
-    }
-  },
 };
