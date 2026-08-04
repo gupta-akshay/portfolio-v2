@@ -4,13 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { BlogPost } from '@/lib/mdx/types';
 import { formatDate } from '@/app/utils/helpers/format';
-import { useLoading } from '@/app/context/LoadingContext';
 
 import styles from '../BlogTile/BlogTile.module.scss';
 
 const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
   const { metadata, slug, readingTime } = blog;
-  const startLoading = useLoading();
 
   const blogHref = `/blog/${slug}`;
 
@@ -36,13 +34,6 @@ const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
       <Link
         href={blogHref}
         className={styles.cardLink}
-        onClick={(e) => {
-          // Cmd/Ctrl/shift-click opens the post elsewhere and leaves this tab
-          // on the same route, so the overlay would hang until its 5s fallback.
-          const opensElsewhere =
-            e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;
-          if (!opensElsewhere) startLoading();
-        }}
         aria-label={`Read ${metadata.title}`}
       >
         <div className={styles.cover}>
@@ -63,10 +54,7 @@ const BlogTileMDX = ({ blog }: { blog: BlogPost }) => {
         </div>
 
         <div className={styles.body}>
-          <div
-            className={styles.tagRow}
-            title={metadata.categories.join(', ')}
-          >
+          <div className={styles.tagRow} title={metadata.categories.join(', ')}>
             {shownTags.map((category) => (
               <span key={category} className={styles.tag}>
                 {category}

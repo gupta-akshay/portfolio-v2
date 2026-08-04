@@ -1,48 +1,24 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import Layout from '@/app/components/Layout';
 import ResumeActions from './ResumeActions';
 import { resumeData } from './data';
 import { getSiteUrl } from '@/lib/site-url';
 import { getYearsOfExperience } from '@/app/utils/helpers/format';
+import { createPageMetadata } from '@/lib/metadata';
 
 import styles from '@/app/styles/sections/resumeSection.module.scss';
 
 const siteUrl = getSiteUrl();
 const resumeDescription = `Resume of Akshay Gupta — Senior Staff Engineer with ${getYearsOfExperience()}+ years building scalable backend, platform, and AI-enabled systems on GCP and AWS.`;
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+export const metadata = createPageMetadata({
   title: 'Resume',
   description: resumeDescription,
-  openGraph: {
-    type: 'profile',
-    title: 'Resume | Akshay Gupta',
-    description: resumeDescription,
-    url: `${siteUrl}/resume`,
-    siteName: 'Akshay Gupta',
-    locale: 'en_US',
-    images: [
-      {
-        url: '/resume/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'Resume — Akshay Gupta, Senior Staff Engineer',
-        type: 'image/png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Resume | Akshay Gupta',
-    description: resumeDescription,
-    creator: '@ashay_music',
-    images: ['/resume/opengraph-image'],
-  },
-  alternates: {
-    canonical: `${siteUrl}/resume`,
-  },
-};
+  socialTitle: 'Resume | Akshay Gupta',
+  path: '/resume',
+  imageAlt: 'Resume — Akshay Gupta, Senior Staff Engineer',
+  type: 'profile',
+});
 
 function formatYearMonth(ym: string): string {
   const [year, month] = ym.split('-');

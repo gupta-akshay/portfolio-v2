@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { z } from 'zod';
 import * as Sentry from '@sentry/nextjs';
-import { ContactFormData, ContactAPIResponse } from '@/app/types/api';
 import {
   escapeHtml,
   replaceMergeFields,
@@ -28,9 +27,7 @@ const resend = new Resend(serverEnv.RESEND_API_KEY);
  * @param req - Next.js request object
  * @returns API response with success/error status
  */
-export async function POST(
-  req: NextRequest
-): Promise<NextResponse<ContactAPIResponse>> {
+export async function POST(req: NextRequest) {
   const start = performance.now();
   let failed = false;
   try {
@@ -41,15 +38,16 @@ export async function POST(
     });
     if (!limit.ok) {
       Sentry.metrics.count('api.sendmail.rate_limited', 1);
-      const response: ContactAPIResponse = {
-        success: false,
-        message: 'Too many requests. Please try again later.',
-        statusCode: 429,
-      };
-      return NextResponse.json(response, {
-        status: 429,
-        headers: { 'Retry-After': String(limit.retryAfterSec) },
-      });
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Too many requests. Please try again later.',
+        },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(limit.retryAfterSec) },
+        }
+      );
     }
 
     const body = await req.json();
@@ -58,14 +56,14 @@ export async function POST(
     const result = contactSchema.safeParse(body);
 
     if (!result.success) {
-      const response: ContactAPIResponse = {
-        success: false,
-        message: 'Invalid input',
-        errors: result.error.flatten().fieldErrors,
-        statusCode: 400,
-      };
-
-      return NextResponse.json(response, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Invalid input',
+          errors: result.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
     }
 
     const { name, email, subject, message } = result.data;
@@ -75,7 +73,7 @@ export async function POST(
     // receive it. Only the copy interpolated into the HTML body is escaped.
     const recipient = email.trim();
 
-    const sanitizedData: ContactFormData = {
+    const sanitizedData = {
       name: escapeHtml(name.trim()),
       email: escapeHtml(recipient),
       subject: escapeHtml(subject?.trim() ?? ''),
@@ -109,17 +107,10 @@ export async function POST(
       attributes: { status: 'success' },
     });
 
-    const successResponse: ContactAPIResponse = {
+    return NextResponse.json({
       success: true,
       message: 'Email sent successfully',
-      data: {
-        emailSent: true,
-        timestamp: new Date(),
-      },
-      statusCode: 200,
-    };
-
-    return NextResponse.json(successResponse, { status: 200 });
+    });
   } catch (e) {
     failed = true;
     logger.error('Error in sending mail:', e);
@@ -130,31 +121,27 @@ export async function POST(
     // Check for specific error types
     if (e instanceof Error) {
       if (e.message.includes('rate limit') || e.message.includes('429')) {
-        const response: ContactAPIResponse = {
-          success: false,
-          message: 'Too many requests. Please try again later.',
-          statusCode: 429,
-        };
-        return NextResponse.json(response, { status: 429 });
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Too many requests. Please try again later.',
+          },
+          { status: 429 }
+        );
       }
 
       if (e.message.includes('invalid') || e.message.includes('validation')) {
-        const response: ContactAPIResponse = {
-          success: false,
-          message: 'Invalid request data',
-          statusCode: 400,
-        };
-        return NextResponse.json(response, { status: 400 });
+        return NextResponse.json(
+          { success: false, message: 'Invalid request data' },
+          { status: 400 }
+        );
       }
     }
 
-    const errorResponse: ContactAPIResponse = {
-      success: false,
-      message: 'Error in sending mail',
-      statusCode: 500,
-    };
-
-    return NextResponse.json(errorResponse, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: 'Error in sending mail' },
+      { status: 500 }
+    );
   } finally {
     Sentry.metrics.distribution(
       'api.sendmail.duration',

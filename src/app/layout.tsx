@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
 import { spaceGrotesk, spaceMono, cookie } from './fonts';
-import { LoadingProvider } from './context/LoadingContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Metrics from './metrics';
 import { getSiteUrl } from '@/lib/site-url';
@@ -95,9 +94,7 @@ export default function RootLayout({
         <a href='#main-content' className='skip-link'>
           Skip to main content
         </a>
-        <ThemeProvider>
-          <LoadingProvider>{children}</LoadingProvider>
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
         <Metrics />
         <SpeedInsights />
         <Analytics />
