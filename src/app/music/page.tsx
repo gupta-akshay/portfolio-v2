@@ -1,46 +1,38 @@
-import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Layout from '@/app/components/Layout';
 import LoadingIndicator from '@/app/components/LoadingIndicator/LoadingIndicator';
 import MusicTracks from '@/app/music/components/MusicTracks';
 import { getSiteUrl } from '@/lib/site-url';
 import { musicContent } from '@/lib/site-content';
+import { createPageMetadata } from '@/lib/metadata';
+import { getAudioFilesList } from '@/app/utils/aws';
 
 const siteUrl = getSiteUrl();
 const musicDescription = musicContent.paragraphs.join(' ');
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+export const dynamic = 'force-dynamic';
+
+export const metadata = createPageMetadata({
   title: 'My Music',
   description: musicDescription,
-  openGraph: {
-    type: 'music.playlist',
-    title: 'My Music | Akshay Gupta',
-    description: musicDescription,
-    url: `${siteUrl}/music`,
-    siteName: 'Akshay Gupta',
-    locale: 'en_US',
-    images: [
-      {
-        url: '/music/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'Akshay Gupta Music - Original productions and electronic remixes',
-        type: 'image/png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'My Music | Akshay Gupta',
-    description: musicDescription,
-    creator: '@ashay_music',
-    images: ['/music/opengraph-image'],
-  },
-  alternates: {
-    canonical: `${siteUrl}/music`,
-  },
-};
+  socialTitle: 'My Music | Akshay Gupta',
+  path: '/music',
+  imageAlt: 'Akshay Gupta Music - Original productions and electronic remixes',
+  type: 'music.playlist',
+});
+
+async function TrackList() {
+  try {
+    const tracks = await getAudioFilesList();
+    return <MusicTracks tracks={tracks} />;
+  } catch {
+    return (
+      <div className='warning-text'>
+        Failed to load tracks. Please try again later.
+      </div>
+    );
+  }
+}
 
 export default function Music() {
   const jsonLd = {
@@ -91,7 +83,7 @@ export default function Music() {
             ))}
           </div>
           <Suspense fallback={<LoadingIndicator />}>
-            <MusicTracks />
+            <TrackList />
           </Suspense>
         </div>
       </section>

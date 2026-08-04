@@ -4,11 +4,9 @@ import { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import * as Sentry from '@sentry/nextjs';
 import { Track } from '@/app/types';
-import {
-  useAudioPlayback,
-  useQueueManager,
-  useKeyboardShortcuts,
-} from './hooks';
+import { useAudioPlayback } from './hooks/useAudioPlayback';
+import { useQueueManager } from './hooks/useQueueManager';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { TrackList, PlayerBar, QueuePanel, Toast } from './components';
 import { logger } from '@/app/utils/logger';
 import styles from './AudioPlayer.module.scss';
@@ -57,6 +55,7 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
     isMuted,
     setIsMuted,
     currentTime,
+    setCurrentTime,
     duration,
     setDuration,
     currentTrack,
@@ -79,6 +78,7 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
     toggleShuffle,
     toggleQueueVisibility,
     clearQueue,
+    advanceQueue,
     getNextTrackIndex,
     getPreviousTrackIndex,
   } = useQueueManager(tracks);
@@ -209,26 +209,8 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
         (track) => track.id === queue[index]!.id
       );
       if (trackIndex !== -1) {
-        // Remove all tracks before this one from the queue
-        const newQueue = queue.slice(index + 1);
-
-        const removedTrackIds = new Set<string>();
-        queue.slice(0, index + 1).forEach((track) => {
-          const stillInQueue =
-            newQueue.some((t) => t.id === track.id) ||
-            track.id === tracks[trackIndex]?.id;
-          if (!stillInQueue) {
-            removedTrackIds.add(track.id);
-          }
-        });
-
         setCurrentTrackIndex(trackIndex);
-
-        queuedTrackIds.forEach((id) => {
-          if (removedTrackIds.has(id)) {
-            queuedTrackIds.delete(id);
-          }
-        });
+        advanceQueue(index + 1);
       }
     }
   };
@@ -430,6 +412,10 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
     setIsMetadataLoaded(true);
   };
 
+  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+    setCurrentTime(e.currentTarget.currentTime);
+  };
+
   const handleCanPlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -466,10 +452,12 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
 
   const handleWaiting = () => {
     setIsLoading(true);
+    setIsPlaying(false);
   };
 
   const handlePlaying = () => {
     setIsLoading(false);
+    setIsPlaying(true);
   };
 
   return (
@@ -485,6 +473,7 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
         webkit-playsinline='true'
         x-webkit-playsinline='true'
         onLoadedMetadata={handleLoadedMetadata}
+        onTimeUpdate={handleTimeUpdate}
         onCanPlay={handleCanPlay}
         onPlay={handlePlay}
         onPause={handlePause}

@@ -1,49 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import MusicLoadingIndicator from './MusicLoadingIndicator';
 import { Track } from '@/app/types';
-import { logger } from '@/app/utils/logger';
 
-const AudioPlayer = dynamic(() => import('@/app/components/AudioPlayer/AudioPlayer'), {
-  loading: () => <MusicLoadingIndicator />,
-  ssr: false,
-});
-
-function MusicTracks() {
-  const [tracks, setTracks] = useState<Track[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTracks = async () => {
-      try {
-        const response = await fetch('/api/music/tracks', {
-          cache: 'no-store',
-        });
-        if (!response.ok) throw new Error('Failed to fetch tracks');
-        const tracksList: Track[] = await response.json();
-        setTracks(tracksList);
-      } catch (err) {
-        setError('Failed to load tracks. Please try again later.');
-        logger.error('Error fetching tracks:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTracks();
-  }, []);
-
-  if (error) {
-    return <div className='warning-text'>{error}</div>;
+const AudioPlayer = dynamic(
+  () => import('@/app/components/AudioPlayer/AudioPlayer'),
+  {
+    loading: () => <MusicLoadingIndicator />,
+    ssr: false,
   }
+);
 
-  if (isLoading) {
-    return <MusicLoadingIndicator />;
-  }
-
+function MusicTracks({ tracks }: { tracks: Track[] }) {
   return (
     <div className='music-container'>
       <AudioPlayer tracks={tracks} />
