@@ -9,11 +9,7 @@ interface TOCItem extends TOCHeading {
   children?: TOCItem[];
 }
 
-interface TableOfContentsMDXProps {
-  headings: TOCHeading[];
-  minHeadings?: number;
-  className?: string;
-}
+const MIN_HEADINGS = 3;
 
 const buildNestedTOC = (headings: TOCHeading[]): TOCItem[] => {
   const result: TOCItem[] = [];
@@ -47,16 +43,6 @@ const buildNestedTOC = (headings: TOCHeading[]): TOCItem[] => {
   return result;
 };
 
-const scrollToHeading = (id: string) => {
-  const element = document.getElementById(id);
-  if (element) {
-    const headerOffset = 80;
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-  }
-};
-
 const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
   items,
   activeId,
@@ -69,10 +55,6 @@ const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
         <li key={item.id} className={`toc-item toc-level-${item.level}`}>
           <a
             href={`#${item.id}`}
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToHeading(item.id);
-            }}
             className={`toc-link ${activeId === item.id ? 'active' : ''}`}
             aria-current={activeId === item.id ? 'location' : undefined}
           >
@@ -87,20 +69,15 @@ const TOCList: React.FC<{ items: TOCItem[]; activeId: string }> = ({
   );
 };
 
-const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
-  headings,
-  minHeadings = 3,
-  className = '',
-}) => {
+const TableOfContentsMDX = ({ headings }: { headings: TOCHeading[] }) => {
   const [activeId, setActiveId] = useState<string>('');
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const tocNavRef = useRef<HTMLElement>(null);
 
   const nestedHeadings = buildNestedTOC(headings);
 
   useEffect(() => {
-    if (headings.length < minHeadings) return;
+    if (headings.length < MIN_HEADINGS) return;
 
     let observer: IntersectionObserver | null = null;
 
@@ -128,10 +105,10 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
       cancelAnimationFrame(frameId);
       observer?.disconnect();
     };
-  }, [headings, minHeadings]);
+  }, [headings]);
 
   useEffect(() => {
-    if (!activeId || isMobile) return;
+    if (!activeId) return;
 
     const nav = tocNavRef.current;
     const activeLink = nav?.querySelector<HTMLElement>(
@@ -159,29 +136,19 @@ const TableOfContentsMDX: React.FC<TableOfContentsMDXProps> = ({
           : 'smooth',
       });
     }
-  }, [activeId, isMobile]);
+  }, [activeId]);
 
   useEffect(() => {
     const handleScroll = () => setIsVisible(window.scrollY > 300);
-    // Matches the breakpoint that hides the rail in TableOfContents.scss
-    const handleResize = () => setIsMobile(window.innerWidth <= 1699);
 
-    handleResize();
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (headings.length < minHeadings || isMobile) return null;
+  if (headings.length < MIN_HEADINGS) return null;
 
   return (
-    <div
-      className={`table-of-contents ${isVisible ? 'visible' : ''} ${className}`}
-    >
+    <div className={`table-of-contents ${isVisible ? 'visible' : ''}`}>
       <div className='toc-content-wrapper'>
         <div className='toc-header'>
           <h4>Table of Contents</h4>

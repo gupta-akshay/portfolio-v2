@@ -7,10 +7,8 @@ export default function Skills() {
   return (
     <div className={styles.skills}>
       {skillsData.map((skill) => (
-        <span className={styles.skillsPill} key={skill.id}>
-          {skill.icon && (
-            <Icon name={skill.icon} className={styles.skillsPillIcon} />
-          )}
+        <span className={styles.skillsPill} key={skill.name}>
+          <Icon name={skill.icon} className={styles.skillsPillIcon} />
           {skill.name}
         </span>
       ))}

@@ -1,6 +1,5 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixin' as *;
-@use '../../styles/3d-effects' as *;
 
 :global(body.theme-light) {
   .experienceContainer {
@@ -196,7 +195,9 @@
   text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform $dur $ease, box-shadow $dur $ease;
+  transition:
+    transform $dur $ease,
+    box-shadow $dur $ease;
 
   &:hover {
     background: $px-theme-hover;
@@ -340,105 +341,5 @@
   &:hover {
     opacity: 1;
     transform: translateX(12px);
-  }
-}
-
-// Legacy styles for backward compatibility
-.experienceBox {
-  display: inline-block;
-  vertical-align: top;
-  width: 100%;
-  margin-top: 15px;
-  background: $px-dark;
-  border-radius: 0;
-
-  @include stacking-cards(2, 5px);
-  @include floating-3d(2px, 0.08);
-  @include responsive-3d-effects;
-}
-
-.experienceRow {
-  padding: 35px;
-
-  @include down-md {
-    padding: 20px;
-  }
-
-  + .experienceRow {
-    border-top: 1px solid rgba($px-white, 0.05);
-  }
-}
-
-.experienceRowLeft {
-  min-height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @include up-sm {
-    border-right: 1px solid rgba($px-white, 0.05);
-  }
-
-  @include down-sm {
-    margin-bottom: 25px;
-    text-align: left;
-
-    img {
-      max-width: 100px;
-    }
-  }
-}
-
-.experienceRowRight {
-  color: $px-body;
-  position: relative;
-
-  h6 {
-    color: $px-white;
-    font-weight: 500;
-    font-size: 20px;
-    margin-bottom: 5px;
-  }
-
-  label {
-    font-size: 13px;
-    margin-bottom: 12px;
-
-    @include down-sm {
-      width: 100%;
-      margin-bottom: 6px;
-    }
-  }
-}
-
-.experienceRowRightType {
-  display: inline-block;
-  padding: 5px 10px;
-  color: #000000;
-  background: $px-theme;
-  font-size: 10px;
-  font-weight: 300;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  @include down-sm {
-    position: relative;
-    margin-bottom: 14px;
-    vertical-align: top;
-  }
-}
-
-.experienceRowRightContent {
-  ul {
-    padding: 0;
-    margin-bottom: 0;
-    text-decoration: none;
-  }
-
-  li {
-    list-style: none;
   }
 }

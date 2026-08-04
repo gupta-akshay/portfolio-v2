@@ -3,13 +3,7 @@
 import { useEffect, useState } from 'react';
 import './ReadingProgressBar.scss';
 
-interface ReadingProgressBarProps {
-  target?: string; // CSS selector for the target element to track
-}
-
-const ReadingProgressBar = ({
-  target = 'article',
-}: ReadingProgressBarProps) => {
+const ReadingProgressBar = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -19,7 +13,7 @@ const ReadingProgressBar = ({
     const computeProgress = () => {
       ticking = false;
 
-      const targetElement = document.querySelector(target);
+      const targetElement = document.querySelector('article');
       if (!targetElement) return;
 
       const targetRect = targetElement.getBoundingClientRect();
@@ -70,7 +64,7 @@ const ReadingProgressBar = ({
       window.removeEventListener('resize', onScrollOrResize);
       if (rafId) window.cancelAnimationFrame(rafId);
     };
-  }, [target]);
+  }, []);
 
   return (
     <div className='reading-progress-bar'>

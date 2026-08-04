@@ -1,15 +1,10 @@
 'use client';
 
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { GitHubCalendar } from 'react-github-calendar';
 import styles from './GitHubCalendar.module.scss';
 
 type CalendarTheme = ComponentProps<typeof GitHubCalendar>['theme'];
-
-interface GitHubCalendarProps {
-  username: string;
-  theme?: CalendarTheme;
-}
 
 const defaultTheme: CalendarTheme = {
   light: [
@@ -28,10 +23,7 @@ const defaultTheme: CalendarTheme = {
   ],
 };
 
-const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
-  username,
-  theme = defaultTheme,
-}) => {
+const GitHubCalendarComponent = ({ username }: { username: string }) => {
   return (
     <>
       <div className='title'>
@@ -48,7 +40,7 @@ const GitHubCalendarComponent: React.FC<GitHubCalendarProps> = ({
         <div className={styles.calendarWrapper}>
           <GitHubCalendar
             username={username}
-            theme={theme}
+            theme={defaultTheme}
             fontSize={12}
             blockSize={12}
             blockMargin={4}

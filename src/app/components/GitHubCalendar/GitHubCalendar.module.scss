@@ -1,6 +1,5 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixin' as *;
-@use '../../styles/3d-effects' as *;
 
 :global(body.theme-light) {
   .calendarContainer {
@@ -212,114 +211,6 @@
   @include down-sm {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
-  }
-}
-
-.loadingContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  background: rgba(251, 191, 36, 0.05);
-  border-radius: 0;
-  border: 1px solid rgba(251, 191, 36, 0.2);
-
-  p {
-    margin-top: 1rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-  }
-
-  @include down-sm {
-    padding: 2rem;
-  }
-}
-
-// Stepped slab fill rather than a smooth spinner
-.loadingSpinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid $px-ink;
-  background: linear-gradient($px-theme 0 0) bottom / 100% 100% no-repeat;
-  animation: slabFill 1s steps(4, end) infinite;
-
-  :global(body.theme-light) & {
-    border-color: $px-ink-light;
-  }
-}
-
-@keyframes slabFill {
-  from {
-    background-size: 100% 0%;
-  }
-  to {
-    background-size: 100% 100%;
-  }
-}
-
-.errorContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: rgba(220, 53, 69, 0.1);
-  border: 1px solid rgba(220, 53, 69, 0.3);
-  border-radius: 0;
-  color: #dc3545;
-  text-align: center;
-  gap: 1rem;
-
-  p {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-
-  @include down-sm {
-    padding: 1.5rem;
-  }
-}
-
-.retryButton {
-  background: rgba(251, 191, 36, 0.1);
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  color: #fbbf24;
-  padding: 0.5rem 1rem;
-  border-radius: 0;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(251, 191, 36, 0.15);
-    border-color: rgba(251, 191, 36, 0.3);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  &:focus {
-    outline: 2px solid rgba(251, 191, 36, 0.5);
-    outline-offset: 2px;
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  @include down-sm {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
 
