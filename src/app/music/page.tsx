@@ -22,16 +22,15 @@ export const metadata = createPageMetadata({
 });
 
 async function TrackList() {
-  try {
-    const tracks = await getAudioFilesList();
-    return <MusicTracks tracks={tracks} />;
-  } catch {
-    return (
-      <div className='warning-text'>
-        Failed to load tracks. Please try again later.
-      </div>
-    );
-  }
+  const tracks = await getAudioFilesList().catch(() => null);
+
+  return tracks ? (
+    <MusicTracks tracks={tracks} />
+  ) : (
+    <div className='warning-text'>
+      Failed to load tracks. Please try again later.
+    </div>
+  );
 }
 
 export default function Music() {
