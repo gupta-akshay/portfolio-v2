@@ -24,7 +24,17 @@ export default function BlogFilter({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const visible = expanded ? counts : counts.slice(0, COLLAPSED_COUNT);
+  // A selected chip always stays on screen. Without this, a shared
+  // `?tag=<rare-topic>` link filters the grid but hides the pressed chip in the
+  // collapsed tail, leaving no way to see or undo the active filter.
+  const visible = expanded
+    ? counts
+    : [
+        ...counts.slice(0, COLLAPSED_COUNT),
+        ...counts
+          .slice(COLLAPSED_COUNT)
+          .filter(([tag]) => selected.includes(tag)),
+      ];
   const hidden = counts.length - visible.length;
 
   return (

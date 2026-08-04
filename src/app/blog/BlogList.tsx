@@ -31,9 +31,7 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
 
   // Unknown tags in the URL are dropped, so an OR filter can never produce an
   // empty grid and there is no empty state to design for.
-  const selected = (searchParams.get('tag')?.split(',') ?? []).filter((tag) =>
-    counts.has(tag)
-  );
+  const selected = searchParams.getAll('tag').filter((tag) => counts.has(tag));
 
   const filtered = selected.length
     ? posts.filter((post) =>
@@ -42,9 +40,13 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
     : posts;
 
   const setSelected = (next: string[]) => {
+    // Repeated `tag` params rather than a comma-joined string: the metadata
+    // schema allows any nonempty category, so `c++`, `a&b` or a category with
+    // a comma in it would not survive a hand-built query string.
+    const params = new URLSearchParams(next.map((tag) => ['tag', tag]));
     // `replace` so a multi-chip session does not bury the previous page under
     // one history entry per click.
-    router.replace(next.length ? `${pathname}?tag=${next.join(',')}` : pathname, {
+    router.replace(next.length ? `${pathname}?${params}` : pathname, {
       scroll: false,
     });
   };
