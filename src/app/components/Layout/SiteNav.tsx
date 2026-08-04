@@ -11,6 +11,7 @@ const LINKS = [
   { key: 'home', label: 'Home', href: '/' },
   { key: 'about', label: 'About', href: '/about' },
   { key: 'resume', label: 'Resume', href: '/resume' },
+  { key: 'projects', label: 'Projects', href: '/projects' },
   { key: 'blog', label: 'Blog', href: '/blog' },
   { key: 'music', label: 'Music', href: '/music' },
   { key: 'contact', label: 'Contact', href: '/contact' },
@@ -19,6 +20,7 @@ const LINKS = [
 const sectionFor = (pathname: string) => {
   if (pathname === '/about') return 'about';
   if (pathname === '/resume') return 'resume';
+  if (pathname === '/projects') return 'projects';
   if (pathname === '/contact') return 'contact';
   if (pathname === '/blog' || pathname.startsWith('/blog/')) return 'blog';
   if (pathname === '/music') return 'music';

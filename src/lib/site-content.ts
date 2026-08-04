@@ -34,6 +34,39 @@ export const aboutContent = {
 export const blogIntro =
   'Long-form notes on engineering, architecture, performance, and practical lessons from shipping production software.';
 
+export const projectsIntro =
+  'Things I built for myself and left in the open — a database tool for AI assistants, and the shell and desktop config I actually run every day.';
+
+// Hand-curated: two of these repos carry no GitHub description, and the order is
+// editorial rather than star-sorted. GitHub only supplies the star count at
+// render time, so this list stands on its own if that request fails.
+export const projects = [
+  {
+    repo: 'postgres-mcp',
+    tagline:
+      'A Model Context Protocol server that gives Claude Code and Cursor live access to a PostgreSQL database — slow-query analysis, schema exploration, hypothetical index simulation and health checks, without leaving the conversation. Pure Go, no CGo, ships as a ~15 MB static binary.',
+    language: 'Go',
+    tech: ['MCP', 'PostgreSQL', 'HypoPG', 'Docker'],
+    license: 'MIT',
+  },
+  {
+    repo: 'omarchy-waybar-config',
+    tagline:
+      'A Waybar setup for Omarchy and Hyprland, built on the HANCORE theme pack. The installer pulls its AUR dependencies, backs up whatever config is already there, and asks which optional modules — weather, GPU, audio visualiser, network speed — should end up on the bar.',
+    language: 'Shell',
+    tech: ['Waybar', 'Hyprland', 'Omarchy', 'Arch Linux'],
+    license: 'MIT',
+  },
+  {
+    repo: 'zsh-config',
+    tagline:
+      'A Zinit-based ZSH configuration with the Starship prompt, zoxide jumping, FZF-backed completion, syntax highlighting and a pile of aliases. The installer detects Arch or macOS and routes through pacman or Homebrew accordingly.',
+    language: 'Shell',
+    tech: ['Zinit', 'Starship', 'FZF', 'Zoxide'],
+    license: 'MIT',
+  },
+] as const;
+
 export const contactContent = {
   heading: "Let's connect",
   intro:
