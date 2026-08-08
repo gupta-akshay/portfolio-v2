@@ -1,0 +1,298 @@
+export const metadata = {
+    title: 'When PostgreSQL Misreads Correlated Columns: A Practical Guide to Extended Statistics',
+    slug: 'postgresql-extended-statistics-correlated-columns-row-estimates',
+    publishedAt: '2026-08-01',
+    categories: ['postgres', 'database', 'performance'],
+    coverImage: '/images/blog/postgresql-extended-statistics-correlated-columns-row-estimates.webp',
+    coverImageAlt: 'Correlated data streams passing through a PostgreSQL statistics model to produce an accurate query plan',
+    author: {
+        name: 'Akshay Gupta',
+        avatar: '/images/blog-author.webp'
+    },
+    excerpt: 'Learn why PostgreSQL misestimates filters on correlated columns, how dependencies, ndistinct, and MCV statistics help, and how to validate the result with EXPLAIN ANALYZE.'
+}
+
+PostgreSQL can have the right indexes and still choose a disappointing query plan.
+
+Sometimes the missing input is not another index. It is knowledge about how columns relate to each other.
+
+PostgreSQL normally keeps statistics for individual columns. When a query filters on several columns, the planner often estimates each condition separately and assumes the conditions are independent. That assumption can fail when the values are correlated. PostgreSQL provides extended statistics so you can tell `ANALYZE` which column groups deserve joint statistics. [PostgreSQL 18 documentation: Extended Statistics](https://www.postgresql.org/docs/18/planner-stats.html#PLANNER-STATS-EXTENDED)
+
+This article follows the earlier guides on [reading PostgreSQL query plans](/blog/reading-and-interpreting-postgresql-query-plans-a-friendly-guide) and [choosing PostgreSQL indexes](/blog/postgresql-indexing-deep-dive-choosing-the-right-index). The focus here is narrower: diagnosing a row-estimate error and deciding whether `dependencies`, `ndistinct`, or `mcv` statistics match the problem.
+
+All behavior and syntax in this article were verified against PostgreSQL 18, the current supported major version on August 1, 2026.
+
+## Why Row Estimates Matter
+
+Every node in an `EXPLAIN` plan includes an estimated number of rows it will emit. PostgreSQL uses estimates and planner cost parameters to compare possible plans, then selects the plan with the lowest estimated total cost. [PostgreSQL 18 documentation: Using `EXPLAIN`](https://www.postgresql.org/docs/18/using-explain.html)
+
+A row estimate can influence:
+
+- whether a scan uses an index, bitmap, or sequential path;
+- which relation becomes the outer side of a nested loop;
+- whether a join uses a nested loop, hash join, or merge join;
+- how much work an aggregate or sort is expected to process.
+
+An inaccurate estimate does not guarantee a bad plan. It is a strong diagnostic lead when the estimated and actual row counts diverge near the point where the plan becomes expensive.
+
+Use `EXPLAIN ANALYZE` to compare the planner's `rows` estimate with the `actual rows` reported during execution. PostgreSQL notes that estimates can vary after `ANALYZE` because its statistics are based on a random sample rather than an exact count. [PostgreSQL 18 documentation: `EXPLAIN` estimates](https://www.postgresql.org/docs/18/using-explain.html#USING-EXPLAIN-BASICS)
+
+## A Reproducible Correlation Problem
+
+Consider a simplified support-case table. In this synthetic data set, each tenant belongs to exactly one region:
+
+```sql
+CREATE TABLE support_cases (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  tenant_id integer NOT NULL,
+  region_id integer NOT NULL,
+  subject text NOT NULL
+);
+
+INSERT INTO support_cases (tenant_id, region_id, subject)
+SELECT
+  i % 100,
+  i % 100,
+  'Case ' || i
+FROM generate_series(1, 10000) AS s(i);
+
+ANALYZE support_cases;
+```
+
+Each of the 100 tenant values appears 100 times. The same is true for each region value. More importantly, `tenant_id` and `region_id` contain identical values in every row.
+
+Now inspect a query that uses both columns:
+
+```sql
+EXPLAIN (ANALYZE, TIMING OFF, BUFFERS OFF)
+SELECT id, subject
+FROM support_cases
+WHERE tenant_id = 42
+  AND region_id = 42;
+```
+
+The query returns 100 rows by construction. Without multivariate statistics, the planner can treat the two filters as independent. Each value matches about 1 percent of the table, so multiplying the two selectivities produces an estimate near 0.01 percent, or roughly one row. PostgreSQL's official multivariate-statistics example demonstrates this same estimate pattern with two perfectly correlated columns. [PostgreSQL 18 documentation: Functional Dependencies example](https://www.postgresql.org/docs/18/multivariate-statistics-examples.html#MULTIVARIATE-STATISTICS-EXAMPLES-FUNCTIONAL-DEPENDENCIES)
+
+Your displayed estimate may vary slightly because `ANALYZE` samples the table. The important signal is the gap between the estimated and actual cardinality, not an exact reproduction of one number.
+
+## Add Functional-Dependency Statistics
+
+`tenant_id` determines `region_id` in this data set. That is the problem addressed by functional-dependency statistics:
+
+```sql
+CREATE STATISTICS support_cases_tenant_region_dependencies
+  (dependencies)
+  ON tenant_id, region_id
+  FROM support_cases;
+
+ANALYZE support_cases;
+```
+
+Creating the statistics object records what PostgreSQL should collect. It does not calculate the statistics immediately. A later manual `ANALYZE` or background auto-analyze performs the collection. [PostgreSQL 18 documentation: Statistics collection](https://www.postgresql.org/docs/18/planner-stats.html#PLANNER-STATS-EXTENDED)
+
+Run the same plan again:
+
+```sql
+EXPLAIN (ANALYZE, TIMING OFF, BUFFERS OFF)
+SELECT id, subject
+FROM support_cases
+WHERE tenant_id = 42
+  AND region_id = 42;
+```
+
+The planner can now account for the dependency instead of reducing the estimate twice. In PostgreSQL's equivalent documented example, the estimate changes from one row to 100 rows, matching the actual result. [PostgreSQL 18 documentation: Multivariate Statistics Examples](https://www.postgresql.org/docs/18/multivariate-statistics-examples.html)
+
+The statistics object does not force a particular plan and does not provide a new access path. It improves an input to the cost model. An index and a statistics object solve different problems:
+
+- An index gives PostgreSQL another way to access rows.
+- Extended statistics give the planner better information about how many rows may match.
+
+You may need one, both, or neither.
+
+## Choose the Statistics Kind That Matches the Error
+
+PostgreSQL 18 supports three multivariate statistics kinds: `dependencies`, `ndistinct`, and `mcv`. If the kind list is omitted, PostgreSQL includes all supported kinds. [PostgreSQL 18 documentation: `CREATE STATISTICS`](https://www.postgresql.org/docs/18/sql-createstatistics.html)
+
+I prefer to name the kinds explicitly. The definition then explains why the object exists.
+
+### `dependencies`: Correlated Equality Filters
+
+Use functional dependencies when knowing one column strongly predicts another column and queries filter on both.
+
+Typical shapes include:
+
+- tenant and region;
+- postal code and city;
+- product subtype and category;
+- an internal identifier and a denormalized attribute derived from it.
+
+The feature has important limits. PostgreSQL 18 applies functional dependencies to simple equality conditions comparing columns with constants and to `IN` clauses containing constants. It does not use them for column-to-column comparisons, column-to-expression comparisons, range filters, `LIKE`, or other condition types. [PostgreSQL 18 documentation: Limitations of Functional Dependencies](https://www.postgresql.org/docs/18/planner-stats.html#FUNCTIONAL-DEPENDENCIES-LIMITATIONS)
+
+Dependencies also assume that the supplied constant values are compatible. If `tenant_id = 42` normally implies `region_id = 42`, dependency statistics do not contain enough value-level information to prove that `tenant_id = 42 AND region_id = 7` returns zero rows. [PostgreSQL 18 documentation: Functional-dependency compatibility limitation](https://www.postgresql.org/docs/18/planner-stats.html#FUNCTIONAL-DEPENDENCIES-LIMITATIONS)
+
+### `ndistinct`: Combined `GROUP BY` Cardinality
+
+Use `ndistinct` when PostgreSQL misestimates how many distinct combinations a set of columns will produce:
+
+```sql
+CREATE STATISTICS support_cases_tenant_region_ndistinct
+  (ndistinct)
+  ON tenant_id, region_id
+  FROM support_cases;
+
+ANALYZE support_cases;
+
+EXPLAIN (ANALYZE, TIMING OFF)
+SELECT tenant_id, region_id, count(*)
+FROM support_cases
+GROUP BY tenant_id, region_id;
+```
+
+Single-column statistics know the distinct count for each column. They do not describe the distinct count of the pair. `ndistinct` statistics collect counts for combinations of two or more columns in the object and can improve estimates for multi-column grouping. [PostgreSQL 18 documentation: Multivariate N-Distinct Counts](https://www.postgresql.org/docs/18/planner-stats.html#PLANNER-STATS-EXTENDED-NDISTINCT)
+
+Do not create `ndistinct` objects for every column combination. PostgreSQL recommends targeting combinations that are used together for grouping and whose misestimates are producing bad plans. Each extra object adds work to statistics collection. [PostgreSQL 18 documentation: N-distinct guidance](https://www.postgresql.org/docs/18/planner-stats.html#PLANNER-STATS-EXTENDED-NDISTINCT)
+
+### `mcv`: Common Value Combinations
+
+Multivariate most-common-value lists store frequent combinations rather than only a global dependency coefficient. This helps when particular pairs are much more or less common than independence would predict.
+
+```sql
+CREATE STATISTICS support_cases_tenant_region_mcv
+  (mcv)
+  ON tenant_id, region_id
+  FROM support_cases;
+
+ANALYZE support_cases;
+```
+
+MCV statistics can distinguish compatible common combinations from incompatible combinations that do not occur in the stored list. They also support a wider range of clauses than functional dependencies, including the range-clause example in PostgreSQL's documentation. The additional detail costs more during `ANALYZE`, consumes more statistics storage, and adds planning work. [PostgreSQL 18 documentation: Multivariate MCV Lists](https://www.postgresql.org/docs/18/multivariate-statistics-examples.html#MULTIVARIATE-STATISTICS-EXAMPLES-MCV)
+
+Use MCV when the problem is about specific combinations of values. Use dependencies when the problem is a broad equality relationship. Measure both against the queries that matter rather than treating either as a universal default.
+
+## Inspect What PostgreSQL Collected
+
+The `pg_stats_ext` view presents extended-statistics definitions and collected data in a readable form. It combines information from `pg_statistic_ext` and `pg_statistic_ext_data` and only exposes objects for tables the current user owns. [PostgreSQL 18 documentation: `pg_stats_ext`](https://www.postgresql.org/docs/18/view-pg-stats-ext.html)
+
+```sql
+SELECT
+  schemaname,
+  tablename,
+  statistics_name,
+  attnames,
+  kinds,
+  n_distinct,
+  dependencies
+FROM pg_stats_ext
+WHERE schemaname = 'public'
+  AND tablename = 'support_cases'
+ORDER BY statistics_name;
+```
+
+For an MCV object, inspect the frequent value combinations and compare their sampled frequency with the frequency expected under independence:
+
+```sql
+SELECT
+  statistics_name,
+  most_common_vals,
+  most_common_freqs,
+  most_common_base_freqs
+FROM pg_stats_ext
+WHERE schemaname = 'public'
+  AND tablename = 'support_cases'
+  AND 'm' = ANY (kinds);
+```
+
+`most_common_freqs` contains the observed frequencies in the sample. `most_common_base_freqs` contains the products of the corresponding single-value frequencies, which represent the independence baseline. [PostgreSQL 18 documentation: `pg_stats_ext` columns](https://www.postgresql.org/docs/18/view-pg-stats-ext.html)
+
+## Increase the Target Only When Evidence Supports It
+
+Extended statistics use sampled rows. PostgreSQL states that increasing the statistics target increases the sample size and will normally improve extended-statistics accuracy, while also increasing the time spent calculating the statistics. [PostgreSQL 18 documentation: Extended Statistics](https://www.postgresql.org/docs/18/planner-stats.html#PLANNER-STATS-EXTENDED)
+
+PostgreSQL 18 lets you set a target directly on a statistics object:
+
+```sql
+ALTER STATISTICS support_cases_tenant_region_mcv
+SET STATISTICS 500;
+
+ANALYZE support_cases;
+```
+
+`500` is an example for a controlled test, not a recommended production default. PostgreSQL accepts extended-statistics targets from 0 through 10,000. `DEFAULT` returns the object to the system default behavior. [PostgreSQL 18 documentation: `ALTER STATISTICS`](https://www.postgresql.org/docs/18/sql-alterstatistics.html)
+
+Increase the target only if:
+
+1. the statistics kind matches the query shape;
+2. estimates still vary or remain inaccurate after a fresh `ANALYZE`;
+3. the improved plan quality justifies longer analysis and additional planning work.
+
+Changing the target cannot fix a statistics object built on the wrong columns.
+
+## The Join Limitation Is Easy to Miss
+
+PostgreSQL 18 does not use extended statistics for selectivity estimates made for table joins. [PostgreSQL 18 documentation: `CREATE STATISTICS` notes](https://www.postgresql.org/docs/18/sql-createstatistics.html#SQL-CREATESTATISTICS-NOTES)
+
+This distinction matters:
+
+```sql
+-- Extended statistics may help estimate these same-table filters.
+SELECT *
+FROM support_cases
+WHERE tenant_id = 42
+  AND region_id = 42;
+
+-- They do not fix the selectivity estimate of this join condition.
+SELECT *
+FROM support_cases sc
+JOIN tenants t
+  ON t.id = sc.tenant_id
+ AND t.region_id = sc.region_id;
+```
+
+Do not add extended statistics and assume every estimate involving those columns will improve. Locate the first inaccurate node and confirm whether its conditions are filters on one relation or comparisons across relations.
+
+## A Practical Diagnostic Workflow
+
+Use this sequence when a plan looks wrong:
+
+1. Run `EXPLAIN (ANALYZE, BUFFERS)` for a safe, representative query.
+2. Find the earliest node with a material gap between estimated and actual rows.
+3. List the conditions applied at that node.
+4. Check whether multiple conditions reference correlated columns from the same table.
+5. Match the query shape to `dependencies`, `ndistinct`, or `mcv`.
+6. Create one focused statistics object and run `ANALYZE`.
+7. Compare the same query and workload before and after.
+8. Keep the object only if estimate or plan quality improves enough to justify its maintenance cost.
+
+Avoid measuring only execution time from one run. Cache state, concurrency, and data sampling can affect the result. Compare plan shape, estimated rows, actual rows, buffer activity, and repeated latency under representative conditions.
+
+Also avoid creating a broad statistics object simply because several columns appear in the same table. PostgreSQL does not compute every possible combination automatically because the number of combinations is large. Statistics objects should identify column groups that appear together in real queries. [PostgreSQL 18 documentation: Extended Statistics](https://www.postgresql.org/docs/18/planner-stats.html#PLANNER-STATS-EXTENDED)
+
+## Cleanup for the Example
+
+If you ran the synthetic example, remove its objects with:
+
+```sql
+DROP TABLE support_cases;
+```
+
+Dropping the table also removes the statistics objects defined on it.
+
+## Closing Thought
+
+Indexes answer, "How can PostgreSQL reach these rows?"
+
+Planner statistics answer, "How many rows should PostgreSQL expect?"
+
+When correlated filters produce a large estimated-versus-actual gap, adding another index may leave the underlying decision error untouched. Extended statistics give the planner a focused description of the relationship it could not infer from individual columns.
+
+Start with the plan. Identify the incorrect estimate. Choose the smallest statistics object that matches the query shape. Run `ANALYZE`, then verify the result.
+
+## Sources
+
+- [PostgreSQL 18: Statistics Used by the Planner](https://www.postgresql.org/docs/18/planner-stats.html)
+- [PostgreSQL 18: Multivariate Statistics Examples](https://www.postgresql.org/docs/18/multivariate-statistics-examples.html)
+- [PostgreSQL 18: `CREATE STATISTICS`](https://www.postgresql.org/docs/18/sql-createstatistics.html)
+- [PostgreSQL 18: `ALTER STATISTICS`](https://www.postgresql.org/docs/18/sql-alterstatistics.html)
+- [PostgreSQL 18: `ANALYZE`](https://www.postgresql.org/docs/18/sql-analyze.html)
+- [PostgreSQL 18: `pg_stats_ext`](https://www.postgresql.org/docs/18/view-pg-stats-ext.html)
+- [PostgreSQL 18: Using `EXPLAIN`](https://www.postgresql.org/docs/18/using-explain.html)
