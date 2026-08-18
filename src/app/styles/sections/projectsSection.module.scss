@@ -1,0 +1,237 @@
+@use '../variables' as *;
+
+// ---- Projects index header + repo card grid ----
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $px-theme;
+  margin-bottom: 12px;
+
+  :global(body.theme-light) & {
+    color: $px-theme-ink;
+  }
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.heading {
+  font-size: clamp(34px, 4vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: $px-white;
+  margin: 0 0 16px;
+
+  span {
+    color: $px-theme;
+  }
+
+  :global(body.theme-light) & {
+    color: $px-dark;
+  }
+}
+
+.intro {
+  font-size: 17px;
+  line-height: 1.75;
+  color: $px-body;
+  margin: 0;
+  text-wrap: pretty;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Same slab-and-press idiom as the track rows: the card travels onto its own
+// shadow on hover and back down flush on press.
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  background: $px-dark;
+  border: $bd-thick solid $px-ink;
+  color: $px-white;
+  transition:
+    transform $dur $ease,
+    box-shadow $dur $ease;
+
+  &:hover,
+  &:focus-visible {
+    color: $px-white;
+    box-shadow: $shadow-md;
+    transform: translate(-3px, -3px);
+  }
+
+  &:active {
+    box-shadow: $shadow-none;
+    transform: translate($press-offset, $press-offset);
+  }
+
+  :global(body.theme-light) & {
+    background: $px-white;
+    border-color: $px-ink-light;
+    color: $px-ink-light;
+  }
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-family: $px-font-mono;
+  font-size: 12px;
+  font-weight: $fw-bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.language,
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// Sized in em so it tracks the label it sits beside. Square, like everything else.
+.langDot {
+  width: 0.75em;
+  height: 0.75em;
+  flex-shrink: 0;
+  border: 1px solid $px-ink;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
+}
+
+.stars {
+  color: $px-theme;
+
+  :global(body.theme-light) & {
+    color: $px-theme-ink;
+  }
+}
+
+.licence {
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid $px-theme-rgb-1;
+  background: $px-theme-rgb-2;
+  color: $px-theme;
+
+  :global(body.theme-light) & {
+    border-color: rgba($px-theme-ink, 0.35);
+    color: $px-theme-ink;
+  }
+}
+
+.cardTitle {
+  font-family: $px-font-mono;
+  font-size: 20px;
+  font-weight: $fw-bold;
+  letter-spacing: -0.01em;
+  color: $px-white;
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+
+  :global(body.theme-light) & {
+    color: $px-dark;
+  }
+}
+
+.cardText {
+  font-size: 15px;
+  line-height: 1.7;
+  color: $px-body;
+  margin: 0 0 20px;
+  text-wrap: pretty;
+
+  :global(body.theme-light) & {
+    color: $px-body-light;
+  }
+}
+
+.techRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.techPill {
+  padding: 4px 9px;
+  border: $bd-thin solid $px-ink;
+  font-family: $px-font-mono;
+  font-size: 11px;
+  font-weight: $fw-bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  :global(body.theme-light) & {
+    border-color: $px-ink-light;
+  }
+}
+
+// Pushed to the bottom so every card's affordance lines up regardless of how
+// long the tagline runs.
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $px-theme;
+
+  :global(body.theme-light) & {
+    color: $px-theme-ink;
+  }
+}
+
+.footerRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
