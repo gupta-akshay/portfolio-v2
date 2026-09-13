@@ -1,0 +1,4 @@
+# Tool versions for mise (https://mise.jdx.dev). Keep `node` in sync with .nvmrc.
+[tools]
+node = "24"
+pnpm = "10"
