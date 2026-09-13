@@ -155,7 +155,7 @@ SENTRY_AUTH_TOKEN=
 
 ## Local Development
 
-Requires Node v24 (`.nvmrc`) and pnpm. `pnpm peaks:generate` additionally needs `ffmpeg`.
+Requires Node v24 and pnpm — pinned in `.nvmrc` (nvm) and `mise.toml` (mise, which also installs pnpm; run `mise install`). `pnpm peaks:generate` additionally needs `ffmpeg`.
 
 ```bash
 pnpm install

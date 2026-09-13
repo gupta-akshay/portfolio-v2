@@ -19,7 +19,7 @@ ANALYZE=true pnpm build  # Build with bundle analyzer
 `pnpm test` runs the handful of `*.test.ts` files on Node's built-in test runner
 (`node --test`) — there is no test framework, and only non-obvious logic has a
 check (currently the contact form's HTML escaping). Package manager is **pnpm**;
-Node **v24** (`.nvmrc`).
+Node **v24** (`.nvmrc` for nvm, `mise.toml` for mise — keep them in sync).
 
 ## Architecture
 
