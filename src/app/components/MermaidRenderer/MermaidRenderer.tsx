@@ -48,6 +48,11 @@ const MermaidRenderer = () => {
       mermaid.initialize({
         startOnLoad: false,
         theme: mode === 'light' ? 'default' : 'dark',
+        // Mermaid 12 defaults to the ELK layout and the hand-drawn "neo" look.
+        // ELK is a separate ~1.6 MB chunk pulled in on first flowchart render;
+        // dagre/classic keeps the previous rendering and avoids that download.
+        layout: 'dagre',
+        look: 'classic',
         securityLevel: 'strict',
       });
 
