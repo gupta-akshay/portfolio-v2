@@ -48,6 +48,8 @@ const MermaidRenderer = () => {
       mermaid.initialize({
         startOnLoad: false,
         theme: mode === 'light' ? 'default' : 'dark',
+        layout: 'dagre',
+        look: 'classic',
         securityLevel: 'strict',
       });
 
