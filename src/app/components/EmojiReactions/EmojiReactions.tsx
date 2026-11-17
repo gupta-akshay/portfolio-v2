@@ -97,7 +97,7 @@ export default function EmojiReactions({ blogSlug }: EmojiReactionsProps) {
       }
     };
 
-    fetchReactions(abortController.signal); // async — setState is never called synchronously
+    void fetchReactions(abortController.signal); // async — setState is never called synchronously
 
     // Show the reactions bar after a short delay
     const timer = setTimeout(() => setIsVisible(true), 1000);

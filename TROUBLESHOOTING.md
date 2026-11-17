@@ -15,7 +15,7 @@ pnpm install
 pnpm dev
 
 # Check for TypeScript errors
-pnpm type-check
+pnpm typecheck
 
 # Fix linting issues
 pnpm lint:fix
@@ -38,7 +38,7 @@ Type error: Property 'X' does not exist on type 'Y'
 
 ```bash
 # Check TypeScript configuration
-pnpm type-check
+pnpm typecheck
 
 # Update types
 pnpm add -D @types/node @types/react @types/react-dom
@@ -772,13 +772,15 @@ Include:
 }
 ```
 
-2. **Enable ESLint Rules:**
+2. **Keep Lint Clean:**
 
-```json
-// .eslintrc.json
-{
-  "extends": ["next/core-web-vitals", "@typescript-eslint/recommended"]
-}
+Linting runs on oxlint, configured in `.oxlintrc.json` (the Next.js core-web-vitals +
+TypeScript rule set, React Compiler rules, and type-aware rules such as
+`no-floating-promises`).
+
+```bash
+pnpm lint
+pnpm lint:fix
 ```
 
 3. **Monitor Performance:**

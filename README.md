@@ -26,7 +26,7 @@ Next.js App Router portfolio with MDX blogging, a custom music player, emoji rea
 
 ## Tech Stack
 
-- Next.js 16 + React 19 + TypeScript
+- Next.js 16 + React 19 + TypeScript 7
 - Sass modules + global Sass architecture
 - Space Grotesk (display/body) + Space Mono (metadata, numerals) via `next/font`
 - MDX (`@next/mdx`, `remark-gfm`, `rehype-slug`, `rehype-prism-plus`); Mermaid is rendered on the client
@@ -155,7 +155,7 @@ SENTRY_AUTH_TOKEN=
 
 ## Local Development
 
-Requires Node v24 and pnpm — pinned in `.nvmrc` (nvm) and `mise.toml` (mise, which also installs pnpm; run `mise install`). `pnpm peaks:generate` additionally needs `ffmpeg`.
+Requires Node 24.22.3 and pnpm — pinned in `.nvmrc` (nvm) and `mise.toml` (mise, which also installs pnpm; run `mise install`). `pnpm peaks:generate` additionally needs `ffmpeg`.
 
 ```bash
 pnpm install
@@ -172,7 +172,10 @@ Open [http://localhost:3000](http://localhost:3000).
 | `pnpm dev`                | Start Next.js dev server                     |
 | `pnpm build`              | Production build                             |
 | `pnpm start`              | Run production server                        |
-| `pnpm lint`               | Run ESLint                                   |
+| `pnpm lint`               | Run oxlint (type-aware)                      |
+| `pnpm lint:fix`           | Run oxlint and apply safe fixes              |
+| `pnpm typecheck`          | Type-check with TypeScript 7 (`tsc --noEmit`) |
+| `pnpm test`               | Run `*.test.ts` with `node --test`           |
 | `pnpm peaks:generate`     | Regenerate music waveform peaks from S3       |
 | `pnpm images:to-webp`     | Convert images in `public/` to WebP           |
 | `pnpm db:generate`        | Generate Drizzle migrations                  |

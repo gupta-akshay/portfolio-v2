@@ -72,7 +72,8 @@ async function listTrackKeys() {
       : undefined;
   } while (continuationToken);
 
-  return keys.sort();
+  // Code-unit order, same as the default sort — spelled out for the linter.
+  return keys.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 }
 
 async function downloadToFile(key, destination) {
