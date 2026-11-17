@@ -10,10 +10,9 @@ Sentry.init({
   // Sample 10% of transactions in production, 100% elsewhere.
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1,
 
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  // v11 sends logs and metrics whenever their APIs are called, so the old
+  // `enableLogs` flag is gone. Its unset `dataCollection` default (user info,
+  // cookies, headers, request bodies) matches what `sendDefaultPii: true` sent
+  // under v10.
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/migration/v10-to-v11/
 });

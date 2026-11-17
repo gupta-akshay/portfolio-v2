@@ -102,7 +102,7 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
     if (prefs.volume !== 0.7) {
       setVolume(prefs.volume);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, []);
 
   // Restore persisted track index once tracks are available
@@ -113,7 +113,7 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
       restoringFromStorageRef.current = true;
       setCurrentTrackIndex(prefs.trackIndex);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, [tracks.length]);
 
   // Persist volume + track index whenever they change
@@ -180,7 +180,7 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
     playAttemptInProgressRef.current = true;
 
     try {
-      baseHandlePlayPause();
+      void baseHandlePlayPause();
     } catch (error) {
       logger.error('Error in handlePlayPause:', error);
     } finally {
@@ -221,7 +221,6 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
   useEffect(() => {
     const track = currentTrackIndex === null ? null : tracks[currentTrackIndex];
     if (!track) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentUrl(null);
       setCurrentPeaks(null);
       return;
@@ -269,11 +268,11 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
       }
     };
 
-    loadTrack();
+    void loadTrack();
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, [currentTrackIndex, tracks]);
 
   const handleTrackSelect = (index: number) => {
@@ -403,7 +402,7 @@ const AudioPlayer = ({ tracks }: { tracks: Track[] }) => {
       restoringFromStorageRef.current = true;
       setCurrentTrackIndex(index);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, [tracks.length]);
 
   const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLAudioElement>) => {

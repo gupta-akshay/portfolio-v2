@@ -60,7 +60,7 @@ const MermaidRenderer = () => {
       }
     };
 
-    render();
+    void render();
 
     return () => {
       cancelled = true;

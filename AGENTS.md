@@ -7,7 +7,9 @@ This file provides guidance to AI Agents when working with code in this reposito
 ```bash
 pnpm dev              # Start dev server (Next.js + Turbopack)
 pnpm build            # Production build
-pnpm lint             # Run ESLint (with 8GB heap limit)
+pnpm lint             # Run oxlint (type-aware, config in .oxlintrc.json)
+pnpm lint:fix         # oxlint with safe autofixes
+pnpm typecheck        # tsc --noEmit (TypeScript 7)
 pnpm peaks:generate   # Regenerate music waveform peaks from S3 (needs ffmpeg + AWS creds)
 pnpm images:to-webp   # Convert images in public/ to WebP
 pnpm db:generate      # Generate Drizzle migrations from schema changes
@@ -19,7 +21,7 @@ ANALYZE=true pnpm build  # Build with bundle analyzer
 `pnpm test` runs the handful of `*.test.ts` files on Node's built-in test runner
 (`node --test`) — there is no test framework, and only non-obvious logic has a
 check (currently the contact form's HTML escaping). Package manager is **pnpm**;
-Node **v24** (`.nvmrc` for nvm, `mise.toml` for mise — keep them in sync).
+Node **24.22.3** (`.nvmrc` for nvm, `mise.toml` for mise — keep them in sync).
 
 ## Architecture
 
@@ -61,7 +63,7 @@ public/               # Static assets
 - **Env validation**: `src/env.ts` exports a `serverEnv` zod-validated proxy (lazy — validated on first access). Import it instead of reading `process.env` on the server; reading `serverEnv.*` on the client throws. `NEXT_PUBLIC_*` vars are read as `process.env.NEXT_PUBLIC_…` literals at their use site, because that is the only form Next inlines into the client bundle. `SKIP_ENV_VALIDATION=true` bypasses (for Docker build stages). `src/lib/site-url.ts` `getSiteUrl()` is the canonical origin for metadata/feeds/sharing.
 - **Path aliases** (`tsconfig.json`): `@/*` → `src/*`, `@/content/*` → `content/*`.
 - **`exactOptionalPropertyTypes` is on.** Passing an explicitly `undefined` value to an optional prop is an error — either omit the key with a conditional spread (`...(x !== undefined && { x })`) or widen the prop to `string | undefined`.
-- **Error monitoring**: Sentry via `@sentry/nextjs`. Config in `sentry.{server,edge}.config.ts`, `src/instrumentation*.ts`, and `withSentryConfig` in `next.config.mjs` (tunnelRoute `/monitoring`). Use `src/app/utils/logger.ts` for logging.
+- **Error monitoring**: Sentry via `@sentry/nextjs`. Config in `sentry.{server,edge}.config.ts`, `src/instrumentation*.ts`, and `withSentryConfig` in `next.config.mjs` (tunnelRoute `/monitoring`). Use `src/app/utils/logger.ts` for logging. On SDK v11, logs and metrics need no opt-in flag, and the unset `dataCollection` default sends user info, cookies, headers and request bodies — what `sendDefaultPii: true` sent on v10. Set `dataCollection` in all three `Sentry.init` calls to narrow it.
 - **Security headers / CSP**: defined in `next.config.mjs` `headers()`. Adding a new external script/style/image/connect origin requires updating the matching CSP directive there or the browser blocks it. The separate, stricter `images.contentSecurityPolicy` guards SVGs passing through the image optimizer (`dangerouslyAllowSVG: true`) — do not loosen it.
 - **Rate limiting**: `src/app/utils/ratelimit.ts` — per-instance in-memory only (not coordinated across serverless instances); guards casual abuse, not DDoS. Used by API routes.
 - **SEO/feeds**: `src/app/sitemap.ts`, `robots.ts`, `manifest.ts`, `feed.xml/route.ts`, and per-route `opengraph-image.tsx` generate metadata/OG images dynamically. Every route renders the same card through `src/lib/og.tsx` — routes pass copy, never layout. Satori cannot read the `next/font` woff2s, so the card loads its own static TTFs from `src/lib/fonts/` with `readFileSync`; `fetch(new URL(…, import.meta.url))` (the pattern in the Next docs) is **not implemented by Turbopack** and fails the build. `outputFileTracingIncludes` in `next.config.mjs` pins that directory into the serverless bundles (nft traces it anyway; the glob guards against a path refactor silently dropping it, which would only surface as a production ENOENT).
@@ -97,6 +99,15 @@ Two build-level gotchas that have already caused silent breakage:
 
 - **`sassOptions.charset = false`** in `next.config.mjs` is required. Dart Sass otherwise prepends a UTF-8 BOM whenever a stylesheet's output contains a non-ASCII character; after bundling that BOM lands mid-chunk and the browser parses it as part of the next selector, silently dropping that rule in production as well as dev.
 - **Write only the unprefixed `backdrop-filter`.** Declaring `-webkit-backdrop-filter` by hand makes Lightning CSS drop the standard property, so the effect never applies anywhere. The build adds prefixes from browserslist.
+
+### TypeScript 7 and linting
+
+- **`typescript` is 7.x** (the native Go compiler). It ships **no JavaScript compiler API** (planned for 7.1), so do not add tools that import `typescript` programmatically (typescript-eslint, ts-morph, ts-node, TS webpack loaders). If one becomes unavoidable, give that tool `@typescript/typescript6` rather than downgrading the project.
+- `next build` type-checks by running the project's `tsc` CLI (the Next 16.4 default), so build type errors are raw `tsc` output, not Next-formatted.
+- The `next` entry under `plugins` in `tsconfig.json` is a tsserver plugin. The TS 7 native language server does not load tsserver plugins; it only takes effect in an editor running a TS 6 language service.
+- **Lint is oxlint — there is no ESLint.** `.oxlintrc.json` (JSONC, comments allowed) carries the eslint-config-next rule set (core-web-vitals + typescript) as mapped by `@oxlint/migrate`, the React Compiler rules, oxlint's `correctness` category, and type-aware rules through `oxlint-tsgolint`. Every rule switched off has a comment saying why. Suppress with `// oxlint-disable-next-line <plugin>/<rule>`.
+- Prettier still owns formatting (single quotes included); there is no `quotes` lint rule.
+- An async helper called from an effect or handler that already catches its own errors is marked `void fn()` to satisfy `no-floating-promises`. `*.test.ts` files are exempt, since `node:test` runs top-level `test()` calls itself.
 
 ### React Compiler
 

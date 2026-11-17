@@ -61,7 +61,7 @@ function CustomImage({
   // For images without dimensions (from markdown syntax), use native img
   // This allows responsive images without requiring explicit dimensions
   return (
-    // eslint-disable-next-line @next/next/no-img-element
+    // oxlint-disable-next-line nextjs/no-img-element
     <img
       src={src}
       alt={alt || ''}
